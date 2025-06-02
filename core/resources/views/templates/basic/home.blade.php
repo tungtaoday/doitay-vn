@@ -1,7 +1,7 @@
 @extends($activeTemplate . 'layouts.frontend')
 @section('content')
 
-<!-- Hero Section - Main CTA -->
+<!-- Hero Section - Main CTA (Custom Section Above Admin Banner) -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center min-vh-100 py-5">
@@ -56,7 +56,7 @@
                     <div class="hero-placeholder">
                         <div class="placeholder-content">
                             <i class="las la-tools" style="font-size: 4rem; color: #0b92d4; margin-bottom: 1rem;"></i>
-                            <h4 style="color: #0b92d4; margin-bottom: 0.5rem;">Thumbstack</h4>
+                            <h4 style="color: #0b92d4; margin-bottom: 0.5rem;">Doitay.vn</h4>
                             <p style="color: #6c757d; font-size: 1.1rem;">Kết nối thợ chuyên nghiệp</p>
                         </div>
                     </div>
@@ -65,6 +65,9 @@
         </div>
     </div>
 </section>
+
+<!-- Existing Admin Banner (from partials) -->
+@include($activeTemplate . 'partials.banner')
 
 <!-- Quick Lead Creation Form -->
 <section id="quick-lead-form" class="py-5 bg-light">
