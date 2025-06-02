@@ -587,25 +587,143 @@ class SiteController extends Controller
 
     public function addClick($id)
     {
-        $advertisement = Advertisement::find($id);
+        $advertisement = Advertisement::findOrFail($id);
+        $advertisement->impression = $advertisement->impression + 1;
+        $advertisement->save();
+        return redirect($advertisement->link);
+    }
 
-        if ($advertisement) {
-            $advertisement->click += 1;
-            $advertisement->save();
+    public function becomeContractor()
+    {
+        $pageTitle = 'Trở thành thợ chuyên nghiệp';
+        $seoContents = (object) [
+            'title' => 'Trở thành thợ chuyên nghiệp - Kiếm tiền từ kỹ năng của bạn',
+            'description' => 'Tham gia Doitay.vn để kết nối với hàng ngàn khách hàng tiềm năng. Tự do về thời gian, thu nhập hấp dẫn.',
+            'keywords' => 'trở thành thợ, đăng ký thợ, kiếm tiền, freelancer, contractor'
+        ];
+        $seoImage = null;
+        
+        // Get some statistics for display
+        $totalJobs = 5000; // This could come from database
+        $activeContractors = 1000;
+        $averageEarning = 15000000; // per month in VND
+        
+        return view('Template::become_contractor', compact('pageTitle', 'seoContents', 'seoImage', 'totalJobs', 'activeContractors', 'averageEarning'));
+    }
+
+    public function becomeContractorRegister(Request $request)
+    {
+        // Handle the contractor registration process
+        $request->validate([
+            'action' => 'required|in:login,register,create_contractor',
+            'fullname' => 'required_if:action,register',
+            'email' => 'required_if:action,register|email',
+            'mobile' => 'required_if:action,register',
+            'password' => 'required_if:action,register|min:6',
+            'username' => 'required_if:action,login',
+            'login_password' => 'required_if:action,login',
+            'company_name' => 'required_if:action,create_contractor',
+            'category_id' => 'required_if:action,create_contractor',
+            'description' => 'required_if:action,create_contractor',
+        ]);
+
+        if ($request->action === 'login') {
+            // Handle login
+            $credentials = [
+                'username' => $request->username,
+                'password' => $request->login_password
+            ];
+            
+            if (auth()->attempt($credentials)) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đăng nhập thành công!',
+                    'redirect' => route('user.company.create')
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Thông tin đăng nhập không chính xác'
+                ]);
+            }
         }
+
+        if ($request->action === 'register') {
+            // Handle user registration
+            try {
+                $user = new \App\Models\User();
+                $user->firstname = explode(' ', $request->fullname)[0];
+                $user->lastname = implode(' ', array_slice(explode(' ', $request->fullname), 1));
+                $user->username = $request->email;
+                $user->email = $request->email;
+                $user->mobile = $request->mobile;
+                $user->password = bcrypt($request->password);
+                $user->country_code = 'VN';
+                $user->country = 'Vietnam';
+                $user->save();
+
+                auth()->login($user);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đăng ký thành công!',
+                    'next_step' => 'create_contractor'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Có lỗi xảy ra khi đăng ký: ' . $e->getMessage()
+                ]);
+            }
+        }
+
+        if ($request->action === 'create_contractor') {
+            // Handle contractor profile creation
+            if (!auth()->check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn cần đăng nhập để tạo hồ sơ thợ'
+                ]);
+            }
+
+            try {
+                $company = new \App\Models\Company();
+                $company->user_id = auth()->id();
+                $company->name = $request->company_name;
+                $company->category_id = $request->category_id;
+                $company->description = $request->description;
+                $company->address = $request->address ?? '';
+                $company->city = $request->city ?? 'Ho Chi Minh City';
+                $company->state = $request->state ?? 'Ho Chi Minh';
+                $company->country = 'Vietnam';
+                $company->zip_code = $request->zip_code ?? '70000';
+                $company->phone = $request->phone ?? auth()->user()->mobile;
+                $company->email = $request->company_email ?? auth()->user()->email;
+                $company->status = 0; // Pending approval
+                $company->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Hồ sơ thợ đã được tạo thành công! Chúng tôi sẽ xem xét và phê duyệt trong vòng 24h.',
+                    'redirect' => route('user.company.index')
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Có lỗi xảy ra khi tạo hồ sơ thợ: ' . $e->getMessage()
+                ]);
+            }
+        }
+
         return response()->json([
-            'success' => true,
-            'data' => $advertisement
+            'success' => false,
+            'message' => 'Hành động không hợp lệ'
         ]);
     }
 
     public function maintenance()
     {
-        $pageTitle = 'Maintenance Mode';
-        if (gs('maintenance_mode') == Status::DISABLE) {
-            return to_route('home');
-        }
-        $maintenance = Frontend::where('data_keys', 'maintenance.data')->first();
-        return view('Template::maintenance', compact('pageTitle', 'maintenance'));
+        $pageTitle = 'Under Maintenance';
+        return view('Template::maintenance', compact('pageTitle'));
     }
 }

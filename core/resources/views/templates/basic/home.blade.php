@@ -66,130 +66,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="hero-image">
-                    <div class="hero-placeholder">
-                        <div class="placeholder-content">
-                            <i class="las la-tools" style="font-size: 4rem; color: #ffffff; margin-bottom: 1rem;"></i>
-                            <h4 style="color: #ffffff; margin-bottom: 0.5rem;">Doitay.vn</h4>
-                            <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem;">Kết nối thợ chuyên nghiệp</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Quick Lead Creation Form -->
-<section id="quick-lead-form" class="py-5 bg-light">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card shadow border-0">
-                    <div class="card-header bg-primary text-white text-center py-4">
-                        <h3 class="mb-0">🚀 Tạo Lead - Tìm Thợ Trong 2 Phút</h3>
-                        <p class="mb-0 mt-2 opacity-75">Mô tả công việc → Nhận báo giá → Chọn thợ phù hợp</p>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="{{ route('user.customer.leads.store') }}" method="POST" class="lead-creation-form">
-                            @csrf
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Loại công việc *</label>
-                                    <select name="category_id" class="form-select" required>
-                                        <option value="">Chọn loại công việc</option>
-                                        @foreach(App\Models\Category::where('status', 1)->get() as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Khu vực *</label>
-                                    <select name="district" class="form-select" required>
-                                        <option value="">Chọn quận/huyện</option>
-                                        <option value="Quận 1">Quận 1</option>
-                                        <option value="Quận 2">Quận 2</option>
-                                        <option value="Quận 3">Quận 3</option>
-                                        <!-- Add more districts -->
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Tiêu đề công việc *</label>
-                                <input type="text" name="title" class="form-control" 
-                                       placeholder="VD: Sửa chữa điện nước tại nhà">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Mô tả chi tiết *</label>
-                                <textarea name="description" class="form-control" rows="4" 
-                                          placeholder="Mô tả chi tiết công việc cần làm..."></textarea>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Ngân sách tối thiểu</label>
-                                    <input type="number" name="budget_min" class="form-control" 
-                                           placeholder="VD: 200000">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Ngân sách tối đa</label>
-                                    <input type="number" name="budget_max" class="form-control" 
-                                           placeholder="VD: 500000">
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Mức độ ưu tiên</label>
-                                    <select name="urgency" class="form-select">
-                                        <option value="medium">Bình thường</option>
-                                        <option value="high">Khẩn cấp</option>
-                                        <option value="low">Không gấp</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Cần hoàn thành trước</label>
-                                    <input type="date" name="needed_by" class="form-control" 
-                                           min="{{ date('Y-m-d', strtotime('+1 day')) }}">
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label class="form-label">Địa chỉ cụ thể *</label>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <input type="text" name="ward" class="form-control mb-2" 
-                                               placeholder="Phường/Xã">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input type="text" name="address" class="form-control mb-2" 
-                                               placeholder="Số nhà, tên đường">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            @auth
-                                <button type="submit" class="btn btn-primary btn-lg w-100">
-                                    <i class="las la-rocket me-2"></i>Tạo Lead & Tìm Thợ Ngay
-                                </button>
-                            @else
-                                <div class="text-center">
-                                    <p class="mb-3">Bạn cần đăng nhập để tạo lead</p>
-                                    <a href="{{ route('user.login') }}" class="btn btn-primary btn-lg me-2">
-                                        Đăng nhập
-                                    </a>
-                                    <a href="{{ route('user.register') }}" class="btn btn-outline-primary btn-lg">
-                                        Đăng ký miễn phí
-                                    </a>
-                                </div>
-                            @endauth
-                        </form>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </section>
@@ -231,6 +107,387 @@
                     </div>
                     <h4>Hoàn Thành</h4>
                     <p>Thợ thực hiện công việc, bạn thanh toán và đánh giá. Tích điểm loyalty cho lần sau.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Lead Creation Form -->
+<section id="quick-lead-form" class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Left Column - Form -->
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="lead-form-container">
+                    <div class="form-header text-center mb-4">
+                        <div class="form-badge">
+                            <i class="las la-rocket"></i>
+                            <span>Miễn Phí 100%</span>
+                        </div>
+                        <h3 class="form-title">Tạo Lead & Tìm Thợ Ngay</h3>
+                        <p class="form-subtitle">Chỉ mất 2 phút • Nhận báo giá từ nhiều thợ chuyên nghiệp</p>
+                    </div>
+
+                    <div class="modern-card">
+                        <!-- Login/Register Tabs -->
+                        <div class="auth-tabs mb-4" id="authTabs">
+                            <div class="tab-buttons">
+                                <button class="tab-btn active" data-tab="guest">
+                                    <i class="las la-user-clock"></i>
+                                    Tạo Lead Nhanh
+                                </button>
+                                <button class="tab-btn" data-tab="login">
+                                    <i class="las la-sign-in-alt"></i>
+                                    Đăng Nhập
+                                </button>
+                                <button class="tab-btn" data-tab="register">
+                                    <i class="las la-user-plus"></i>
+                                    Đăng Ký
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Guest Form (Default) -->
+                        <div class="tab-content active" id="guestTab">
+                            <form class="lead-form" id="guestLeadForm">
+                                @csrf
+                                <div class="form-step" id="step1">
+                                    <h5 class="step-title">📋 Thông tin công việc</h5>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Loại công việc *</label>
+                                            <select name="category_id" class="form-select modern-select" required>
+                                                <option value="">Chọn loại công việc</option>
+                                                @foreach(App\Models\Category::where('status', 1)->get() as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Khu vực *</label>
+                                            <select name="district" class="form-select modern-select" required>
+                                                <option value="">Chọn quận/huyện</option>
+                                                <option value="Quận 1">Quận 1</option>
+                                                <option value="Quận 2">Quận 2</option>
+                                                <option value="Quận 3">Quận 3</option>
+                                                <option value="Quận 4">Quận 4</option>
+                                                <option value="Quận 5">Quận 5</option>
+                                                <option value="Quận 6">Quận 6</option>
+                                                <option value="Quận 7">Quận 7</option>
+                                                <option value="Quận 8">Quận 8</option>
+                                                <option value="Quận 9">Quận 9</option>
+                                                <option value="Quận 10">Quận 10</option>
+                                                <option value="Quận 11">Quận 11</option>
+                                                <option value="Quận 12">Quận 12</option>
+                                                <option value="Quận Bình Thạnh">Quận Bình Thạnh</option>
+                                                <option value="Quận Gò Vấp">Quận Gò Vấp</option>
+                                                <option value="Quận Phú Nhuận">Quận Phú Nhuận</option>
+                                                <option value="Quận Tân Bình">Quận Tân Bình</option>
+                                                <option value="Quận Tân Phú">Quận Tân Phú</option>
+                                                <option value="Quận Thủ Đức">Quận Thủ Đức</option>
+                                                <option value="Huyện Bình Chánh">Huyện Bình Chánh</option>
+                                                <option value="Huyện Cần Giờ">Huyện Cần Giờ</option>
+                                                <option value="Huyện Củ Chi">Huyện Củ Chi</option>
+                                                <option value="Huyện Hóc Môn">Huyện Hóc Môn</option>
+                                                <option value="Huyện Nhà Bè">Huyện Nhà Bè</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Tiêu đề công việc *</label>
+                                        <input type="text" name="title" class="form-control modern-input" 
+                                               placeholder="VD: Sửa chữa điện nước tại nhà" required>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Mô tả chi tiết *</label>
+                                        <textarea name="description" class="form-control modern-textarea" rows="3" 
+                                                  placeholder="Mô tả chi tiết công việc cần làm..." required></textarea>
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary btn-lg w-100 next-step">
+                                        Tiếp theo: Thông tin liên hệ
+                                        <i class="las la-arrow-right ms-2"></i>
+                                    </button>
+                                </div>
+
+                                <div class="form-step" id="step2" style="display: none;">
+                                    <h5 class="step-title">📞 Thông tin liên hệ</h5>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Họ tên *</label>
+                                            <input type="text" name="fullname" class="form-control modern-input" 
+                                                   placeholder="Nhập họ tên" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Số điện thoại *</label>
+                                            <input type="tel" name="mobile" class="form-control modern-input" 
+                                                   placeholder="0123456789" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" name="email" class="form-control modern-input" 
+                                               placeholder="email@domain.com">
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Địa chỉ cụ thể *</label>
+                                        <input type="text" name="address" class="form-control modern-input" 
+                                               placeholder="Số nhà, tên đường" required>
+                                    </div>
+
+                                    <div class="step-navigation">
+                                        <button type="button" class="btn btn-outline-secondary prev-step">
+                                            <i class="las la-arrow-left me-2"></i>Quay lại
+                                        </button>
+                                        <button type="button" class="btn btn-primary next-step">
+                                            Tiếp theo: Chi tiết khác
+                                            <i class="las la-arrow-right ms-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-step" id="step3" style="display: none;">
+                                    <h5 class="step-title">💰 Chi tiết bổ sung</h5>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Ngân sách từ</label>
+                                            <input type="number" name="budget_min" class="form-control modern-input" 
+                                                   placeholder="200,000">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Ngân sách đến</label>
+                                            <input type="number" name="budget_max" class="form-control modern-input" 
+                                                   placeholder="500,000">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Mức độ ưu tiên</label>
+                                            <select name="urgency" class="form-select modern-select">
+                                                <option value="medium">Bình thường</option>
+                                                <option value="high">Khẩn cấp</option>
+                                                <option value="low">Không gấp</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Cần hoàn thành trước</label>
+                                            <input type="date" name="needed_by" class="form-control modern-input" 
+                                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="terms-checkbox mb-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                            <label class="form-check-label" for="agreeTerms">
+                                                Tôi đồng ý với <a href="#" class="text-primary">Điều khoản dịch vụ</a> 
+                                                và <a href="#" class="text-primary">Chính sách bảo mật</a>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="step-navigation">
+                                        <button type="button" class="btn btn-outline-secondary prev-step">
+                                            <i class="las la-arrow-left me-2"></i>Quay lại
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-lg submit-lead">
+                                            <i class="las la-rocket me-2"></i>Tạo Lead & Tự Động Đăng Ký
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Login Tab -->
+                        <div class="tab-content" id="loginTab">
+                            <form class="auth-form" id="loginForm">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="form-label">Email hoặc Số điện thoại</label>
+                                    <input type="text" name="username" class="form-control modern-input" 
+                                           placeholder="email@domain.com hoặc 0123456789" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Mật khẩu</label>
+                                    <input type="password" name="password" class="form-control modern-input" 
+                                           placeholder="Nhập mật khẩu" required>
+                                </div>
+                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                                        <label class="form-check-label" for="rememberMe">Ghi nhớ</label>
+                                    </div>
+                                    <a href="#" class="text-primary">Quên mật khẩu?</a>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="las la-sign-in-alt me-2"></i>Đăng Nhập
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Register Tab -->
+                        <div class="tab-content" id="registerTab">
+                            <form class="auth-form" id="registerForm">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Họ *</label>
+                                        <input type="text" name="firstname" class="form-control modern-input" 
+                                               placeholder="Họ" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Tên *</label>
+                                        <input type="text" name="lastname" class="form-control modern-input" 
+                                               placeholder="Tên" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" name="email" class="form-control modern-input" 
+                                           placeholder="email@domain.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại *</label>
+                                    <input type="tel" name="mobile" class="form-control modern-input" 
+                                           placeholder="0123456789" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Mật khẩu *</label>
+                                        <input type="password" name="password" class="form-control modern-input" 
+                                               placeholder="Tối thiểu 6 ký tự" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Xác nhận mật khẩu *</label>
+                                        <input type="password" name="password_confirmation" class="form-control modern-input" 
+                                               placeholder="Nhập lại mật khẩu" required>
+                                    </div>
+                                </div>
+                                <div class="terms-checkbox mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="agreeTermsReg" required>
+                                        <label class="form-check-label" for="agreeTermsReg">
+                                            Tôi đồng ý với <a href="#" class="text-primary">Điều khoản dịch vụ</a>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-lg w-100">
+                                    <i class="las la-user-plus me-2"></i>Đăng Ký Miễn Phí
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Persuasive Content -->
+            <div class="col-lg-6">
+                <div class="persuasive-content">
+                    <!-- Hero Image/Video -->
+                    <div class="content-hero mb-4">
+                        <div class="hero-video-placeholder">
+                            <div class="video-overlay">
+                                <i class="las la-play-circle"></i>
+                                <h4>Xem cách Doitay.vn hoạt động</h4>
+                                <p>2 phút để hiểu toàn bộ quy trình</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Indicators -->
+                    <div class="trust-indicators mb-4">
+                        <h4 class="trust-title">✨ Tại sao chọn Doitay.vn?</h4>
+                        <div class="trust-features">
+                            <div class="trust-item">
+                                <div class="trust-icon">
+                                    <i class="las la-shield-alt text-success"></i>
+                                </div>
+                                <div class="trust-text">
+                                    <h6>100% An toàn & Bảo mật</h6>
+                                    <p>Thông tin được mã hóa SSL, thợ đã xác minh</p>
+                                </div>
+                            </div>
+                            <div class="trust-item">
+                                <div class="trust-icon">
+                                    <i class="las la-clock text-primary"></i>
+                                </div>
+                                <div class="trust-text">
+                                    <h6>Phản hồi trong 15 phút</h6>
+                                    <p>Nhận báo giá nhanh chóng từ nhiều thợ</p>
+                                </div>
+                            </div>
+                            <div class="trust-item">
+                                <div class="trust-icon">
+                                    <i class="las la-medal text-warning"></i>
+                                </div>
+                                <div class="trust-text">
+                                    <h6>Thợ chuyên nghiệp verified</h6>
+                                    <p>Đã kiểm tra kỹ năng và kinh nghiệm</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Reviews -->
+                    <div class="customer-reviews">
+                        <h5 class="reviews-title">💬 Khách hàng nói gì</h5>
+                        <div class="reviews-slider">
+                            <div class="review-item active">
+                                <div class="review-stars">
+                                    ⭐⭐⭐⭐⭐
+                                </div>
+                                <p class="review-text">"Tìm được thợ sửa điện nước rất nhanh, giá cả hợp lý. Sẽ dùng lại!"</p>
+                                <div class="reviewer">
+                                    <strong>Anh Minh</strong> - Quận 1, TP.HCM
+                                </div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-stars">
+                                    ⭐⭐⭐⭐⭐
+                                </div>
+                                <p class="review-text">"Platform rất dễ sử dụng, nhiều thợ chuyên nghiệp. Rất hài lòng!"</p>
+                                <div class="reviewer">
+                                    <strong>Chị Lan</strong> - Quận 7, TP.HCM
+                                </div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-stars">
+                                    ⭐⭐⭐⭐⭐
+                                </div>
+                                <p class="review-text">"Thợ đến đúng giờ, làm việc sạch sẽ. Giá cả minh bạch."</p>
+                                <div class="reviewer">
+                                    <strong>Anh Tuấn</strong> - Quận Bình Thạnh
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Counter -->
+                    <div class="stats-counter mt-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-number" data-count="1000">0</div>
+                                <div class="stat-label">Thợ verified</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number" data-count="5000">0</div>
+                                <div class="stat-label">Job hoàn thành</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number" data-count="98">0</div>
+                                <div class="stat-label">% Hài lòng</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -471,29 +728,6 @@
     margin: 0;
 }
 
-.hero-placeholder {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-}
-
-.hero-placeholder:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-}
-
-.placeholder-content {
-    padding: 2rem;
-}
-
 /* Mobile responsive */
 @media (max-width: 768px) {
     .hero-section.bg_img {
@@ -514,10 +748,6 @@
     
     .hero-actions .btn:last-child {
         margin-bottom: 0;
-    }
-    
-    .hero-placeholder {
-        height: 300px;
     }
 }
 
@@ -582,6 +812,371 @@
 .lead-creation-form {
     max-width: none;
 }
+
+/* Quick Lead Form Styles */
+.lead-form-container {
+    position: relative;
+}
+
+.form-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.form-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.modern-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Tab System */
+.auth-tabs {
+    margin-bottom: 1.5rem;
+}
+
+.tab-buttons {
+    display: flex;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 0.25rem;
+    gap: 0.25rem;
+}
+
+.tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.tab-btn.active {
+    background: white;
+    color: #0b92d4;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn:hover {
+    color: #0b92d4;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Form Steps */
+.form-step {
+    animation: slideIn 0.4s ease;
+}
+
+.step-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.step-navigation {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.step-navigation .btn {
+    flex: 1;
+}
+
+/* Modern Form Controls */
+.modern-input,
+.modern-select,
+.modern-textarea {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.modern-input:focus,
+.modern-select:focus,
+.modern-textarea:focus {
+    border-color: #0b92d4;
+    box-shadow: 0 0 0 0.2rem rgba(11, 146, 212, 0.1);
+    background: white;
+}
+
+.terms-checkbox {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+/* Persuasive Content */
+.persuasive-content {
+    padding-left: 2rem;
+}
+
+.content-hero {
+    position: relative;
+}
+
+.hero-video-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.hero-video-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>') repeat;
+    animation: float 6s ease-in-out infinite;
+}
+
+.hero-video-placeholder:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.video-overlay {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.video-overlay i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.video-overlay h4 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.video-overlay p {
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* Trust Indicators */
+.trust-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.trust-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.trust-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.trust-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.trust-icon {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(11, 146, 212, 0.1);
+}
+
+.trust-icon i {
+    font-size: 1.5rem;
+}
+
+.trust-text h6 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.trust-text p {
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Customer Reviews */
+.reviews-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.reviews-slider {
+    position: relative;
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.review-item {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.review-item.active {
+    display: block;
+}
+
+.review-stars {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.review-text {
+    font-style: italic;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.reviewer {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Stats Counter */
+.stats-counter {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0b92d4;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .persuasive-content {
+        padding-left: 0;
+        margin-top: 2rem;
+    }
+    
+    .modern-card {
+        padding: 1.5rem;
+    }
+    
+    .tab-btn {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .trust-features {
+        gap: 1rem;
+    }
+    
+    .hero-video-placeholder {
+        height: 200px;
+    }
+    
+    .video-overlay i {
+        font-size: 3rem;
+    }
+}
 </style>
 
 @push('script')
@@ -610,7 +1205,314 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add resize listener
     window.addEventListener('resize', updateBackgroundImage);
+
+    // Initialize Quick Lead Form functionality
+    initQuickLeadForm();
 });
+
+function initQuickLeadForm() {
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            btn.classList.add('active');
+            document.getElementById(targetTab + 'Tab').classList.add('active');
+        });
+    });
+
+    // Form steps navigation
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    // Next step buttons
+    document.querySelectorAll('.next-step').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (validateCurrentStep(currentStep)) {
+                goToStep(currentStep + 1);
+            }
+        });
+    });
+
+    // Previous step buttons
+    document.querySelectorAll('.prev-step').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToStep(currentStep - 1);
+        });
+    });
+
+    function goToStep(step) {
+        if (step < 1 || step > totalSteps) return;
+        
+        // Hide current step
+        document.getElementById('step' + currentStep).style.display = 'none';
+        
+        // Show target step
+        currentStep = step;
+        document.getElementById('step' + currentStep).style.display = 'block';
+    }
+
+    function validateCurrentStep(step) {
+        const currentStepEl = document.getElementById('step' + step);
+        const requiredFields = currentStepEl.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+        }
+
+        return isValid;
+    }
+
+    // Guest Lead Form Submission
+    document.getElementById('guestLeadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!validateCurrentStep(3)) return;
+
+        const formData = new FormData(e.target);
+        const submitBtn = e.target.querySelector('.submit-lead');
+        
+        // Show loading state
+        submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('{{ route("user.customer.leads.store") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
+                e.target.reset();
+                goToStep(1);
+            } else {
+                showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+            }
+        } catch (error) {
+            showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+        } finally {
+            submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Lead & Tự Động Đăng Ký';
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Login Form
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        
+        submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đăng nhập...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('{{ route("user.login") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('✅ Đăng nhập thành công!', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showNotification(result.message || 'Thông tin đăng nhập không chính xác', 'error');
+            }
+        } catch (error) {
+            showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+        } finally {
+            submitBtn.innerHTML = '<i class="las la-sign-in-alt me-2"></i>Đăng Nhập';
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Register Form
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const password = formData.get('password');
+        const passwordConfirm = formData.get('password_confirmation');
+        
+        if (password !== passwordConfirm) {
+            showNotification('Mật khẩu xác nhận không khớp', 'error');
+            return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        
+        submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đăng ký...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('{{ route("user.register") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('🎉 Đăng ký thành công! Vui lòng kiểm tra email để xác thực.', 'success');
+                e.target.reset();
+                // Switch to login tab
+                document.querySelector('[data-tab="login"]').click();
+            } else {
+                showNotification(result.message || 'Có lỗi xảy ra khi đăng ký', 'error');
+            }
+        } catch (error) {
+            showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+        } finally {
+            submitBtn.innerHTML = '<i class="las la-user-plus me-2"></i>Đăng Ký Miễn Phí';
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Reviews slider
+    initReviewsSlider();
+    
+    // Stats counter animation
+    initStatsCounter();
+}
+
+function initReviewsSlider() {
+    const reviews = document.querySelectorAll('.review-item');
+    let currentReview = 0;
+
+    function showNextReview() {
+        reviews[currentReview].classList.remove('active');
+        currentReview = (currentReview + 1) % reviews.length;
+        reviews[currentReview].classList.add('active');
+    }
+
+    // Auto-rotate reviews every 4 seconds
+    setInterval(showNextReview, 4000);
+}
+
+function initStatsCounter() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = parseInt(entry.target.getAttribute('data-count'));
+                animateNumber(entry.target, 0, target, 2000);
+                observer.unobserve(entry.target);
+            }
+        });
+    });
+
+    statNumbers.forEach(stat => observer.observe(stat));
+}
+
+function animateNumber(element, start, end, duration) {
+    const startTime = performance.now();
+    
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        const currentNumber = Math.floor(start + (end - start) * easeOutQuart(progress));
+        element.textContent = currentNumber.toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            // Add + sign for some numbers
+            if (end >= 1000) {
+                element.textContent = currentNumber.toLocaleString() + '+';
+            } else if (end === 98) {
+                element.textContent = currentNumber + '%';
+            }
+        }
+    }
+    
+    requestAnimationFrame(update);
+}
+
+function easeOutQuart(t) {
+    return 1 - Math.pow(1 - t, 4);
+}
+
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    document.querySelectorAll('.custom-notification').forEach(n => n.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `custom-notification alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        animation: slideInRight 0.3s ease;
+    `;
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Add CSS for notification animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.1) !important;
+    }
+`;
+document.head.appendChild(style);
 </script>
 @endpush
 

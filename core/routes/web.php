@@ -69,6 +69,10 @@ Route::controller('SiteController')->group(function () {
     Route::get('/about/doitay', 'about')->name('about');
     Route::post('add-click/{id}', 'addClick')->name('add.click');
     
+    // Become Contractor Landing Page
+    Route::get('become-contractor', 'becomeContractor')->name('become.contractor');
+    Route::post('become-contractor/register', 'becomeContractorRegister')->name('become.contractor.register');
+    
     // Pages route should be last to avoid conflicts
     Route::get('{slug}', 'pages')->name('pages');
 });

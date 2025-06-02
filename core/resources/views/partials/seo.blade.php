@@ -1,7 +1,15 @@
 @if($seo)
     <meta name="title" Content="{{ gs()->siteName(__($pageTitle)) }}">
     <meta name="description" content="{{ @$seoContents->description ?? $seo->description }}">
-    <meta name="keywords" content="{{ implode(',',@$seoContents->keywords ?? $seo->keywords) }}">
+    @php
+        $keywords = @$seoContents->keywords ?? $seo->keywords;
+        if (is_string($keywords)) {
+            $keywords = explode(',', $keywords);
+        } elseif (!is_array($keywords)) {
+            $keywords = [];
+        }
+    @endphp
+    <meta name="keywords" content="{{ implode(',', $keywords) }}">
     <link rel="shortcut icon" href="{{ siteFavicon() }}" type="image/x-icon">
 
     {{--<!-- Apple Stuff -->--}}

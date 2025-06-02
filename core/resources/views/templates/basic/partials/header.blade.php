@@ -34,6 +34,12 @@
                                 <a href="{{ route('contact') }}">@lang('Liên hệ')</a>
                             </li>
                         @endguest
+                        <li class="become-contractor-nav">
+                            <a href="{{ route('become.contractor') }}" class="btn-become-contractor">
+                                <i class="las la-tools"></i>
+                                <span>@lang('Trở thành thợ')</span>
+                            </a>
+                        </li>
                                 </ul>
         </nav>
 
@@ -152,6 +158,12 @@
                         </a>
                     </li>
                 @endguest
+                <li class="become-contractor-mobile">
+                    <a href="{{ route('become.contractor') }}" class="mobile-become-contractor">
+                        <i class="las la-tools"></i>
+                        @lang('Trở thành thợ')
+                    </a>
+                </li>
             </ul>
 
             <!-- Mobile Auth Actions -->
@@ -277,6 +289,55 @@
     color: #0b92d4;
     background: rgba(11, 146, 212, 0.1);
     transform: translateY(-2px);
+}
+
+/* Become Contractor Button Styles */
+.become-contractor-nav {
+    margin-left: 20px;
+}
+
+.btn-become-contractor {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px !important;
+    font-size: 14px;
+    font-weight: 600 !important;
+    color: white !important;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    border: none;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-become-contractor::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-become-contractor:hover::before {
+    left: 100%;
+}
+
+.btn-become-contractor:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+    background: linear-gradient(135deg, #218838, #1fa085) !important;
+    color: white !important;
+}
+
+.btn-become-contractor i {
+    font-size: 16px;
 }
 
 /* Header Actions */
@@ -642,6 +703,19 @@
 .mobile-action-btn.logout:hover {
     background: rgba(239, 68, 68, 0.1);
     color: #dc2626;
+}
+
+/* Mobile Become Contractor Button */
+.mobile-become-contractor {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.mobile-become-contractor:hover {
+    background: linear-gradient(135deg, #218838, #1fa085) !important;
+    color: white !important;
+    transform: translateX(8px) scale(1.02);
 }
 
 /* Responsive Behavior */
