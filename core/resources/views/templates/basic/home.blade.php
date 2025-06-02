@@ -1,15 +1,30 @@
 @extends($activeTemplate . 'layouts.frontend')
 @section('content')
 
-<!-- Hero Section - Main CTA (Custom Section Above Admin Banner) -->
-<section class="hero-section">
+@php
+    $bannerContent = getContent('banner.content', true);
+    $mobileBannerContent = getContent('mobile_banner.content', true);
+    $desktopImage = frontendImage('banner', @$bannerContent->data_values->image, '1920x840');
+    $mobileImage = frontendImage('mobile_banner', @$mobileBannerContent->data_values->image, '768x500');
+    
+    // If no mobile image, use desktop image
+    if (strpos($mobileImage, 'placeholder-image') !== false) {
+        $mobileImage = $desktopImage;
+    }
+@endphp
+
+<!-- Hero Section with Admin Managed Background Image -->
+<section class="hero-section bg_img" 
+         data-mobile-image="{{ $mobileImage }}" 
+         style="background-image: url('{{ $desktopImage }}');">
+    <div class="hero-overlay"></div>
     <div class="container">
         <div class="row align-items-center min-vh-100 py-5">
             <div class="col-lg-6">
                 <div class="hero-content">
                     <h1 class="hero-title">
                         Tìm Thợ Chuyên Nghiệp <br>
-                        <span class="text-primary">Nhanh & Tin Cậy</span>
+                        <span class="gradient-text">Nhanh & Tin Cậy</span>
                     </h1>
                     <p class="hero-description">
                         Kết nối bạn với hàng ngàn thợ chuyên nghiệp. Từ điện nước, sửa chữa đến thi công - 
@@ -21,7 +36,7 @@
                         <a href="#quick-lead-form" class="btn btn-primary btn-lg me-3">
                             <i class="las la-plus me-2"></i>Tạo Lead Ngay
                         </a>
-                        <a href="#contractor-search" class="btn btn-outline-primary btn-lg">
+                        <a href="#contractor-search" class="btn btn-outline-light btn-lg">
                             <i class="las la-search me-2"></i>Tìm Thợ
                         </a>
                     </div>
@@ -55,9 +70,9 @@
                 <div class="hero-image">
                     <div class="hero-placeholder">
                         <div class="placeholder-content">
-                            <i class="las la-tools" style="font-size: 4rem; color: #0b92d4; margin-bottom: 1rem;"></i>
-                            <h4 style="color: #0b92d4; margin-bottom: 0.5rem;">Doitay.vn</h4>
-                            <p style="color: #6c757d; font-size: 1.1rem;">Kết nối thợ chuyên nghiệp</p>
+                            <i class="las la-tools" style="font-size: 4rem; color: #ffffff; margin-bottom: 1rem;"></i>
+                            <h4 style="color: #ffffff; margin-bottom: 0.5rem;">Doitay.vn</h4>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem;">Kết nối thợ chuyên nghiệp</p>
                         </div>
                     </div>
                 </div>
@@ -65,9 +80,6 @@
         </div>
     </div>
 </section>
-
-<!-- Existing Admin Banner (from partials) -->
-@include($activeTemplate . 'partials.banner')
 
 <!-- Quick Lead Creation Form -->
 <section id="quick-lead-form" class="py-5 bg-light">
@@ -353,22 +365,92 @@
 </section>
 
 <style>
+/* Hero Section with Background Image */
+.hero-section.bg_img {
+    position: relative;
+    min-height: 100vh;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(11, 146, 212, 0.7) 0%, rgba(32, 201, 151, 0.7) 100%);
+    z-index: 1;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content {
+    color: white;
+}
+
 .hero-title {
     font-size: 3.5rem;
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 1.5rem;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #ffd700, #ffa500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
 }
 
 .hero-description {
     font-size: 1.25rem;
-    color: #6c757d;
+    color: rgba(255, 255, 255, 0.95);
     margin-bottom: 2rem;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 }
 
 .hero-actions .btn {
     padding: 1rem 2rem;
     border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.hero-actions .btn-primary {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    color: white;
+}
+
+.hero-actions .btn-primary:hover {
+    background: white;
+    color: #0b92d4;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.hero-actions .btn-outline-light {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: white;
+}
+
+.hero-actions .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    transform: translateY(-2px);
+    color: white;
 }
 
 .stat-item {
@@ -378,16 +460,68 @@
 .stat-number {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #0b92d4;
+    color: white;
     margin-bottom: 0.25rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .stat-label {
     font-size: 0.875rem;
-    color: #6c757d;
+    color: rgba(255, 255, 255, 0.8);
     margin: 0;
 }
 
+.hero-placeholder {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.hero-placeholder:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.placeholder-content {
+    padding: 2rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .hero-section.bg_img {
+        min-height: 80vh;
+        background-size: cover !important;
+        background-position: center !important;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .hero-placeholder {
+        height: 300px;
+    }
+}
+
+/* Other existing styles */
 .process-step {
     position: relative;
     padding: 2rem 1rem;
@@ -448,48 +582,36 @@
 .lead-creation-form {
     max-width: none;
 }
-
-.hero-placeholder {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border: 2px dashed #0b92d4;
-    border-radius: 20px;
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.hero-placeholder:hover {
-    border-color: #20c997;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(11, 146, 212, 0.15);
-}
-
-.placeholder-content {
-    padding: 2rem;
-}
-
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-actions .btn {
-        display: block;
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-    
-    .hero-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .hero-placeholder {
-        height: 300px;
-    }
-}
 </style>
+
+@push('script')
+<script>
+"use strict";
+// Handle responsive background image for hero section
+document.addEventListener('DOMContentLoaded', function() {
+    const heroSection = document.querySelector('.hero-section.bg_img');
+    if (!heroSection) return;
+    
+    const mobileImage = heroSection.getAttribute('data-mobile-image');
+    const desktopImage = heroSection.style.backgroundImage;
+    
+    function updateBackgroundImage() {
+        if (window.innerWidth <= 768) {
+            if (mobileImage && mobileImage !== '') {
+                heroSection.style.setProperty('background-image', `url('${mobileImage}')`, 'important');
+            }
+        } else {
+            heroSection.style.setProperty('background-image', desktopImage, 'important');
+        }
+    }
+
+    // Run on page load
+    updateBackgroundImage();
+
+    // Add resize listener
+    window.addEventListener('resize', updateBackgroundImage);
+});
+</script>
+@endpush
 
 @endsection
