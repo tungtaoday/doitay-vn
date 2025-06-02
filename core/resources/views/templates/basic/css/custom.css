@@ -1,0 +1,146 @@
+/* Mobile Menu Styles */
+.profile-nav__toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.profile-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    transition: all 0.3s ease;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.profile-menu__item {
+    margin: 0 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.profile-menu__link {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.profile-menu__link i {
+    margin-right: 4px;
+    font-size: 14px;
+}
+
+.profile-menu__link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Force menu to stay in one line */
+@media (min-width: 992px) {
+    .profile-menu {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .profile-menu__item {
+        flex-shrink: 0 !important;
+        margin: 0 2px !important;
+    }
+    
+    .profile-menu__link {
+        padding: 5px 7px !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .profile-nav__toggle {
+        display: block;
+    }
+
+    .profile-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: #fff;
+        padding: 20px;
+        z-index: 999;
+        overflow-y: auto;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+        flex-direction: column;
+    }
+
+    .profile-menu.active {
+        right: 0;
+    }
+
+    .profile-menu__item {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .profile-menu__link {
+        display: block;
+        padding: 10px;
+        color: #333;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .profile-menu__link i {
+        margin-right: 10px;
+    }
+
+    .profile-menu__link:hover {
+        background: rgba(0,0,0,0.05);
+    }
+
+    .profile-bg {
+        height: 200px;
+    }
+
+    .profile-header {
+        padding: 20px 0;
+    }
+}
+
+/* General Mobile Optimizations */
+@media (max-width: 767px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .pt-50 {
+        padding-top: 30px;
+    }
+
+    .pb-50 {
+        padding-bottom: 30px;
+    }
+
+    .section--bg {
+        background-size: cover;
+    }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 768px) and (max-width: 991px) {
+    .profile-bg {
+        height: 250px;
+    }
+} 

@@ -1,0 +1,1 @@
+@include($activeTemplate . 'partials.reviews') 

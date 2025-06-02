@@ -1,0 +1,72 @@
+.review {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.review-content {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.review-reactions {
+    display: flex;
+    gap: 10px;
+}
+
+.reaction-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.reaction-btn.active {
+    background-color: #f0f8ff;
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.reaction-btn:hover {
+    background-color: #f0f8ff;
+}
+
+.tooltips:hover::after {
+    content: attr(data-tippy-options);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0.9;
+}
+
+.changing-text {
+    display: inline-block;
+    border-right: 2px solid #333; /* Con trỏ gõ chữ */
+    padding-right: 5px;
+    animation: blink-caret 0.8s steps(2, start) infinite;
+    color: blue; /* Thay "blue" bằng mã màu bạn muốn */
+
+  }
+  
+  /* Hiệu ứng nhấp nháy của con trỏ */
+  @keyframes blink-caret {
+    50% {
+      border-color: transparent;
+    }
+  }
+  
