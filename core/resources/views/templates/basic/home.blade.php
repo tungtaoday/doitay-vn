@@ -71,42 +71,87 @@
 </section>
 
 <!-- How It Works -->
-<section class="py-5">
+<section class="py-5 how-it-works-section">
     <div class="container">
+        <!-- Section Header -->
         <div class="text-center mb-5">
-            <h2 class="section-title">Cách doitay.vn Hoạt Động</h2>
-            <p class="section-subtitle">Quy trình đơn giản 3 bước để tìm được thợ phù hợp</p>
+            <!-- <div class="section-badge">
+                <i class="las la-cog"></i>
+                <span>Quy Trình Làm Việc</span>
+            </div> -->
+            <h2 class="section-title-how">Cách Chúng Tôi Hoạt Động</h2>
+            <p class="section-subtitle-how">Quy trình đơn giản 3 bước để tìm được thợ chuyên nghiệp phù hợp</p>
+            <div class="title-decoration">
+                <div class="decoration-line"></div>
+                <div class="decoration-circle"></div>
+                <div class="decoration-line"></div>
+            </div>
         </div>
         
-        <div class="row">
-            <div class="col-lg-4 mb-4">
-                <div class="process-step text-center">
-                    <div class="step-icon">
-                        <span class="step-number">1</span>
-                        <i class="las la-edit step-icon-bg"></i>
+        <!-- Process Steps -->
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="process-step-card">
+                    <div class="step-header">
+                        <div class="step-icon-modern">
+                            <span class="step-number-modern">1</span>
+                            <div class="step-icon-bg-modern">
+                                <i class="las la-edit"></i>
+                            </div>
+                        </div>
+                        <div class="step-connector step-connector-1"></div>
                     </div>
-                    <h4>Tạo Lead</h4>
-                    <p>Mô tả công việc cần làm, ngân sách và thời gian. Hệ thống sẽ thông báo cho các thợ phù hợp.</p>
+                    <div class="step-content">
+                        <h4 class="step-title-modern">Tạo Lead</h4>
+                        <p class="step-description-modern">Mô tả công việc cần làm, ngân sách và thời gian. Hệ thống tự động thông báo cho các thợ phù hợp trong khu vực.</p>
+                        <div class="step-features">
+                            <span class="feature-tag">✓ Miễn phí 100%</span>
+                            <span class="feature-tag">✓ Nhanh chóng</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-4 mb-4">
-                <div class="process-step text-center">
-                    <div class="step-icon">
-                        <span class="step-number">2</span>
-                        <i class="las la-users step-icon-bg"></i>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="process-step-card step-card-featured">
+                    <div class="step-header">
+                        <div class="step-icon-modern step-icon-featured">
+                            <span class="step-number-modern">2</span>
+                            <div class="step-icon-bg-modern">
+                                <i class="las la-users"></i>
+                            </div>
+                        </div>
+                        <div class="step-connector step-connector-2"></div>
                     </div>
-                    <h4>Nhận Báo Giá</h4>
-                    <p>Các thợ quan tâm sẽ mua lead và liên hệ báo giá. Bạn so sánh và chọn thợ phù hợp nhất.</p>
+                    <div class="step-content">
+                        <h4 class="step-title-modern">Nhận Báo Giá</h4>
+                        <p class="step-description-modern">Các thợ quan tâm sẽ mua lead và liên hệ báo giá trực tiếp. Bạn so sánh giá và chọn thợ phù hợp nhất với nhu cầu.</p>
+                        <div class="step-features">
+                            <span class="feature-tag">✓ Nhiều lựa chọn</span>
+                            <span class="feature-tag featured-tag">✓ Thợ verified</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-4 mb-4">
-                <div class="process-step text-center">
-                    <div class="step-icon">
-                        <span class="step-number">3</span>
-                        <i class="las la-handshake step-icon-bg"></i>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="process-step-card">
+                    <div class="step-header">
+                        <div class="step-icon-modern">
+                            <span class="step-number-modern">3</span>
+                            <div class="step-icon-bg-modern">
+                                <i class="las la-handshake"></i>
+                            </div>
+                        </div>
                     </div>
-                    <h4>Hoàn Thành</h4>
-                    <p>Thợ thực hiện công việc, bạn thanh toán và đánh giá. Tích điểm loyalty cho lần sau.</p>
+                    <div class="step-content">
+                        <h4 class="step-title-modern">Hoàn Thành</h4>
+                        <p class="step-description-modern">Thợ thực hiện công việc chuyên nghiệp, bạn thanh toán và đánh giá. Tích điểm loyalty cho những lần tiếp theo.</p>
+                        <div class="step-features">
+                            <span class="feature-tag">✓ Đảm bảo chất lượng</span>
+                            <span class="feature-tag">✓ Tích điểm</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -393,7 +438,7 @@
             <div class="col-lg-6">
                 <div class="persuasive-content">
                     <!-- Hero Image/Video -->
-                    <div class="content-hero mb-4">
+                    <!-- <div class="content-hero mb-4">
                         <div class="hero-video-placeholder">
                             <div class="video-overlay">
                                 <i class="las la-play-circle"></i>
@@ -401,7 +446,7 @@
                                 <p>2 phút để hiểu toàn bộ quy trình</p>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Trust Indicators -->
                     <div class="trust-indicators mb-4">
@@ -472,7 +517,7 @@
                     </div>
 
                     <!-- Stats Counter -->
-                    <div class="stats-counter mt-4">
+                    <!-- <div class="stats-counter mt-4">
                         <div class="row text-center">
                             <div class="col-4">
                                 <div class="stat-number" data-count="2500">0</div>
@@ -487,7 +532,7 @@
                                 <div class="stat-label">% Hài lòng</div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -733,7 +778,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
     border-radius: 16px;
@@ -1528,6 +1573,330 @@
 @keyframes float {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
     50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* How It Works Section - Clean Professional Design */
+.how-it-works-section {
+    background: #fafbfc;
+    position: relative;
+    overflow: hidden;
+}
+
+.how-it-works-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1.5" fill="%23102f4b" opacity="0.02"/></svg>') repeat;
+    pointer-events: none;
+}
+
+.section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #48bbe2;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px rgba(72, 187, 226, 0.25);
+    position: relative;
+    z-index: 2;
+}
+
+.section-badge i {
+    font-size: 1.1rem;
+}
+
+.section-title-how {
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: #102f4b;
+    margin-bottom: 1rem;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    z-index: 2;
+}
+
+.section-subtitle-how {
+    font-size: 1.2rem;
+    color:rgb(0, 0, 0);
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.title-decoration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.decoration-line {
+    width: 60px;
+    height: 2px;
+    background: #48bbe2;
+    opacity: 0.3;
+}
+
+.decoration-circle {
+    width: 8px;
+    height: 8px;
+    background: #48bbe2;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(72, 187, 226, 0.15);
+}
+
+/* Process Step Cards */
+.process-step-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 8px 32px rgba(16, 47, 75, 0.08);
+    border: 1px solid rgba(72, 187, 226, 0.1);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.process-step-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #48bbe2;
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.process-step-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(16, 47, 75, 0.15);
+    border-color: rgba(72, 187, 226, 0.3);
+}
+
+.process-step-card:hover::before {
+    transform: scaleX(1);
+}
+
+/* Featured Step Card */
+.step-card-featured {
+    background: rgba(72, 187, 226, 0.02);
+    border: 2px solid rgba(72, 187, 226, 0.2);
+    transform: scale(1.02);
+}
+
+.step-card-featured::before {
+    background: #102f4b;
+    height: 6px;
+}
+
+/* Step Header */
+.step-header {
+    position: relative;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.step-icon-modern {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #48bbe2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(72, 187, 226, 0.25);
+    transition: all 0.3s ease;
+}
+
+.step-icon-featured {
+    background: #102f4b;
+    box-shadow: 0 8px 24px rgba(16, 47, 75, 0.25);
+    animation: pulse-featured 2s infinite;
+}
+
+.step-number-modern {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: white;
+    color: #102f4b;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    z-index: 3;
+    border: 2px solid #48bbe2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.step-icon-bg-modern {
+    color: white;
+    font-size: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Step Connectors */
+.step-connector {
+    position: absolute;
+    top: 40px;
+    right: -40px;
+    width: 80px;
+    height: 2px;
+    background: #48bbe2;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+.step-connector-2 {
+    background: #102f4b;
+    opacity: 0.4;
+}
+
+/* Step Content */
+.step-content {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.step-title-modern {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #102f4b;
+    margin-bottom: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.step-description-modern {
+    font-size: 1rem;
+    color:rgb(0, 0, 0);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex: 1;
+}
+
+.step-features {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.feature-tag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(72, 187, 226, 0.1);
+    color: #102f4b;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid rgba(72, 187, 226, 0.2);
+}
+
+.featured-tag {
+    background: rgba(16, 47, 75, 0.1);
+    color: #102f4b;
+    border-color: rgba(16, 47, 75, 0.2);
+}
+
+/* Animations */
+@keyframes pulse-featured {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .how-it-works-section {
+        padding: 3rem 0;
+    }
+    
+    .section-title-how {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .section-subtitle-how {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .title-decoration {
+        margin-bottom: 2rem;
+    }
+    
+    .decoration-line {
+        width: 40px;
+    }
+    
+    .process-step-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .step-icon-modern {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .step-icon-bg-modern {
+        font-size: 1.5rem;
+    }
+    
+    .step-number-modern {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+        top: -6px;
+        right: -6px;
+    }
+    
+    .step-connector {
+        display: none;
+    }
+    
+    .step-card-featured {
+        transform: none;
+    }
+    
+    .step-title-modern {
+        font-size: 1.2rem;
+    }
+    
+    .step-description-modern {
+        font-size: 0.9rem;
+    }
+    
+    .feature-tag {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
 }
 </style>
 
