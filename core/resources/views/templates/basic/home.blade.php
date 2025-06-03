@@ -46,20 +46,20 @@
                         <div class="row">
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <h4 class="stat-number">1000+</h4>
-                                    <p class="stat-label">Thợ verified</p>
+                                    <h4 class="stat-number">2,500+</h4>
+                                    <p class="stat-label">Thợ</p>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <h4 class="stat-number">5000+</h4>
-                                    <p class="stat-label">Job hoàn thành</p>
+                                    <h4 class="stat-number">15,000+</h4>
+                                    <p class="stat-label">Jobs</p>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <h4 class="stat-number">4.8⭐</h4>
-                                    <p class="stat-label">Đánh giá TB</p>
+                                    <h4 class="stat-number">4.9⭐</h4>
+                                    <p class="stat-label">Đánh giá</p>
                                 </div>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title">Cách Thumbstack Hoạt Động</h2>
+            <h2 class="section-title">Cách doitay.vn Hoạt Động</h2>
             <p class="section-subtitle">Quy trình đơn giản 3 bước để tìm được thợ phù hợp</p>
         </div>
         
@@ -475,15 +475,15 @@
                     <div class="stats-counter mt-4">
                         <div class="row text-center">
                             <div class="col-4">
-                                <div class="stat-number" data-count="1000">0</div>
-                                <div class="stat-label">Thợ verified</div>
+                                <div class="stat-number" data-count="2500">0</div>
+                                <div class="stat-label">Thợ</div>
                             </div>
                             <div class="col-4">
-                                <div class="stat-number" data-count="5000">0</div>
-                                <div class="stat-label">Job hoàn thành</div>
+                                <div class="stat-number" data-count="15000">0</div>
+                                <div class="stat-label">Jobs</div>
                             </div>
                             <div class="col-4">
-                                <div class="stat-number" data-count="98">0</div>
+                                <div class="stat-number" data-count="99">0</div>
                                 <div class="stat-label">% Hài lòng</div>
                             </div>
                         </div>
@@ -622,6 +622,11 @@
 </section>
 
 <style>
+/* Global Font Family */
+* {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 /* Hero Section with Background Image */
 .hero-section.bg_img {
     position: relative;
@@ -630,16 +635,6 @@
     background-position: center !important;
     background-repeat: no-repeat !important;
     overflow: hidden;
-}
-
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(11, 146, 212, 0.7) 0%, rgba(32, 201, 151, 0.7) 100%);
-    z-index: 1;
 }
 
 .hero-section .container {
@@ -652,12 +647,13 @@
 }
 
 .hero-title {
-    font-size: 3.5rem;
+    font-size: 3.2rem;
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 1.5rem;
     color: white;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    font-family: 'Inter', sans-serif;
 }
 
 .gradient-text {
@@ -673,6 +669,8 @@
     color: rgba(255, 255, 255, 0.95);
     margin-bottom: 2rem;
     text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    line-height: 1.6;
+    font-weight: 400;
 }
 
 .hero-actions .btn {
@@ -681,6 +679,7 @@
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
+    font-size: 1rem;
 }
 
 .hero-actions .btn-primary {
@@ -710,22 +709,120 @@
     color: white;
 }
 
-.stat-item {
+.hero-actions .btn:last-child {
+    margin-bottom: 0;
+}
+
+/* Hero Stats Styling */
+.hero-stats .stat-item {
     text-align: center;
+    position: relative;
+    padding: 1.25rem 0.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    overflow: hidden;
 }
 
-.stat-number {
+.hero-stats .stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 16px;
+}
+
+.hero-stats .stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+.hero-stats .stat-item:hover::before {
+    opacity: 1;
+}
+
+.hero-stats .stat-number {
+    position: relative;
+    z-index: 2;
     font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
+    font-weight: 800;
+    color: #ffffff;
     margin-bottom: 0.25rem;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    line-height: 1.2;
 }
 
-.stat-label {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.8);
+.hero-stats .stat-label {
+    position: relative;
+    z-index: 2;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.95);
     margin: 0;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.3px;
+    line-height: 1.1;
+}
+
+/* Stats Counter */
+.stats-counter .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0b92d4;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stats-counter {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stats-counter .stat-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .stats-counter {
+        padding: 1.25rem;
+    }
+    
+    .stats-counter .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .stats-counter .stat-label {
+        font-size: 0.8rem;
+    }
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    color: #6c757d;
+    font-weight: 400;
+    line-height: 1.6;
 }
 
 /* Mobile responsive */
@@ -734,27 +831,109 @@
         min-height: 80vh;
         background-size: cover !important;
         background-position: center !important;
+        margin: 1rem;
+        border-radius: 20px;
+        overflow: hidden;
     }
     
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
     }
     
     .hero-actions .btn {
         display: block;
         width: 100%;
         margin-bottom: 1rem;
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9rem;
     }
     
     .hero-actions .btn:last-child {
         margin-bottom: 0;
     }
+    
+    .hero-stats .stat-item {
+        padding: 1rem 0.25rem;
+    }
+    
+    .hero-stats .stat-number {
+        font-size: 1.1rem;
+        margin-bottom: 0.2rem;
+        line-height: 1.1;
+    }
+    
+    .hero-stats .stat-label {
+        font-size: 0.65rem;
+        line-height: 1;
+        letter-spacing: 0.2px;
+    }
+    
+    .section-title {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+    }
 }
 
-/* Other existing styles */
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .hero-section.bg_img {
+        margin: 0.75rem;
+        border-radius: 16px;
+        min-height: 75vh;
+    }
+    
+    .hero-title {
+        font-size: 1.75rem;
+    }
+    
+    .hero-description {
+        font-size: 0.95rem;
+    }
+    
+    .hero-actions .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .section-subtitle {
+        font-size: 0.9rem;
+    }
+}
+
+/* Process Steps */
 .process-step {
     position: relative;
     padding: 2rem 1rem;
+}
+
+.process-step h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.process-step p {
+    font-size: 1rem;
+    color: #6c757d;
+    line-height: 1.6;
+    font-weight: 400;
 }
 
 .step-icon {
@@ -785,6 +964,25 @@
     color: rgba(11, 146, 212, 0.1);
 }
 
+@media (max-width: 768px) {
+    .process-step {
+        padding: 1.5rem 0.5rem;
+    }
+    
+    .process-step h4 {
+        font-size: 1.125rem;
+    }
+    
+    .process-step p {
+        font-size: 0.9rem;
+    }
+    
+    .step-icon-bg {
+        font-size: 3rem;
+    }
+}
+
+/* Category Cards */
 .category-card {
     text-decoration: none;
     color: inherit;
@@ -799,18 +997,67 @@
     box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
 }
 
+.category-card .card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.category-card .card-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 400;
+}
+
 .category-icon i {
     font-size: 3rem;
 }
 
+@media (max-width: 768px) {
+    .category-card .card-title {
+        font-size: 1rem;
+    }
+    
+    .category-card .card-text {
+        font-size: 0.8rem;
+    }
+    
+    .category-icon i {
+        font-size: 2.5rem;
+    }
+}
+
+/* Contractor Cards */
 .contractor-avatar img {
     width: 80px;
     height: 80px;
     object-fit: cover;
 }
 
-.lead-creation-form {
-    max-width: none;
+.contractor-card .card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.contractor-card .text-muted {
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+@media (max-width: 768px) {
+    .contractor-avatar img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .contractor-card .card-title {
+        font-size: 1rem;
+    }
+    
+    .contractor-card .text-muted {
+        font-size: 0.8rem;
+    }
 }
 
 /* Quick Lead Form Styles */
@@ -836,11 +1083,13 @@
     color: #2c3e50;
     font-weight: 700;
     margin-bottom: 0.5rem;
+    font-size: 1.5rem;
 }
 
 .form-subtitle {
     color: #6c757d;
     font-size: 1rem;
+    font-weight: 400;
 }
 
 .modern-card {
@@ -849,6 +1098,25 @@
     padding: 2rem;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+    .form-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .form-title {
+        font-size: 1.25rem;
+    }
+    
+    .form-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .modern-card {
+        padding: 1.5rem;
+    }
 }
 
 /* Tab System */
@@ -899,6 +1167,19 @@
     animation: fadeIn 0.3s ease;
 }
 
+@media (max-width: 768px) {
+    .tab-btn {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .tab-btn i {
+        font-size: 1rem;
+    }
+}
+
 /* Form Steps */
 .form-step {
     animation: slideIn 0.4s ease;
@@ -910,6 +1191,7 @@
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid #e9ecef;
+    font-size: 1.125rem;
 }
 
 .step-navigation {
@@ -922,6 +1204,18 @@
     flex: 1;
 }
 
+@media (max-width: 768px) {
+    .step-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .step-navigation {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
+
 /* Modern Form Controls */
 .modern-input,
 .modern-select,
@@ -932,6 +1226,7 @@
     font-size: 1rem;
     transition: all 0.3s ease;
     background: #f8f9fa;
+    font-family: 'Inter', sans-serif;
 }
 
 .modern-input:focus,
@@ -942,11 +1237,40 @@
     background: white;
 }
 
+.form-label {
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
 .terms-checkbox {
     background: #f8f9fa;
     padding: 1rem;
     border-radius: 12px;
     border: 1px solid #e9ecef;
+}
+
+.terms-checkbox .form-check-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .modern-input,
+    .modern-select,
+    .modern-textarea {
+        font-size: 0.9rem;
+        padding: 0.65rem 0.85rem;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .terms-checkbox .form-check-label {
+        font-size: 0.8rem;
+    }
 }
 
 /* Persuasive Content */
@@ -1003,11 +1327,36 @@
 .video-overlay h4 {
     font-weight: 600;
     margin-bottom: 0.5rem;
+    font-size: 1.25rem;
 }
 
 .video-overlay p {
     opacity: 0.8;
     margin: 0;
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .persuasive-content {
+        padding-left: 0;
+        margin-top: 2rem;
+    }
+    
+    .hero-video-placeholder {
+        height: 200px;
+    }
+    
+    .video-overlay i {
+        font-size: 3rem;
+    }
+    
+    .video-overlay h4 {
+        font-size: 1.125rem;
+    }
+    
+    .video-overlay p {
+        font-size: 0.9rem;
+    }
 }
 
 /* Trust Indicators */
@@ -1015,6 +1364,7 @@
     color: #2c3e50;
     font-weight: 700;
     margin-bottom: 1.5rem;
+    font-size: 1.25rem;
 }
 
 .trust-features {
@@ -1059,12 +1409,45 @@
     color: #2c3e50;
     font-weight: 600;
     margin-bottom: 0.25rem;
+    font-size: 1rem;
 }
 
 .trust-text p {
     color: #6c757d;
     font-size: 0.875rem;
     margin: 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .trust-title {
+        font-size: 1.125rem;
+    }
+    
+    .trust-features {
+        gap: 1rem;
+    }
+    
+    .trust-item {
+        padding: 0.875rem;
+    }
+    
+    .trust-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .trust-icon i {
+        font-size: 1.25rem;
+    }
+    
+    .trust-text h6 {
+        font-size: 0.95rem;
+    }
+    
+    .trust-text p {
+        font-size: 0.8rem;
+    }
 }
 
 /* Customer Reviews */
@@ -1072,6 +1455,7 @@
     color: #2c3e50;
     font-weight: 700;
     margin-bottom: 1.5rem;
+    font-size: 1.25rem;
 }
 
 .reviews-slider {
@@ -1103,34 +1487,31 @@
     margin-bottom: 1rem;
     font-size: 1.1rem;
     line-height: 1.6;
+    font-weight: 400;
 }
 
 .reviewer {
     color: #6c757d;
     font-size: 0.9rem;
-}
-
-/* Stats Counter */
-.stats-counter {
-    background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #0b92d4;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.stat-label {
-    color: #6c757d;
-    font-size: 0.875rem;
     font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .reviews-title {
+        font-size: 1.125rem;
+    }
+    
+    .reviews-slider {
+        padding: 1.25rem;
+    }
+    
+    .review-text {
+        font-size: 1rem;
+    }
+    
+    .reviewer {
+        font-size: 0.85rem;
+    }
 }
 
 /* Animations */
@@ -1147,35 +1528,6 @@
 @keyframes float {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
     50% { transform: translateY(-10px) rotate(5deg); }
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .persuasive-content {
-        padding-left: 0;
-        margin-top: 2rem;
-    }
-    
-    .modern-card {
-        padding: 1.5rem;
-    }
-    
-    .tab-btn {
-        font-size: 0.75rem;
-        padding: 0.5rem 0.75rem;
-    }
-    
-    .trust-features {
-        gap: 1rem;
-    }
-    
-    .hero-video-placeholder {
-        height: 200px;
-    }
-    
-    .video-overlay i {
-        font-size: 3rem;
-    }
 }
 </style>
 
@@ -1426,13 +1778,15 @@ function initReviewsSlider() {
 }
 
 function initStatsCounter() {
-    const statNumbers = document.querySelectorAll('.stat-number');
+    const statNumbers = document.querySelectorAll('[data-count]');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const target = parseInt(entry.target.getAttribute('data-count'));
-                animateNumber(entry.target, 0, target, 2000);
+                if (!isNaN(target)) {
+                    animateNumber(entry.target, 0, target, 2000);
+                }
                 observer.unobserve(entry.target);
             }
         });
@@ -1442,6 +1796,9 @@ function initStatsCounter() {
 }
 
 function animateNumber(element, start, end, duration) {
+    // Only animate if element has data-count attribute
+    if (!element.hasAttribute('data-count')) return;
+    
     const startTime = performance.now();
     
     function update(currentTime) {
@@ -1449,16 +1806,20 @@ function animateNumber(element, start, end, duration) {
         const progress = Math.min(elapsed / duration, 1);
         
         const currentNumber = Math.floor(start + (end - start) * easeOutQuart(progress));
-        element.textContent = currentNumber.toLocaleString();
         
         if (progress < 1) {
+            element.textContent = currentNumber.toLocaleString();
             requestAnimationFrame(update);
         } else {
-            // Add + sign for some numbers
-            if (end >= 1000) {
-                element.textContent = currentNumber.toLocaleString() + '+';
-            } else if (end === 98) {
-                element.textContent = currentNumber + '%';
+            // Final formatting based on the number
+            if (end >= 10000) {
+                element.textContent = (end / 1000).toFixed(0) + 'K+';
+            } else if (end >= 1000) {
+                element.textContent = end.toLocaleString() + '+';
+            } else if (end >= 90) {
+                element.textContent = end + '%';
+            } else {
+                element.textContent = end.toLocaleString();
             }
         }
     }
