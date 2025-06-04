@@ -2348,63 +2348,81 @@ function initQuickLeadForm() {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetTab = btn.getAttribute('data-tab');
-            
-            // Remove active class from all tabs and contents
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked tab and corresponding content
-            btn.classList.add('active');
-            document.getElementById(targetTab + 'Tab').classList.add('active');
+    // Only add tab event listeners if tabs exist (for guest users)
+    if (tabBtns.length > 0) {
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                btn.classList.add('active');
+                const targetElement = document.getElementById(targetTab + 'Tab');
+                if (targetElement) {
+                    targetElement.classList.add('active');
+                }
+            });
         });
-    });
+    }
 
     // Form steps navigation for guest users
     let currentStep = 1;
     const totalSteps = 3;
 
     // Next step buttons for guest form
-    document.querySelectorAll('.next-step').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (validateCurrentStep(currentStep)) {
-                goToStep(currentStep + 1);
-            }
+    const nextStepBtns = document.querySelectorAll('.next-step');
+    if (nextStepBtns.length > 0) {
+        nextStepBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (validateCurrentStep(currentStep)) {
+                    goToStep(currentStep + 1);
+                }
+            });
         });
-    });
+    }
 
     // Previous step buttons for guest form
-    document.querySelectorAll('.prev-step').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            goToStep(currentStep - 1);
+    const prevStepBtns = document.querySelectorAll('.prev-step');
+    if (prevStepBtns.length > 0) {
+        prevStepBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToStep(currentStep - 1);
+            });
         });
-    });
+    }
 
     // Form steps navigation for authenticated users
     let currentAuthStep = 1;
     const totalAuthSteps = 2;
 
     // Next step buttons for authenticated user form
-    document.querySelectorAll('.next-step-auth').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (validateAuthStep(currentAuthStep)) {
-                goToAuthStep(currentAuthStep + 1);
-            }
+    const nextStepAuthBtns = document.querySelectorAll('.next-step-auth');
+    if (nextStepAuthBtns.length > 0) {
+        nextStepAuthBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (validateAuthStep(currentAuthStep)) {
+                    goToAuthStep(currentAuthStep + 1);
+                }
+            });
         });
-    });
+    }
 
     // Previous step buttons for authenticated user form
-    document.querySelectorAll('.prev-step-auth').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            goToAuthStep(currentAuthStep - 1);
+    const prevStepAuthBtns = document.querySelectorAll('.prev-step-auth');
+    if (prevStepAuthBtns.length > 0) {
+        prevStepAuthBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToAuthStep(currentAuthStep - 1);
+            });
         });
-    });
+    }
 
     function goToStep(step) {
         if (step < 1 || step > totalSteps) return;
@@ -2517,157 +2535,166 @@ function initQuickLeadForm() {
     }
 
     // Guest Lead Form Submission
-    document.getElementById('guestLeadForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (!validateCurrentStep(3)) return;
+    const guestLeadForm = document.getElementById('guestLeadForm');
+    if (guestLeadForm) {
+        guestLeadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateCurrentStep(3)) return;
 
-        const formData = new FormData(e.target);
-        const submitBtn = e.target.querySelector('.submit-lead');
-        
-        // Show loading state
-        submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
-        submitBtn.disabled = true;
+            const formData = new FormData(e.target);
+            const submitBtn = e.target.querySelector('.submit-lead');
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
+            submitBtn.disabled = true;
 
-        try {
-            const response = await fetch('{{ route("user.customer.leads.store") }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            try {
+                const response = await fetch('{{ route("user.customer.leads.store") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
+                    e.target.reset();
+                    goToStep(1);
+                } else {
+                    showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
                 }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
-                e.target.reset();
-                goToStep(1);
-            } else {
-                showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+            } catch (error) {
+                showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+            } finally {
+                submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Lead & Tự Động Đăng Ký';
+                submitBtn.disabled = false;
             }
-        } catch (error) {
-            showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
-        } finally {
-            submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Lead & Tự Động Đăng Ký';
-            submitBtn.disabled = false;
-        }
-    });
+        });
+    }
 
     // Login Form
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        
-        submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đăng nhập...';
-        submitBtn.disabled = true;
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đăng nhập...';
+            submitBtn.disabled = true;
 
-        try {
-            const response = await fetch('{{ route("user.login") }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            try {
+                const response = await fetch('{{ route("user.login") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('✅ Đăng nhập thành công!', 'success');
+                    // Switch to lead tab instead of reloading
+                    setTimeout(() => {
+                        // Hide auth tabs
+                        const authTabs = document.getElementById('authTabs');
+                        if (authTabs) {
+                            authTabs.style.display = 'none';
+                        }
+                        
+                        // Show lead tab
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        const leadTab = document.getElementById('leadTab');
+                        if (leadTab) {
+                            leadTab.classList.add('active');
+                        }
+                        
+                        // Show user welcome message
+                        showUserWelcome(result.user);
+                    }, 500);
+                } else {
+                    showNotification(result.message || 'Thông tin đăng nhập không chính xác', 'error');
                 }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                showNotification('✅ Đăng nhập thành công!', 'success');
-                // Switch to lead tab instead of reloading
-                setTimeout(() => {
-                    // Hide auth tabs
-                    const authTabs = document.getElementById('authTabs');
-                    if (authTabs) {
-                        authTabs.style.display = 'none';
-                    }
-                    
-                    // Show lead tab
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    const leadTab = document.getElementById('leadTab');
-                    if (leadTab) {
-                        leadTab.classList.add('active');
-                    }
-                    
-                    // Show user welcome message
-                    showUserWelcome(result.user);
-                }, 500);
-            } else {
-                showNotification(result.message || 'Thông tin đăng nhập không chính xác', 'error');
+            } catch (error) {
+                showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+            } finally {
+                submitBtn.innerHTML = '<i class="las la-sign-in-alt me-2"></i>Đăng Nhập';
+                submitBtn.disabled = false;
             }
-        } catch (error) {
-            showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
-        } finally {
-            submitBtn.innerHTML = '<i class="las la-sign-in-alt me-2"></i>Đăng Nhập';
-            submitBtn.disabled = false;
-        }
-    });
+        });
+    }
 
     // Register Form
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const password = formData.get('password');
-        const passwordConfirm = formData.get('password_confirmation');
-        
-        if (password !== passwordConfirm) {
-            showNotification('Mật khẩu xác nhận không khớp', 'error');
-            return;
-        }
-
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        
-        submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đăng ký...';
-        submitBtn.disabled = true;
-
-        try {
-            const response = await fetch('{{ route("user.register") }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                showNotification('🎉 Đăng ký thành công! Đang chuyển đến form tạo lead...', 'success');
-                e.target.reset();
-                
-                // Switch to lead tab instead of login tab
-                setTimeout(() => {
-                    // Hide auth tabs
-                    const authTabs = document.getElementById('authTabs');
-                    if (authTabs) {
-                        authTabs.style.display = 'none';
-                    }
-                    
-                    // Show lead tab
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    const leadTab = document.getElementById('leadTab');
-                    if (leadTab) {
-                        leadTab.classList.add('active');
-                    }
-                    
-                    // Show user welcome message
-                    showUserWelcome(result.user);
-                }, 1000);
-            } else {
-                showNotification(result.message || 'Có lỗi xảy ra khi đăng ký', 'error');
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const password = formData.get('password');
+            const passwordConfirm = formData.get('password_confirmation');
+            
+            if (password !== passwordConfirm) {
+                showNotification('Mật khẩu xác nhận không khớp', 'error');
+                return;
             }
-        } catch (error) {
-            showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
-        } finally {
-            submitBtn.innerHTML = '<i class="las la-user-plus me-2"></i>Đăng Ký Miễn Phí';
-            submitBtn.disabled = false;
-        }
-    });
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đăng ký...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('{{ route("user.register") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('🎉 Đăng ký thành công! Đang chuyển đến form tạo lead...', 'success');
+                    e.target.reset();
+                    
+                    // Switch to lead tab instead of login tab
+                    setTimeout(() => {
+                        // Hide auth tabs
+                        const authTabs = document.getElementById('authTabs');
+                        if (authTabs) {
+                            authTabs.style.display = 'none';
+                        }
+                        
+                        // Show lead tab
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        const leadTab = document.getElementById('leadTab');
+                        if (leadTab) {
+                            leadTab.classList.add('active');
+                        }
+                        
+                        // Show user welcome message
+                        showUserWelcome(result.user);
+                    }, 1000);
+                } else {
+                    showNotification(result.message || 'Có lỗi xảy ra khi đăng ký', 'error');
+                }
+            } catch (error) {
+                showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+            } finally {
+                submitBtn.innerHTML = '<i class="las la-user-plus me-2"></i>Đăng Ký Miễn Phí';
+                submitBtn.disabled = false;
+            }
+        });
+    }
 
     // Reviews slider
     initReviewsSlider();
