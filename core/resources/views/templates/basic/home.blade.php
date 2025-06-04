@@ -2227,95 +2227,117 @@ function initLocationSystem() {
 }
 
 function loadCities() {
+    console.log('Loading cities...');
     $.ajax({
         url: '/localtion/api/cities',
         type: 'GET',
-        dataType: 'text',
+        dataType: 'text', // Changed back to 'text' 
         success: function(response) {
+            console.log('Raw cities API response:', response);
             const cleanResponse = response.replace(/<!--|-->/g, '').trim();
+            console.log('Cleaned response:', cleanResponse);
             try {
                 const cities = JSON.parse(cleanResponse);
                 const citySelects = $('select[name="city_code"]');
+                
+                console.log('Found city selects:', citySelects.length);
+                console.log('Cities data:', cities);
                 
                 citySelects.each(function() {
                     const select = $(this);
                     select.empty().append('<option value="">Chọn thành phố</option>');
                     
                     cities.forEach(city => {
+                        console.log('Adding city:', city);
                         select.append(
                             `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
                         );
                     });
                 });
+                
+                console.log('Cities loaded successfully');
             } catch (error) {
-                console.error("Lỗi phân tích JSON (cities):", error);
+                console.error("Lỗi xử lý dữ liệu cities:", error);
                 showNotification('Có lỗi khi tải danh sách thành phố', 'error');
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.error("Lỗi API (cities):", textStatus, errorThrown);
+            console.error("Response text:", jqXHR.responseText);
             showNotification('Không thể tải danh sách thành phố', 'error');
         }
     });
 }
 
 function loadDistricts(cityCode, districtSelect) {
+    console.log('Loading districts for city:', cityCode);
     $.ajax({
         url: `/localtion/api/districts/${cityCode}`,
         type: 'GET',
-        dataType: 'text',
+        dataType: 'text', // Changed back to 'text'
         success: function(response) {
+            console.log('Raw districts API response:', response);
             const cleanResponse = response.replace(/<!--|-->/g, '').trim();
+            console.log('Cleaned districts response:', cleanResponse);
             try {
                 const districts = JSON.parse(cleanResponse);
                 
                 districtSelect.empty().append('<option value="">Chọn quận/huyện</option>');
                 
                 districts.forEach(district => {
+                    console.log('Adding district:', district);
                     districtSelect.append(
                         `<option value="${district.District_code}" data-name="${district.District}">${district.District}</option>`
                     );
                 });
                 
                 districtSelect.prop('disabled', false);
+                console.log('Districts loaded successfully');
             } catch (error) {
-                console.error("Lỗi phân tích JSON (districts):", error);
+                console.error("Lỗi xử lý dữ liệu districts:", error);
                 showNotification('Có lỗi khi tải danh sách quận/huyện', 'error');
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.error("Lỗi API (districts):", textStatus, errorThrown);
+            console.error("Response text:", jqXHR.responseText);
             showNotification('Không thể tải danh sách quận/huyện', 'error');
         }
     });
 }
 
 function loadWards(districtCode, wardSelect) {
+    console.log('Loading wards for district:', districtCode);
     $.ajax({
         url: `/localtion/api/wards/${districtCode}`,
         type: 'GET',
-        dataType: 'text',
+        dataType: 'text', // Changed back to 'text'
         success: function(response) {
+            console.log('Raw wards API response:', response);
             const cleanResponse = response.replace(/<!--|-->/g, '').trim();
+            console.log('Cleaned wards response:', cleanResponse);
             try {
                 const wards = JSON.parse(cleanResponse);
                 
                 wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
                 
                 wards.forEach(ward => {
+                    console.log('Adding ward:', ward);
                     wardSelect.append(
                         `<option value="${ward.Ward_code}" data-name="${ward.Ward}">${ward.Ward}</option>`
                     );
                 });
                 
                 wardSelect.prop('disabled', false);
+                console.log('Wards loaded successfully');
             } catch (error) {
-                console.error("Lỗi phân tích JSON (wards):", error);
+                console.error("Lỗi xử lý dữ liệu wards:", error);
                 showNotification('Có lỗi khi tải danh sách phường/xã', 'error');
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.error("Lỗi API (wards):", textStatus, errorThrown);
+            console.error("Response text:", jqXHR.responseText);
             showNotification('Không thể tải danh sách phường/xã', 'error');
         }
     });
