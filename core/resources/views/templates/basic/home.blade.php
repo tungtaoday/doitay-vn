@@ -159,7 +159,7 @@
 </section>
 
 <!-- Quick Lead Creation Form -->
-<section id="quick-lead-form" class="py-5 bg-light">
+<section id="quick-lead-form" class="py-5 bg-light quick-lead-form">
     <div class="container">
         <div class="row align-items-center">
             <!-- Left Column - Form -->
@@ -1114,35 +1114,38 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: linear-gradient(45deg, #28a745, #20c997);
+    background: #48bbe2;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 50px;
     font-weight: 600;
     font-size: 0.875rem;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 4px 15px rgba(72, 187, 226, 0.25);
+    font-family: 'Inter', sans-serif;
 }
 
 .form-title {
-    color: #2c3e50;
+    color: #102f4b;
     font-weight: 700;
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
+    font-family: 'Inter', sans-serif;
 }
 
 .form-subtitle {
     color: #6c757d;
     font-size: 1rem;
     font-weight: 400;
+    font-family: 'Inter', sans-serif;
 }
 
 .modern-card {
     background: white;
     border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 40px rgba(16, 47, 75, 0.08);
+    border: 1px solid rgba(72, 187, 226, 0.1);
 }
 
 @media (max-width: 768px) {
@@ -1195,12 +1198,12 @@
 
 .tab-btn.active {
     background: white;
-    color: #0b92d4;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    color: #102f4b;
+    box-shadow: 0 2px 8px rgba(16, 47, 75, 0.1);
 }
 
 .tab-btn:hover {
-    color: #0b92d4;
+    color: #48bbe2;
 }
 
 .tab-content {
@@ -1231,12 +1234,13 @@
 }
 
 .step-title {
-    color: #2c3e50;
+    color: #102f4b;
     font-weight: 600;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 2px solid rgba(72, 187, 226, 0.2);
     font-size: 1.125rem;
+    font-family: 'Inter', sans-serif;
 }
 
 .step-navigation {
@@ -1265,40 +1269,50 @@
 .modern-input,
 .modern-select,
 .modern-textarea {
-    border: 2px solid #e9ecef;
+    border: 2px solid rgba(72, 187, 226, 0.2);
     border-radius: 12px;
     padding: 0.75rem 1rem;
     font-size: 1rem;
     transition: all 0.3s ease;
     background: #f8f9fa;
     font-family: 'Inter', sans-serif;
+    color: #102f4b;
 }
 
 .modern-input:focus,
 .modern-select:focus,
 .modern-textarea:focus {
-    border-color: #0b92d4;
-    box-shadow: 0 0 0 0.2rem rgba(11, 146, 212, 0.1);
+    border-color: #48bbe2;
+    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.15);
     background: white;
+    outline: none;
+}
+
+.modern-input::placeholder,
+.modern-textarea::placeholder {
+    color: #6c757d;
+    font-family: 'Inter', sans-serif;
 }
 
 .form-label {
     font-weight: 500;
-    color: #2c3e50;
+    color: #102f4b;
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
 }
 
 .terms-checkbox {
-    background: #f8f9fa;
+    background: rgba(72, 187, 226, 0.05);
     padding: 1rem;
     border-radius: 12px;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(72, 187, 226, 0.15);
 }
 
 .terms-checkbox .form-check-label {
     font-size: 0.9rem;
-    color: #6c757d;
+    color: #102f4b;
+    font-family: 'Inter', sans-serif;
 }
 
 @media (max-width: 768px) {
@@ -1405,6 +1419,10 @@
 }
 
 /* Trust Indicators */
+.trust-indicators {
+    display: block;
+}
+
 .trust-title {
     color: #2c3e50;
     font-weight: 700;
@@ -1492,6 +1510,11 @@
     
     .trust-text p {
         font-size: 0.8rem;
+    }
+    
+    /* Hide trust indicators on mobile */
+    .trust-indicators {
+        display: none;
     }
 }
 
@@ -1897,6 +1920,54 @@
         font-size: 0.7rem;
         padding: 0.3rem 0.6rem;
     }
+}
+
+/* Quick Lead Form Buttons */
+.quick-lead-form .btn-primary {
+    background: #48bbe2;
+    border-color: #48bbe2;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.quick-lead-form .btn-primary:hover {
+    background: #102f4b;
+    border-color: #102f4b;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 47, 75, 0.2);
+}
+
+.quick-lead-form .btn-success {
+    background: #102f4b;
+    border-color: #102f4b;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.quick-lead-form .btn-success:hover {
+    background: #48bbe2;
+    border-color: #48bbe2;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(72, 187, 226, 0.2);
+}
+
+.quick-lead-form .btn-outline-secondary {
+    border-color: rgba(72, 187, 226, 0.3);
+    color: #102f4b;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.quick-lead-form .btn-outline-secondary:hover {
+    background: rgba(72, 187, 226, 0.1);
+    border-color: #48bbe2;
+    color: #102f4b;
 }
 </style>
 
