@@ -224,32 +224,27 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Khu vực *</label>
-                                            <select name="district" class="form-select modern-select" required>
+                                            <label class="form-label">Thành phố *</label>
+                                            <select name="city_code" class="form-select modern-select" required>
+                                                <option value="">Chọn thành phố</option>
+                                                <!-- Cities will be loaded dynamically -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Quận/Huyện *</label>
+                                            <select name="district_code" class="form-select modern-select" disabled required>
                                                 <option value="">Chọn quận/huyện</option>
-                                                <option value="Quận 1">Quận 1</option>
-                                                <option value="Quận 2">Quận 2</option>
-                                                <option value="Quận 3">Quận 3</option>
-                                                <option value="Quận 4">Quận 4</option>
-                                                <option value="Quận 5">Quận 5</option>
-                                                <option value="Quận 6">Quận 6</option>
-                                                <option value="Quận 7">Quận 7</option>
-                                                <option value="Quận 8">Quận 8</option>
-                                                <option value="Quận 9">Quận 9</option>
-                                                <option value="Quận 10">Quận 10</option>
-                                                <option value="Quận 11">Quận 11</option>
-                                                <option value="Quận 12">Quận 12</option>
-                                                <option value="Quận Bình Thạnh">Quận Bình Thạnh</option>
-                                                <option value="Quận Gò Vấp">Quận Gò Vấp</option>
-                                                <option value="Quận Phú Nhuận">Quận Phú Nhuận</option>
-                                                <option value="Quận Tân Bình">Quận Tân Bình</option>
-                                                <option value="Quận Tân Phú">Quận Tân Phú</option>
-                                                <option value="Quận Thủ Đức">Quận Thủ Đức</option>
-                                                <option value="Huyện Bình Chánh">Huyện Bình Chánh</option>
-                                                <option value="Huyện Cần Giờ">Huyện Cần Giờ</option>
-                                                <option value="Huyện Củ Chi">Huyện Củ Chi</option>
-                                                <option value="Huyện Hóc Môn">Huyện Hóc Môn</option>
-                                                <option value="Huyện Nhà Bè">Huyện Nhà Bè</option>
+                                                <!-- Districts will be loaded dynamically -->
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Phường/Xã</label>
+                                            <select name="ward_code" class="form-select modern-select" disabled>
+                                                <option value="">Chọn phường/xã</option>
+                                                <!-- Wards will be loaded dynamically -->
                                             </select>
                                         </div>
                                     </div>
@@ -335,32 +330,27 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Khu vực *</label>
-                                            <select name="district" class="form-select modern-select" required>
+                                            <label class="form-label">Thành phố *</label>
+                                            <select name="city_code" class="form-select modern-select" required>
+                                                <option value="">Chọn thành phố</option>
+                                                <!-- Cities will be loaded dynamically -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Quận/Huyện *</label>
+                                            <select name="district_code" class="form-select modern-select" disabled required>
                                                 <option value="">Chọn quận/huyện</option>
-                                                <option value="Quận 1">Quận 1</option>
-                                                <option value="Quận 2">Quận 2</option>
-                                                <option value="Quận 3">Quận 3</option>
-                                                <option value="Quận 4">Quận 4</option>
-                                                <option value="Quận 5">Quận 5</option>
-                                                <option value="Quận 6">Quận 6</option>
-                                                <option value="Quận 7">Quận 7</option>
-                                                <option value="Quận 8">Quận 8</option>
-                                                <option value="Quận 9">Quận 9</option>
-                                                <option value="Quận 10">Quận 10</option>
-                                                <option value="Quận 11">Quận 11</option>
-                                                <option value="Quận 12">Quận 12</option>
-                                                <option value="Quận Bình Thạnh">Quận Bình Thạnh</option>
-                                                <option value="Quận Gò Vấp">Quận Gò Vấp</option>
-                                                <option value="Quận Phú Nhuận">Quận Phú Nhuận</option>
-                                                <option value="Quận Tân Bình">Quận Tân Bình</option>
-                                                <option value="Quận Tân Phú">Quận Tân Phú</option>
-                                                <option value="Quận Thủ Đức">Quận Thủ Đức</option>
-                                                <option value="Huyện Bình Chánh">Huyện Bình Chánh</option>
-                                                <option value="Huyện Cần Giờ">Huyện Cần Giờ</option>
-                                                <option value="Huyện Củ Chi">Huyện Củ Chi</option>
-                                                <option value="Huyện Hóc Môn">Huyện Hóc Môn</option>
-                                                <option value="Huyện Nhà Bè">Huyện Nhà Bè</option>
+                                                <!-- Districts will be loaded dynamically -->
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Phường/Xã</label>
+                                            <select name="ward_code" class="form-select modern-select" disabled>
+                                                <option value="">Chọn phường/xã</option>
+                                                <!-- Wards will be loaded dynamically -->
                                             </select>
                                         </div>
                                     </div>
@@ -2115,6 +2105,18 @@
     font-family: 'Inter', sans-serif;
     margin: 0;
 }
+
+/* Disabled Select Styling */
+.modern-select:disabled {
+    background-color: #f8f9fa;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.modern-select:disabled:focus {
+    border-color: rgba(72, 187, 226, 0.2);
+    box-shadow: none;
+}
 </style>
 
 @push('script')
@@ -2146,7 +2148,178 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize Quick Lead Form functionality
     initQuickLeadForm();
+    
+    // Initialize Location System
+    initLocationSystem();
 });
+
+function initLocationSystem() {
+    // Load cities when page loads
+    loadCities();
+    
+    // Handle city change for both guest and authenticated forms
+    $(document).on('change', 'select[name="city_code"]', function() {
+        const cityCode = $(this).val();
+        const formContainer = $(this).closest('form');
+        const districtSelect = formContainer.find('select[name="district_code"]');
+        const wardSelect = formContainer.find('select[name="ward_code"]');
+        
+        // Reset district and ward selects
+        districtSelect.empty().append('<option value="">Chọn quận/huyện</option>').prop('disabled', true);
+        wardSelect.empty().append('<option value="">Chọn phường/xã</option>').prop('disabled', true);
+        
+        if (cityCode) {
+            loadDistricts(cityCode, districtSelect);
+        }
+    });
+    
+    // Handle district change for both guest and authenticated forms
+    $(document).on('change', 'select[name="district_code"]', function() {
+        const districtCode = $(this).val();
+        const formContainer = $(this).closest('form');
+        const wardSelect = formContainer.find('select[name="ward_code"]');
+        
+        // Reset ward select
+        wardSelect.empty().append('<option value="">Chọn phường/xã</option>').prop('disabled', true);
+        
+        if (districtCode) {
+            loadWards(districtCode, wardSelect);
+        }
+    });
+    
+    // Add hidden fields for form submission
+    $(document).on('submit', '#guestLeadForm, #authenticatedLeadForm', function() {
+        const form = $(this);
+        const citySelect = form.find('select[name="city_code"]');
+        const districtSelect = form.find('select[name="district_code"]');
+        const wardSelect = form.find('select[name="ward_code"]');
+        
+        // Add city name
+        const cityName = citySelect.find('option:selected').text();
+        if (cityName && cityName !== 'Chọn thành phố') {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'city',
+                value: cityName
+            }).appendTo(form);
+        }
+        
+        // Add district name
+        const districtName = districtSelect.find('option:selected').text();
+        if (districtName && districtName !== 'Chọn quận/huyện') {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'district',
+                value: districtName
+            }).appendTo(form);
+        }
+        
+        // Add ward name
+        const wardName = wardSelect.find('option:selected').text();
+        if (wardName && wardName !== 'Chọn phường/xã') {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'ward',
+                value: wardName
+            }).appendTo(form);
+        }
+    });
+}
+
+function loadCities() {
+    $.ajax({
+        url: '/localtion/api/cities',
+        type: 'GET',
+        dataType: 'text',
+        success: function(response) {
+            const cleanResponse = response.replace(/<!--|-->/g, '').trim();
+            try {
+                const cities = JSON.parse(cleanResponse);
+                const citySelects = $('select[name="city_code"]');
+                
+                citySelects.each(function() {
+                    const select = $(this);
+                    select.empty().append('<option value="">Chọn thành phố</option>');
+                    
+                    cities.forEach(city => {
+                        select.append(
+                            `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
+                        );
+                    });
+                });
+            } catch (error) {
+                console.error("Lỗi phân tích JSON (cities):", error);
+                showNotification('Có lỗi khi tải danh sách thành phố', 'error');
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Lỗi API (cities):", textStatus, errorThrown);
+            showNotification('Không thể tải danh sách thành phố', 'error');
+        }
+    });
+}
+
+function loadDistricts(cityCode, districtSelect) {
+    $.ajax({
+        url: `/localtion/api/districts/${cityCode}`,
+        type: 'GET',
+        dataType: 'text',
+        success: function(response) {
+            const cleanResponse = response.replace(/<!--|-->/g, '').trim();
+            try {
+                const districts = JSON.parse(cleanResponse);
+                
+                districtSelect.empty().append('<option value="">Chọn quận/huyện</option>');
+                
+                districts.forEach(district => {
+                    districtSelect.append(
+                        `<option value="${district.District_code}" data-name="${district.District}">${district.District}</option>`
+                    );
+                });
+                
+                districtSelect.prop('disabled', false);
+            } catch (error) {
+                console.error("Lỗi phân tích JSON (districts):", error);
+                showNotification('Có lỗi khi tải danh sách quận/huyện', 'error');
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Lỗi API (districts):", textStatus, errorThrown);
+            showNotification('Không thể tải danh sách quận/huyện', 'error');
+        }
+    });
+}
+
+function loadWards(districtCode, wardSelect) {
+    $.ajax({
+        url: `/localtion/api/wards/${districtCode}`,
+        type: 'GET',
+        dataType: 'text',
+        success: function(response) {
+            const cleanResponse = response.replace(/<!--|-->/g, '').trim();
+            try {
+                const wards = JSON.parse(cleanResponse);
+                
+                wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
+                
+                wards.forEach(ward => {
+                    wardSelect.append(
+                        `<option value="${ward.Ward_code}" data-name="${ward.Ward}">${ward.Ward}</option>`
+                    );
+                });
+                
+                wardSelect.prop('disabled', false);
+            } catch (error) {
+                console.error("Lỗi phân tích JSON (wards):", error);
+                showNotification('Có lỗi khi tải danh sách phường/xã', 'error');
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Lỗi API (wards):", textStatus, errorThrown);
+            showNotification('Không thể tải danh sách phường/xã', 'error');
+        }
+    });
+}
 
 function initQuickLeadForm() {
     // Tab switching (only for guests)

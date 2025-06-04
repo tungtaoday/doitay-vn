@@ -963,7 +963,7 @@ var nicUploadOptions = {
 };
 
 var nicUploadButton = nicEditorAdvancedButton.extend({
-    nicURI: "https://api.imgur.com/3/image",
+    nicURI: null,
     errorText: "Failed to upload image",
     addPane: function () {
         if (typeof window.FormData === "undefined") { return this.onError("Image uploads are not supported in this browser, use Chrome, Firefox, or Safari instead.") }
@@ -985,16 +985,30 @@ var nicUploadButton = nicEditorAdvancedButton.extend({
         this.setProgress(0);
         var A = new FormData();
         A.append("image", B);
+        
+        if (this.ne.options.uploadData) {
+            for (var key in this.ne.options.uploadData) {
+                A.append(key, this.ne.options.uploadData[key]);
+            }
+        }
+        
         var C = new XMLHttpRequest();
         C.open("POST", this.ne.options.uploadURI || this.nicURI);
         C.onload = function () {
-            try { var D = JSON.parse(C.responseText).data } catch (E) { return this.onError() }
-            if (D.error) { return this.onError(D.error) }
-            this.onUploaded(D)
+            try { 
+                var response = JSON.parse(C.responseText);
+                if (response.success) {
+                    var D = { link: response.url, width: null };
+                    this.onUploaded(D);
+                } else {
+                    this.onError(response.message || "Upload failed");
+                }
+            } catch (E) { 
+                return this.onError("Invalid server response") 
+            }
         }.closure(this);
         C.onerror = this.onError.closure(this);
         C.upload.onprogress = function (D) { this.setProgress(D.loaded / D.total) }.closure(this);
-        C.setRequestHeader("Authorization", "Client-ID 546c25a59c58ad7");
         C.send(A)
     },
     setProgress: function (A) { this.progress.setStyle({ display: "block" }); if (A < 0.98) { this.progress.value = A } else { this.progress.removeAttribute("value") } },
