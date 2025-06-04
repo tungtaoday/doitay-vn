@@ -175,7 +175,8 @@
                     </div>
 
                     <div class="modern-card">
-                        <!-- Login/Register Tabs -->
+                        <!-- Auth Tabs (Show only if not logged in) -->
+                        @guest
                         <div class="auth-tabs mb-4" id="authTabs">
                             <div class="tab-buttons">
                                 <button class="tab-btn active" data-tab="guest">
@@ -192,8 +193,131 @@
                                 </button>
                             </div>
                         </div>
+                        @endguest
 
-                        <!-- Guest Form (Default) -->
+                        @auth
+                        <!-- Logged in user header -->
+                        <div class="auth-header mb-4 text-center">
+                            <div class="user-welcome">
+                                <i class="las la-user-circle text-primary" style="font-size: 2rem;"></i>
+                                <h5 class="mt-2 mb-1">Xin chào, {{ auth()->user()->firstname }} {{ auth()->user()->lastname }}!</h5>
+                                <p class="text-muted">Tạo lead mới để tìm thợ chuyên nghiệp</p>
+                            </div>
+                        </div>
+                        @endauth
+
+                        <!-- Lead Form (Always visible, active by default for logged in users) -->
+                        <div class="tab-content {{ auth()->check() ? 'active' : '' }}" id="leadTab">
+                            <form class="lead-form" id="authenticatedLeadForm">
+                                @csrf
+                                <div class="form-step" id="lead-step1">
+                                    <h5 class="step-title">📋 Thông tin công việc</h5>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Loại công việc *</label>
+                                            <select name="category_id" class="form-select modern-select" required>
+                                                <option value="">Chọn loại công việc</option>
+                                                @foreach(App\Models\Category::where('status', 1)->get() as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Khu vực *</label>
+                                            <select name="district" class="form-select modern-select" required>
+                                                <option value="">Chọn quận/huyện</option>
+                                                <option value="Quận 1">Quận 1</option>
+                                                <option value="Quận 2">Quận 2</option>
+                                                <option value="Quận 3">Quận 3</option>
+                                                <option value="Quận 4">Quận 4</option>
+                                                <option value="Quận 5">Quận 5</option>
+                                                <option value="Quận 6">Quận 6</option>
+                                                <option value="Quận 7">Quận 7</option>
+                                                <option value="Quận 8">Quận 8</option>
+                                                <option value="Quận 9">Quận 9</option>
+                                                <option value="Quận 10">Quận 10</option>
+                                                <option value="Quận 11">Quận 11</option>
+                                                <option value="Quận 12">Quận 12</option>
+                                                <option value="Quận Bình Thạnh">Quận Bình Thạnh</option>
+                                                <option value="Quận Gò Vấp">Quận Gò Vấp</option>
+                                                <option value="Quận Phú Nhuận">Quận Phú Nhuận</option>
+                                                <option value="Quận Tân Bình">Quận Tân Bình</option>
+                                                <option value="Quận Tân Phú">Quận Tân Phú</option>
+                                                <option value="Quận Thủ Đức">Quận Thủ Đức</option>
+                                                <option value="Huyện Bình Chánh">Huyện Bình Chánh</option>
+                                                <option value="Huyện Cần Giờ">Huyện Cần Giờ</option>
+                                                <option value="Huyện Củ Chi">Huyện Củ Chi</option>
+                                                <option value="Huyện Hóc Môn">Huyện Hóc Môn</option>
+                                                <option value="Huyện Nhà Bè">Huyện Nhà Bè</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Tiêu đề công việc *</label>
+                                        <input type="text" name="title" class="form-control modern-input" 
+                                               placeholder="VD: Sửa chữa điện nước tại nhà" required>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Mô tả chi tiết *</label>
+                                        <textarea name="description" class="form-control modern-textarea" rows="3" 
+                                                  placeholder="Mô tả chi tiết công việc cần làm..." required></textarea>
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary btn-lg w-100 next-step-auth">
+                                        Tiếp theo: Chi tiết bổ sung
+                                        <i class="las la-arrow-right ms-2"></i>
+                                    </button>
+                                </div>
+
+                                <div class="form-step" id="lead-step2" style="display: none;">
+                                    <h5 class="step-title">💰 Chi tiết bổ sung</h5>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Ngân sách từ</label>
+                                            <input type="number" name="budget_min" class="form-control modern-input" 
+                                                   placeholder="200,000">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Ngân sách đến</label>
+                                            <input type="number" name="budget_max" class="form-control modern-input" 
+                                                   placeholder="500,000">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Mức độ ưu tiên</label>
+                                            <select name="urgency" class="form-select modern-select">
+                                                <option value="medium">Bình thường</option>
+                                                <option value="high">Khẩn cấp</option>
+                                                <option value="low">Không gấp</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Cần hoàn thành trước</label>
+                                            <input type="date" name="needed_by" class="form-control modern-input" 
+                                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="step-navigation">
+                                        <button type="button" class="btn btn-outline-secondary prev-step-auth">
+                                            <i class="las la-arrow-left me-2"></i>Quay lại
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-lg submit-lead-auth">
+                                            <i class="las la-rocket me-2"></i>Tạo Lead Ngay
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        @guest
+                        <!-- Guest Form (Only for non-logged in users) -->
                         <div class="tab-content active" id="guestTab">
                             <form class="lead-form" id="guestLeadForm">
                                 @csrf
@@ -351,6 +475,7 @@
                                 </div>
                             </form>
                         </div>
+                        @endguest
 
                         <!-- Login Tab -->
                         <div class="tab-content" id="loginTab">
@@ -1969,6 +2094,27 @@
     border-color: #48bbe2;
     color: #102f4b;
 }
+
+/* User Welcome Header */
+.auth-header .user-welcome {
+    padding: 1rem;
+}
+
+.auth-header .user-welcome i {
+    color: #48bbe2 !important;
+}
+
+.auth-header .user-welcome h5 {
+    color: #102f4b;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+.auth-header .user-welcome p {
+    color: #6c757d;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
 </style>
 
 @push('script')
@@ -2003,7 +2149,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initQuickLeadForm() {
-    // Tab switching
+    // Tab switching (only for guests)
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -2021,11 +2167,11 @@ function initQuickLeadForm() {
         });
     });
 
-    // Form steps navigation
+    // Form steps navigation for guest users
     let currentStep = 1;
     const totalSteps = 3;
 
-    // Next step buttons
+    // Next step buttons for guest form
     document.querySelectorAll('.next-step').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -2035,11 +2181,33 @@ function initQuickLeadForm() {
         });
     });
 
-    // Previous step buttons
+    // Previous step buttons for guest form
     document.querySelectorAll('.prev-step').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             goToStep(currentStep - 1);
+        });
+    });
+
+    // Form steps navigation for authenticated users
+    let currentAuthStep = 1;
+    const totalAuthSteps = 2;
+
+    // Next step buttons for authenticated user form
+    document.querySelectorAll('.next-step-auth').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (validateAuthStep(currentAuthStep)) {
+                goToAuthStep(currentAuthStep + 1);
+            }
+        });
+    });
+
+    // Previous step buttons for authenticated user form
+    document.querySelectorAll('.prev-step-auth').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToAuthStep(currentAuthStep - 1);
         });
     });
 
@@ -2054,8 +2222,21 @@ function initQuickLeadForm() {
         document.getElementById('step' + currentStep).style.display = 'block';
     }
 
+    function goToAuthStep(step) {
+        if (step < 1 || step > totalAuthSteps) return;
+        
+        // Hide current step
+        document.getElementById('lead-step' + currentAuthStep).style.display = 'none';
+        
+        // Show target step
+        currentAuthStep = step;
+        document.getElementById('lead-step' + currentAuthStep).style.display = 'block';
+    }
+
     function validateCurrentStep(step) {
         const currentStepEl = document.getElementById('step' + step);
+        if (!currentStepEl) return true;
+        
         const requiredFields = currentStepEl.querySelectorAll('[required]');
         let isValid = true;
 
@@ -2073,6 +2254,71 @@ function initQuickLeadForm() {
         }
 
         return isValid;
+    }
+
+    function validateAuthStep(step) {
+        const currentStepEl = document.getElementById('lead-step' + step);
+        if (!currentStepEl) return true;
+        
+        const requiredFields = currentStepEl.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+        }
+
+        return isValid;
+    }
+
+    // Authenticated Lead Form Submission
+    const authenticatedLeadForm = document.getElementById('authenticatedLeadForm');
+    if (authenticatedLeadForm) {
+        authenticatedLeadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateAuthStep(2)) return;
+
+            const formData = new FormData(e.target);
+            const submitBtn = e.target.querySelector('.submit-lead-auth');
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('{{ route("user.customer.leads.store") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
+                    e.target.reset();
+                    goToAuthStep(1);
+                } else {
+                    showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+                }
+            } catch (error) {
+                showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+            } finally {
+                submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Lead Ngay';
+                submitBtn.disabled = false;
+            }
+        });
     }
 
     // Guest Lead Form Submission
@@ -2137,9 +2383,24 @@ function initQuickLeadForm() {
 
             if (result.success) {
                 showNotification('✅ Đăng nhập thành công!', 'success');
+                // Switch to lead tab instead of reloading
                 setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                    // Hide auth tabs
+                    const authTabs = document.getElementById('authTabs');
+                    if (authTabs) {
+                        authTabs.style.display = 'none';
+                    }
+                    
+                    // Show lead tab
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    const leadTab = document.getElementById('leadTab');
+                    if (leadTab) {
+                        leadTab.classList.add('active');
+                    }
+                    
+                    // Show user welcome message
+                    showUserWelcome(result.user);
+                }, 500);
             } else {
                 showNotification(result.message || 'Thông tin đăng nhập không chính xác', 'error');
             }
@@ -2181,10 +2442,27 @@ function initQuickLeadForm() {
             const result = await response.json();
 
             if (result.success) {
-                showNotification('🎉 Đăng ký thành công! Vui lòng kiểm tra email để xác thực.', 'success');
+                showNotification('🎉 Đăng ký thành công! Đang chuyển đến form tạo lead...', 'success');
                 e.target.reset();
-                // Switch to login tab
-                document.querySelector('[data-tab="login"]').click();
+                
+                // Switch to lead tab instead of login tab
+                setTimeout(() => {
+                    // Hide auth tabs
+                    const authTabs = document.getElementById('authTabs');
+                    if (authTabs) {
+                        authTabs.style.display = 'none';
+                    }
+                    
+                    // Show lead tab
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    const leadTab = document.getElementById('leadTab');
+                    if (leadTab) {
+                        leadTab.classList.add('active');
+                    }
+                    
+                    // Show user welcome message
+                    showUserWelcome(result.user);
+                }, 1000);
             } else {
                 showNotification(result.message || 'Có lỗi xảy ra khi đăng ký', 'error');
             }
@@ -2314,6 +2592,25 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+function showUserWelcome(user) {
+    // Create user welcome header dynamically
+    const welcomeHTML = `
+        <div class="auth-header mb-4 text-center">
+            <div class="user-welcome">
+                <i class="las la-user-circle text-primary" style="font-size: 2rem;"></i>
+                <h5 class="mt-2 mb-1">Xin chào, ${user.firstname} ${user.lastname}!</h5>
+                <p class="text-muted">Tạo lead mới để tìm thợ chuyên nghiệp</p>
+            </div>
+        </div>
+    `;
+    
+    // Insert welcome message at the beginning of lead tab
+    const leadTab = document.getElementById('leadTab');
+    if (leadTab) {
+        leadTab.insertAdjacentHTML('afterbegin', welcomeHTML);
+    }
+}
 </script>
 @endpush
 
