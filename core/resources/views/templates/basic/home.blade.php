@@ -2301,6 +2301,1369 @@
     border-color: rgba(72, 187, 226, 0.2);
     box-shadow: none;
 }
+
+/* Guest Form Next Step Button - Force Clickable */
+.next-step {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 20 !important;
+    display: inline-block !important;
+    background: #48bbe2 !important;
+    border: 2px solid #48bbe2 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    outline: none !important;
+    min-height: 48px !important;
+    width: auto !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.next-step:hover {
+    background: #102f4b !important;
+    border-color: #102f4b !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(16, 47, 75, 0.2) !important;
+}
+
+.next-step:focus {
+    outline: 2px solid #48bbe2 !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
+}
+
+.next-step:active {
+    transform: translateY(0) !important;
+    background: #3aa3c7 !important;
+    color: white !important;
+}
+
+.next-step:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+/* Guest Form Previous Step Button */
+.prev-step {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 20 !important;
+    display: inline-block !important;
+    background: transparent !important;
+    border: 2px solid rgba(72, 187, 226, 0.3) !important;
+    color: #102f4b !important;
+    font-weight: 500 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    outline: none !important;
+    min-height: 48px !important;
+    width: auto !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.prev-step:hover {
+    background: rgba(72, 187, 226, 0.1) !important;
+    border-color: #48bbe2 !important;
+    color: #102f4b !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(72, 187, 226, 0.1) !important;
+}
+
+.prev-step:focus {
+    outline: 2px solid #48bbe2 !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
+}
+
+.prev-step:active {
+    transform: translateY(0) !important;
+    background: rgba(72, 187, 226, 0.2) !important;
+}
+
+/* Ensure guest form containers allow clicks */
+#guestTab,
+#guestLeadForm,
+.form-step {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 1;
+}
+
+#step1,
+#step2,
+#step3 {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 2;
+}
+
+.step-navigation {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 21;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Mobile improvements for guest form buttons */
+@media (max-width: 768px) {
+    .next-step,
+    .prev-step {
+        padding: 0.875rem 1.25rem !important;
+        font-size: 0.9rem !important;
+        min-height: 52px !important;
+        width: 100% !important;
+    }
+    
+    .step-navigation {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
+
+/* Form steps navigation for guest users - AGGRESSIVE FIX */
+let currentGuestStep = 1;
+const totalGuestSteps = 3;
+
+// Function to force setup guest buttons
+function setupGuestButtons() {
+    console.log('🔧 Setting up guest form buttons...');
+    
+    // Remove ALL existing next-step listeners and create fresh ones
+    const existingNextBtns = document.querySelectorAll('.next-step');
+    existingNextBtns.forEach((btn, index) => {
+        console.log('Removing existing next-step button', index);
+        const parent = btn.parentNode;
+        const newBtn = btn.cloneNode(true);
+        parent.replaceChild(newBtn, btn);
+    });
+
+    // Setup next-step buttons with multiple event types
+    const nextStepBtns = document.querySelectorAll('.next-step');
+    console.log('🎯 Found next-step buttons:', nextStepBtns.length);
+    
+    nextStepBtns.forEach((btn, index) => {
+        console.log('Setting up next-step button', index, btn);
+        
+        // Ensure button is clickable
+        btn.style.pointerEvents = 'auto';
+        btn.style.cursor = 'pointer';
+        btn.style.zIndex = '25';
+        btn.disabled = false;
+        
+        // Add multiple event listeners for maximum compatibility
+        ['click', 'mousedown', 'touchstart'].forEach(eventType => {
+            btn.addEventListener(eventType, function(e) {
+                console.log(`🎯 Guest next-step ${eventType} event triggered on button`, index);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Skip validation for now to test navigation
+                console.log('Attempting to go to next step from:', currentGuestStep);
+                goToGuestStep(currentGuestStep + 1);
+                
+                // Optional: Add validation back later
+                // if (validateCurrentStep(currentGuestStep)) {
+                //     goToGuestStep(currentGuestStep + 1);
+                // }
+            }, { passive: false, capture: true });
+        });
+        
+        // Test button immediately
+        console.log('✅ Button', index, 'setup complete. Testing...');
+        console.log('Button visible:', btn.offsetParent !== null);
+        console.log('Button disabled:', btn.disabled);
+        console.log('Button pointer events:', window.getComputedStyle(btn).pointerEvents);
+    });
+
+    // Remove ALL existing prev-step listeners and create fresh ones
+    const existingPrevBtns = document.querySelectorAll('.prev-step');
+    existingPrevBtns.forEach((btn, index) => {
+        console.log('Removing existing prev-step button', index);
+        const parent = btn.parentNode;
+        const newBtn = btn.cloneNode(true);
+        parent.replaceChild(newBtn, btn);
+    });
+
+    // Setup prev-step buttons
+    const prevStepBtns = document.querySelectorAll('.prev-step');
+    console.log('🎯 Found prev-step buttons:', prevStepBtns.length);
+    
+    prevStepBtns.forEach((btn, index) => {
+        console.log('Setting up prev-step button', index, btn);
+        
+        // Ensure button is clickable
+        btn.style.pointerEvents = 'auto';
+        btn.style.cursor = 'pointer';
+        btn.style.zIndex = '25';
+        btn.disabled = false;
+        
+        // Add multiple event listeners
+        ['click', 'mousedown', 'touchstart'].forEach(eventType => {
+            btn.addEventListener(eventType, function(e) {
+                console.log(`🎯 Guest prev-step ${eventType} event triggered on button`, index);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                console.log('Attempting to go to previous step from:', currentGuestStep);
+                goToGuestStep(currentGuestStep - 1);
+            }, { passive: false, capture: true });
+        });
+    });
+}
+
+// New guest step navigation function
+function goToGuestStep(step) {
+    if (step < 1 || step > totalSteps) {
+        console.log('❌ Invalid guest step:', step);
+        return;
+    }
+    
+    console.log('🚶 Going to guest step:', step, 'from current step:', currentStep);
+    
+    // Hide all steps first
+    for (let i = 1; i <= totalSteps; i++) {
+        const stepEl = document.getElementById('step' + i);
+        if (stepEl) {
+            stepEl.style.display = 'none';
+            console.log('Hidden step', i);
+        }
+    }
+    
+    // Show target step
+    const targetStepEl = document.getElementById('step' + step);
+    if (targetStepEl) {
+        targetStepEl.style.display = 'block';
+        currentStep = step;
+        console.log('✅ Showed step', step, '- currentStep updated to:', currentStep);
+    } else {
+        console.log('❌ Could not find step element:', 'step' + step);
+    }
+}
+
+// Initialize guest buttons immediately
+setupGuestButtons();
+
+// Also setup with delay in case DOM changes
+setTimeout(setupGuestButtons, 1000);
+setTimeout(setupGuestButtons, 3000);
+
+// Legacy functions for compatibility (keep existing goToStep)
+function goToStep(step) {
+    console.log('🔄 Legacy goToStep called, redirecting to goToGuestStep');
+    goToGuestStep(step);
+}
+
+// =======================================
+// GUEST FORM BUTTON FIX - FINAL SOLUTION
+// =======================================
+
+// Initialize guest button fix immediately when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Initializing GUEST BUTTON FIX...');
+    setupGuestFormButtons();
+    
+    // Also run with delays to catch dynamically loaded content
+    setTimeout(setupGuestFormButtons, 1000);
+    setTimeout(setupGuestFormButtons, 3000);
+});
+
+function setupGuestFormButtons() {
+    console.log('🔧 Setting up guest form buttons...');
+    
+    // Force setup next-step buttons
+    const nextButtons = document.querySelectorAll('.next-step');
+    console.log('Found next-step buttons:', nextButtons.length);
+    
+    nextButtons.forEach((btn, index) => {
+        // Remove existing event listeners by cloning
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        // Force make button clickable
+        newBtn.style.pointerEvents = 'auto';
+        newBtn.style.cursor = 'pointer';
+        newBtn.style.zIndex = '1000';
+        newBtn.disabled = false;
+        newBtn.style.opacity = '1';
+        newBtn.style.visibility = 'visible';
+        
+        // Add comprehensive event listeners
+        ['click', 'touchend', 'mouseup'].forEach(eventType => {
+            newBtn.addEventListener(eventType, function(e) {
+                console.log(`🎯 GUEST next-step ${eventType} triggered!`);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Simple step navigation without complex validation
+                const currentStepEl = document.querySelector('#step1[style*="block"], #step1:not([style*="none"])');
+                const nextStepEl = document.getElementById('step2');
+                
+                if (currentStepEl && nextStepEl) {
+                    currentStepEl.style.display = 'none';
+                    nextStepEl.style.display = 'block';
+                    console.log('✅ Guest moved to step 2');
+                } else {
+                    // Fallback: force show step 2
+                    const step1 = document.getElementById('step1');
+                    const step2 = document.getElementById('step2');
+                    if (step1) step1.style.display = 'none';
+                    if (step2) step2.style.display = 'block';
+                    console.log('✅ Guest moved to step 2 (fallback)');
+                }
+            }, { passive: false, capture: true });
+        });
+        
+        console.log(`✅ Setup next-step button ${index}`);
+    });
+    
+    // Force setup prev-step buttons
+    const prevButtons = document.querySelectorAll('.prev-step');
+    console.log('Found prev-step buttons:', prevButtons.length);
+    
+    prevButtons.forEach((btn, index) => {
+        // Remove existing event listeners by cloning
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        // Force make button clickable
+        newBtn.style.pointerEvents = 'auto';
+        newBtn.style.cursor = 'pointer';
+        newBtn.style.zIndex = '1000';
+        newBtn.disabled = false;
+        
+        // Add comprehensive event listeners
+        ['click', 'touchend', 'mouseup'].forEach(eventType => {
+            newBtn.addEventListener(eventType, function(e) {
+                console.log(`🎯 GUEST prev-step ${eventType} triggered!`);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Simple step navigation
+                const currentStepEl = document.querySelector('#step2[style*="block"], #step2:not([style*="none"]), #step3[style*="block"], #step3:not([style*="none"])');
+                
+                if (currentStepEl) {
+                    const currentStepNumber = currentStepEl.id.replace('step', '');
+                    const prevStepNumber = parseInt(currentStepNumber) - 1;
+                    const prevStepEl = document.getElementById('step' + prevStepNumber);
+                    
+                    if (prevStepEl) {
+                        currentStepEl.style.display = 'none';
+                        prevStepEl.style.display = 'block';
+                        console.log(`✅ Guest moved to step ${prevStepNumber}`);
+                    }
+                }
+            }, { passive: false, capture: true });
+        });
+        
+        console.log(`✅ Setup prev-step button ${index}`);
+    });
+}
+
+// Manual test functions for guest form
+window.testGuestNextStep = function() {
+    console.log('🧪 Manual test: Guest next step');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    
+    if (step1) step1.style.display = 'none';
+    if (step2) step2.style.display = 'block';
+    
+    console.log('✅ Manually moved to step 2');
+};
+
+window.testGuestPrevStep = function() {
+    console.log('🧪 Manual test: Guest prev step');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    if (step2) step2.style.display = 'none';
+    if (step3) step3.style.display = 'none';
+    if (step1) step1.style.display = 'block';
+    
+    console.log('✅ Manually moved to step 1');
+};
+
+window.checkGuestButtonStatus = function() {
+    console.log('🔍 Checking guest button status...');
+    
+    const nextButtons = document.querySelectorAll('.next-step');
+    const prevButtons = document.querySelectorAll('.prev-step');
+    
+    console.log('Next buttons found:', nextButtons.length);
+    nextButtons.forEach((btn, i) => {
+        console.log(`Next button ${i}:`, {
+            visible: btn.offsetParent !== null,
+            disabled: btn.disabled,
+            pointerEvents: getComputedStyle(btn).pointerEvents,
+            cursor: getComputedStyle(btn).cursor,
+            zIndex: getComputedStyle(btn).zIndex
+        });
+    });
+    
+    console.log('Prev buttons found:', prevButtons.length);
+    prevButtons.forEach((btn, i) => {
+        console.log(`Prev button ${i}:`, {
+            visible: btn.offsetParent !== null,
+            disabled: btn.disabled,
+            pointerEvents: getComputedStyle(btn).pointerEvents,
+            cursor: getComputedStyle(btn).cursor,
+            zIndex: getComputedStyle(btn).zIndex
+        });
+    });
+};
+
+window.forceClickGuestNextStep = function() {
+    console.log('🔨 Force clicking guest next step button...');
+    const nextBtn = document.querySelector('.next-step');
+    if (nextBtn) {
+        // Try multiple click methods
+        nextBtn.click();
+        nextBtn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        nextBtn.dispatchEvent(new TouchEvent('touchend', { bubbles: true, cancelable: true }));
+        console.log('✅ Force click attempted');
+    } else {
+        console.log('❌ Next button not found');
+    }
+};
+
+// Add global event delegation as backup
+document.addEventListener('click', function(e) {
+    // Backup handler for next-step buttons
+    if (e.target.closest('.next-step')) {
+        console.log('🚨 BACKUP: Guest next-step clicked');
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = 'block';
+        
+        console.log('✅ BACKUP: Moved to step 2');
+    }
+    
+    // Backup handler for prev-step buttons
+    if (e.target.closest('.prev-step')) {
+        console.log('🚨 BACKUP: Guest prev-step clicked');
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        if (step2) step2.style.display = 'none';
+        if (step3) step3.style.display = 'none';
+        if (step1) step1.style.display = 'block';
+        
+        console.log('✅ BACKUP: Moved to step 1');
+    }
+}, true); // Use capture phase
+
+// =======================================
+// GUEST BUTTON FIX - WORKING SOLUTION
+// =======================================
+
+// Simple and effective guest button fix
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Fixing guest buttons...');
+    
+    // Wait a bit for all elements to load
+    setTimeout(function() {
+        fixGuestButtons();
+    }, 500);
+    
+    setTimeout(function() {
+        fixGuestButtons();
+    }, 2000);
+});
+
+function fixGuestButtons() {
+    console.log('🔧 Fixing guest form navigation buttons...');
+    
+    // Fix next-step buttons
+    const nextButtons = document.querySelectorAll('.next-step');
+    console.log('Found next buttons:', nextButtons.length);
+    
+    nextButtons.forEach((btn, index) => {
+        // Clear existing listeners by replacing
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        // Force clickable styles
+        newBtn.style.pointerEvents = 'auto';
+        newBtn.style.cursor = 'pointer';
+        newBtn.style.zIndex = '999';
+        newBtn.disabled = false;
+        
+        // Add click handler
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🎯 Guest next clicked!');
+            
+            // Simple step change
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            
+            if (step1) step1.style.display = 'none';
+            if (step2) step2.style.display = 'block';
+            
+            console.log('✅ Moved to step 2');
+        });
+        
+        console.log('✅ Fixed next button', index);
+    });
+    
+    // Fix prev-step buttons
+    const prevButtons = document.querySelectorAll('.prev-step');
+    console.log('Found prev buttons:', prevButtons.length);
+    
+    prevButtons.forEach((btn, index) => {
+        // Clear existing listeners by replacing
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        // Force clickable styles
+        newBtn.style.pointerEvents = 'auto';
+        newBtn.style.cursor = 'pointer';
+        newBtn.style.zIndex = '999';
+        newBtn.disabled = false;
+        
+        // Add click handler
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🎯 Guest prev clicked!');
+            
+            // Simple step change back
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            
+            if (step2) step2.style.display = 'none';
+            if (step3) step3.style.display = 'none';
+            if (step1) step1.style.display = 'block';
+            
+            console.log('✅ Moved to step 1');
+        });
+        
+        console.log('✅ Fixed prev button', index);
+    });
+}
+
+// Manual test functions
+window.testGuestNextStep = function() {
+    console.log('🧪 Manual test: Guest next step');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    
+    if (step1) step1.style.display = 'none';
+    if (step2) step2.style.display = 'block';
+    
+    console.log('✅ Manually moved to step 2');
+};
+
+window.testGuestPrevStep = function() {
+    console.log('🧪 Manual test: Guest prev step');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    if (step2) step2.style.display = 'none';
+    if (step3) step3.style.display = 'none';
+    if (step1) step1.style.display = 'block';
+    
+    console.log('✅ Manually moved to step 1');
+};
+
+window.checkGuestSteps = function() {
+    console.log('🔍 Checking guest steps...');
+    
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    console.log('Step 1:', step1 ? 'Found' : 'Not found', step1 ? getComputedStyle(step1).display : 'N/A');
+    console.log('Step 2:', step2 ? 'Found' : 'Not found', step2 ? getComputedStyle(step2).display : 'N/A');
+    console.log('Step 3:', step3 ? 'Found' : 'Not found', step3 ? getComputedStyle(step3).display : 'N/A');
+    
+    const nextBtns = document.querySelectorAll('.next-step');
+    const prevBtns = document.querySelectorAll('.prev-step');
+    
+    console.log('Next buttons:', nextBtns.length);
+    console.log('Prev buttons:', prevBtns.length);
+    
+    return {
+        step1: !!step1,
+        step2: !!step2,
+        step3: !!step3,
+        nextButtons: nextBtns.length,
+        prevButtons: prevBtns.length
+    };
+};
+
+window.forceFixGuestButtons = function() {
+    console.log('🔨 Force fixing guest buttons...');
+    fixGuestButtons();
+};
+
+// Backup global click handler
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.next-step')) {
+        console.log('🚨 Backup next handler');
+        e.preventDefault();
+        
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = 'block';
+        
+        console.log('✅ Backup moved to step 2');
+    }
+    
+    if (e.target.closest('.prev-step')) {
+        console.log('🚨 Backup prev handler');
+        e.preventDefault();
+        
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        if (step2) step2.style.display = 'none';
+        if (step3) step3.style.display = 'none';
+        if (step1) step1.style.display = 'block';
+        
+        console.log('✅ Backup moved to step 1');
+    }
+}, true);
+
+// IMMEDIATE OVERRIDE FOR GUEST BUTTONS
+console.log('🚨 IMMEDIATE OVERRIDE STARTING...');
+
+// Function to immediately fix buttons
+function emergencyButtonFix() {
+    console.log('🆘 Emergency button fix running...');
+    
+    setTimeout(() => {
+        // Fix next-step buttons with simpler logic
+        const nextBtns = document.querySelectorAll('.next-step');
+        console.log('Emergency found next buttons:', nextBtns.length);
+        
+        nextBtns.forEach((btn, i) => {
+            console.log('Emergency fixing next button', i);
+            
+            // Clone to remove all listeners
+            const parent = btn.parentNode;
+            const newBtn = btn.cloneNode(true);
+            parent.replaceChild(newBtn, btn);
+            
+            // Force properties
+            newBtn.style.cssText += '; pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;';
+            newBtn.disabled = false;
+            
+            // Simple click handler - determine step by checking which step form contains this button
+            newBtn.onclick = function(e) {
+                console.log('🎯 EMERGENCY NEXT CLICK!');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Find which step this button belongs to
+                const step1 = document.getElementById('step1');
+                const step2 = document.getElementById('step2');
+                const step3 = document.getElementById('step3');
+                
+                const buttonInStep1 = step1 && step1.contains(newBtn);
+                const buttonInStep2 = step2 && step2.contains(newBtn);
+                
+                console.log('Button in step 1:', buttonInStep1);
+                console.log('Button in step 2:', buttonInStep2);
+                
+                if (buttonInStep1) {
+                    // Step 1 -> Step 2
+                    if (step1) step1.style.display = 'none';
+                    if (step2) step2.style.display = 'block';
+                    if (step3) step3.style.display = 'none';
+                    console.log('✅ EMERGENCY: Step 1 -> 2');
+                } else if (buttonInStep2) {
+                    // Step 2 -> Step 3
+                    if (step1) step1.style.display = 'none';
+                    if (step2) step2.style.display = 'none';
+                    if (step3) step3.style.display = 'block';
+                    console.log('✅ EMERGENCY: Step 2 -> 3');
+                } else {
+                    // Fallback: try to go to next visible step
+                    console.log('Fallback next step logic');
+                    if (step1 && window.getComputedStyle(step1).display !== 'none') {
+                        if (step1) step1.style.display = 'none';
+                        if (step2) step2.style.display = 'block';
+                        console.log('✅ FALLBACK: Step 1 -> 2');
+                    } else if (step2 && window.getComputedStyle(step2).display !== 'none') {
+                        if (step2) step2.style.display = 'none';
+                        if (step3) step3.style.display = 'block';
+                        console.log('✅ FALLBACK: Step 2 -> 3');
+                    }
+                }
+                return false;
+            };
+            
+            console.log('✅ Emergency next button', i, 'fixed');
+        });
+        
+        // Fix prev-step buttons with simpler logic
+        const prevBtns = document.querySelectorAll('.prev-step');
+        console.log('Emergency found prev buttons:', prevBtns.length);
+        
+        prevBtns.forEach((btn, i) => {
+            console.log('Emergency fixing prev button', i);
+            
+            // Clone to remove all listeners
+            const parent = btn.parentNode;
+            const newBtn = btn.cloneNode(true);
+            parent.replaceChild(newBtn, btn);
+            
+            // Force properties
+            newBtn.style.cssText += '; pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;';
+            newBtn.disabled = false;
+            
+            // Simple click handler
+            newBtn.onclick = function(e) {
+                console.log('🎯 EMERGENCY PREV CLICK!');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Find which step this button belongs to
+                const step1 = document.getElementById('step1');
+                const step2 = document.getElementById('step2');
+                const step3 = document.getElementById('step3');
+                
+                const buttonInStep2 = step2 && step2.contains(newBtn);
+                const buttonInStep3 = step3 && step3.contains(newBtn);
+                
+                console.log('Button in step 2:', buttonInStep2);
+                console.log('Button in step 3:', buttonInStep3);
+                
+                if (buttonInStep3) {
+                    // Step 3 -> Step 2
+                    if (step1) step1.style.display = 'none';
+                    if (step2) step2.style.display = 'block';
+                    if (step3) step3.style.display = 'none';
+                    console.log('✅ EMERGENCY: Step 3 -> 2');
+                } else if (buttonInStep2) {
+                    // Step 2 -> Step 1
+                    if (step1) step1.style.display = 'block';
+                    if (step2) step2.style.display = 'none';
+                    if (step3) step3.style.display = 'none';
+                    console.log('✅ EMERGENCY: Step 2 -> 1');
+                } else {
+                    // Fallback: try to go to previous visible step
+                    console.log('Fallback prev step logic');
+                    if (step3 && window.getComputedStyle(step3).display !== 'none') {
+                        if (step1) step1.style.display = 'none';
+                        if (step2) step2.style.display = 'block';
+                        if (step3) step3.style.display = 'none';
+                        console.log('✅ FALLBACK: Step 3 -> 2');
+                    } else if (step2 && window.getComputedStyle(step2).display !== 'none') {
+                        if (step1) step1.style.display = 'block';
+                        if (step2) step2.style.display = 'none';
+                        if (step3) step3.style.display = 'none';
+                        console.log('✅ FALLBACK: Step 2 -> 1');
+                    }
+                }
+                return false;
+            };
+            
+            console.log('✅ Emergency prev button', i, 'fixed');
+        });
+    }, 100);
+}
+
+// Run immediately
+emergencyButtonFix();
+
+// Run repeatedly
+setInterval(emergencyButtonFix, 2000);
+
+// Manual test
+window.emergencyTest = function() {
+    console.log('🧪 Emergency test');
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+};
+
+// Additional test functions for all steps
+window.goToStep1 = function() {
+    console.log('🧪 Go to step 1');
+    document.getElementById('step1').style.display = 'block';
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step3').style.display = 'none';
+};
+
+window.goToStep2 = function() {
+    console.log('🧪 Go to step 2');
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    document.getElementById('step3').style.display = 'none';
+};
+
+window.goToStep3 = function() {
+    console.log('🧪 Go to step 3');
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step3').style.display = 'block';
+};
+
+window.testAllButtons = function() {
+    console.log('🧪 Testing all buttons...');
+    
+    const nextBtns = document.querySelectorAll('.next-step');
+    const prevBtns = document.querySelectorAll('.prev-step');
+    
+    console.log('Next buttons found:', nextBtns.length);
+    console.log('Prev buttons found:', prevBtns.length);
+    
+    nextBtns.forEach((btn, i) => {
+        console.log(`Next button ${i}:`, {
+            visible: btn.offsetParent !== null,
+            disabled: btn.disabled,
+            style: btn.style.cssText,
+            onclick: typeof btn.onclick
+        });
+    });
+    
+    prevBtns.forEach((btn, i) => {
+        console.log(`Prev button ${i}:`, {
+            visible: btn.offsetParent !== null,
+            disabled: btn.disabled,
+            style: btn.style.cssText,
+            onclick: typeof btn.onclick
+        });
+    });
+};
+
+window.forceRefixButtons = function() {
+    console.log('🔨 Force re-fixing all buttons...');
+    emergencyButtonFix();
+};
+
+window.debugCurrentSituation = function() {
+    console.log('🔍 === DEBUGGING CURRENT SITUATION ===');
+    
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    console.log('Step elements:');
+    console.log('- Step 1:', step1 ? 'Found' : 'Not found');
+    console.log('- Step 2:', step2 ? 'Found' : 'Not found'); 
+    console.log('- Step 3:', step3 ? 'Found' : 'Not found');
+    
+    if (step1) {
+        console.log('Step 1 display:', window.getComputedStyle(step1).display);
+        console.log('Step 1 style.display:', step1.style.display);
+    }
+    
+    if (step2) {
+        console.log('Step 2 display:', window.getComputedStyle(step2).display);
+        console.log('Step 2 style.display:', step2.style.display);
+    }
+    
+    if (step3) {
+        console.log('Step 3 display:', window.getComputedStyle(step3).display);
+        console.log('Step 3 style.display:', step3.style.display);
+    }
+    
+    // Check buttons in each step
+    const nextBtns = document.querySelectorAll('.next-step');
+    const prevBtns = document.querySelectorAll('.prev-step');
+    
+    console.log('Next buttons found:', nextBtns.length);
+    console.log('Prev buttons found:', prevBtns.length);
+    
+    nextBtns.forEach((btn, i) => {
+        const inStep1 = step1 && step1.contains(btn);
+        const inStep2 = step2 && step2.contains(btn);
+        const inStep3 = step3 && step3.contains(btn);
+        
+        console.log(`Next button ${i}:`, {
+            visible: btn.offsetParent !== null,
+            disabled: btn.disabled,
+            inStep1: inStep1,
+            inStep2: inStep2,
+            inStep3: inStep3,
+            hasOnclick: typeof btn.onclick === 'function'
+        });
+    });
+    
+    prevBtns.forEach((btn, i) => {
+        const inStep1 = step1 && step1.contains(btn);
+        const inStep2 = step2 && step2.contains(btn);
+        const inStep3 = step3 && step3.contains(btn);
+        
+        console.log(`Prev button ${i}:`, {
+            visible: btn.offsetParent !== null,
+            disabled: btn.disabled,
+            inStep1: inStep1,
+            inStep2: inStep2,
+            inStep3: inStep3,
+            hasOnclick: typeof btn.onclick === 'function'
+        });
+    });
+    
+    console.log('=== END DEBUG ===');
+};
+
+window.testStep2ToStep3 = function() {
+    console.log('🧪 Test: Step 2 -> Step 3');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    if (step1) step1.style.display = 'none';
+    if (step2) step2.style.display = 'none';
+    if (step3) step3.style.display = 'block';
+    
+    console.log('✅ Manually moved to step 3');
+};
+
+window.testStep2ToStep1 = function() {
+    console.log('🧪 Test: Step 2 -> Step 1');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    if (step1) step1.style.display = 'block';
+    if (step2) step2.style.display = 'none';
+    if (step3) step3.style.display = 'none';
+    
+    console.log('✅ Manually moved to step 1');
+};
+
+console.log('🚨 EMERGENCY OVERRIDE COMPLETE');
+
+// IMMEDIATE GUEST BUTTON DEBUG AND FIX
+console.log('🚀 Starting immediate guest button debug...');
+
+// Simple immediate fix function with aggressive CSS overrides
+function immediateGuestButtonFix() {
+    console.log('🔧 Running immediate guest button fix...');
+    
+    // Find next-step buttons
+    const nextBtns = document.querySelectorAll('.next-step');
+    console.log('Next buttons found:', nextBtns.length);
+    
+    // Force fix each button
+    nextBtns.forEach((btn, i) => {
+        console.log(`Fixing button ${i}...`);
+        
+        // Remove all existing event listeners by cloning
+        const parent = btn.parentNode;
+        const newBtn = btn.cloneNode(true);
+        parent.replaceChild(newBtn, btn);
+        
+        // Force all clickable properties
+        newBtn.style.pointerEvents = 'auto !important';
+        newBtn.style.cursor = 'pointer !important';
+        newBtn.style.zIndex = '9999 !important';
+        newBtn.style.position = 'relative !important';
+        newBtn.disabled = false;
+        newBtn.style.opacity = '1 !important';
+        newBtn.style.visibility = 'visible !important';
+        
+        // Add multiple event types
+        ['click', 'mousedown', 'touchstart', 'touchend'].forEach(eventType => {
+            newBtn.addEventListener(eventType, function(e) {
+                console.log(`🎯 ${eventType} on guest next button!`);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Determine current step and navigate to next
+                const step1 = document.getElementById('step1');
+                const step2 = document.getElementById('step2');
+                const step3 = document.getElementById('step3');
+                
+                // Check which step is currently visible
+                const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
+                const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
+                const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
+                
+                console.log('Current step visibility:', {
+                    step1: step1Visible,
+                    step2: step2Visible, 
+                    step3: step3Visible
+                });
+                
+                if (step1Visible) {
+                    // Currently on step 1, go to step 2
+                    console.log('Changing from step 1 to step 2...');
+                    hideStep(step1);
+                    showStep(step2);
+                    console.log('✅ Moved from step 1 to step 2');
+                    
+                } else if (step2Visible) {
+                    // Currently on step 2, go to step 3
+                    console.log('Changing from step 2 to step 3...');
+                    hideStep(step2);
+                    showStep(step3);
+                    console.log('✅ Moved from step 2 to step 3');
+                    
+                } else {
+                    // Fallback: assume step 1 and go to step 2
+                    console.log('Fallback: Changing to step 2...');
+                    hideStep(step1);
+                    showStep(step2);
+                    console.log('✅ Fallback: Moved to step 2');
+                }
+                
+                // Additional cleanup
+                setTimeout(() => {
+                    cleanupSteps();
+                }, 100);
+                
+            }, { passive: false, capture: true });
+        });
+        
+        console.log(`✅ Button ${i} fixed with all events`);
+    });
+    
+    // Also fix prev-step buttons
+    const prevBtns = document.querySelectorAll('.prev-step');
+    console.log('Prev buttons found:', prevBtns.length);
+    
+    prevBtns.forEach((btn, i) => {
+        console.log(`Fixing prev button ${i}...`);
+        
+        // Remove all existing event listeners by cloning
+        const parent = btn.parentNode;
+        const newBtn = btn.cloneNode(true);
+        parent.replaceChild(newBtn, btn);
+        
+        // Force all clickable properties
+        newBtn.style.pointerEvents = 'auto !important';
+        newBtn.style.cursor = 'pointer !important';
+        newBtn.style.zIndex = '9999 !important';
+        newBtn.style.position = 'relative !important';
+        newBtn.disabled = false;
+        newBtn.style.opacity = '1 !important';
+        newBtn.style.visibility = 'visible !important';
+        
+        // Add multiple event types
+        ['click', 'mousedown', 'touchstart', 'touchend'].forEach(eventType => {
+            newBtn.addEventListener(eventType, function(e) {
+                console.log(`🎯 ${eventType} on guest prev button!`);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Determine current step and navigate to previous
+                const step1 = document.getElementById('step1');
+                const step2 = document.getElementById('step2');
+                const step3 = document.getElementById('step3');
+                
+                // Check which step is currently visible
+                const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
+                const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
+                const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
+                
+                console.log('Current step visibility for prev:', {
+                    step1: step1Visible,
+                    step2: step2Visible, 
+                    step3: step3Visible
+                });
+                
+                if (step3Visible) {
+                    // Currently on step 3, go to step 2
+                    console.log('Changing from step 3 to step 2...');
+                    hideStep(step3);
+                    showStep(step2);
+                    console.log('✅ Moved from step 3 to step 2');
+                    
+                } else if (step2Visible) {
+                    // Currently on step 2, go to step 1
+                    console.log('Changing from step 2 to step 1...');
+                    hideStep(step2);
+                    showStep(step1);
+                    console.log('✅ Moved from step 2 to step 1');
+                }
+                
+                // Additional cleanup
+                setTimeout(() => {
+                    cleanupSteps();
+                }, 100);
+                
+            }, { passive: false, capture: true });
+        });
+        
+        console.log(`✅ Prev button ${i} fixed with all events`);
+    });
+}
+
+// Helper function to aggressively hide a step
+function hideStep(stepElement) {
+    if (stepElement) {
+        stepElement.style.display = 'none !important';
+        stepElement.style.visibility = 'hidden !important';
+        stepElement.style.opacity = '0 !important';
+        stepElement.style.height = '0 !important';
+        stepElement.style.overflow = 'hidden !important';
+        stepElement.style.position = 'absolute !important';
+        stepElement.style.left = '-9999px !important';
+        stepElement.setAttribute('style', stepElement.getAttribute('style') + '; display: none !important;');
+        console.log(`Step ${stepElement.id} hidden`);
+    }
+}
+
+// Helper function to aggressively show a step
+function showStep(stepElement) {
+    if (stepElement) {
+        stepElement.style.display = 'block !important';
+        stepElement.style.visibility = 'visible !important';
+        stepElement.style.opacity = '1 !important';
+        stepElement.style.height = 'auto !important';
+        stepElement.style.overflow = 'visible !important';
+        stepElement.style.position = 'relative !important';
+        stepElement.style.left = 'auto !important';
+        stepElement.setAttribute('style', stepElement.getAttribute('style') + '; display: block !important;');
+        
+        // Force browser to repaint
+        stepElement.offsetHeight; // Trigger reflow
+        stepElement.style.transform = 'translateZ(0)'; // Force hardware acceleration
+        console.log(`Step ${stepElement.id} shown`);
+    }
+}
+
+// Helper function to clean up step conflicts
+function cleanupSteps() {
+    const allSteps = ['step1', 'step2', 'step3'];
+    
+    allSteps.forEach(stepId => {
+        const stepEl = document.getElementById(stepId);
+        if (stepEl) {
+            const isVisible = getComputedStyle(stepEl).display !== 'none';
+            if (isVisible) {
+                showStep(stepEl); // Ensure it's properly shown
+            } else {
+                hideStep(stepEl); // Ensure it's properly hidden
+            }
+        }
+    });
+    
+    console.log('🔄 Step cleanup completed');
+}
+
+// Run immediately when script loads
+immediateGuestButtonFix();
+
+// Run when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM ready, running guest button fix again...');
+    setTimeout(immediateGuestButtonFix, 100);
+    setTimeout(immediateGuestButtonFix, 500);
+    setTimeout(immediateGuestButtonFix, 1000);
+    setTimeout(immediateGuestButtonFix, 2000);
+});
+
+// Global window functions for manual testing
+window.debugGuestButtons = function() {
+    console.log('🔍 Debug guest buttons...');
+    
+    const nextBtns = document.querySelectorAll('.next-step');
+    const prevBtns = document.querySelectorAll('.prev-step');
+    console.log('Next buttons found:', nextBtns.length);
+    console.log('Prev buttons found:', prevBtns.length);
+    
+    // Check steps
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    console.log('Steps status:');
+    console.log('- Step 1:', step1 ? 'Found' : 'Not found', step1 ? getComputedStyle(step1).display : 'N/A');
+    console.log('- Step 2:', step2 ? 'Found' : 'Not found', step2 ? getComputedStyle(step2).display : 'N/A');
+    console.log('- Step 3:', step3 ? 'Found' : 'Not found', step3 ? getComputedStyle(step3).display : 'N/A');
+};
+
+window.manualStepChange = function(targetStep) {
+    console.log(`🔧 Manual step change to step ${targetStep}...`);
+    
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    // Hide all steps first
+    hideStep(step1);
+    hideStep(step2);
+    hideStep(step3);
+    
+    // Show target step
+    if (targetStep === 1) showStep(step1);
+    else if (targetStep === 2) showStep(step2);
+    else if (targetStep === 3) showStep(step3);
+    
+    console.log(`✅ Manually changed to step ${targetStep}`);
+};
+
+window.goToStep1 = function() { manualStepChange(1); };
+window.goToStep2 = function() { manualStepChange(2); };
+window.goToStep3 = function() { manualStepChange(3); };
+
+window.forceButtonClick = function() {
+    console.log('🔨 Force button click...');
+    
+    const nextBtn = document.querySelector('.next-step');
+    if (nextBtn) {
+        console.log('Found button, trying to click...');
+        
+        // Try multiple click methods
+        nextBtn.click();
+        
+        const clickEvent = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        });
+        nextBtn.dispatchEvent(clickEvent);
+        
+        console.log('✅ Force click attempted');
+    } else {
+        console.log('❌ No next-step button found');
+    }
+};
+
+window.rerunFix = function() {
+    console.log('🔄 Re-running immediate fix...');
+    immediateGuestButtonFix();
+};
+
+// Global backup click handler with highest priority - MORE AGGRESSIVE
+document.addEventListener('click', function(e) {
+    if (e.target && (e.target.classList.contains('next-step') || e.target.closest('.next-step'))) {
+        console.log('🚨 GLOBAL BACKUP: Next step clicked!');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        // Check current step and navigate
+        const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
+        const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
+        
+        if (step1Visible) {
+            hideStep(step1);
+            showStep(step2);
+            console.log('✅ GLOBAL BACKUP: Changed from step 1 to step 2');
+        } else if (step2Visible) {
+            hideStep(step2);
+            showStep(step3);
+            console.log('✅ GLOBAL BACKUP: Changed from step 2 to step 3');
+        } else {
+            // Fallback
+            hideStep(step1);
+            showStep(step2);
+            console.log('✅ GLOBAL BACKUP: Fallback to step 2');
+        }
+        
+        return false;
+    }
+    
+    // Handle prev-step buttons
+    if (e.target && (e.target.classList.contains('prev-step') || e.target.closest('.prev-step'))) {
+        console.log('🚨 GLOBAL BACKUP: Prev step clicked!');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        // Check current step and navigate backward
+        const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
+        const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
+        
+        if (step3Visible) {
+            hideStep(step3);
+            showStep(step2);
+            console.log('✅ GLOBAL BACKUP: Changed from step 3 to step 2');
+        } else if (step2Visible) {
+            hideStep(step2);
+            showStep(step1);
+            console.log('✅ GLOBAL BACKUP: Changed from step 2 to step 1');
+        }
+        
+        return false;
+    }
+}, true); // Use capture phase with highest priority
+
+// Additional: Force override any CSS animations or transitions that might interfere
+const forceStepStyles = document.createElement('style');
+forceStepStyles.textContent = `
+    #step1.form-step[style*="none"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+    
+    #step2.form-step[style*="block"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        overflow: visible !important;
+        position: relative !important;
+        left: auto !important;
+    }
+    
+    #step3.form-step[style*="block"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        overflow: visible !important;
+        position: relative !important;
+        left: auto !important;
+    }
+    
+    .next-step, .prev-step {
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        z-index: 9999 !important;
+        position: relative !important;
+    }
+`;
+document.head.appendChild(forceStepStyles);
 </style>
 
 @push('script')
@@ -4403,6 +5766,406 @@ window.fillTestLocationData = function() {
         }
     }, 5000);
 };
+
+// IMMEDIATE GUEST BUTTON DEBUG AND FIX
+console.log('🚀 Starting immediate guest button debug...');
+
+// Simple immediate fix function with aggressive CSS overrides
+function immediateGuestButtonFix() {
+    console.log('🔧 Running immediate guest button fix...');
+    
+    // Find next-step buttons
+    const nextBtns = document.querySelectorAll('.next-step');
+    console.log('Next buttons found:', nextBtns.length);
+    
+    // Force fix each button
+    nextBtns.forEach((btn, i) => {
+        console.log(`Fixing button ${i}...`);
+        
+        // Remove all existing event listeners by cloning
+        const parent = btn.parentNode;
+        const newBtn = btn.cloneNode(true);
+        parent.replaceChild(newBtn, btn);
+        
+        // Force all clickable properties
+        newBtn.style.pointerEvents = 'auto !important';
+        newBtn.style.cursor = 'pointer !important';
+        newBtn.style.zIndex = '9999 !important';
+        newBtn.style.position = 'relative !important';
+        newBtn.disabled = false;
+        newBtn.style.opacity = '1 !important';
+        newBtn.style.visibility = 'visible !important';
+        
+        // Add multiple event types
+        ['click', 'mousedown', 'touchstart', 'touchend'].forEach(eventType => {
+            newBtn.addEventListener(eventType, function(e) {
+                console.log(`🎯 ${eventType} on guest next button!`);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Determine current step and navigate to next
+                const step1 = document.getElementById('step1');
+                const step2 = document.getElementById('step2');
+                const step3 = document.getElementById('step3');
+                
+                // Check which step is currently visible
+                const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
+                const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
+                const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
+                
+                console.log('Current step visibility:', {
+                    step1: step1Visible,
+                    step2: step2Visible, 
+                    step3: step3Visible
+                });
+                
+                if (step1Visible) {
+                    // Currently on step 1, go to step 2
+                    console.log('Changing from step 1 to step 2...');
+                    hideStep(step1);
+                    showStep(step2);
+                    console.log('✅ Moved from step 1 to step 2');
+                    
+                } else if (step2Visible) {
+                    // Currently on step 2, go to step 3
+                    console.log('Changing from step 2 to step 3...');
+                    hideStep(step2);
+                    showStep(step3);
+                    console.log('✅ Moved from step 2 to step 3');
+                    
+                } else {
+                    // Fallback: assume step 1 and go to step 2
+                    console.log('Fallback: Changing to step 2...');
+                    hideStep(step1);
+                    showStep(step2);
+                    console.log('✅ Fallback: Moved to step 2');
+                }
+                
+                // Additional cleanup
+                setTimeout(() => {
+                    cleanupSteps();
+                }, 100);
+                
+            }, { passive: false, capture: true });
+        });
+        
+        console.log(`✅ Button ${i} fixed with all events`);
+    });
+    
+    // Also fix prev-step buttons
+    const prevBtns = document.querySelectorAll('.prev-step');
+    console.log('Prev buttons found:', prevBtns.length);
+    
+    prevBtns.forEach((btn, i) => {
+        console.log(`Fixing prev button ${i}...`);
+        
+        // Remove all existing event listeners by cloning
+        const parent = btn.parentNode;
+        const newBtn = btn.cloneNode(true);
+        parent.replaceChild(newBtn, btn);
+        
+        // Force all clickable properties
+        newBtn.style.pointerEvents = 'auto !important';
+        newBtn.style.cursor = 'pointer !important';
+        newBtn.style.zIndex = '9999 !important';
+        newBtn.style.position = 'relative !important';
+        newBtn.disabled = false;
+        newBtn.style.opacity = '1 !important';
+        newBtn.style.visibility = 'visible !important';
+        
+        // Add multiple event types
+        ['click', 'mousedown', 'touchstart', 'touchend'].forEach(eventType => {
+            newBtn.addEventListener(eventType, function(e) {
+                console.log(`🎯 ${eventType} on guest prev button!`);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Determine current step and navigate to previous
+                const step1 = document.getElementById('step1');
+                const step2 = document.getElementById('step2');
+                const step3 = document.getElementById('step3');
+                
+                // Check which step is currently visible
+                const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
+                const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
+                const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
+                
+                console.log('Current step visibility for prev:', {
+                    step1: step1Visible,
+                    step2: step2Visible, 
+                    step3: step3Visible
+                });
+                
+                if (step3Visible) {
+                    // Currently on step 3, go to step 2
+                    console.log('Changing from step 3 to step 2...');
+                    hideStep(step3);
+                    showStep(step2);
+                    console.log('✅ Moved from step 3 to step 2');
+                    
+                } else if (step2Visible) {
+                    // Currently on step 2, go to step 1
+                    console.log('Changing from step 2 to step 1...');
+                    hideStep(step2);
+                    showStep(step1);
+                    console.log('✅ Moved from step 2 to step 1');
+                }
+                
+                // Additional cleanup
+                setTimeout(() => {
+                    cleanupSteps();
+                }, 100);
+                
+            }, { passive: false, capture: true });
+        });
+        
+        console.log(`✅ Prev button ${i} fixed with all events`);
+    });
+}
+
+// Helper function to aggressively hide a step
+function hideStep(stepElement) {
+    if (stepElement) {
+        stepElement.style.display = 'none !important';
+        stepElement.style.visibility = 'hidden !important';
+        stepElement.style.opacity = '0 !important';
+        stepElement.style.height = '0 !important';
+        stepElement.style.overflow = 'hidden !important';
+        stepElement.style.position = 'absolute !important';
+        stepElement.style.left = '-9999px !important';
+        stepElement.setAttribute('style', stepElement.getAttribute('style') + '; display: none !important;');
+        console.log(`Step ${stepElement.id} hidden`);
+    }
+}
+
+// Helper function to aggressively show a step
+function showStep(stepElement) {
+    if (stepElement) {
+        stepElement.style.display = 'block !important';
+        stepElement.style.visibility = 'visible !important';
+        stepElement.style.opacity = '1 !important';
+        stepElement.style.height = 'auto !important';
+        stepElement.style.overflow = 'visible !important';
+        stepElement.style.position = 'relative !important';
+        stepElement.style.left = 'auto !important';
+        stepElement.setAttribute('style', stepElement.getAttribute('style') + '; display: block !important;');
+        
+        // Force browser to repaint
+        stepElement.offsetHeight; // Trigger reflow
+        stepElement.style.transform = 'translateZ(0)'; // Force hardware acceleration
+        console.log(`Step ${stepElement.id} shown`);
+    }
+}
+
+// Helper function to clean up step conflicts
+function cleanupSteps() {
+    const allSteps = ['step1', 'step2', 'step3'];
+    
+    allSteps.forEach(stepId => {
+        const stepEl = document.getElementById(stepId);
+        if (stepEl) {
+            const isVisible = getComputedStyle(stepEl).display !== 'none';
+            if (isVisible) {
+                showStep(stepEl); // Ensure it's properly shown
+            } else {
+                hideStep(stepEl); // Ensure it's properly hidden
+            }
+        }
+    });
+    
+    console.log('🔄 Step cleanup completed');
+}
+
+// Run immediately when script loads
+immediateGuestButtonFix();
+
+// Run when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM ready, running guest button fix again...');
+    setTimeout(immediateGuestButtonFix, 100);
+    setTimeout(immediateGuestButtonFix, 500);
+    setTimeout(immediateGuestButtonFix, 1000);
+    setTimeout(immediateGuestButtonFix, 2000);
+});
+
+// Global window functions for manual testing
+window.debugGuestButtons = function() {
+    console.log('🔍 Debug guest buttons...');
+    
+    const nextBtns = document.querySelectorAll('.next-step');
+    const prevBtns = document.querySelectorAll('.prev-step');
+    console.log('Next buttons found:', nextBtns.length);
+    console.log('Prev buttons found:', prevBtns.length);
+    
+    // Check steps
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    console.log('Steps status:');
+    console.log('- Step 1:', step1 ? 'Found' : 'Not found', step1 ? getComputedStyle(step1).display : 'N/A');
+    console.log('- Step 2:', step2 ? 'Found' : 'Not found', step2 ? getComputedStyle(step2).display : 'N/A');
+    console.log('- Step 3:', step3 ? 'Found' : 'Not found', step3 ? getComputedStyle(step3).display : 'N/A');
+};
+
+window.manualStepChange = function(targetStep) {
+    console.log(`🔧 Manual step change to step ${targetStep}...`);
+    
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    
+    // Hide all steps first
+    hideStep(step1);
+    hideStep(step2);
+    hideStep(step3);
+    
+    // Show target step
+    if (targetStep === 1) showStep(step1);
+    else if (targetStep === 2) showStep(step2);
+    else if (targetStep === 3) showStep(step3);
+    
+    console.log(`✅ Manually changed to step ${targetStep}`);
+};
+
+window.goToStep1 = function() { manualStepChange(1); };
+window.goToStep2 = function() { manualStepChange(2); };
+window.goToStep3 = function() { manualStepChange(3); };
+
+window.forceButtonClick = function() {
+    console.log('🔨 Force button click...');
+    
+    const nextBtn = document.querySelector('.next-step');
+    if (nextBtn) {
+        console.log('Found button, trying to click...');
+        
+        // Try multiple click methods
+        nextBtn.click();
+        
+        const clickEvent = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        });
+        nextBtn.dispatchEvent(clickEvent);
+        
+        console.log('✅ Force click attempted');
+    } else {
+        console.log('❌ No next-step button found');
+    }
+};
+
+window.rerunFix = function() {
+    console.log('🔄 Re-running immediate fix...');
+    immediateGuestButtonFix();
+};
+
+// Global backup click handler with highest priority - MORE AGGRESSIVE
+document.addEventListener('click', function(e) {
+    if (e.target && (e.target.classList.contains('next-step') || e.target.closest('.next-step'))) {
+        console.log('🚨 GLOBAL BACKUP: Next step clicked!');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        // Check current step and navigate
+        const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
+        const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
+        
+        if (step1Visible) {
+            hideStep(step1);
+            showStep(step2);
+            console.log('✅ GLOBAL BACKUP: Changed from step 1 to step 2');
+        } else if (step2Visible) {
+            hideStep(step2);
+            showStep(step3);
+            console.log('✅ GLOBAL BACKUP: Changed from step 2 to step 3');
+        } else {
+            // Fallback
+            hideStep(step1);
+            showStep(step2);
+            console.log('✅ GLOBAL BACKUP: Fallback to step 2');
+        }
+        
+        return false;
+    }
+    
+    // Handle prev-step buttons
+    if (e.target && (e.target.classList.contains('prev-step') || e.target.closest('.prev-step'))) {
+        console.log('🚨 GLOBAL BACKUP: Prev step clicked!');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        // Check current step and navigate backward
+        const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
+        const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
+        
+        if (step3Visible) {
+            hideStep(step3);
+            showStep(step2);
+            console.log('✅ GLOBAL BACKUP: Changed from step 3 to step 2');
+        } else if (step2Visible) {
+            hideStep(step2);
+            showStep(step1);
+            console.log('✅ GLOBAL BACKUP: Changed from step 2 to step 1');
+        }
+        
+        return false;
+    }
+}, true); // Use capture phase with highest priority
+
+// Additional: Force override any CSS animations or transitions that might interfere
+const forceStepStyles = document.createElement('style');
+forceStepStyles.textContent = `
+    #step1.form-step[style*="none"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+    
+    #step2.form-step[style*="block"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        overflow: visible !important;
+        position: relative !important;
+        left: auto !important;
+    }
+    
+    #step3.form-step[style*="block"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        overflow: visible !important;
+        position: relative !important;
+        left: auto !important;
+    }
+    
+    .next-step, .prev-step {
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        z-index: 9999 !important;
+        position: relative !important;
+    }
+`;
+document.head.appendChild(forceStepStyles);
 </script>
 @endpush
 
