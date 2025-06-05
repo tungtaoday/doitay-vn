@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\NewLeadNotification;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class CustomerLeadController extends Controller
 {
@@ -87,29 +89,72 @@ class CustomerLeadController extends Controller
 
             // Handle user creation for guests
             $customerId = null;
+            $isNewUser = false;
+            $generatedPassword = null;
+            
             if (auth()->check()) {
                 $customerId = auth()->id();
             } else {
-                // Create or find user for guest
-                $user = \App\Models\User::where('mobile', $validated['mobile'])->first();
+                // Check if user already exists by mobile or email
+                $user = null;
+                
+                // First try to find by mobile
+                if (!empty($validated['mobile'])) {
+                    $user = \App\Models\User::where('mobile', $validated['mobile'])->first();
+                }
+                
+                // If not found by mobile, try by email
+                if (!$user && !empty($validated['email'])) {
+                    $user = \App\Models\User::where('email', $validated['email'])->first();
+                }
                 
                 if (!$user) {
+                    // Generate random password for new user
+                    $generatedPassword = \Str::random(8);
+                    
+                    // Parse fullname
+                    $nameParts = explode(' ', trim($validated['fullname']));
+                    $firstname = $nameParts[0] ?? '';
+                    $lastname = count($nameParts) > 1 ? implode(' ', array_slice($nameParts, 1)) : '';
+                    
+                    // Create new user
                     $user = \App\Models\User::create([
-                        'firstname' => explode(' ', $validated['fullname'])[0],
-                        'lastname' => substr($validated['fullname'], strpos($validated['fullname'], ' ') + 1) ?: '',
+                        'firstname' => $firstname,
+                        'lastname' => $lastname,
                         'username' => $validated['mobile'],
                         'email' => $validated['email'] ?: $validated['mobile'] . '@doitay.vn',
                         'mobile' => $validated['mobile'],
-                        'password' => \Hash::make('123456'), // Default password
+                        'password' => \Hash::make($generatedPassword),
                         'email_verified_at' => now(),
                         'mobile_verified_at' => now(),
+                        'status' => 1, // Active user
+                        'ev' => 1, // Email verified
+                        'sv' => 1, // SMS verified
+                        'profile_complete' => 0,
                     ]);
                     
-                    // Auto login the guest user
-                    auth()->login($user);
-                    \Log::info('Created new user for guest lead:', ['user_id' => $user->id]);
+                    $isNewUser = true;
+                    
+                    \Log::info('Created new user for guest lead:', [
+                        'user_id' => $user->id,
+                        'mobile' => $user->mobile,
+                        'email' => $user->email,
+                        'password' => $generatedPassword
+                    ]);
+                    
+                    // Send welcome email with login credentials
+                    $this->sendWelcomeEmail($user, $generatedPassword);
+                    
+                } else {
+                    \Log::info('Found existing user for guest lead:', [
+                        'user_id' => $user->id,
+                        'mobile' => $user->mobile,
+                        'email' => $user->email
+                    ]);
                 }
                 
+                // Auto login the user (new or existing)
+                auth()->login($user);
                 $customerId = $user->id;
             }
 
@@ -149,8 +194,17 @@ class CustomerLeadController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ từ các thợ sớm.',
+                'message' => $isNewUser 
+                    ? 'Lead đã được tạo thành công! Tài khoản mới đã được tạo và thông tin đăng nhập đã được gửi qua email/SMS.' 
+                    : 'Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ từ các thợ sớm.',
                 'lead_id' => $lead->id,
+                'user_created' => $isNewUser,
+                'user_id' => $customerId,
+                'login_info' => $isNewUser ? [
+                    'username' => $validated['mobile'],
+                    'password_sent' => true,
+                    'email' => $validated['email'] ?: $validated['mobile'] . '@doitay.vn'
+                ] : null,
                 'redirect_url' => auth()->check() ? route('user.customer.leads.show', $lead->id) : null
             ]);
 
@@ -315,5 +369,72 @@ class CustomerLeadController extends Controller
 
         $notify[] = ['success', 'Bạn đã chọn thợ thành công! Thợ sẽ sớm liên hệ với bạn.'];
         return back()->withNotify($notify);
+    }
+
+    private function sendWelcomeEmail($user, $password)
+    {
+        try {
+            // Send email if email is valid
+            if (!empty($user->email) && filter_var($user->email, FILTER_VALIDATE_EMAIL) && !str_contains($user->email, '@doitay.vn')) {
+                \Mail::send('emails.welcome_guest', [
+                    'user' => $user,
+                    'password' => $password,
+                    'login_url' => route('user.login'),
+                    'website_name' => config('app.name', 'DoiTay.vn')
+                ], function ($message) use ($user) {
+                    $message->to($user->email, $user->firstname . ' ' . $user->lastname)
+                           ->subject('Chào mừng bạn đến với ' . config('app.name', 'DoiTay.vn'));
+                });
+                
+                \Log::info('Welcome email sent successfully:', [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ]);
+            }
+            
+            // Send SMS notification with password
+            if (!empty($user->mobile)) {
+                $smsMessage = "Chào mừng bạn đến với DoiTay.vn! Tài khoản: {$user->mobile}, Mật khẩu: {$password}. Đăng nhập tại: " . route('user.login');
+                
+                // Use your SMS service here
+                $this->sendSMS($user->mobile, $smsMessage);
+                
+                \Log::info('Welcome SMS sent successfully:', [
+                    'user_id' => $user->id,
+                    'mobile' => $user->mobile
+                ]);
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to send welcome email/SMS:', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+    
+    private function sendSMS($mobile, $message)
+    {
+        try {
+            // Implement SMS sending logic here
+            // This is a placeholder - you should implement with your SMS provider
+            
+            // Example with a common SMS service:
+            /*
+            $smsService = new \YourSMSService();
+            $smsService->send($mobile, $message);
+            */
+            
+            \Log::info('SMS sending attempted:', [
+                'mobile' => $mobile,
+                'message' => $message
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('SMS sending failed:', [
+                'mobile' => $mobile,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 } 

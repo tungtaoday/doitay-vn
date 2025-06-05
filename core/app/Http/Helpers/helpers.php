@@ -4,7 +4,6 @@ use Carbon\Carbon;
 use App\Lib\Captcha;
 use App\Notify\Notify;
 use App\Lib\ClientInfo;
-use App\Lib\CurlRequest;
 use App\Lib\FileManager;
 use App\Models\Frontend;
 use App\Constants\Status;
@@ -12,7 +11,6 @@ use App\Models\Extension;
 use Illuminate\Support\Str;
 use App\Models\Advertisement;
 use App\Models\GeneralSetting;
-use Laramin\Utility\VugiChugi;
 use Illuminate\Support\Facades\Cache;
 
 function systemDetails()
@@ -174,15 +172,9 @@ function osBrowser()
 
 function getTemplates()
 {
-    $param['purchasecode'] = env("PURCHASECODE");
-    $param['website'] = @$_SERVER['HTTP_HOST'] . @$_SERVER['REQUEST_URI'] . ' - ' . env("APP_URL");
-    $url = VugiChugi::gttmp() . systemDetails()['name'];
-    $response = CurlRequest::curlPostContent($url, $param);
-    if ($response) {
-        return $response;
-    } else {
-        return null;
-    }
+    // Removed ViserLab template fetching for security and privacy
+    // This function has been disabled to prevent external data transmission
+    return null;
 }
 
 function getPageSections($arr = false)

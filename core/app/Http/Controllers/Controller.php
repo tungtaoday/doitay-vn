@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Laramin\Utility\Onumoti;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 
-abstract class Controller
+class Controller extends BaseController
 {
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
     public function __construct()
     {
-        $className = get_called_class();
-        Onumoti::mySite($this,$className);
+        // ViserLab tracking removed for security and privacy
     }
-
-    public static function middleware()
-    {
-        return [];
-    }
-
 }

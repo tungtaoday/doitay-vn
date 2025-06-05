@@ -2302,1571 +2302,259 @@
     box-shadow: none;
 }
 
-/* Guest Form Next Step Button - Force Clickable */
-.next-step {
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    position: relative !important;
-    z-index: 20 !important;
-    display: inline-block !important;
-    background: #48bbe2 !important;
-    border: 2px solid #48bbe2 !important;
-    color: white !important;
-    font-weight: 600 !important;
-    padding: 0.75rem 1.5rem !important;
-    border-radius: 12px !important;
-    transition: all 0.3s ease !important;
-    text-decoration: none !important;
-    outline: none !important;
-    min-height: 48px !important;
-    width: auto !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    user-select: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-}
-
-.next-step:hover {
-    background: #102f4b !important;
-    border-color: #102f4b !important;
-    color: white !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(16, 47, 75, 0.2) !important;
-}
-
-.next-step:focus {
-    outline: 2px solid #48bbe2 !important;
-    outline-offset: 2px !important;
-    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
-}
-
-.next-step:active {
-    transform: translateY(0) !important;
-    background: #3aa3c7 !important;
-    color: white !important;
-}
-
-.next-step:disabled {
-    opacity: 0.6 !important;
-    cursor: not-allowed !important;
-    pointer-events: none !important;
-}
-
-/* Guest Form Previous Step Button */
-.prev-step {
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    position: relative !important;
-    z-index: 20 !important;
-    display: inline-block !important;
-    background: transparent !important;
-    border: 2px solid rgba(72, 187, 226, 0.3) !important;
-    color: #102f4b !important;
-    font-weight: 500 !important;
-    padding: 0.75rem 1.5rem !important;
-    border-radius: 12px !important;
-    transition: all 0.3s ease !important;
-    text-decoration: none !important;
-    outline: none !important;
-    min-height: 48px !important;
-    width: auto !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    user-select: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-}
-
-.prev-step:hover {
-    background: rgba(72, 187, 226, 0.1) !important;
-    border-color: #48bbe2 !important;
-    color: #102f4b !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(72, 187, 226, 0.1) !important;
-}
-
-.prev-step:focus {
-    outline: 2px solid #48bbe2 !important;
-    outline-offset: 2px !important;
-    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
-}
-
-.prev-step:active {
-    transform: translateY(0) !important;
-    background: rgba(72, 187, 226, 0.2) !important;
-}
-
-/* Ensure guest form containers allow clicks */
-#guestTab,
-#guestLeadForm,
-.form-step {
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 1;
-}
-
-#step1,
-#step2,
-#step3 {
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 2;
-}
-
-.step-navigation {
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 21;
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-/* Mobile improvements for guest form buttons */
-@media (max-width: 768px) {
-    .next-step,
-    .prev-step {
-        padding: 0.875rem 1.25rem !important;
-        font-size: 0.9rem !important;
-        min-height: 52px !important;
-        width: 100% !important;
-    }
+/* Debug function to check dropdown state */
+.checkDropdownState {
+    console.log('🔍 Checking dropdown state...');
     
-    .step-navigation {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-}
-
-/* Form steps navigation for guest users - AGGRESSIVE FIX */
-let currentGuestStep = 1;
-const totalGuestSteps = 3;
-
-// Function to force setup guest buttons
-function setupGuestButtons() {
-    console.log('🔧 Setting up guest form buttons...');
+    const authCitySelect = document.getElementById('auth_city_code');
+    const guestCitySelect = document.getElementById('guest_city_code');
     
-    // Remove ALL existing next-step listeners and create fresh ones
-    const existingNextBtns = document.querySelectorAll('.next-step');
-    existingNextBtns.forEach((btn, index) => {
-        console.log('Removing existing next-step button', index);
-        const parent = btn.parentNode;
-        const newBtn = btn.cloneNode(true);
-        parent.replaceChild(newBtn, btn);
-    });
-
-    // Setup next-step buttons with multiple event types
-    const nextStepBtns = document.querySelectorAll('.next-step');
-    console.log('🎯 Found next-step buttons:', nextStepBtns.length);
-    
-    nextStepBtns.forEach((btn, index) => {
-        console.log('Setting up next-step button', index, btn);
+    console.log('=== AUTH CITY SELECT ===');
+    if (authCitySelect) {
+        console.log('Element found:', authCitySelect);
+        console.log('Options count:', authCitySelect.options.length);
+        console.log('Disabled:', authCitySelect.disabled);
+        console.log('Visible:', window.getComputedStyle(authCitySelect).display !== 'none');
+        console.log('Parent visible:', window.getComputedStyle(authCitySelect.parentElement).display !== 'none');
         
-        // Ensure button is clickable
-        btn.style.pointerEvents = 'auto';
-        btn.style.cursor = 'pointer';
-        btn.style.zIndex = '25';
-        btn.disabled = false;
-        
-        // Add multiple event listeners for maximum compatibility
-        ['click', 'mousedown', 'touchstart'].forEach(eventType => {
-            btn.addEventListener(eventType, function(e) {
-                console.log(`🎯 Guest next-step ${eventType} event triggered on button`, index);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Skip validation for now to test navigation
-                console.log('Attempting to go to next step from:', currentGuestStep);
-                goToGuestStep(currentGuestStep + 1);
-                
-                // Optional: Add validation back later
-                // if (validateCurrentStep(currentGuestStep)) {
-                //     goToGuestStep(currentGuestStep + 1);
-                // }
-            }, { passive: false, capture: true });
-        });
-        
-        // Test button immediately
-        console.log('✅ Button', index, 'setup complete. Testing...');
-        console.log('Button visible:', btn.offsetParent !== null);
-        console.log('Button disabled:', btn.disabled);
-        console.log('Button pointer events:', window.getComputedStyle(btn).pointerEvents);
-    });
-
-    // Remove ALL existing prev-step listeners and create fresh ones
-    const existingPrevBtns = document.querySelectorAll('.prev-step');
-    existingPrevBtns.forEach((btn, index) => {
-        console.log('Removing existing prev-step button', index);
-        const parent = btn.parentNode;
-        const newBtn = btn.cloneNode(true);
-        parent.replaceChild(newBtn, btn);
-    });
-
-    // Setup prev-step buttons
-    const prevStepBtns = document.querySelectorAll('.prev-step');
-    console.log('🎯 Found prev-step buttons:', prevStepBtns.length);
-    
-    prevStepBtns.forEach((btn, index) => {
-        console.log('Setting up prev-step button', index, btn);
-        
-        // Ensure button is clickable
-        btn.style.pointerEvents = 'auto';
-        btn.style.cursor = 'pointer';
-        btn.style.zIndex = '25';
-        btn.disabled = false;
-        
-        // Add multiple event listeners
-        ['click', 'mousedown', 'touchstart'].forEach(eventType => {
-            btn.addEventListener(eventType, function(e) {
-                console.log(`🎯 Guest prev-step ${eventType} event triggered on button`, index);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                console.log('Attempting to go to previous step from:', currentGuestStep);
-                goToGuestStep(currentGuestStep - 1);
-            }, { passive: false, capture: true });
-        });
-    });
-}
-
-// New guest step navigation function
-function goToGuestStep(step) {
-    if (step < 1 || step > totalSteps) {
-        console.log('❌ Invalid guest step:', step);
-        return;
-    }
-    
-    console.log('🚶 Going to guest step:', step, 'from current step:', currentStep);
-    
-    // Hide all steps first
-    for (let i = 1; i <= totalSteps; i++) {
-        const stepEl = document.getElementById('step' + i);
-        if (stepEl) {
-            stepEl.style.display = 'none';
-            console.log('Hidden step', i);
+        if (authCitySelect.options.length > 0) {
+            for (let i = 0; i < Math.min(5, authCitySelect.options.length); i++) {
+                console.log(`Option ${i}:`, authCitySelect.options[i].value, authCitySelect.options[i].text);
+            }
         }
-    }
-    
-    // Show target step
-    const targetStepEl = document.getElementById('step' + step);
-    if (targetStepEl) {
-        targetStepEl.style.display = 'block';
-        currentStep = step;
-        console.log('✅ Showed step', step, '- currentStep updated to:', currentStep);
     } else {
-        console.log('❌ Could not find step element:', 'step' + step);
+        console.log('❌ Auth city select not found');
     }
-}
-
-// Initialize guest buttons immediately
-setupGuestButtons();
-
-// Also setup with delay in case DOM changes
-setTimeout(setupGuestButtons, 1000);
-setTimeout(setupGuestButtons, 3000);
-
-// Legacy functions for compatibility (keep existing goToStep)
-function goToStep(step) {
-    console.log('🔄 Legacy goToStep called, redirecting to goToGuestStep');
-    goToGuestStep(step);
-}
-
-// =======================================
-// GUEST FORM BUTTON FIX - FINAL SOLUTION
-// =======================================
-
-// Initialize guest button fix immediately when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Initializing GUEST BUTTON FIX...');
-    setupGuestFormButtons();
     
-    // Also run with delays to catch dynamically loaded content
-    setTimeout(setupGuestFormButtons, 1000);
-    setTimeout(setupGuestFormButtons, 3000);
-});
-
-function setupGuestFormButtons() {
-    console.log('🔧 Setting up guest form buttons...');
-    
-    // Force setup next-step buttons
-    const nextButtons = document.querySelectorAll('.next-step');
-    console.log('Found next-step buttons:', nextButtons.length);
-    
-    nextButtons.forEach((btn, index) => {
-        // Remove existing event listeners by cloning
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
+    console.log('=== GUEST CITY SELECT ===');
+    if (guestCitySelect) {
+        console.log('Element found:', guestCitySelect);
+        console.log('Options count:', guestCitySelect.options.length);
+        console.log('Disabled:', guestCitySelect.disabled);
+        console.log('Visible:', window.getComputedStyle(guestCitySelect).display !== 'none');
+        console.log('Parent visible:', window.getComputedStyle(guestCitySelect.parentElement).display !== 'none');
         
-        // Force make button clickable
-        newBtn.style.pointerEvents = 'auto';
-        newBtn.style.cursor = 'pointer';
-        newBtn.style.zIndex = '1000';
-        newBtn.disabled = false;
-        newBtn.style.opacity = '1';
-        newBtn.style.visibility = 'visible';
-        
-        // Add comprehensive event listeners
-        ['click', 'touchend', 'mouseup'].forEach(eventType => {
-            newBtn.addEventListener(eventType, function(e) {
-                console.log(`🎯 GUEST next-step ${eventType} triggered!`);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Simple step navigation without complex validation
-                const currentStepEl = document.querySelector('#step1[style*="block"], #step1:not([style*="none"])');
-                const nextStepEl = document.getElementById('step2');
-                
-                if (currentStepEl && nextStepEl) {
-                    currentStepEl.style.display = 'none';
-                    nextStepEl.style.display = 'block';
-                    console.log('✅ Guest moved to step 2');
-                } else {
-                    // Fallback: force show step 2
-                    const step1 = document.getElementById('step1');
-                    const step2 = document.getElementById('step2');
-                    if (step1) step1.style.display = 'none';
-                    if (step2) step2.style.display = 'block';
-                    console.log('✅ Guest moved to step 2 (fallback)');
-                }
-            }, { passive: false, capture: true });
-        });
-        
-        console.log(`✅ Setup next-step button ${index}`);
-    });
-    
-    // Force setup prev-step buttons
-    const prevButtons = document.querySelectorAll('.prev-step');
-    console.log('Found prev-step buttons:', prevButtons.length);
-    
-    prevButtons.forEach((btn, index) => {
-        // Remove existing event listeners by cloning
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        
-        // Force make button clickable
-        newBtn.style.pointerEvents = 'auto';
-        newBtn.style.cursor = 'pointer';
-        newBtn.style.zIndex = '1000';
-        newBtn.disabled = false;
-        
-        // Add comprehensive event listeners
-        ['click', 'touchend', 'mouseup'].forEach(eventType => {
-            newBtn.addEventListener(eventType, function(e) {
-                console.log(`🎯 GUEST prev-step ${eventType} triggered!`);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Simple step navigation
-                const currentStepEl = document.querySelector('#step2[style*="block"], #step2:not([style*="none"]), #step3[style*="block"], #step3:not([style*="none"])');
-                
-                if (currentStepEl) {
-                    const currentStepNumber = currentStepEl.id.replace('step', '');
-                    const prevStepNumber = parseInt(currentStepNumber) - 1;
-                    const prevStepEl = document.getElementById('step' + prevStepNumber);
-                    
-                    if (prevStepEl) {
-                        currentStepEl.style.display = 'none';
-                        prevStepEl.style.display = 'block';
-                        console.log(`✅ Guest moved to step ${prevStepNumber}`);
-                    }
-                }
-            }, { passive: false, capture: true });
-        });
-        
-        console.log(`✅ Setup prev-step button ${index}`);
-    });
-}
-
-// Manual test functions for guest form
-window.testGuestNextStep = function() {
-    console.log('🧪 Manual test: Guest next step');
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    
-    if (step1) step1.style.display = 'none';
-    if (step2) step2.style.display = 'block';
-    
-    console.log('✅ Manually moved to step 2');
-};
-
-window.testGuestPrevStep = function() {
-    console.log('🧪 Manual test: Guest prev step');
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    if (step2) step2.style.display = 'none';
-    if (step3) step3.style.display = 'none';
-    if (step1) step1.style.display = 'block';
-    
-    console.log('✅ Manually moved to step 1');
-};
-
-window.checkGuestButtonStatus = function() {
-    console.log('🔍 Checking guest button status...');
-    
-    const nextButtons = document.querySelectorAll('.next-step');
-    const prevButtons = document.querySelectorAll('.prev-step');
-    
-    console.log('Next buttons found:', nextButtons.length);
-    nextButtons.forEach((btn, i) => {
-        console.log(`Next button ${i}:`, {
-            visible: btn.offsetParent !== null,
-            disabled: btn.disabled,
-            pointerEvents: getComputedStyle(btn).pointerEvents,
-            cursor: getComputedStyle(btn).cursor,
-            zIndex: getComputedStyle(btn).zIndex
-        });
-    });
-    
-    console.log('Prev buttons found:', prevButtons.length);
-    prevButtons.forEach((btn, i) => {
-        console.log(`Prev button ${i}:`, {
-            visible: btn.offsetParent !== null,
-            disabled: btn.disabled,
-            pointerEvents: getComputedStyle(btn).pointerEvents,
-            cursor: getComputedStyle(btn).cursor,
-            zIndex: getComputedStyle(btn).zIndex
-        });
-    });
-};
-
-window.forceClickGuestNextStep = function() {
-    console.log('🔨 Force clicking guest next step button...');
-    const nextBtn = document.querySelector('.next-step');
-    if (nextBtn) {
-        // Try multiple click methods
-        nextBtn.click();
-        nextBtn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-        nextBtn.dispatchEvent(new TouchEvent('touchend', { bubbles: true, cancelable: true }));
-        console.log('✅ Force click attempted');
+        if (guestCitySelect.options.length > 0) {
+            for (let i = 0; i < Math.min(5, guestCitySelect.options.length); i++) {
+                console.log(`Option ${i}:`, guestCitySelect.options[i].value, guestCitySelect.options[i].text);
+            }
+        }
     } else {
-        console.log('❌ Next button not found');
-    }
-};
-
-// Add global event delegation as backup
-document.addEventListener('click', function(e) {
-    // Backup handler for next-step buttons
-    if (e.target.closest('.next-step')) {
-        console.log('🚨 BACKUP: Guest next-step clicked');
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        
-        if (step1) step1.style.display = 'none';
-        if (step2) step2.style.display = 'block';
-        
-        console.log('✅ BACKUP: Moved to step 2');
+        console.log('❌ Guest city select not found');
     }
     
-    // Backup handler for prev-step buttons
-    if (e.target.closest('.prev-step')) {
-        console.log('🚨 BACKUP: Guest prev-step clicked');
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        
-        if (step2) step2.style.display = 'none';
-        if (step3) step3.style.display = 'none';
-        if (step1) step1.style.display = 'block';
-        
-        console.log('✅ BACKUP: Moved to step 1');
-    }
-}, true); // Use capture phase
-
-// =======================================
-// GUEST BUTTON FIX - WORKING SOLUTION
-// =======================================
-
-// Simple and effective guest button fix
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Fixing guest buttons...');
+    // Check if tabs are properly displayed
+    const guestTab = document.getElementById('guestTab');
+    const authTab = document.getElementById('leadTab');
     
-    // Wait a bit for all elements to load
-    setTimeout(function() {
-        fixGuestButtons();
+    console.log('=== TAB VISIBILITY ===');
+    console.log('Guest tab active:', guestTab?.classList.contains('active'));
+    console.log('Auth tab active:', authTab?.classList.contains('active'));
+}
+
+// Force reload cities with retry mechanism
+.forceReloadCities {
+    console.log('🔄 Force reloading cities...');
+    
+    // Clear existing options first
+    const authCitySelect = document.getElementById('auth_city_code');
+    const guestCitySelect = document.getElementById('guest_city_code');
+    
+    if (authCitySelect) {
+        authCitySelect.innerHTML = '<option value="">Đang tải...</option>';
+    }
+    if (guestCitySelect) {
+        guestCitySelect.innerHTML = '<option value="">Đang tải...</option>';
+    }
+    
+    // Reload after short delay
+    setTimeout(() => {
+        loadCities();
     }, 500);
-    
-    setTimeout(function() {
-        fixGuestButtons();
-    }, 2000);
-});
-
-function fixGuestButtons() {
-    console.log('🔧 Fixing guest form navigation buttons...');
-    
-    // Fix next-step buttons
-    const nextButtons = document.querySelectorAll('.next-step');
-    console.log('Found next buttons:', nextButtons.length);
-    
-    nextButtons.forEach((btn, index) => {
-        // Clear existing listeners by replacing
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        
-        // Force clickable styles
-        newBtn.style.pointerEvents = 'auto';
-        newBtn.style.cursor = 'pointer';
-        newBtn.style.zIndex = '999';
-        newBtn.disabled = false;
-        
-        // Add click handler
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🎯 Guest next clicked!');
-            
-            // Simple step change
-            const step1 = document.getElementById('step1');
-            const step2 = document.getElementById('step2');
-            
-            if (step1) step1.style.display = 'none';
-            if (step2) step2.style.display = 'block';
-            
-            console.log('✅ Moved to step 2');
-        });
-        
-        console.log('✅ Fixed next button', index);
-    });
-    
-    // Fix prev-step buttons
-    const prevButtons = document.querySelectorAll('.prev-step');
-    console.log('Found prev buttons:', prevButtons.length);
-    
-    prevButtons.forEach((btn, index) => {
-        // Clear existing listeners by replacing
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        
-        // Force clickable styles
-        newBtn.style.pointerEvents = 'auto';
-        newBtn.style.cursor = 'pointer';
-        newBtn.style.zIndex = '999';
-        newBtn.disabled = false;
-        
-        // Add click handler
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🎯 Guest prev clicked!');
-            
-            // Simple step change back
-            const step1 = document.getElementById('step1');
-            const step2 = document.getElementById('step2');
-            const step3 = document.getElementById('step3');
-            
-            if (step2) step2.style.display = 'none';
-            if (step3) step3.style.display = 'none';
-            if (step1) step1.style.display = 'block';
-            
-            console.log('✅ Moved to step 1');
-        });
-        
-        console.log('✅ Fixed prev button', index);
-    });
 }
 
-// Manual test functions
-window.testGuestNextStep = function() {
-    console.log('🧪 Manual test: Guest next step');
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
+// Manual populate with test data
+.populateTestCities {
+    console.log('🧪 Populating test cities...');
     
-    if (step1) step1.style.display = 'none';
-    if (step2) step2.style.display = 'block';
+    const testCities = [
+        { City_code: '01', City: 'Hà Nội' },
+        { City_code: '79', City: 'TP. Hồ Chí Minh' },
+        { City_code: '48', City: 'Đà Nẵng' },
+        { City_code: '31', City: 'Hải Phòng' },
+        { City_code: '92', City: 'Cần Thơ' },
+        { City_code: '26', City: 'Vĩnh Phúc' },
+        { City_code: '20', City: 'Thái Bình' }
+    ];
     
-    console.log('✅ Manually moved to step 2');
-};
-
-window.testGuestPrevStep = function() {
-    console.log('🧪 Manual test: Guest prev step');
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
+    let testOptions = '<option value="">Chọn thành phố</option>';
+    testCities.forEach(city => {
+        testOptions += `<option value="${city.City_code}">${city.City}</option>`;
+    });
     
-    if (step2) step2.style.display = 'none';
-    if (step3) step3.style.display = 'none';
-    if (step1) step1.style.display = 'block';
+    const authCitySelect = document.getElementById('auth_city_code');
+    const guestCitySelect = document.getElementById('guest_city_code');
     
-    console.log('✅ Manually moved to step 1');
-};
-
-window.checkGuestSteps = function() {
-    console.log('🔍 Checking guest steps...');
-    
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    console.log('Step 1:', step1 ? 'Found' : 'Not found', step1 ? getComputedStyle(step1).display : 'N/A');
-    console.log('Step 2:', step2 ? 'Found' : 'Not found', step2 ? getComputedStyle(step2).display : 'N/A');
-    console.log('Step 3:', step3 ? 'Found' : 'Not found', step3 ? getComputedStyle(step3).display : 'N/A');
-    
-    const nextBtns = document.querySelectorAll('.next-step');
-    const prevBtns = document.querySelectorAll('.prev-step');
-    
-    console.log('Next buttons:', nextBtns.length);
-    console.log('Prev buttons:', prevBtns.length);
-    
-    return {
-        step1: !!step1,
-        step2: !!step2,
-        step3: !!step3,
-        nextButtons: nextBtns.length,
-        prevButtons: prevBtns.length
-    };
-};
-
-window.forceFixGuestButtons = function() {
-    console.log('🔨 Force fixing guest buttons...');
-    fixGuestButtons();
-};
-
-// Backup global click handler
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.next-step')) {
-        console.log('🚨 Backup next handler');
-        e.preventDefault();
-        
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        
-        if (step1) step1.style.display = 'none';
-        if (step2) step2.style.display = 'block';
-        
-        console.log('✅ Backup moved to step 2');
+    if (authCitySelect) {
+        authCitySelect.innerHTML = testOptions;
+        console.log('✅ Auth city select populated with test data');
+    }
+    if (guestCitySelect) {
+        guestCitySelect.innerHTML = testOptions;
+        console.log('✅ Guest city select populated with test data');
     }
     
-    if (e.target.closest('.prev-step')) {
-        console.log('🚨 Backup prev handler');
-        e.preventDefault();
-        
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        
-        if (step2) step2.style.display = 'none';
-        if (step3) step3.style.display = 'none';
-        if (step1) step1.style.display = 'block';
-        
-        console.log('✅ Backup moved to step 1');
-    }
-}, true);
+    showNotification('✅ Test cities populated successfully!', 'success');
+}
 
-// IMMEDIATE OVERRIDE FOR GUEST BUTTONS
-console.log('🚨 IMMEDIATE OVERRIDE STARTING...');
-
-// Function to immediately fix buttons
-function emergencyButtonFix() {
-    console.log('🆘 Emergency button fix running...');
+// Auto-fill location data for testing
+window.fillTestLocationData = function() {
+    console.log('🔧 Filling test location data');
+    
+    // Load cities first
+    loadCities();
     
     setTimeout(() => {
-        // Fix next-step buttons with simpler logic
-        const nextBtns = document.querySelectorAll('.next-step');
-        console.log('Emergency found next buttons:', nextBtns.length);
-        
-        nextBtns.forEach((btn, i) => {
-            console.log('Emergency fixing next button', i);
-            
-            // Clone to remove all listeners
-            const parent = btn.parentNode;
-            const newBtn = btn.cloneNode(true);
-            parent.replaceChild(newBtn, btn);
-            
-            // Force properties
-            newBtn.style.cssText += '; pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;';
-            newBtn.disabled = false;
-            
-            // Simple click handler - determine step by checking which step form contains this button
-            newBtn.onclick = function(e) {
-                console.log('🎯 EMERGENCY NEXT CLICK!');
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Find which step this button belongs to
-                const step1 = document.getElementById('step1');
-                const step2 = document.getElementById('step2');
-                const step3 = document.getElementById('step3');
-                
-                const buttonInStep1 = step1 && step1.contains(newBtn);
-                const buttonInStep2 = step2 && step2.contains(newBtn);
-                
-                console.log('Button in step 1:', buttonInStep1);
-                console.log('Button in step 2:', buttonInStep2);
-                
-                if (buttonInStep1) {
-                    // Step 1 -> Step 2
-                    if (step1) step1.style.display = 'none';
-                    if (step2) step2.style.display = 'block';
-                    if (step3) step3.style.display = 'none';
-                    console.log('✅ EMERGENCY: Step 1 -> 2');
-                } else if (buttonInStep2) {
-                    // Step 2 -> Step 3
-                    if (step1) step1.style.display = 'none';
-                    if (step2) step2.style.display = 'none';
-                    if (step3) step3.style.display = 'block';
-                    console.log('✅ EMERGENCY: Step 2 -> 3');
-                } else {
-                    // Fallback: try to go to next visible step
-                    console.log('Fallback next step logic');
-                    if (step1 && window.getComputedStyle(step1).display !== 'none') {
-                        if (step1) step1.style.display = 'none';
-                        if (step2) step2.style.display = 'block';
-                        console.log('✅ FALLBACK: Step 1 -> 2');
-                    } else if (step2 && window.getComputedStyle(step2).display !== 'none') {
-                        if (step2) step2.style.display = 'none';
-                        if (step3) step3.style.display = 'block';
-                        console.log('✅ FALLBACK: Step 2 -> 3');
-                    }
-                }
-                return false;
-            };
-            
-            console.log('✅ Emergency next button', i, 'fixed');
-        });
-        
-        // Fix prev-step buttons with simpler logic
-        const prevBtns = document.querySelectorAll('.prev-step');
-        console.log('Emergency found prev buttons:', prevBtns.length);
-        
-        prevBtns.forEach((btn, i) => {
-            console.log('Emergency fixing prev button', i);
-            
-            // Clone to remove all listeners
-            const parent = btn.parentNode;
-            const newBtn = btn.cloneNode(true);
-            parent.replaceChild(newBtn, btn);
-            
-            // Force properties
-            newBtn.style.cssText += '; pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;';
-            newBtn.disabled = false;
-            
-            // Simple click handler
-            newBtn.onclick = function(e) {
-                console.log('🎯 EMERGENCY PREV CLICK!');
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Find which step this button belongs to
-                const step1 = document.getElementById('step1');
-                const step2 = document.getElementById('step2');
-                const step3 = document.getElementById('step3');
-                
-                const buttonInStep2 = step2 && step2.contains(newBtn);
-                const buttonInStep3 = step3 && step3.contains(newBtn);
-                
-                console.log('Button in step 2:', buttonInStep2);
-                console.log('Button in step 3:', buttonInStep3);
-                
-                if (buttonInStep3) {
-                    // Step 3 -> Step 2
-                    if (step1) step1.style.display = 'none';
-                    if (step2) step2.style.display = 'block';
-                    if (step3) step3.style.display = 'none';
-                    console.log('✅ EMERGENCY: Step 3 -> 2');
-                } else if (buttonInStep2) {
-                    // Step 2 -> Step 1
-                    if (step1) step1.style.display = 'block';
-                    if (step2) step2.style.display = 'none';
-                    if (step3) step3.style.display = 'none';
-                    console.log('✅ EMERGENCY: Step 2 -> 1');
-                } else {
-                    // Fallback: try to go to previous visible step
-                    console.log('Fallback prev step logic');
-                    if (step3 && window.getComputedStyle(step3).display !== 'none') {
-                        if (step1) step1.style.display = 'none';
-                        if (step2) step2.style.display = 'block';
-                        if (step3) step3.style.display = 'none';
-                        console.log('✅ FALLBACK: Step 3 -> 2');
-                    } else if (step2 && window.getComputedStyle(step2).display !== 'none') {
-                        if (step1) step1.style.display = 'block';
-                        if (step2) step2.style.display = 'none';
-                        if (step3) step3.style.display = 'none';
-                        console.log('✅ FALLBACK: Step 2 -> 1');
-                    }
-                }
-                return false;
-            };
-            
-            console.log('✅ Emergency prev button', i, 'fixed');
-        });
-    }, 100);
-}
-
-// Run immediately
-emergencyButtonFix();
-
-// Run repeatedly
-setInterval(emergencyButtonFix, 2000);
-
-// Manual test
-window.emergencyTest = function() {
-    console.log('🧪 Emergency test');
-    document.getElementById('step1').style.display = 'none';
-    document.getElementById('step2').style.display = 'block';
-};
-
-// Additional test functions for all steps
-window.goToStep1 = function() {
-    console.log('🧪 Go to step 1');
-    document.getElementById('step1').style.display = 'block';
-    document.getElementById('step2').style.display = 'none';
-    document.getElementById('step3').style.display = 'none';
-};
-
-window.goToStep2 = function() {
-    console.log('🧪 Go to step 2');
-    document.getElementById('step1').style.display = 'none';
-    document.getElementById('step2').style.display = 'block';
-    document.getElementById('step3').style.display = 'none';
-};
-
-window.goToStep3 = function() {
-    console.log('🧪 Go to step 3');
-    document.getElementById('step1').style.display = 'none';
-    document.getElementById('step2').style.display = 'none';
-    document.getElementById('step3').style.display = 'block';
-};
-
-window.testAllButtons = function() {
-    console.log('🧪 Testing all buttons...');
-    
-    const nextBtns = document.querySelectorAll('.next-step');
-    const prevBtns = document.querySelectorAll('.prev-step');
-    
-    console.log('Next buttons found:', nextBtns.length);
-    console.log('Prev buttons found:', prevBtns.length);
-    
-    nextBtns.forEach((btn, i) => {
-        console.log(`Next button ${i}:`, {
-            visible: btn.offsetParent !== null,
-            disabled: btn.disabled,
-            style: btn.style.cssText,
-            onclick: typeof btn.onclick
-        });
-    });
-    
-    prevBtns.forEach((btn, i) => {
-        console.log(`Prev button ${i}:`, {
-            visible: btn.offsetParent !== null,
-            disabled: btn.disabled,
-            style: btn.style.cssText,
-            onclick: typeof btn.onclick
-        });
-    });
-};
-
-window.forceRefixButtons = function() {
-    console.log('🔨 Force re-fixing all buttons...');
-    emergencyButtonFix();
-};
-
-window.debugCurrentSituation = function() {
-    console.log('🔍 === DEBUGGING CURRENT SITUATION ===');
-    
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    console.log('Step elements:');
-    console.log('- Step 1:', step1 ? 'Found' : 'Not found');
-    console.log('- Step 2:', step2 ? 'Found' : 'Not found'); 
-    console.log('- Step 3:', step3 ? 'Found' : 'Not found');
-    
-    if (step1) {
-        console.log('Step 1 display:', window.getComputedStyle(step1).display);
-        console.log('Step 1 style.display:', step1.style.display);
-    }
-    
-    if (step2) {
-        console.log('Step 2 display:', window.getComputedStyle(step2).display);
-        console.log('Step 2 style.display:', step2.style.display);
-    }
-    
-    if (step3) {
-        console.log('Step 3 display:', window.getComputedStyle(step3).display);
-        console.log('Step 3 style.display:', step3.style.display);
-    }
-    
-    // Check buttons in each step
-    const nextBtns = document.querySelectorAll('.next-step');
-    const prevBtns = document.querySelectorAll('.prev-step');
-    
-    console.log('Next buttons found:', nextBtns.length);
-    console.log('Prev buttons found:', prevBtns.length);
-    
-    nextBtns.forEach((btn, i) => {
-        const inStep1 = step1 && step1.contains(btn);
-        const inStep2 = step2 && step2.contains(btn);
-        const inStep3 = step3 && step3.contains(btn);
-        
-        console.log(`Next button ${i}:`, {
-            visible: btn.offsetParent !== null,
-            disabled: btn.disabled,
-            inStep1: inStep1,
-            inStep2: inStep2,
-            inStep3: inStep3,
-            hasOnclick: typeof btn.onclick === 'function'
-        });
-    });
-    
-    prevBtns.forEach((btn, i) => {
-        const inStep1 = step1 && step1.contains(btn);
-        const inStep2 = step2 && step2.contains(btn);
-        const inStep3 = step3 && step3.contains(btn);
-        
-        console.log(`Prev button ${i}:`, {
-            visible: btn.offsetParent !== null,
-            disabled: btn.disabled,
-            inStep1: inStep1,
-            inStep2: inStep2,
-            inStep3: inStep3,
-            hasOnclick: typeof btn.onclick === 'function'
-        });
-    });
-    
-    console.log('=== END DEBUG ===');
-};
-
-window.testStep2ToStep3 = function() {
-    console.log('🧪 Test: Step 2 -> Step 3');
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    if (step1) step1.style.display = 'none';
-    if (step2) step2.style.display = 'none';
-    if (step3) step3.style.display = 'block';
-    
-    console.log('✅ Manually moved to step 3');
-};
-
-window.testStep2ToStep1 = function() {
-    console.log('🧪 Test: Step 2 -> Step 1');
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    if (step1) step1.style.display = 'block';
-    if (step2) step2.style.display = 'none';
-    if (step3) step3.style.display = 'none';
-    
-    console.log('✅ Manually moved to step 1');
-};
-
-console.log('🚨 EMERGENCY OVERRIDE COMPLETE');
-
-// IMMEDIATE GUEST BUTTON DEBUG AND FIX
-console.log('🚀 Starting immediate guest button debug...');
-
-// Simple immediate fix function with aggressive CSS overrides
-function immediateGuestButtonFix() {
-    console.log('🔧 Running immediate guest button fix...');
-    
-    // Find next-step buttons
-    const nextBtns = document.querySelectorAll('.next-step');
-    console.log('Next buttons found:', nextBtns.length);
-    
-    // Force fix each button
-    nextBtns.forEach((btn, i) => {
-        console.log(`Fixing button ${i}...`);
-        
-        // Remove all existing event listeners by cloning
-        const parent = btn.parentNode;
-        const newBtn = btn.cloneNode(true);
-        parent.replaceChild(newBtn, btn);
-        
-        // Force all clickable properties
-        newBtn.style.pointerEvents = 'auto !important';
-        newBtn.style.cursor = 'pointer !important';
-        newBtn.style.zIndex = '9999 !important';
-        newBtn.style.position = 'relative !important';
-        newBtn.disabled = false;
-        newBtn.style.opacity = '1 !important';
-        newBtn.style.visibility = 'visible !important';
-        
-        // Add multiple event types
-        ['click', 'mousedown', 'touchstart', 'touchend'].forEach(eventType => {
-            newBtn.addEventListener(eventType, function(e) {
-                console.log(`🎯 ${eventType} on guest next button!`);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Determine current step and navigate to next
-                const step1 = document.getElementById('step1');
-                const step2 = document.getElementById('step2');
-                const step3 = document.getElementById('step3');
-                
-                // Check which step is currently visible
-                const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
-                const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
-                const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
-                
-                console.log('Current step visibility:', {
-                    step1: step1Visible,
-                    step2: step2Visible, 
-                    step3: step3Visible
-                });
-                
-                if (step1Visible) {
-                    // Currently on step 1, go to step 2
-                    console.log('Changing from step 1 to step 2...');
-                    hideStep(step1);
-                    showStep(step2);
-                    console.log('✅ Moved from step 1 to step 2');
-                    
-                } else if (step2Visible) {
-                    // Currently on step 2, go to step 3
-                    console.log('Changing from step 2 to step 3...');
-                    hideStep(step2);
-                    showStep(step3);
-                    console.log('✅ Moved from step 2 to step 3');
-                    
-                } else {
-                    // Fallback: assume step 1 and go to step 2
-                    console.log('Fallback: Changing to step 2...');
-                    hideStep(step1);
-                    showStep(step2);
-                    console.log('✅ Fallback: Moved to step 2');
-                }
-                
-                // Additional cleanup
-                setTimeout(() => {
-                    cleanupSteps();
-                }, 100);
-                
-            }, { passive: false, capture: true });
-        });
-        
-        console.log(`✅ Button ${i} fixed with all events`);
-    });
-    
-    // Also fix prev-step buttons
-    const prevBtns = document.querySelectorAll('.prev-step');
-    console.log('Prev buttons found:', prevBtns.length);
-    
-    prevBtns.forEach((btn, i) => {
-        console.log(`Fixing prev button ${i}...`);
-        
-        // Remove all existing event listeners by cloning
-        const parent = btn.parentNode;
-        const newBtn = btn.cloneNode(true);
-        parent.replaceChild(newBtn, btn);
-        
-        // Force all clickable properties
-        newBtn.style.pointerEvents = 'auto !important';
-        newBtn.style.cursor = 'pointer !important';
-        newBtn.style.zIndex = '9999 !important';
-        newBtn.style.position = 'relative !important';
-        newBtn.disabled = false;
-        newBtn.style.opacity = '1 !important';
-        newBtn.style.visibility = 'visible !important';
-        
-        // Add multiple event types
-        ['click', 'mousedown', 'touchstart', 'touchend'].forEach(eventType => {
-            newBtn.addEventListener(eventType, function(e) {
-                console.log(`🎯 ${eventType} on guest prev button!`);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Determine current step and navigate to previous
-                const step1 = document.getElementById('step1');
-                const step2 = document.getElementById('step2');
-                const step3 = document.getElementById('step3');
-                
-                // Check which step is currently visible
-                const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
-                const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
-                const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
-                
-                console.log('Current step visibility for prev:', {
-                    step1: step1Visible,
-                    step2: step2Visible, 
-                    step3: step3Visible
-                });
-                
-                if (step3Visible) {
-                    // Currently on step 3, go to step 2
-                    console.log('Changing from step 3 to step 2...');
-                    hideStep(step3);
-                    showStep(step2);
-                    console.log('✅ Moved from step 3 to step 2');
-                    
-                } else if (step2Visible) {
-                    // Currently on step 2, go to step 1
-                    console.log('Changing from step 2 to step 1...');
-                    hideStep(step2);
-                    showStep(step1);
-                    console.log('✅ Moved from step 2 to step 1');
-                }
-                
-                // Additional cleanup
-                setTimeout(() => {
-                    cleanupSteps();
-                }, 100);
-                
-            }, { passive: false, capture: true });
-        });
-        
-        console.log(`✅ Prev button ${i} fixed with all events`);
-    });
-}
-
-// Helper function to aggressively hide a step
-function hideStep(stepElement) {
-    if (stepElement) {
-        stepElement.style.display = 'none !important';
-        stepElement.style.visibility = 'hidden !important';
-        stepElement.style.opacity = '0 !important';
-        stepElement.style.height = '0 !important';
-        stepElement.style.overflow = 'hidden !important';
-        stepElement.style.position = 'absolute !important';
-        stepElement.style.left = '-9999px !important';
-        stepElement.setAttribute('style', stepElement.getAttribute('style') + '; display: none !important;');
-        console.log(`Step ${stepElement.id} hidden`);
-    }
-}
-
-// Helper function to aggressively show a step
-function showStep(stepElement) {
-    if (stepElement) {
-        stepElement.style.display = 'block !important';
-        stepElement.style.visibility = 'visible !important';
-        stepElement.style.opacity = '1 !important';
-        stepElement.style.height = 'auto !important';
-        stepElement.style.overflow = 'visible !important';
-        stepElement.style.position = 'relative !important';
-        stepElement.style.left = 'auto !important';
-        stepElement.setAttribute('style', stepElement.getAttribute('style') + '; display: block !important;');
-        
-        // Force browser to repaint
-        stepElement.offsetHeight; // Trigger reflow
-        stepElement.style.transform = 'translateZ(0)'; // Force hardware acceleration
-        console.log(`Step ${stepElement.id} shown`);
-    }
-}
-
-// Helper function to clean up step conflicts
-function cleanupSteps() {
-    const allSteps = ['step1', 'step2', 'step3'];
-    
-    allSteps.forEach(stepId => {
-        const stepEl = document.getElementById(stepId);
-        if (stepEl) {
-            const isVisible = getComputedStyle(stepEl).display !== 'none';
-            if (isVisible) {
-                showStep(stepEl); // Ensure it's properly shown
-            } else {
-                hideStep(stepEl); // Ensure it's properly hidden
-            }
-        }
-    });
-    
-    console.log('🔄 Step cleanup completed');
-}
-
-// Run immediately when script loads
-immediateGuestButtonFix();
-
-// Run when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM ready, running guest button fix again...');
-    setTimeout(immediateGuestButtonFix, 100);
-    setTimeout(immediateGuestButtonFix, 500);
-    setTimeout(immediateGuestButtonFix, 1000);
-    setTimeout(immediateGuestButtonFix, 2000);
-});
-
-// Global window functions for manual testing
-window.debugGuestButtons = function() {
-    console.log('🔍 Debug guest buttons...');
-    
-    const nextBtns = document.querySelectorAll('.next-step');
-    const prevBtns = document.querySelectorAll('.prev-step');
-    console.log('Next buttons found:', nextBtns.length);
-    console.log('Prev buttons found:', prevBtns.length);
-    
-    // Check steps
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    console.log('Steps status:');
-    console.log('- Step 1:', step1 ? 'Found' : 'Not found', step1 ? getComputedStyle(step1).display : 'N/A');
-    console.log('- Step 2:', step2 ? 'Found' : 'Not found', step2 ? getComputedStyle(step2).display : 'N/A');
-    console.log('- Step 3:', step3 ? 'Found' : 'Not found', step3 ? getComputedStyle(step3).display : 'N/A');
-};
-
-window.manualStepChange = function(targetStep) {
-    console.log(`🔧 Manual step change to step ${targetStep}...`);
-    
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    // Hide all steps first
-    hideStep(step1);
-    hideStep(step2);
-    hideStep(step3);
-    
-    // Show target step
-    if (targetStep === 1) showStep(step1);
-    else if (targetStep === 2) showStep(step2);
-    else if (targetStep === 3) showStep(step3);
-    
-    console.log(`✅ Manually changed to step ${targetStep}`);
-};
-
-window.goToStep1 = function() { manualStepChange(1); };
-window.goToStep2 = function() { manualStepChange(2); };
-window.goToStep3 = function() { manualStepChange(3); };
-
-window.forceButtonClick = function() {
-    console.log('🔨 Force button click...');
-    
-    const nextBtn = document.querySelector('.next-step');
-    if (nextBtn) {
-        console.log('Found button, trying to click...');
-        
-        // Try multiple click methods
-        nextBtn.click();
-        
-        const clickEvent = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-        });
-        nextBtn.dispatchEvent(clickEvent);
-        
-        console.log('✅ Force click attempted');
-    } else {
-        console.log('❌ No next-step button found');
-    }
-};
-
-window.rerunFix = function() {
-    console.log('🔄 Re-running immediate fix...');
-    immediateGuestButtonFix();
-};
-
-// Global backup click handler with highest priority - MORE AGGRESSIVE
-document.addEventListener('click', function(e) {
-    if (e.target && (e.target.classList.contains('next-step') || e.target.closest('.next-step'))) {
-        console.log('🚨 GLOBAL BACKUP: Next step clicked!');
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        
-        // Check current step and navigate
-        const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
-        const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
-        
-        if (step1Visible) {
-            hideStep(step1);
-            showStep(step2);
-            console.log('✅ GLOBAL BACKUP: Changed from step 1 to step 2');
-        } else if (step2Visible) {
-            hideStep(step2);
-            showStep(step3);
-            console.log('✅ GLOBAL BACKUP: Changed from step 2 to step 3');
-        } else {
-            // Fallback
-            hideStep(step1);
-            showStep(step2);
-            console.log('✅ GLOBAL BACKUP: Fallback to step 2');
-        }
-        
-        return false;
-    }
-    
-    // Handle prev-step buttons
-    if (e.target && (e.target.classList.contains('prev-step') || e.target.closest('.prev-step'))) {
-        console.log('🚨 GLOBAL BACKUP: Prev step clicked!');
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        
-        // Check current step and navigate backward
-        const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
-        const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
-        
-        if (step3Visible) {
-            hideStep(step3);
-            showStep(step2);
-            console.log('✅ GLOBAL BACKUP: Changed from step 3 to step 2');
-        } else if (step2Visible) {
-            hideStep(step2);
-            showStep(step1);
-            console.log('✅ GLOBAL BACKUP: Changed from step 2 to step 1');
-        }
-        
-        return false;
-    }
-}, true); // Use capture phase with highest priority
-
-// Additional: Force override any CSS animations or transitions that might interfere
-const forceStepStyles = document.createElement('style');
-forceStepStyles.textContent = `
-    #step1.form-step[style*="none"] {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        overflow: hidden !important;
-        position: absolute !important;
-        left: -9999px !important;
-    }
-    
-    #step2.form-step[style*="block"] {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        height: auto !important;
-        overflow: visible !important;
-        position: relative !important;
-        left: auto !important;
-    }
-    
-    #step3.form-step[style*="block"] {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        height: auto !important;
-        overflow: visible !important;
-        position: relative !important;
-        left: auto !important;
-    }
-    
-    .next-step, .prev-step {
-        pointer-events: auto !important;
-        cursor: pointer !important;
-        z-index: 9999 !important;
-        position: relative !important;
-    }
-`;
-document.head.appendChild(forceStepStyles);
-
-// Function to show new user modal with login information
-function showNewUserModal(loginInfo) {
-    // Create modal HTML
-    const modalHTML = `
-        <div id="newUserModal" class="modal" style="
-            display: block;
-            position: fixed;
-            z-index: 9999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        ">
-            <div class="modal-content" style="
-                background-color: #fff;
-                margin: 5% auto;
-                padding: 0;
-                border-radius: 8px;
-                width: 90%;
-                max-width: 500px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                animation: modalSlideIn 0.3s ease-out;
-            ">
-                <div style="
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    padding: 20px;
-                    border-radius: 8px 8px 0 0;
-                    text-align: center;
-                ">
-                    <h3 style="margin: 0; font-size: 24px;">🎉 Tài khoản đã được tạo!</h3>
-                    <p style="margin: 10px 0 0 0; opacity: 0.9;">Chào mừng bạn đến với DoiTay.vn</p>
-                </div>
-                
-                <div style="padding: 30px;">
-                    <div style="
-                        background-color: #f8f9fa;
-                        border-left: 4px solid #667eea;
-                        padding: 20px;
-                        margin: 20px 0;
-                        border-radius: 0 4px 4px 0;
-                    ">
-                        <h4 style="margin-top: 0; color: #667eea;">🔑 Thông tin đăng nhập:</h4>
-                        
-                        <div style="
-                            background-color: #fff;
-                            padding: 15px;
-                            border-radius: 4px;
-                            border: 1px solid #ddd;
-                            margin: 10px 0;
-                            font-family: 'Courier New', monospace;
-                        ">
-                            <strong>📱 Tài khoản:</strong> ${loginInfo.username}
-                        </div>
-                        
-                        <div style="
-                            background-color: #fff;
-                            padding: 15px;
-                            border-radius: 4px;
-                            border: 1px solid #ddd;
-                            margin: 10px 0;
-                            font-family: 'Courier New', monospace;
-                        ">
-                            <strong>📧 Email:</strong> ${loginInfo.email}
-                        </div>
-                        
-                        <div style="
-                            background-color: #fff3cd;
-                            padding: 15px;
-                            border-radius: 4px;
-                            border: 1px solid #ffeaa7;
-                            margin: 15px 0;
-                        ">
-                            <strong>🔑 Mật khẩu đã được gửi qua email và SMS</strong>
-                        </div>
-                    </div>
-                    
-                    <div style="
-                        background-color: #d1ecf1;
-                        border: 1px solid #bee5eb;
-                        color: #0c5460;
-                        padding: 15px;
-                        border-radius: 4px;
-                        margin: 20px 0;
-                    ">
-                        <strong>📋 Lưu ý quan trọng:</strong>
-                        <ul style="margin: 10px 0; padding-left: 20px;">
-                            <li>Kiểm tra email và SMS để lấy mật khẩu</li>
-                            <li>Bạn đã được tự động đăng nhập</li>
-                            <li>Vui lòng đổi mật khẩu sau lần đăng nhập đầu tiên</li>
-                            <li>Lưu thông tin đăng nhập an toàn</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button onclick="closeNewUserModal()" style="
-                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                            color: white;
-                            border: none;
-                            padding: 12px 30px;
-                            border-radius: 5px;
-                            font-size: 16px;
-                            cursor: pointer;
-                            margin-right: 10px;
-                        ">
-                            ✅ Đã hiểu
-                        </button>
-                        
-                        <button onclick="copyLoginInfo('${loginInfo.username}', '${loginInfo.email}')" style="
-                            background: #28a745;
-                            color: white;
-                            border: none;
-                            padding: 12px 20px;
-                            border-radius: 5px;
-                            font-size: 16px;
-                            cursor: pointer;
-                        ">
-                            📋 Copy thông tin
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <style>
-            @keyframes modalSlideIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(-50px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
+        // Select Ho Chi Minh City
+        const guestCitySelect = document.getElementById('guest_city_code');
+        if (guestCitySelect) {
+            // Find Ho Chi Minh City option
+            for (let i = 0; i < guestCitySelect.options.length; i++) {
+                if (guestCitySelect.options[i].text.includes('Hồ Chí Minh') || 
+                    guestCitySelect.options[i].text.includes('TP.HCM')) {
+                    guestCitySelect.selectedIndex = i;
+                    guestCitySelect.dispatchEvent(new Event('change'));
+                    console.log('Selected city:', guestCitySelect.options[i].text);
+                    break;
                 }
             }
-        </style>
-    `;
+        }
+    }, 1000);
     
-    // Remove existing modal if any
-    const existingModal = document.getElementById('newUserModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Add modal to page
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Auto close after 15 seconds
     setTimeout(() => {
-        closeNewUserModal();
-    }, 15000);
-}
-
-// Function to close new user modal
-window.closeNewUserModal = function() {
-    const modal = document.getElementById('newUserModal');
-    if (modal) {
-        modal.style.animation = 'modalSlideOut 0.3s ease-in';
-        setTimeout(() => {
-            modal.remove();
-        }, 300);
-    }
+        // Select a district
+        const guestDistrictSelect = document.getElementById('guest_district_code');
+        if (guestDistrictSelect && guestDistrictSelect.options.length > 1) {
+            guestDistrictSelect.selectedIndex = 1; // First district
+            guestDistrictSelect.dispatchEvent(new Event('change'));
+            console.log('Selected district:', guestDistrictSelect.options[1].text);
+        }
+    }, 3000);
+    
+    setTimeout(() => {
+        // Select a ward
+        const guestWardSelect = document.getElementById('guest_ward_code');
+        if (guestWardSelect && guestWardSelect.options.length > 1) {
+            guestWardSelect.selectedIndex = 1; // First ward
+            console.log('Selected ward:', guestWardSelect.options[1].text);
+        }
+    }, 5000);
 };
 
-// Function to copy login information
-window.copyLoginInfo = function(username, email) {
-    const textToCopy = `Thông tin đăng nhập DoiTay.vn:\nTài khoản: ${username}\nEmail: ${email}\nMật khẩu: Đã gửi qua email/SMS`;
+// Debug function to check dropdown state
+window.checkDropdownState = function() {
+    console.log('🔍 Checking dropdown state...');
     
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            showNotification('📋 Đã copy thông tin đăng nhập!', 'success', 2000);
-        }).catch(() => {
-            fallbackCopyTextToClipboard(textToCopy);
-        });
+    const authCitySelect = document.getElementById('auth_city_code');
+    const guestCitySelect = document.getElementById('guest_city_code');
+    
+    console.log('=== AUTH CITY SELECT ===');
+    if (authCitySelect) {
+        console.log('Element found:', authCitySelect);
+        console.log('Options count:', authCitySelect.options.length);
+        console.log('Disabled:', authCitySelect.disabled);
+        console.log('Visible:', window.getComputedStyle(authCitySelect).display !== 'none');
+        console.log('Parent visible:', window.getComputedStyle(authCitySelect.parentElement).display !== 'none');
+        
+        if (authCitySelect.options.length > 0) {
+            for (let i = 0; i < Math.min(5, authCitySelect.options.length); i++) {
+                console.log(`Option ${i}:`, authCitySelect.options[i].value, authCitySelect.options[i].text);
+            }
+        }
     } else {
-        fallbackCopyTextToClipboard(textToCopy);
+        console.log('❌ Auth city select not found');
     }
+    
+    console.log('=== GUEST CITY SELECT ===');
+    if (guestCitySelect) {
+        console.log('Element found:', guestCitySelect);
+        console.log('Options count:', guestCitySelect.options.length);
+        console.log('Disabled:', guestCitySelect.disabled);
+        console.log('Visible:', window.getComputedStyle(guestCitySelect).display !== 'none');
+        console.log('Parent visible:', window.getComputedStyle(guestCitySelect.parentElement).display !== 'none');
+        
+        if (guestCitySelect.options.length > 0) {
+            for (let i = 0; i < Math.min(5, guestCitySelect.options.length); i++) {
+                console.log(`Option ${i}:`, guestCitySelect.options[i].value, guestCitySelect.options[i].text);
+            }
+        }
+    } else {
+        console.log('❌ Guest city select not found');
+    }
+    
+    // Check if tabs are properly displayed
+    const guestTab = document.getElementById('guestTab');
+    const authTab = document.getElementById('leadTab');
+    
+    console.log('=== TAB VISIBILITY ===');
+    console.log('Guest tab active:', guestTab?.classList.contains('active'));
+    console.log('Auth tab active:', authTab?.classList.contains('active'));
 };
 
-// Fallback copy function for older browsers
-function fallbackCopyTextToClipboard(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
+// Force reload cities with retry mechanism
+window.forceReloadCities = function() {
+    console.log('🔄 Force reloading cities...');
     
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-        document.execCommand('copy');
-        showNotification('📋 Đã copy thông tin đăng nhập!', 'success', 2000);
-    } catch (err) {
-        showNotification('❌ Không thể copy, vui lòng copy thủ công', 'error');
+    // Clear existing options first
+    const authCitySelect = document.getElementById('auth_city_code');
+    const guestCitySelect = document.getElementById('guest_city_code');
+    
+    if (authCitySelect) {
+        authCitySelect.innerHTML = '<option value="">Đang tải...</option>';
     }
+    if (guestCitySelect) {
+        guestCitySelect.innerHTML = '<option value="">Đang tải...</option>';
+    }
+    
+    // Reload after short delay
+    setTimeout(() => {
+        loadCities();
+    }, 500);
+};
 
-    document.body.removeChild(textArea);
-}
+// Manual populate with test data
+window.populateTestCities = function() {
+    console.log('🧪 Populating test cities...');
+    
+    const testCities = [
+        { City_code: '01', City: 'Hà Nội' },
+        { City_code: '79', City: 'TP. Hồ Chí Minh' },
+        { City_code: '48', City: 'Đà Nẵng' },
+        { City_code: '31', City: 'Hải Phòng' },
+        { City_code: '92', City: 'Cần Thơ' },
+        { City_code: '26', City: 'Vĩnh Phúc' },
+        { City_code: '20', City: 'Thái Bình' }
+    ];
+    
+    let testOptions = '<option value="">Chọn thành phố</option>';
+    testCities.forEach(city => {
+        testOptions += `<option value="${city.City_code}">${city.City}</option>`;
+    });
+    
+    const authCitySelect = document.getElementById('auth_city_code');
+    const guestCitySelect = document.getElementById('guest_city_code');
+    
+    if (authCitySelect) {
+        authCitySelect.innerHTML = testOptions;
+        console.log('✅ Auth city select populated with test data');
+    }
+    if (guestCitySelect) {
+        guestCitySelect.innerHTML = testOptions;
+        console.log('✅ Guest city select populated with test data');
+    }
+    
+    showNotification('✅ Test cities populated successfully!', 'success');
+};
 </style>
 
 @push('script')
@@ -3910,30 +2598,56 @@ function initLocationSystem() {
     // Handle city change for both guest and authenticated forms
     $(document).on('change', 'select[name="city_code"]', function() {
         const cityCode = $(this).val();
-        const formContainer = $(this).closest('form');
-        const districtSelect = formContainer.find('select[name="district_code"]');
-        const wardSelect = formContainer.find('select[name="ward_code"]');
+        const selectId = $(this).attr('id');
         
-        // Reset district and ward selects
-        districtSelect.empty().append('<option value="">Chọn quận/huyện</option>').prop('disabled', true);
-        wardSelect.empty().append('<option value="">Chọn phường/xã</option>').prop('disabled', true);
+        // Determine prefix from select ID
+        let prefix = 'guest';
+        if (selectId && selectId.includes('auth_')) {
+            prefix = 'auth';
+        }
+        
+        console.log('City changed:', cityCode, 'prefix:', prefix);
+        
+        // Reset dependent selects
+        const districtSelect = document.getElementById(`${prefix}_district_code`);
+        const wardSelect = document.getElementById(`${prefix}_ward_code`);
+        
+        if (districtSelect) {
+            districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+            districtSelect.disabled = true;
+        }
+        if (wardSelect) {
+            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            wardSelect.disabled = true;
+        }
         
         if (cityCode) {
-            loadDistricts(cityCode, districtSelect);
+            loadDistricts(cityCode, prefix);
         }
     });
     
     // Handle district change for both guest and authenticated forms
     $(document).on('change', 'select[name="district_code"]', function() {
         const districtCode = $(this).val();
-        const formContainer = $(this).closest('form');
-        const wardSelect = formContainer.find('select[name="ward_code"]');
+        const selectId = $(this).attr('id');
+        
+        // Determine prefix from select ID
+        let prefix = 'guest';
+        if (selectId && selectId.includes('auth_')) {
+            prefix = 'auth';
+        }
+        
+        console.log('District changed:', districtCode, 'prefix:', prefix);
         
         // Reset ward select
-        wardSelect.empty().append('<option value="">Chọn phường/xã</option>').prop('disabled', true);
+        const wardSelect = document.getElementById(`${prefix}_ward_code`);
+        if (wardSelect) {
+            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            wardSelect.disabled = true;
+        }
         
         if (districtCode) {
-            loadWards(districtCode, wardSelect);
+            loadWards(districtCode, prefix);
         }
     });
     
@@ -3980,170 +2694,174 @@ function loadCities() {
     console.log('🏙️ Loading cities...');
     
     // Check if select elements exist before fetching
-    const citySelects = $('select[name="city_code"]');
-    console.log('Found city selects:', citySelects.length);
+    const authCitySelect = document.getElementById('auth_city_code');
+    const guestCitySelect = document.getElementById('guest_city_code');
     
-    if (citySelects.length === 0) {
+    console.log('Found select elements:');
+    console.log('Auth city select:', authCitySelect);
+    console.log('Guest city select:', guestCitySelect);
+    
+    if (!authCitySelect && !guestCitySelect) {
         console.warn('⚠️ No city select elements found, retrying in 1 second...');
         setTimeout(loadCities, 1000);
         return;
     }
     
-    $.ajax({
-        url: '/localtion/api/cities',
-        type: 'GET',
-        dataType: 'text', // Changed back to 'text' 
-        success: function(response) {
-            console.log('📡 Cities API response received');
-            console.log('Raw cities API response:', response);
-            const cleanResponse = response.replace(/<!--|-->/g, '').trim();
-            console.log('Cleaned response:', cleanResponse);
-            try {
-                const cities = JSON.parse(cleanResponse);
-                console.log('📊 Cities data parsed:', cities);
-                console.log('📊 Number of cities:', cities.length);
-                
-                if (!Array.isArray(cities) || cities.length === 0) {
-                    throw new Error('Invalid cities data received');
-                }
-                
-                citySelects.each(function() {
-                    const select = $(this);
-                    const selectId = select.attr('id');
-                    console.log('🔄 Populating select:', selectId);
-                    
-                    select.empty().append('<option value="">Chọn thành phố</option>');
-                    
-                    cities.forEach((city, index) => {
-                        if (index < 5) console.log(`City ${index + 1}:`, city);
-                        select.append(
-                            `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
-                        );
-                    });
-                    
-                    console.log('✅ Select populated, options count:', select.find('option').length);
-                });
-                
-                console.log('🎉 Cities loaded and populated successfully!');
-                
-                // Trigger change event to refresh dropdowns
-                citySelects.trigger('change');
-                
-            } catch (error) {
-                console.error("❌ Lỗi xử lý dữ liệu cities:", error);
-                console.error('❌ Error details:', {
-                    name: error.name,
-                    message: error.message,
-                    stack: error.stack
-                });
-                
-                // Fallback with hardcoded major cities
-                console.log('🔄 Using fallback cities...');
-                const fallbackCities = [
-                    { City_code: '01', City: 'Hà Nội' },
-                    { City_code: '79', City: 'TP. Hồ Chí Minh' },
-                    { City_code: '48', City: 'Đà Nẵng' },
-                    { City_code: '31', City: 'Hải Phòng' },
-                    { City_code: '92', City: 'Cần Thơ' }
-                ];
-                
-                citySelects.each(function() {
-                    const select = $(this);
-                    select.empty().append('<option value="">Chọn thành phố</option>');
-                    
-                    fallbackCities.forEach(city => {
-                        select.append(
-                            `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
-                        );
-                    });
-                    
-                    console.log('✅ Fallback cities populated for:', select.attr('id'));
-                });
-                
-                showNotification('Đang sử dụng danh sách thành phố cơ bản. Vui lòng thử lại sau.', 'warning');
+    fetch('/localtion/api/cities')
+        .then(response => {
+            console.log('📡 Cities API response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error("❌ Lỗi API (cities):", textStatus, errorThrown);
-            console.error("❌ Response text:", jqXHR.responseText);
-            console.error("❌ Status code:", jqXHR.status);
-            showNotification('Không thể tải danh sách thành phố', 'error');
-        }
-    });
+            return response.json();
+        })
+        .then(cities => {
+            console.log('📊 Cities data received:', cities);
+            console.log('📊 Number of cities:', cities.length);
+            
+            if (!Array.isArray(cities) || cities.length === 0) {
+                throw new Error('Invalid cities data received');
+            }
+            
+            // Build options for cities  
+            let cityOptions = '<option value="">Chọn thành phố</option>';
+            cities.forEach((city, index) => {
+                console.log(`City ${index + 1}:`, city);
+                cityOptions += `<option value="${city.City_code}">${city.City}</option>`;
+            });
+            
+            console.log('🔧 Built city options HTML:', cityOptions.substring(0, 200) + '...');
+            
+            // Populate auth city select
+            if (authCitySelect) {
+                console.log('🔄 Populating auth city select...');
+                authCitySelect.innerHTML = cityOptions;
+                console.log('✅ Auth city select populated, options count:', authCitySelect.options.length);
+            }
+            
+            // Populate guest city select
+            if (guestCitySelect) {
+                console.log('🔄 Populating guest city select...');
+                guestCitySelect.innerHTML = cityOptions;
+                console.log('✅ Guest city select populated, options count:', guestCitySelect.options.length);
+            }
+            
+            console.log('🎉 Cities loaded and populated successfully!');
+            
+            // Trigger a change event to refresh the dropdowns
+            if (authCitySelect) authCitySelect.dispatchEvent(new Event('change'));
+            if (guestCitySelect) guestCitySelect.dispatchEvent(new Event('change'));
+            
+        })
+        .catch(error => {
+            console.error('❌ Error loading cities:', error);
+            console.error('❌ Error details:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            });
+            
+            // Fallback with hardcoded major cities
+            console.log('🔄 Using fallback cities...');
+            const fallbackCities = [
+                { City_code: '01', City: 'Hà Nội' },
+                { City_code: '02', City: 'TP. Hồ Chí Minh' },
+                { City_code: '03', City: 'Đà Nẵng' },
+                { City_code: '04', City: 'Hải Phòng' },
+                { City_code: '05', City: 'Cần Thơ' }
+            ];
+            
+            let fallbackOptions = '<option value="">Chọn thành phố</option>';
+            fallbackCities.forEach(city => {
+                fallbackOptions += `<option value="${city.City_code}">${city.City}</option>`;
+            });
+            
+            if (authCitySelect) {
+                authCitySelect.innerHTML = fallbackOptions;
+                console.log('✅ Auth city select populated with fallback');
+            }
+            if (guestCitySelect) {
+                guestCitySelect.innerHTML = fallbackOptions;
+                console.log('✅ Guest city select populated with fallback');
+            }
+            
+            showNotification('Đang sử dụng danh sách thành phố cơ bản. Vui lòng thử lại sau.', 'warning');
+        });
 }
 
-function loadDistricts(cityCode, districtSelect) {
-    console.log('Loading districts for city:', cityCode);
-    $.ajax({
-        url: `/localtion/api/districts/${cityCode}`,
-        type: 'GET',
-        dataType: 'text', // Changed back to 'text'
-        success: function(response) {
-            console.log('Raw districts API response:', response);
-            const cleanResponse = response.replace(/<!--|-->/g, '').trim();
-            console.log('Cleaned districts response:', cleanResponse);
-            try {
-                const districts = JSON.parse(cleanResponse);
-                
-                districtSelect.empty().append('<option value="">Chọn quận/huyện</option>');
-                
+function loadDistricts(cityCode, prefix) {
+    if (!cityCode) {
+        console.log('No city code provided');
+        return;
+    }
+    
+    console.log('Loading districts for city:', cityCode, 'prefix:', prefix);
+    
+    fetch(`/localtion/api/districts/${cityCode}`)
+        .then(response => response.json())
+        .then(districts => {
+            console.log('Districts loaded:', districts);
+            
+            const districtSelect = document.getElementById(`${prefix}_district_code`);
+            const wardSelect = document.getElementById(`${prefix}_ward_code`);
+            
+            if (districtSelect) {
+                // Build options for districts
+                let districtOptions = '<option value="">Chọn quận/huyện</option>';
                 districts.forEach(district => {
-                    console.log('Adding district:', district);
-                    districtSelect.append(
-                        `<option value="${district.District_code}" data-name="${district.District}">${district.District}</option>`
-                    );
+                    districtOptions += `<option value="${district.District_code}">${district.District}</option>`;
                 });
                 
-                districtSelect.prop('disabled', false);
-                console.log('Districts loaded successfully');
-            } catch (error) {
-                console.error("Lỗi xử lý dữ liệu districts:", error);
-                showNotification('Có lỗi khi tải danh sách quận/huyện', 'error');
+                districtSelect.innerHTML = districtOptions;
+                districtSelect.disabled = false;
+                
+                console.log('Districts populated successfully for', prefix);
             }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error("Lỗi API (districts):", textStatus, errorThrown);
-            console.error("Response text:", jqXHR.responseText);
+            
+            // Reset ward select
+            if (wardSelect) {
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                wardSelect.disabled = true;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading districts:', error);
             showNotification('Không thể tải danh sách quận/huyện', 'error');
-        }
-    });
+        });
 }
 
-function loadWards(districtCode, wardSelect) {
-    console.log('Loading wards for district:', districtCode);
-    $.ajax({
-        url: `/localtion/api/wards/${districtCode}`,
-        type: 'GET',
-        dataType: 'text', // Changed back to 'text'
-        success: function(response) {
-            console.log('Raw wards API response:', response);
-            const cleanResponse = response.replace(/<!--|-->/g, '').trim();
-            console.log('Cleaned wards response:', cleanResponse);
-            try {
-                const wards = JSON.parse(cleanResponse);
-                
-                wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
-                
+function loadWards(districtCode, prefix) {
+    if (!districtCode) {
+        console.log('No district code provided');
+        return;
+    }
+    
+    console.log('Loading wards for district:', districtCode, 'prefix:', prefix);
+    
+    fetch(`/localtion/api/wards/${districtCode}`)
+        .then(response => response.json())
+        .then(wards => {
+            console.log('Wards loaded:', wards);
+            
+            const wardSelect = document.getElementById(`${prefix}_ward_code`);
+            
+            if (wardSelect) {
+                // Build options for wards
+                let wardOptions = '<option value="">Chọn phường/xã</option>';
                 wards.forEach(ward => {
-                    console.log('Adding ward:', ward);
-                    wardSelect.append(
-                        `<option value="${ward.Ward_code}" data-name="${ward.Ward}">${ward.Ward}</option>`
-                    );
+                    wardOptions += `<option value="${ward.Ward_code}">${ward.Ward}</option>`;
                 });
                 
-                wardSelect.prop('disabled', false);
-                console.log('Wards loaded successfully');
-            } catch (error) {
-                console.error("Lỗi xử lý dữ liệu wards:", error);
-                showNotification('Có lỗi khi tải danh sách phường/xã', 'error');
+                wardSelect.innerHTML = wardOptions;
+                wardSelect.disabled = false;
+                
+                console.log('Wards populated successfully for', prefix);
             }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error("Lỗi API (wards):", textStatus, errorThrown);
-            console.error("Response text:", jqXHR.responseText);
+        })
+        .catch(error => {
+            console.error('Error loading wards:', error);
             showNotification('Không thể tải danh sách phường/xã', 'error');
-        }
-    });
+        });
 }
 
 function initQuickLeadForm() {
@@ -4361,8 +3079,6 @@ function initQuickLeadForm() {
         const currentStepEl = document.getElementById('step' + step);
         if (!currentStepEl) return true;
         
-        console.log('🔍 Validating guest step:', step);
-        
         const requiredFields = currentStepEl.querySelectorAll('[required]');
         let isValid = true;
         let missingFields = [];
@@ -4370,49 +3086,25 @@ function initQuickLeadForm() {
         requiredFields.forEach(field => {
             // Skip validation for disabled fields (like district_code when no city is selected)
             if (field.disabled) {
-                console.log('⏭️ Skipping disabled field:', field.name || field.id);
-                field.classList.remove('is-invalid');
+                console.log('Skipping disabled field:', field.name || field.id);
                 return;
             }
             
             if (!field.value.trim()) {
                 field.classList.add('is-invalid');
-                const label = field.previousElementSibling?.textContent || field.name || field.placeholder || 'Unknown field';
+                const label = field.previousElementSibling?.textContent || field.name || 'Unknown field';
                 missingFields.push(label);
                 isValid = false;
-                console.log('❌ Missing field:', label);
             } else {
                 field.classList.remove('is-invalid');
-                console.log('✅ Valid field:', field.name || field.id, '=', field.value);
             }
         });
 
-        // Special validation for step 1 - check if city is selected
-        if (step === 1) {
-            const citySelect = currentStepEl.querySelector('select[name="city_code"]');
-            if (citySelect && !citySelect.value) {
-                citySelect.classList.add('is-invalid');
-                missingFields.push('Thành phố');
-                isValid = false;
-                console.log('❌ City not selected');
-            }
-            
-            // Only check district if city is selected
-            const districtSelect = currentStepEl.querySelector('select[name="district_code"]');
-            if (citySelect && citySelect.value && districtSelect && !districtSelect.disabled && !districtSelect.value) {
-                districtSelect.classList.add('is-invalid');
-                missingFields.push('Quận/Huyện');
-                isValid = false;
-                console.log('❌ District not selected');
-            }
-        }
-
         if (!isValid) {
-            const errorMessage = `Vui lòng điền đầy đủ thông tin bắt buộc:\n• ${missingFields.join('\n• ')}`;
-            showNotification(errorMessage, 'error');
-            console.log('❌ Validation failed for guest step', step, '- Missing fields:', missingFields);
+            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc:\n- ' + missingFields.join('\n- '), 'error');
+            console.log('Validation failed for step', step, '- Missing fields:', missingFields);
         } else {
-            console.log('✅ Validation passed for guest step', step);
+            console.log('Validation passed for step', step);
         }
 
         return isValid;
@@ -4605,48 +3297,27 @@ function initQuickLeadForm() {
                 console.log('Response result:', result);
 
                 if (result.success) {
-                    // Enhanced notification for new user creation
-                    if (result.user_created) {
-                        const loginInfo = result.login_info;
-                        let message = '🎉 Lead đã được tạo thành công!\n\n';
-                        message += '✅ Tài khoản mới đã được tạo:\n';
-                        message += `📱 Tài khoản: ${loginInfo.username}\n`;
-                        message += `📧 Email: ${loginInfo.email}\n`;
-                        message += '🔑 Mật khẩu đã được gửi qua email/SMS\n\n';
-                        message += '🚀 Bạn đã được tự động đăng nhập và sẽ nhận được liên hệ từ thợ sớm!';
-                        
-                        // Show detailed notification for new user
-                        showNotification(message, 'success', 8000); // Show longer for important info
-                        
-                        // Also log for debugging
-                        console.log('🎉 New user created:', {
-                            user_id: result.user_id,
-                            username: loginInfo.username,
-                            email: loginInfo.email,
-                            password_sent: loginInfo.password_sent
-                        });
-                        
-                        // Optional: Show a modal with login instructions
-                        showNewUserModal(loginInfo);
-                        
-                    } else {
-                        // Standard success message for existing users
-                        showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
-                    }
-                    
+                    showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
                     e.target.reset();
-                    goToStep(1);
+                    goToAuthStep(1);
                 } else {
-                    let errorMessage = result.message || 'Có lỗi xảy ra, vui lòng thử lại';
-                    
-                    // Handle validation errors
+                    // Show detailed validation errors
                     if (result.errors) {
-                        console.log('❌ Validation errors:', result.errors);
-                        const errorMessages = Object.values(result.errors).flat();
-                        errorMessage = errorMessages.join(', ');
+                        console.log('Validation errors:', result.errors);
+                        let errorMessage = result.message || 'Có lỗi xảy ra';
+                        if (result.errors.district) {
+                            errorMessage += '\n- ' + result.errors.district.join(', ');
+                        }
+                        if (result.errors.ward) {
+                            errorMessage += '\n- ' + result.errors.ward.join(', ');
+                        }
+                        if (result.errors.address) {
+                            errorMessage += '\n- ' + result.errors.address.join(', ');
+                        }
+                        showNotification(errorMessage, 'error');
+                    } else {
+                        showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
                     }
-                    
-                    showNotification('❌ ' + errorMessage, 'error');
                 }
             } catch (error) {
                 console.error('Form submission error:', error);
@@ -4675,48 +3346,43 @@ function initQuickLeadForm() {
 
             const formData = new FormData(e.target);
             
-            // Add location data from selects (critical for validation)
+            // Add location data from selects (similar to authenticated form)
             const formContainer = e.target;
             const citySelect = formContainer.querySelector('select[name="city_code"]');
             const districtSelect = formContainer.querySelector('select[name="district_code"]');
             const wardSelect = formContainer.querySelector('select[name="ward_code"]');
-            
-            console.log('🔍 Checking location data...');
-            console.log('City:', citySelect?.value, citySelect?.options[citySelect?.selectedIndex]?.text);
-            console.log('District:', districtSelect?.value, districtSelect?.options[districtSelect?.selectedIndex]?.text);
-            console.log('Ward:', wardSelect?.value, wardSelect?.options[wardSelect?.selectedIndex]?.text);
             
             // Add city name
             if (citySelect && citySelect.value) {
                 const cityName = citySelect.options[citySelect.selectedIndex].text;
                 if (cityName && cityName !== 'Chọn thành phố') {
                     formData.append('city', cityName);
-                    console.log('✅ Added city:', cityName);
+                    console.log('Added city:', cityName);
                 }
             }
             
-            // Add district name - REQUIRED for validation
+            // Add district name - required
             if (districtSelect && districtSelect.value) {
                 const districtName = districtSelect.options[districtSelect.selectedIndex].text;
                 if (districtName && districtName !== 'Chọn quận/huyện') {
                     formData.append('district', districtName);
-                    console.log('✅ Added district:', districtName);
+                    console.log('Added district:', districtName);
                 }
             } else {
                 // Fallback district handling for guest form
-                console.warn('⚠️ No district selected, using fallback...');
+                console.warn('No district selected, using fallback...');
                 
                 // Use city as district fallback
                 if (citySelect && citySelect.value) {
                     const cityName = citySelect.options[citySelect.selectedIndex].text;
                     if (cityName && cityName !== 'Chọn thành phố') {
                         formData.append('district', cityName);
-                        console.log('🔄 Using city as district fallback:', cityName);
+                        console.log('Using city as district fallback:', cityName);
                     }
                 } else {
                     // Default fallback
                     formData.append('district', 'Khu vực không xác định');
-                    console.log('🔄 Using default district fallback');
+                    console.log('Using default district fallback');
                 }
             }
             
@@ -4725,7 +3391,7 @@ function initQuickLeadForm() {
                 const wardName = wardSelect.options[wardSelect.selectedIndex].text;
                 if (wardName && wardName !== 'Chọn phường/xã') {
                     formData.append('ward', wardName);
-                    console.log('✅ Added ward:', wardName);
+                    console.log('Added ward:', wardName);
                 }
             } else {
                 // Ward fallback
@@ -4733,23 +3399,23 @@ function initQuickLeadForm() {
                     const districtName = districtSelect.options[districtSelect.selectedIndex].text;
                     if (districtName && districtName !== 'Chọn quận/huyện') {
                         formData.append('ward', districtName);
-                        console.log('🔄 Using district as ward fallback:', districtName);
+                        console.log('Using district as ward fallback:', districtName);
                     }
                 } else if (citySelect && citySelect.value) {
                     const cityName = citySelect.options[citySelect.selectedIndex].text;
                     if (cityName && cityName !== 'Chọn thành phố') {
                         formData.append('ward', cityName);
-                        console.log('🔄 Using city as ward fallback:', cityName);
+                        console.log('Using city as ward fallback:', cityName);
                     }
                 } else {
                     formData.append('ward', 'Phường/Xã không xác định');
-                    console.log('🔄 Using default ward fallback');
+                    console.log('Using default ward fallback');
                 }
             }
             
             const submitBtn = e.target.querySelector('.submit-lead');
             
-            console.log('📤 Final guest form data entries:', Array.from(formData.entries()));
+            console.log('Guest form data entries:', Array.from(formData.entries()));
             
             // Show loading state
             submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
@@ -4789,12 +3455,12 @@ function initQuickLeadForm() {
                     
                     // Handle validation errors
                     if (result.errors) {
-                        console.log('❌ Validation errors:', result.errors);
                         const errorMessages = Object.values(result.errors).flat();
                         errorMessage = errorMessages.join(', ');
                     }
                     
                     showNotification('❌ ' + errorMessage, 'error');
+                    console.log('Guest form errors:', result.errors);
                 }
             } catch (error) {
                 console.error('Guest form submission error:', error);
@@ -5566,157 +4232,89 @@ function initQuickLeadForm() {
         return step1Valid;
     };
 
-    // Add function to fill test location data for guest form
-    window.fillGuestTestLocationData = function() {
-        console.log('🧪 Filling guest test location data...');
-        
-        // Select first category
-        const categorySelect = document.getElementById('guest_category_id');
-        if (categorySelect && categorySelect.options.length > 1) {
-            categorySelect.selectedIndex = 1;
-            console.log('✅ Selected category:', categorySelect.value);
+    // Debug function to test next-step button
+    window.testNextStepButton = function() {
+        console.log('🔧 Testing next-step button functionality');
+        const button = document.querySelector('.next-step');
+        if (button) {
+            console.log('✅ Next-step button found:', button);
+            console.log('Button disabled:', button.disabled);
+            console.log('Button visible:', window.getComputedStyle(button).display !== 'none');
+            console.log('Button parent visible:', window.getComputedStyle(button.parentElement).display !== 'none');
+            
+            // Trigger click programmatically
+            console.log('🖱️ Simulating button click...');
+            button.click();
+        } else {
+            console.log('❌ Next-step button not found');
         }
-        
-        // Fill basic required fields for step 1
-        const titleInput = document.getElementById('guest_title');
-        if (titleInput) {
-            titleInput.value = 'Test: Sửa chữa điện nước';
-            console.log('✅ Set title:', titleInput.value);
-        }
-        
-        const descriptionInput = document.getElementById('guest_description');
-        if (descriptionInput) {
-            descriptionInput.value = 'Cần sửa chữa hệ thống điện và nước trong nhà cho khách';
-            console.log('✅ Set description:', descriptionInput.value);
-        }
-        
-        // Fill step 2 contact info
-        const fullnameInput = document.getElementById('guest_fullname');
-        if (fullnameInput) {
-            fullnameInput.value = 'Nguyễn Văn Test';
-            console.log('✅ Set fullname:', fullnameInput.value);
-        }
-        
-        const mobileInput = document.getElementById('guest_mobile');
-        if (mobileInput) {
-            mobileInput.value = '0901234567';
-            console.log('✅ Set mobile:', mobileInput.value);
-        }
-        
-        const emailInput = document.getElementById('guest_email');
-        if (emailInput) {
-            emailInput.value = 'test@example.com';
-            console.log('✅ Set email:', emailInput.value);
-        }
-        
-        const addressInput = document.getElementById('guest_address');
-        if (addressInput) {
-            addressInput.value = '123 Test Street';
-            console.log('✅ Set address:', addressInput.value);
-        }
-        
-        // Check terms checkbox
-        const termsCheck = document.getElementById('agreeTerms');
-        if (termsCheck) {
-            termsCheck.checked = true;
-            console.log('✅ Checked terms');
-        }
-        
-        console.log('🎯 Test data filled! Now manually select city and district, then try navigation.');
     };
 
-    // Test guest form step navigation
-    window.testGuestStepNavigation = function() {
-        console.log('🧪 Testing guest step navigation...');
+    // Debug function to check form state
+    window.checkGuestFormState = function() {
+        console.log('🔧 Checking guest form state');
+        console.log('Current step:', currentStep);
         
-        // Check current step
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
         const step3 = document.getElementById('step3');
         
-        console.log('Step 1 visible:', step1 && window.getComputedStyle(step1).display !== 'none');
-        console.log('Step 2 visible:', step2 && window.getComputedStyle(step2).display !== 'none');
-        console.log('Step 3 visible:', step3 && window.getComputedStyle(step3).display !== 'none');
+        console.log('Step 1 display:', step1 ? window.getComputedStyle(step1).display : 'not found');
+        console.log('Step 2 display:', step2 ? window.getComputedStyle(step2).display : 'not found');
+        console.log('Step 3 display:', step3 ? window.getComputedStyle(step3).display : 'not found');
         
-        // Test next step button
-        const nextBtn = document.querySelector('.next-step');
-        if (nextBtn) {
-            console.log('Next button found:', nextBtn);
-            console.log('Button visible:', nextBtn.offsetParent !== null);
-            console.log('Button disabled:', nextBtn.disabled);
-            console.log('Button text:', nextBtn.textContent.trim());
-        } else {
-            console.log('❌ Next button not found');
+        // Check form fields in current step
+        const currentStepEl = document.getElementById('step' + currentStep);
+        if (currentStepEl) {
+            const requiredFields = currentStepEl.querySelectorAll('[required]');
+            console.log('Required fields in current step:', requiredFields.length);
+            requiredFields.forEach((field, index) => {
+                console.log(`Field ${index + 1}:`, field.name || field.id, 
+                           'Value:', field.value, 
+                           'Disabled:', field.disabled);
+            });
         }
-        
-        return {
-            step1Visible: step1 && window.getComputedStyle(step1).display !== 'none',
-            step2Visible: step2 && window.getComputedStyle(step2).display !== 'none',
-            step3Visible: step3 && window.getComputedStyle(step3).display !== 'none',
-            nextButtonFound: !!nextBtn
-        };
     };
 
-    // Force guest step navigation
-    window.forceGuestStep = function(stepNumber) {
-        console.log('🔧 Force moving to guest step:', stepNumber);
-        
-        // Hide all steps
-        for (let i = 1; i <= 3; i++) {
-            const step = document.getElementById('step' + i);
-            if (step) {
-                step.style.display = 'none';
+    // Force next step without validation (for debugging)
+    window.forceNextStep = function() {
+        console.log('🔧 Forcing next step without validation');
+        goToStep(currentStep + 1);
+    };
+
+    // Add additional event delegation as backup
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.next-step') || e.target.closest('.next-step')) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const button = e.target.matches('.next-step') ? e.target : e.target.closest('.next-step');
+            console.log('🔄 Backup event delegation for next-step button');
+            console.log('Current step before validation:', currentStep);
+            
+            if (validateCurrentStep(currentStep)) {
+                console.log('✅ Validation passed, moving to next step');
+                goToStep(currentStep + 1);
+            } else {
+                console.log('❌ Validation failed, staying on current step');
             }
         }
-        
-        // Show target step
-        const targetStep = document.getElementById('step' + stepNumber);
-        if (targetStep) {
-            targetStep.style.display = 'block';
-            console.log('✅ Moved to step', stepNumber);
-            return true;
-        } else {
-            console.log('❌ Step', stepNumber, 'not found');
-            return false;
-        }
-    };
+    });
 
-    // Check guest form validation
-    window.checkGuestValidation = function(stepNumber = 1) {
-        console.log('🔍 Checking guest validation for step:', stepNumber);
-        
-        const step = document.getElementById('step' + stepNumber);
-        if (!step) {
-            console.log('❌ Step not found:', stepNumber);
-            return false;
+    // Add touch event support for mobile
+    document.addEventListener('touchend', function(e) {
+        if (e.target.matches('.next-step') || e.target.closest('.next-step')) {
+            e.preventDefault();
+            console.log('📱 Touch event for next-step button');
+            
+            const button = e.target.matches('.next-step') ? e.target : e.target.closest('.next-step');
+            setTimeout(() => {
+                if (validateCurrentStep(currentStep)) {
+                    goToStep(currentStep + 1);
+                }
+            }, 100);
         }
-        
-        const requiredFields = step.querySelectorAll('[required]');
-        console.log('Required fields in step', stepNumber + ':', requiredFields.length);
-        
-        let validationResults = [];
-        requiredFields.forEach((field, index) => {
-            const isDisabled = field.disabled;
-            const hasValue = field.value.trim() !== '';
-            const isValid = isDisabled || hasValue;
-            
-            validationResults.push({
-                index: index,
-                name: field.name || field.id,
-                value: field.value,
-                disabled: isDisabled,
-                valid: isValid
-            });
-            
-            console.log(`Field ${index} (${field.name || field.id}):`, {
-                value: field.value,
-                disabled: isDisabled,
-                valid: isValid ? '✅' : '❌'
-            });
-        });
-        
-        return validationResults;
-    };
+    });
 }
 
 function initReviewsSlider() {
@@ -5850,102 +4448,47 @@ function showUserWelcome(user) {
     }
 }
 
-// Debug function to check dropdown state
-window.checkDropdownState = function() {
-    console.log('🔍 Checking dropdown state...');
+// Debug function to check location data loading
+window.testLocationLoading = function() {
+    console.log('🔧 Testing location data loading');
     
-    const authCitySelect = document.getElementById('auth_city_code');
-    const guestCitySelect = document.getElementById('guest_city_code');
+    // Test city loading
+    loadCities();
     
-    console.log('=== AUTH CITY SELECT ===');
-    if (authCitySelect) {
-        console.log('Element found:', authCitySelect);
-        console.log('Options count:', authCitySelect.options.length);
-        console.log('Disabled:', authCitySelect.disabled);
-        console.log('Visible:', window.getComputedStyle(authCitySelect).display !== 'none');
-        console.log('Parent visible:', window.getComputedStyle(authCitySelect.parentElement).display !== 'none');
-        
-        if (authCitySelect.options.length > 0) {
-            for (let i = 0; i < Math.min(5, authCitySelect.options.length); i++) {
-                console.log(`Option ${i}:`, authCitySelect.options[i].value, authCitySelect.options[i].text);
-            }
-        }
-    } else {
-        console.log('❌ Auth city select not found');
-    }
-    
-    console.log('=== GUEST CITY SELECT ===');
-    if (guestCitySelect) {
-        console.log('Element found:', guestCitySelect);
-        console.log('Options count:', guestCitySelect.options.length);
-        console.log('Disabled:', guestCitySelect.disabled);
-        console.log('Visible:', window.getComputedStyle(guestCitySelect).display !== 'none');
-        console.log('Parent visible:', window.getComputedStyle(guestCitySelect.parentElement).display !== 'none');
-        
-        if (guestCitySelect.options.length > 0) {
-            for (let i = 0; i < Math.min(5, guestCitySelect.options.length); i++) {
-                console.log(`Option ${i}:`, guestCitySelect.options[i].value, guestCitySelect.options[i].text);
-            }
-        }
-    } else {
-        console.log('❌ Guest city select not found');
-    }
-    
-    // Check if tabs are properly displayed
-    const guestTab = document.getElementById('guestTab');
-    const authTab = document.getElementById('leadTab');
-    
-    console.log('=== TAB VISIBILITY ===');
-    console.log('Guest tab active:', guestTab?.classList.contains('active'));
-    console.log('Auth tab active:', authTab?.classList.contains('active'));
-};
-
-// Force reload cities with retry mechanism
-window.forceReloadCities = function() {
-    console.log('🔄 Force reloading cities...');
-    
-    // Clear existing options first
-    const citySelects = $('select[name="city_code"]');
-    citySelects.each(function() {
-        $(this).empty().append('<option value="">Đang tải...</option>');
-    });
-    
-    // Reload after short delay
+    // Test with sample data
     setTimeout(() => {
-        loadCities();
-    }, 500);
+        console.log('Testing district loading with sample city code...');
+        loadDistricts('01', 'guest'); // Ha Noi
+    }, 2000);
+    
+    setTimeout(() => {
+        console.log('Testing ward loading with sample district code...');
+        loadWards('001', 'guest'); // Ba Dinh
+    }, 4000);
 };
 
-// Manual populate with test data
-window.populateTestCities = function() {
-    console.log('🧪 Populating test cities...');
+// Debug function to check form data before submission
+window.checkFormData = function() {
+    console.log('🔧 Checking form data before submission');
     
-    const testCities = [
-        { City_code: '01', City: 'Hà Nội' },
-        { City_code: '79', City: 'TP. Hồ Chí Minh' },
-        { City_code: '48', City: 'Đà Nẵng' },
-        { City_code: '31', City: 'Hải Phòng' },
-        { City_code: '92', City: 'Cần Thơ' },
-        { City_code: '26', City: 'Vĩnh Phúc' },
-        { City_code: '20', City: 'Thái Bình' }
-    ];
-    
-    const citySelects = $('select[name="city_code"]');
-    
-    citySelects.each(function() {
-        const select = $(this);
-        select.empty().append('<option value="">Chọn thành phố</option>');
+    const guestForm = document.getElementById('guestLeadForm');
+    if (guestForm) {
+        const formData = new FormData(guestForm);
+        console.log('Guest form data:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
         
-        testCities.forEach(city => {
-            select.append(
-                `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
-            );
-        });
+        // Check location selects specifically
+        const citySelect = guestForm.querySelector('select[name="city_code"]');
+        const districtSelect = guestForm.querySelector('select[name="district_code"]');
+        const wardSelect = guestForm.querySelector('select[name="ward_code"]');
         
-        console.log('✅ Test cities populated for:', select.attr('id'));
-    });
-    
-    showNotification('✅ Test cities populated successfully!', 'success');
+        console.log('Location select values:');
+        console.log('City:', citySelect?.value, citySelect?.options[citySelect?.selectedIndex]?.text);
+        console.log('District:', districtSelect?.value, districtSelect?.options[districtSelect?.selectedIndex]?.text);
+        console.log('Ward:', wardSelect?.value, wardSelect?.options[wardSelect?.selectedIndex]?.text);
+    }
 };
 
 // Auto-fill location data for testing
@@ -5957,439 +4500,40 @@ window.fillTestLocationData = function() {
     
     setTimeout(() => {
         // Select Ho Chi Minh City
-        const guestCitySelect = $('#guest_city_code');
-        if (guestCitySelect.length) {
+        const guestCitySelect = document.getElementById('guest_city_code');
+        if (guestCitySelect) {
             // Find Ho Chi Minh City option
-            guestCitySelect.find('option').each(function() {
-                if ($(this).text().includes('Hồ Chí Minh') || $(this).text().includes('TP.HCM')) {
-                    guestCitySelect.val($(this).val()).trigger('change');
-                    console.log('Selected city:', $(this).text());
-                    return false;
+            for (let i = 0; i < guestCitySelect.options.length; i++) {
+                if (guestCitySelect.options[i].text.includes('Hồ Chí Minh') || 
+                    guestCitySelect.options[i].text.includes('TP.HCM')) {
+                    guestCitySelect.selectedIndex = i;
+                    guestCitySelect.dispatchEvent(new Event('change'));
+                    console.log('Selected city:', guestCitySelect.options[i].text);
+                    break;
                 }
-            });
+            }
         }
     }, 1000);
     
     setTimeout(() => {
         // Select a district
-        const guestDistrictSelect = $('#guest_district_code');
-        if (guestDistrictSelect.length && guestDistrictSelect.find('option').length > 1) {
-            const firstDistrict = guestDistrictSelect.find('option:eq(1)');
-            guestDistrictSelect.val(firstDistrict.val()).trigger('change');
-            console.log('Selected district:', firstDistrict.text());
+        const guestDistrictSelect = document.getElementById('guest_district_code');
+        if (guestDistrictSelect && guestDistrictSelect.options.length > 1) {
+            guestDistrictSelect.selectedIndex = 1; // First district
+            guestDistrictSelect.dispatchEvent(new Event('change'));
+            console.log('Selected district:', guestDistrictSelect.options[1].text);
         }
     }, 3000);
     
     setTimeout(() => {
         // Select a ward
-        const guestWardSelect = $('#guest_ward_code');
-        if (guestWardSelect.length && guestWardSelect.find('option').length > 1) {
-            const firstWard = guestWardSelect.find('option:eq(1)');
-            guestWardSelect.val(firstWard.val());
-            console.log('Selected ward:', firstWard.text());
+        const guestWardSelect = document.getElementById('guest_ward_code');
+        if (guestWardSelect && guestWardSelect.options.length > 1) {
+            guestWardSelect.selectedIndex = 1; // First ward
+            console.log('Selected ward:', guestWardSelect.options[1].text);
         }
     }, 5000);
 };
-
-// IMMEDIATE GUEST BUTTON DEBUG AND FIX
-console.log('🚀 Starting immediate guest button debug...');
-
-// Simple immediate fix function with aggressive CSS overrides
-function immediateGuestButtonFix() {
-    console.log('🔧 Running immediate guest button fix...');
-    
-    // Find next-step buttons
-    const nextBtns = document.querySelectorAll('.next-step');
-    console.log('Next buttons found:', nextBtns.length);
-    
-    // Force fix each button
-    nextBtns.forEach((btn, i) => {
-        console.log(`Fixing button ${i}...`);
-        
-        // Remove all existing event listeners by cloning
-        const parent = btn.parentNode;
-        const newBtn = btn.cloneNode(true);
-        parent.replaceChild(newBtn, btn);
-        
-        // Force all clickable properties
-        newBtn.style.pointerEvents = 'auto !important';
-        newBtn.style.cursor = 'pointer !important';
-        newBtn.style.zIndex = '9999 !important';
-        newBtn.style.position = 'relative !important';
-        newBtn.disabled = false;
-        newBtn.style.opacity = '1 !important';
-        newBtn.style.visibility = 'visible !important';
-        
-        // Add multiple event types
-        ['click', 'mousedown', 'touchstart', 'touchend'].forEach(eventType => {
-            newBtn.addEventListener(eventType, function(e) {
-                console.log(`🎯 ${eventType} on guest next button!`);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Determine current step and navigate to next
-                const step1 = document.getElementById('step1');
-                const step2 = document.getElementById('step2');
-                const step3 = document.getElementById('step3');
-                
-                // Check which step is currently visible
-                const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
-                const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
-                const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
-                
-                console.log('Current step visibility:', {
-                    step1: step1Visible,
-                    step2: step2Visible, 
-                    step3: step3Visible
-                });
-                
-                if (step1Visible) {
-                    // Currently on step 1, go to step 2
-                    console.log('Changing from step 1 to step 2...');
-                    hideStep(step1);
-                    showStep(step2);
-                    console.log('✅ Moved from step 1 to step 2');
-                    
-                } else if (step2Visible) {
-                    // Currently on step 2, go to step 3
-                    console.log('Changing from step 2 to step 3...');
-                    hideStep(step2);
-                    showStep(step3);
-                    console.log('✅ Moved from step 2 to step 3');
-                    
-                } else {
-                    // Fallback: assume step 1 and go to step 2
-                    console.log('Fallback: Changing to step 2...');
-                    hideStep(step1);
-                    showStep(step2);
-                    console.log('✅ Fallback: Moved to step 2');
-                }
-                
-                // Additional cleanup
-                setTimeout(() => {
-                    cleanupSteps();
-                }, 100);
-                
-            }, { passive: false, capture: true });
-        });
-        
-        console.log(`✅ Button ${i} fixed with all events`);
-    });
-    
-    // Also fix prev-step buttons
-    const prevBtns = document.querySelectorAll('.prev-step');
-    console.log('Prev buttons found:', prevBtns.length);
-    
-    prevBtns.forEach((btn, i) => {
-        console.log(`Fixing prev button ${i}...`);
-        
-        // Remove all existing event listeners by cloning
-        const parent = btn.parentNode;
-        const newBtn = btn.cloneNode(true);
-        parent.replaceChild(newBtn, btn);
-        
-        // Force all clickable properties
-        newBtn.style.pointerEvents = 'auto !important';
-        newBtn.style.cursor = 'pointer !important';
-        newBtn.style.zIndex = '9999 !important';
-        newBtn.style.position = 'relative !important';
-        newBtn.disabled = false;
-        newBtn.style.opacity = '1 !important';
-        newBtn.style.visibility = 'visible !important';
-        
-        // Add multiple event types
-        ['click', 'mousedown', 'touchstart', 'touchend'].forEach(eventType => {
-            newBtn.addEventListener(eventType, function(e) {
-                console.log(`🎯 ${eventType} on guest prev button!`);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Determine current step and navigate to previous
-                const step1 = document.getElementById('step1');
-                const step2 = document.getElementById('step2');
-                const step3 = document.getElementById('step3');
-                
-                // Check which step is currently visible
-                const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
-                const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
-                const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
-                
-                console.log('Current step visibility for prev:', {
-                    step1: step1Visible,
-                    step2: step2Visible, 
-                    step3: step3Visible
-                });
-                
-                if (step3Visible) {
-                    // Currently on step 3, go to step 2
-                    console.log('Changing from step 3 to step 2...');
-                    hideStep(step3);
-                    showStep(step2);
-                    console.log('✅ Moved from step 3 to step 2');
-                    
-                } else if (step2Visible) {
-                    // Currently on step 2, go to step 1
-                    console.log('Changing from step 2 to step 1...');
-                    hideStep(step2);
-                    showStep(step1);
-                    console.log('✅ Moved from step 2 to step 1');
-                }
-                
-                // Additional cleanup
-                setTimeout(() => {
-                    cleanupSteps();
-                }, 100);
-                
-            }, { passive: false, capture: true });
-        });
-        
-        console.log(`✅ Prev button ${i} fixed with all events`);
-    });
-}
-
-// Helper function to aggressively hide a step
-function hideStep(stepElement) {
-    if (stepElement) {
-        stepElement.style.display = 'none !important';
-        stepElement.style.visibility = 'hidden !important';
-        stepElement.style.opacity = '0 !important';
-        stepElement.style.height = '0 !important';
-        stepElement.style.overflow = 'hidden !important';
-        stepElement.style.position = 'absolute !important';
-        stepElement.style.left = '-9999px !important';
-        stepElement.setAttribute('style', stepElement.getAttribute('style') + '; display: none !important;');
-        console.log(`Step ${stepElement.id} hidden`);
-    }
-}
-
-// Helper function to aggressively show a step
-function showStep(stepElement) {
-    if (stepElement) {
-        stepElement.style.display = 'block !important';
-        stepElement.style.visibility = 'visible !important';
-        stepElement.style.opacity = '1 !important';
-        stepElement.style.height = 'auto !important';
-        stepElement.style.overflow = 'visible !important';
-        stepElement.style.position = 'relative !important';
-        stepElement.style.left = 'auto !important';
-        stepElement.setAttribute('style', stepElement.getAttribute('style') + '; display: block !important;');
-        
-        // Force browser to repaint
-        stepElement.offsetHeight; // Trigger reflow
-        stepElement.style.transform = 'translateZ(0)'; // Force hardware acceleration
-        console.log(`Step ${stepElement.id} shown`);
-    }
-}
-
-// Helper function to clean up step conflicts
-function cleanupSteps() {
-    const allSteps = ['step1', 'step2', 'step3'];
-    
-    allSteps.forEach(stepId => {
-        const stepEl = document.getElementById(stepId);
-        if (stepEl) {
-            const isVisible = getComputedStyle(stepEl).display !== 'none';
-            if (isVisible) {
-                showStep(stepEl); // Ensure it's properly shown
-            } else {
-                hideStep(stepEl); // Ensure it's properly hidden
-            }
-        }
-    });
-    
-    console.log('🔄 Step cleanup completed');
-}
-
-// Run immediately when script loads
-immediateGuestButtonFix();
-
-// Run when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM ready, running guest button fix again...');
-    setTimeout(immediateGuestButtonFix, 100);
-    setTimeout(immediateGuestButtonFix, 500);
-    setTimeout(immediateGuestButtonFix, 1000);
-    setTimeout(immediateGuestButtonFix, 2000);
-});
-
-// Global window functions for manual testing
-window.debugGuestButtons = function() {
-    console.log('🔍 Debug guest buttons...');
-    
-    const nextBtns = document.querySelectorAll('.next-step');
-    const prevBtns = document.querySelectorAll('.prev-step');
-    console.log('Next buttons found:', nextBtns.length);
-    console.log('Prev buttons found:', prevBtns.length);
-    
-    // Check steps
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    console.log('Steps status:');
-    console.log('- Step 1:', step1 ? 'Found' : 'Not found', step1 ? getComputedStyle(step1).display : 'N/A');
-    console.log('- Step 2:', step2 ? 'Found' : 'Not found', step2 ? getComputedStyle(step2).display : 'N/A');
-    console.log('- Step 3:', step3 ? 'Found' : 'Not found', step3 ? getComputedStyle(step3).display : 'N/A');
-};
-
-window.manualStepChange = function(targetStep) {
-    console.log(`🔧 Manual step change to step ${targetStep}...`);
-    
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    
-    // Hide all steps first
-    hideStep(step1);
-    hideStep(step2);
-    hideStep(step3);
-    
-    // Show target step
-    if (targetStep === 1) showStep(step1);
-    else if (targetStep === 2) showStep(step2);
-    else if (targetStep === 3) showStep(step3);
-    
-    console.log(`✅ Manually changed to step ${targetStep}`);
-};
-
-window.goToStep1 = function() { manualStepChange(1); };
-window.goToStep2 = function() { manualStepChange(2); };
-window.goToStep3 = function() { manualStepChange(3); };
-
-window.forceButtonClick = function() {
-    console.log('🔨 Force button click...');
-    
-    const nextBtn = document.querySelector('.next-step');
-    if (nextBtn) {
-        console.log('Found button, trying to click...');
-        
-        // Try multiple click methods
-        nextBtn.click();
-        
-        const clickEvent = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-        });
-        nextBtn.dispatchEvent(clickEvent);
-        
-        console.log('✅ Force click attempted');
-    } else {
-        console.log('❌ No next-step button found');
-    }
-};
-
-window.rerunFix = function() {
-    console.log('🔄 Re-running immediate fix...');
-    immediateGuestButtonFix();
-};
-
-// Global backup click handler with highest priority - MORE AGGRESSIVE
-document.addEventListener('click', function(e) {
-    if (e.target && (e.target.classList.contains('next-step') || e.target.closest('.next-step'))) {
-        console.log('🚨 GLOBAL BACKUP: Next step clicked!');
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        
-        // Check current step and navigate
-        const step1Visible = step1 && getComputedStyle(step1).display !== 'none';
-        const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
-        
-        if (step1Visible) {
-            hideStep(step1);
-            showStep(step2);
-            console.log('✅ GLOBAL BACKUP: Changed from step 1 to step 2');
-        } else if (step2Visible) {
-            hideStep(step2);
-            showStep(step3);
-            console.log('✅ GLOBAL BACKUP: Changed from step 2 to step 3');
-        } else {
-            // Fallback
-            hideStep(step1);
-            showStep(step2);
-            console.log('✅ GLOBAL BACKUP: Fallback to step 2');
-        }
-        
-        return false;
-    }
-    
-    // Handle prev-step buttons
-    if (e.target && (e.target.classList.contains('prev-step') || e.target.closest('.prev-step'))) {
-        console.log('🚨 GLOBAL BACKUP: Prev step clicked!');
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        
-        // Check current step and navigate backward
-        const step2Visible = step2 && getComputedStyle(step2).display !== 'none';
-        const step3Visible = step3 && getComputedStyle(step3).display !== 'none';
-        
-        if (step3Visible) {
-            hideStep(step3);
-            showStep(step2);
-            console.log('✅ GLOBAL BACKUP: Changed from step 3 to step 2');
-        } else if (step2Visible) {
-            hideStep(step2);
-            showStep(step1);
-            console.log('✅ GLOBAL BACKUP: Changed from step 2 to step 1');
-        }
-        
-        return false;
-    }
-}, true); // Use capture phase with highest priority
-
-// Additional: Force override any CSS animations or transitions that might interfere
-const forceStepStyles = document.createElement('style');
-forceStepStyles.textContent = `
-    #step1.form-step[style*="none"] {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        overflow: hidden !important;
-        position: absolute !important;
-        left: -9999px !important;
-    }
-    
-    #step2.form-step[style*="block"] {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        height: auto !important;
-        overflow: visible !important;
-        position: relative !important;
-        left: auto !important;
-    }
-    
-    #step3.form-step[style*="block"] {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        height: auto !important;
-        overflow: visible !important;
-        position: relative !important;
-        left: auto !important;
-    }
-    
-    .next-step, .prev-step {
-        pointer-events: auto !important;
-        cursor: pointer !important;
-        z-index: 9999 !important;
-        position: relative !important;
-    }
-`;
-document.head.appendChild(forceStepStyles);
 </script>
 @endpush
 

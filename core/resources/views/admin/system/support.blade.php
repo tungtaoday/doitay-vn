@@ -1,14 +1,12 @@
 @extends('admin.layouts.app')
 @section('panel')
     <div class="row justify-content-center">
-        <div class="col-xl-8">
-            <div class="card b-radius--10 ">
-              <div class="card-body text-center">
-                <h3>@lang('To keep our support system efficient and seamless and to keep your data safe and secure, we\'ve developed an easy to use support portal for you. We are now using that centralized system to provide support.')</h3>
-              </div>
-              <div class="card-footer">
-                <a href="https://viserlab.com/support" target="_blank" class="btn btn--primary h-45 w-100">@lang('Get Support')</a>
-              </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-center">@lang('For technical support and assistance, please contact our development team through alternative channels.')</p>
+                    <!-- ViserLab support removed for security -->
+                </div>
             </div>
         </div>
     </div>

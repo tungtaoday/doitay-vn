@@ -146,3 +146,15 @@ Route::get('/test-dashboard', function() {
     return view('Template::user.test_dashboard', compact('pageTitle', 'user'));
 });
 
+// ViserLab fallback routes to prevent errors
+Route::get('activate', function() {
+    return redirect()->route('home')->with('info', 'System activation is no longer required.');
+})->name('activate');
+
+Route::post('activate_system_submit', function() {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'System activation has been disabled for security reasons.'
+    ]);
+})->name('activate_system_submit');
+
