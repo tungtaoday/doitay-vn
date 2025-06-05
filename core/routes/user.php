@@ -39,7 +39,7 @@ Route::namespace('User\Auth')->name('user.')->group(function () {
     });
 });
 
-Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
+Route::middleware('auth')->name('user.')->group(function () {
     Route::get('user-data', 'User\UserController@userData')->name('data');
     Route::post('user-data-submit', 'User\UserController@userDataSubmit')->name('data.submit');
     Route::get('get-districts', 'User\CompanyController@getDistricts')->name('get.districts');
@@ -81,11 +81,10 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
                 Route::post('update/{id}', 'store')->name('update');
             });
 
-            // Customer Lead Management
+            // Customer Lead Management (Protected routes only)
             Route::controller('CustomerLeadController')->prefix('customer/leads')->name('customer.leads.')->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('create', 'create')->name('create');
-                Route::post('store', 'store')->name('store');
                 Route::get('show/{id}', 'show')->name('show');
                 Route::get('edit/{id}', 'edit')->name('edit');
                 Route::put('update/{id}', 'update')->name('update');
@@ -134,6 +133,11 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
 
         });
     });
+});
+
+// Public Lead Creation Route (accessible to both guests and authenticated users)
+Route::controller('User\CustomerLeadController')->prefix('customer/leads')->name('user.customer.leads.')->group(function () {
+    Route::post('store', 'store')->name('store');
 });
 
 Route::middleware('auth')->group(function () {

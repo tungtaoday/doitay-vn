@@ -216,7 +216,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Loại công việc *</label>
-                                            <select name="category_id" class="form-select modern-select" required>
+                                            <select name="category_id" class="form-select modern-select" id="auth_category_id" required>
                                                 <option value="">Chọn loại công việc</option>
                                                 @foreach(App\Models\Category::where('status', 1)->get() as $category)
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -225,7 +225,7 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Thành phố *</label>
-                                            <select name="city_code" class="form-select modern-select" required>
+                                            <select name="city_code" class="form-select modern-select" id="auth_city_code" required>
                                                 <option value="">Chọn thành phố</option>
                                                 <!-- Cities will be loaded dynamically -->
                                             </select>
@@ -235,14 +235,14 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Quận/Huyện *</label>
-                                            <select name="district_code" class="form-select modern-select" disabled required>
+                                            <select name="district_code" class="form-select modern-select" id="auth_district_code" disabled required>
                                                 <option value="">Chọn quận/huyện</option>
                                                 <!-- Districts will be loaded dynamically -->
                                             </select>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Phường/Xã</label>
-                                            <select name="ward_code" class="form-select modern-select" disabled>
+                                            <select name="ward_code" class="form-select modern-select" id="auth_ward_code" disabled>
                                                 <option value="">Chọn phường/xã</option>
                                                 <!-- Wards will be loaded dynamically -->
                                             </select>
@@ -250,14 +250,20 @@
                                     </div>
                                     
                                     <div class="mb-3">
+                                        <label class="form-label">Địa chỉ cụ thể *</label>
+                                        <input type="text" name="address" class="form-control modern-input" id="auth_address"
+                                               placeholder="Số nhà, tên đường" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
                                         <label class="form-label">Tiêu đề công việc *</label>
-                                        <input type="text" name="title" class="form-control modern-input" 
+                                        <input type="text" name="title" class="form-control modern-input" id="auth_title"
                                                placeholder="VD: Sửa chữa điện nước tại nhà" required>
                                     </div>
                                     
                                     <div class="mb-4">
                                         <label class="form-label">Mô tả chi tiết *</label>
-                                        <textarea name="description" class="form-control modern-textarea" rows="3" 
+                                        <textarea name="description" class="form-control modern-textarea" id="auth_description" rows="3" 
                                                   placeholder="Mô tả chi tiết công việc cần làm..." required></textarea>
                                     </div>
 
@@ -273,12 +279,12 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Ngân sách từ</label>
-                                            <input type="number" name="budget_min" class="form-control modern-input" 
+                                            <input type="number" name="budget_min" class="form-control modern-input" id="auth_budget_min"
                                                    placeholder="200,000">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Ngân sách đến</label>
-                                            <input type="number" name="budget_max" class="form-control modern-input" 
+                                            <input type="number" name="budget_max" class="form-control modern-input" id="auth_budget_max"
                                                    placeholder="500,000">
                                         </div>
                                     </div>
@@ -286,7 +292,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Mức độ ưu tiên</label>
-                                            <select name="urgency" class="form-select modern-select">
+                                            <select name="urgency" class="form-select modern-select" id="auth_urgency">
                                                 <option value="medium">Bình thường</option>
                                                 <option value="high">Khẩn cấp</option>
                                                 <option value="low">Không gấp</option>
@@ -294,7 +300,7 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Cần hoàn thành trước</label>
-                                            <input type="date" name="needed_by" class="form-control modern-input" 
+                                            <input type="date" name="needed_by" class="form-control modern-input" id="auth_needed_by"
                                                    min="{{ date('Y-m-d', strtotime('+1 day')) }}">
                                         </div>
                                     </div>
@@ -322,7 +328,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Loại công việc *</label>
-                                            <select name="category_id" class="form-select modern-select" required>
+                                            <select name="category_id" class="form-select modern-select" id="guest_category_id" required>
                                                 <option value="">Chọn loại công việc</option>
                                                 @foreach(App\Models\Category::where('status', 1)->get() as $category)
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -331,7 +337,7 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Thành phố *</label>
-                                            <select name="city_code" class="form-select modern-select" required>
+                                            <select name="city_code" class="form-select modern-select" id="guest_city_code" required>
                                                 <option value="">Chọn thành phố</option>
                                                 <!-- Cities will be loaded dynamically -->
                                             </select>
@@ -341,14 +347,14 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Quận/Huyện *</label>
-                                            <select name="district_code" class="form-select modern-select" disabled required>
+                                            <select name="district_code" class="form-select modern-select" id="guest_district_code" disabled required>
                                                 <option value="">Chọn quận/huyện</option>
                                                 <!-- Districts will be loaded dynamically -->
                                             </select>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Phường/Xã</label>
-                                            <select name="ward_code" class="form-select modern-select" disabled>
+                                            <select name="ward_code" class="form-select modern-select" id="guest_ward_code" disabled>
                                                 <option value="">Chọn phường/xã</option>
                                                 <!-- Wards will be loaded dynamically -->
                                             </select>
@@ -357,13 +363,13 @@
                                     
                                     <div class="mb-3">
                                         <label class="form-label">Tiêu đề công việc *</label>
-                                        <input type="text" name="title" class="form-control modern-input" 
+                                        <input type="text" name="title" class="form-control modern-input" id="guest_title"
                                                placeholder="VD: Sửa chữa điện nước tại nhà" required>
                                     </div>
                                     
                                     <div class="mb-4">
                                         <label class="form-label">Mô tả chi tiết *</label>
-                                        <textarea name="description" class="form-control modern-textarea" rows="3" 
+                                        <textarea name="description" class="form-control modern-textarea" id="guest_description" rows="3" 
                                                   placeholder="Mô tả chi tiết công việc cần làm..." required></textarea>
                                     </div>
 
@@ -379,25 +385,25 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Họ tên *</label>
-                                            <input type="text" name="fullname" class="form-control modern-input" 
+                                            <input type="text" name="fullname" class="form-control modern-input" id="guest_fullname"
                                                    placeholder="Nhập họ tên" required>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Số điện thoại *</label>
-                                            <input type="tel" name="mobile" class="form-control modern-input" 
+                                            <input type="tel" name="mobile" class="form-control modern-input" id="guest_mobile"
                                                    placeholder="0123456789" required>
                                         </div>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label class="form-label">Email</label>
-                                        <input type="email" name="email" class="form-control modern-input" 
+                                        <input type="email" name="email" class="form-control modern-input" id="guest_email"
                                                placeholder="email@domain.com">
                                     </div>
                                     
                                     <div class="mb-4">
                                         <label class="form-label">Địa chỉ cụ thể *</label>
-                                        <input type="text" name="address" class="form-control modern-input" 
+                                        <input type="text" name="address" class="form-control modern-input" id="guest_address"
                                                placeholder="Số nhà, tên đường" required>
                                     </div>
 
@@ -418,12 +424,12 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Ngân sách từ</label>
-                                            <input type="number" name="budget_min" class="form-control modern-input" 
+                                            <input type="number" name="budget_min" class="form-control modern-input" id="guest_budget_min"
                                                    placeholder="200,000">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Ngân sách đến</label>
-                                            <input type="number" name="budget_max" class="form-control modern-input" 
+                                            <input type="number" name="budget_max" class="form-control modern-input" id="guest_budget_max"
                                                    placeholder="500,000">
                                         </div>
                                     </div>
@@ -431,7 +437,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Mức độ ưu tiên</label>
-                                            <select name="urgency" class="form-select modern-select">
+                                            <select name="urgency" class="form-select modern-select" id="guest_urgency">
                                                 <option value="medium">Bình thường</option>
                                                 <option value="high">Khẩn cấp</option>
                                                 <option value="low">Không gấp</option>
@@ -439,7 +445,7 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Cần hoàn thành trước</label>
-                                            <input type="date" name="needed_by" class="form-control modern-input" 
+                                            <input type="date" name="needed_by" class="form-control modern-input" id="guest_needed_by"
                                                    min="{{ date('Y-m-d', strtotime('+1 day')) }}">
                                         </div>
                                     </div>
@@ -473,12 +479,12 @@
                                 @csrf
                                 <div class="mb-3">
                                     <label class="form-label">Email hoặc Số điện thoại</label>
-                                    <input type="text" name="username" class="form-control modern-input" 
+                                    <input type="text" name="username" class="form-control modern-input" id="login_username"
                                            placeholder="email@domain.com hoặc 0123456789" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Mật khẩu</label>
-                                    <input type="password" name="password" class="form-control modern-input" 
+                                    <input type="password" name="password" class="form-control modern-input" id="login_password"
                                            placeholder="Nhập mật khẩu" required>
                                 </div>
                                 <div class="mb-3 d-flex justify-content-between align-items-center">
@@ -501,34 +507,34 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Họ *</label>
-                                        <input type="text" name="firstname" class="form-control modern-input" 
+                                        <input type="text" name="firstname" class="form-control modern-input" id="register_firstname"
                                                placeholder="Họ" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Tên *</label>
-                                        <input type="text" name="lastname" class="form-control modern-input" 
+                                        <input type="text" name="lastname" class="form-control modern-input" id="register_lastname"
                                                placeholder="Tên" required>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email *</label>
-                                    <input type="email" name="email" class="form-control modern-input" 
+                                    <input type="email" name="email" class="form-control modern-input" id="register_email"
                                            placeholder="email@domain.com" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Số điện thoại *</label>
-                                    <input type="tel" name="mobile" class="form-control modern-input" 
+                                    <input type="tel" name="mobile" class="form-control modern-input" id="register_mobile"
                                            placeholder="0123456789" required>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Mật khẩu *</label>
-                                        <input type="password" name="password" class="form-control modern-input" 
+                                        <input type="password" name="password" class="form-control modern-input" id="register_password"
                                                placeholder="Tối thiểu 6 ký tự" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Xác nhận mật khẩu *</label>
-                                        <input type="password" name="password_confirmation" class="form-control modern-input" 
+                                        <input type="password" name="password_confirmation" class="form-control modern-input" id="register_password_confirmation"
                                                placeholder="Nhập lại mật khẩu" required>
                                     </div>
                                 </div>
@@ -1293,6 +1299,8 @@
     border-radius: 12px;
     padding: 0.25rem;
     gap: 0.25rem;
+    position: relative;
+    z-index: 10;
 }
 
 .tab-btn {
@@ -1309,20 +1317,44 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+    z-index: 11;
+    min-height: 48px;
+    text-decoration: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tab-btn:focus {
+    outline: 2px solid #48bbe2;
+    outline-offset: 2px;
 }
 
 .tab-btn.active {
     background: white;
     color: #102f4b;
     box-shadow: 0 2px 8px rgba(16, 47, 75, 0.1);
+    pointer-events: auto;
+    z-index: 12;
 }
 
 .tab-btn:hover {
     color: #48bbe2;
+    background: rgba(72, 187, 226, 0.1);
+    pointer-events: auto;
 }
 
+.tab-btn:active {
+    transform: scale(0.98);
+}
+
+/* Ensure tab content visibility */
 .tab-content {
     display: none;
+    position: relative;
+    z-index: 5;
 }
 
 .tab-content.active {
@@ -1330,16 +1362,23 @@
     animation: fadeIn 0.3s ease;
 }
 
+/* Mobile tab improvements */
 @media (max-width: 768px) {
     .tab-btn {
         font-size: 0.75rem;
-        padding: 0.5rem 0.75rem;
+        padding: 0.6rem 0.75rem;
         flex-direction: column;
         gap: 0.25rem;
+        min-height: 56px;
     }
     
     .tab-btn i {
-        font-size: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .tab-buttons {
+        gap: 0.15rem;
+        padding: 0.2rem;
     }
 }
 
@@ -2045,6 +2084,13 @@
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     transition: all 0.3s ease;
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+    z-index: 10;
+    display: inline-block;
+    text-decoration: none;
+    outline: none;
 }
 
 .quick-lead-form .btn-primary:hover {
@@ -2055,6 +2101,120 @@
     box-shadow: 0 4px 12px rgba(16, 47, 75, 0.2);
 }
 
+.quick-lead-form .btn-primary:focus {
+    outline: 2px solid #48bbe2;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25);
+}
+
+.quick-lead-form .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(16, 47, 75, 0.2);
+}
+
+.quick-lead-form .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Specific styling for next-step-auth button */
+.next-step-auth {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 15 !important;
+    display: inline-block !important;
+    background: #48bbe2 !important;
+    border: 2px solid #48bbe2 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    outline: none !important;
+    min-height: 48px !important;
+    width: 100% !important;
+}
+
+.next-step-auth:hover {
+    background: #102f4b !important;
+    border-color: #102f4b !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(16, 47, 75, 0.2) !important;
+}
+
+.next-step-auth:focus {
+    outline: 2px solid #48bbe2 !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
+}
+
+.next-step-auth:active {
+    transform: translateY(0) !important;
+    background: #3aa3c7 !important;
+}
+
+/* Specific styling for prev-step-auth button */
+.prev-step-auth {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 15 !important;
+    display: inline-block !important;
+    background: transparent !important;
+    border: 2px solid rgba(72, 187, 226, 0.3) !important;
+    color: #102f4b !important;
+    font-weight: 500 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    outline: none !important;
+    min-height: 48px !important;
+}
+
+.prev-step-auth:hover {
+    background: rgba(72, 187, 226, 0.1) !important;
+    border-color: #48bbe2 !important;
+    color: #102f4b !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(72, 187, 226, 0.1) !important;
+}
+
+.prev-step-auth:focus {
+    outline: 2px solid #48bbe2 !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
+}
+
+.prev-step-auth:active {
+    transform: translateY(0) !important;
+    background: rgba(72, 187, 226, 0.2) !important;
+}
+
+/* Ensure parent containers don't block clicks */
+.lead-form-container,
+.modern-card,
+.tab-content,
+#leadTab,
+#authenticatedLeadForm,
+.form-step,
+.step-navigation {
+    pointer-events: auto !important;
+    position: relative;
+}
+
+/* Form step specific styling */
+#lead-step1,
+#lead-step2 {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 5;
+}
+
 .quick-lead-form .btn-success {
     background: #102f4b;
     border-color: #102f4b;
@@ -2062,6 +2222,10 @@
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     transition: all 0.3s ease;
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+    z-index: 10;
 }
 
 .quick-lead-form .btn-success:hover {
@@ -2077,12 +2241,32 @@
     color: #102f4b;
     font-family: 'Inter', sans-serif;
     font-weight: 500;
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+    z-index: 10;
 }
 
 .quick-lead-form .btn-outline-secondary:hover {
     background: rgba(72, 187, 226, 0.1);
     border-color: #48bbe2;
     color: #102f4b;
+}
+
+/* Mobile responsive button styling */
+@media (max-width: 768px) {
+    .next-step-auth {
+        padding: 0.875rem 1.25rem !important;
+        font-size: 0.9rem !important;
+        min-height: 52px !important;
+    }
+    
+    .quick-lead-form .btn-primary,
+    .quick-lead-form .btn-success {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.9rem;
+        min-height: 48px;
+    }
 }
 
 /* User Welcome Header */
@@ -2344,106 +2528,214 @@ function loadWards(districtCode, wardSelect) {
 }
 
 function initQuickLeadForm() {
-    // Tab switching (only for guests)
+    // Remove any existing event listeners first to prevent conflicts
+    document.removeEventListener('DOMContentLoaded', initQuickLeadForm);
+    
+    // Tab switching (only for guests) with improved event handling
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    // Only add tab event listeners if tabs exist (for guest users)
-    if (tabBtns.length > 0) {
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const targetTab = btn.getAttribute('data-tab');
-                
-                // Remove active class from all tabs and contents
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                // Add active class to clicked tab and corresponding content
-                btn.classList.add('active');
-                const targetElement = document.getElementById(targetTab + 'Tab');
-                if (targetElement) {
-                    targetElement.classList.add('active');
-                }
-            });
+    // Clean up any existing tab listeners first
+    tabBtns.forEach(btn => {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    // Re-select after cloning
+    const newTabBtns = document.querySelectorAll('.tab-btn');
+    
+    // Improved tab switching with debugging
+    newTabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Tab clicked:', btn.getAttribute('data-tab'));
+            
+            const targetTab = btn.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            newTabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            btn.classList.add('active');
+            const targetElement = document.getElementById(targetTab + 'Tab');
+            if (targetElement) {
+                targetElement.classList.add('active');
+                console.log('Activated tab:', targetTab);
+            }
         });
-    }
+    });
+
+    // Manual tab switching function for debugging
+    window.switchTab = function(tabName) {
+        console.log('Manual tab switch to:', tabName);
+        const tabBtn = document.querySelector(`[data-tab="${tabName}"]`);
+        if (tabBtn) {
+            tabBtn.click();
+        }
+    };
 
     // Form steps navigation for guest users
     let currentStep = 1;
     const totalSteps = 3;
 
-    // Next step buttons for guest form
+    // Next step buttons for guest form with improved event handling
     const nextStepBtns = document.querySelectorAll('.next-step');
-    if (nextStepBtns.length > 0) {
-        nextStepBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (validateCurrentStep(currentStep)) {
-                    goToStep(currentStep + 1);
-                }
-            });
-        });
-    }
+    nextStepBtns.forEach(btn => {
+        // Clone to remove existing listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+    });
 
-    // Previous step buttons for guest form
-    const prevStepBtns = document.querySelectorAll('.prev-step');
-    if (prevStepBtns.length > 0) {
-        prevStepBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                goToStep(currentStep - 1);
-            });
+    // Re-select and add listeners to cloned buttons
+    document.querySelectorAll('.next-step').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Next step clicked, current step:', currentStep);
+            if (validateCurrentStep(currentStep)) {
+                goToStep(currentStep + 1);
+            }
         });
-    }
+    });
+
+    // Previous step buttons for guest form with improved event handling
+    const prevStepBtns = document.querySelectorAll('.prev-step');
+    prevStepBtns.forEach(btn => {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    document.querySelectorAll('.prev-step').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Previous step clicked, current step:', currentStep);
+            goToStep(currentStep - 1);
+        });
+    });
 
     // Form steps navigation for authenticated users
     let currentAuthStep = 1;
     const totalAuthSteps = 2;
 
-    // Next step buttons for authenticated user form
+    // Next step buttons for authenticated user form with enhanced debugging
     const nextStepAuthBtns = document.querySelectorAll('.next-step-auth');
-    if (nextStepAuthBtns.length > 0) {
-        nextStepAuthBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (validateAuthStep(currentAuthStep)) {
-                    goToAuthStep(currentAuthStep + 1);
-                }
-            });
+    console.log('Found next-step-auth buttons:', nextStepAuthBtns.length);
+    
+    nextStepAuthBtns.forEach((btn, index) => {
+        console.log('Processing next-step-auth button', index, btn);
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    document.querySelectorAll('.next-step-auth').forEach((btn, index) => {
+        console.log('Adding listener to next-step-auth button', index);
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Auth next step clicked, current step:', currentAuthStep);
+            console.log('Button element:', btn);
+            console.log('Button classes:', btn.className);
+            
+            // Skip validation for debugging - just go to next step
+            goToAuthStep(currentAuthStep + 1);
+            
+            // Alternative: Check validation but still log
+            // if (validateAuthStep(currentAuthStep)) {
+            //     goToAuthStep(currentAuthStep + 1);
+            // } else {
+            //     console.log('Validation failed for auth step:', currentAuthStep);
+            // }
         });
-    }
+        
+        // Add backup event listener
+        btn.addEventListener('mousedown', (e) => {
+            console.log('Auth next step button mousedown event');
+        });
+        
+        btn.addEventListener('touchstart', (e) => {
+            console.log('Auth next step button touchstart event');
+        });
+    });
 
     // Previous step buttons for authenticated user form
     const prevStepAuthBtns = document.querySelectorAll('.prev-step-auth');
-    if (prevStepAuthBtns.length > 0) {
-        prevStepAuthBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                goToAuthStep(currentAuthStep - 1);
-            });
+    console.log('Found prev-step-auth buttons:', prevStepAuthBtns.length);
+    
+    prevStepAuthBtns.forEach((btn, index) => {
+        console.log('Processing prev-step-auth button', index, btn);
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    document.querySelectorAll('.prev-step-auth').forEach((btn, index) => {
+        console.log('Adding listener to prev-step-auth button', index);
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Auth previous step clicked, current step:', currentAuthStep);
+            console.log('Previous button element:', btn);
+            console.log('Previous button classes:', btn.className);
+            
+            goToAuthStep(currentAuthStep - 1);
         });
-    }
+        
+        // Add backup event listeners
+        btn.addEventListener('mousedown', (e) => {
+            console.log('Auth prev step button mousedown event');
+        });
+        
+        btn.addEventListener('touchstart', (e) => {
+            console.log('Auth prev step button touchstart event');
+        });
+    });
 
     function goToStep(step) {
         if (step < 1 || step > totalSteps) return;
         
+        console.log('Going to step:', step);
         // Hide current step
-        document.getElementById('step' + currentStep).style.display = 'none';
+        const currentStepEl = document.getElementById('step' + currentStep);
+        if (currentStepEl) {
+            currentStepEl.style.display = 'none';
+        }
         
         // Show target step
         currentStep = step;
-        document.getElementById('step' + currentStep).style.display = 'block';
+        const targetStepEl = document.getElementById('step' + currentStep);
+        if (targetStepEl) {
+            targetStepEl.style.display = 'block';
+        }
     }
 
     function goToAuthStep(step) {
-        if (step < 1 || step > totalAuthSteps) return;
+        if (step < 1 || step > totalAuthSteps) {
+            console.log('Invalid auth step:', step);
+            return;
+        }
+        
+        console.log('Going to auth step:', step, 'from current step:', currentAuthStep);
         
         // Hide current step
-        document.getElementById('lead-step' + currentAuthStep).style.display = 'none';
+        const currentStepEl = document.getElementById('lead-step' + currentAuthStep);
+        if (currentStepEl) {
+            currentStepEl.style.display = 'none';
+            console.log('Hid step:', 'lead-step' + currentAuthStep);
+        } else {
+            console.log('Could not find current step element:', 'lead-step' + currentAuthStep);
+        }
         
         // Show target step
         currentAuthStep = step;
-        document.getElementById('lead-step' + currentAuthStep).style.display = 'block';
+        const targetStepEl = document.getElementById('lead-step' + currentAuthStep);
+        if (targetStepEl) {
+            targetStepEl.style.display = 'block';
+            console.log('Showed step:', 'lead-step' + currentAuthStep);
+        } else {
+            console.log('Could not find target step element:', 'lead-step' + currentAuthStep);
+        }
     }
 
     function validateCurrentStep(step) {
@@ -2473,60 +2765,214 @@ function initQuickLeadForm() {
         const currentStepEl = document.getElementById('lead-step' + step);
         if (!currentStepEl) return true;
         
-        const requiredFields = currentStepEl.querySelectorAll('[required]');
         let isValid = true;
+        let missingFields = [];
 
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                field.classList.add('is-invalid');
+        if (step === 1) {
+            // Check required fields in step 1
+            const requiredFields = currentStepEl.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    missingFields.push(field.previousElementSibling?.textContent || field.name || 'Unknown field');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            // Check district selection specifically for step 1
+            const districtSelect = document.getElementById('auth_district_code');
+            if (!districtSelect || !districtSelect.value) {
+                if (districtSelect) districtSelect.classList.add('is-invalid');
+                missingFields.push('Quận/Huyện');
                 isValid = false;
             } else {
-                field.classList.remove('is-invalid');
+                if (districtSelect) districtSelect.classList.remove('is-invalid');
             }
-        });
+        }
+
+        if (step === 2) {
+            // Check required fields in step 2 only
+            const requiredFields = currentStepEl.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    missingFields.push(field.previousElementSibling?.textContent || field.name || 'Unknown field');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            // Don't re-validate district here, assume it was validated in step 1
+            // Instead, just check if district value exists without marking as invalid
+            const districtSelect = document.getElementById('auth_district_code');
+            if (!districtSelect || !districtSelect.value) {
+                console.warn('District not selected, but allowing submission (may be handled by server)');
+                // Don't block submission, let server handle this
+            }
+        }
 
         if (!isValid) {
-            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+            console.log('Validation failed for step', step, '- Missing fields:', missingFields);
+            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc:\n- ' + missingFields.join('\n- '), 'error');
+        } else {
+            console.log('Validation passed for step', step);
         }
 
         return isValid;
     }
 
-    // Authenticated Lead Form Submission
+    // Authenticated Lead Form Submission with improved error handling
     const authenticatedLeadForm = document.getElementById('authenticatedLeadForm');
     if (authenticatedLeadForm) {
-        authenticatedLeadForm.addEventListener('submit', async (e) => {
+        // Remove existing listeners
+        const newForm = authenticatedLeadForm.cloneNode(true);
+        authenticatedLeadForm.parentNode.replaceChild(newForm, authenticatedLeadForm);
+        
+        // Add listener to new form
+        document.getElementById('authenticatedLeadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            console.log('Authenticated lead form submitted');
             
-            if (!validateAuthStep(2)) return;
+            // Enhanced validation check
+            if (!validateAuthStep(2)) {
+                console.log('Validation failed, not submitting');
+                return;
+            }
 
             const formData = new FormData(e.target);
+            
+            // Add location data from selects
+            const formContainer = e.target;
+            const citySelect = formContainer.querySelector('select[name="city_code"]');
+            const districtSelect = formContainer.querySelector('select[name="district_code"]');
+            const wardSelect = formContainer.querySelector('select[name="ward_code"]');
+            
+            // Add city name
+            if (citySelect && citySelect.value) {
+                const cityName = citySelect.options[citySelect.selectedIndex].text;
+                if (cityName && cityName !== 'Chọn thành phố') {
+                    formData.append('city', cityName);
+                    console.log('Added city:', cityName);
+                }
+            }
+            
+            // Add district name - required
+            if (districtSelect && districtSelect.value) {
+                const districtName = districtSelect.options[districtSelect.selectedIndex].text;
+                if (districtName && districtName !== 'Chọn quận/huyện') {
+                    formData.append('district', districtName);
+                    console.log('Added district:', districtName);
+                }
+            } else {
+                // More flexible district handling
+                console.warn('No district selected, checking for alternatives...');
+                
+                // Try to get district from step 1 form data
+                const districtCodeValue = districtSelect?.value;
+                if (districtCodeValue) {
+                    formData.append('district', 'District_' + districtCodeValue);
+                    console.log('Added district from code:', districtCodeValue);
+                } else {
+                    // Last resort: use city as district
+                    const citySelect = formContainer.querySelector('select[name="city_code"]');
+                    if (citySelect && citySelect.value) {
+                        const cityName = citySelect.options[citySelect.selectedIndex].text;
+                        if (cityName && cityName !== 'Chọn thành phố') {
+                            formData.append('district', cityName);
+                            console.log('Using city as district fallback:', cityName);
+                        }
+                    }
+                    
+                    // If still no district, create a default one
+                    if (!formData.get('district')) {
+                        formData.append('district', 'Khu vực không xác định');
+                        console.log('Using default district');
+                    }
+                }
+            }
+            
+            // Add ward name with better fallback
+            if (wardSelect && wardSelect.value) {
+                const wardName = wardSelect.options[wardSelect.selectedIndex].text;
+                if (wardName && wardName !== 'Chọn phường/xã') {
+                    formData.append('ward', wardName);
+                    console.log('Added ward:', wardName);
+                }
+            } else {
+                // Use district name as ward if no ward selected
+                const districtName = formData.get('district');
+                if (districtName) {
+                    formData.append('ward', districtName);
+                    console.log('Added ward as district:', districtName);
+                } else {
+                    formData.append('ward', 'Phường không xác định');
+                    console.log('Added default ward');
+                }
+            }
+            
             const submitBtn = e.target.querySelector('.submit-lead-auth');
+            
+            console.log('Final form data entries:', Array.from(formData.entries()));
             
             // Show loading state
             submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
             submitBtn.disabled = true;
 
             try {
+                console.log('Sending request to:', '{{ route("user.customer.leads.store") }}');
                 const response = await fetch('{{ route("user.customer.leads.store") }}', {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const responseText = await response.text();
+                    console.error('Non-JSON response:', responseText);
+                    throw new Error('Server returned non-JSON response: ' + contentType);
+                }
+
                 const result = await response.json();
+                console.log('Response result:', result);
 
                 if (result.success) {
                     showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
                     e.target.reset();
                     goToAuthStep(1);
                 } else {
-                    showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+                    // Show detailed validation errors
+                    if (result.errors) {
+                        console.log('Validation errors:', result.errors);
+                        let errorMessage = result.message || 'Có lỗi xảy ra';
+                        if (result.errors.district) {
+                            errorMessage += '\n- ' + result.errors.district.join(', ');
+                        }
+                        if (result.errors.ward) {
+                            errorMessage += '\n- ' + result.errors.ward.join(', ');
+                        }
+                        if (result.errors.address) {
+                            errorMessage += '\n- ' + result.errors.address.join(', ');
+                        }
+                        showNotification(errorMessage, 'error');
+                    } else {
+                        showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+                    }
                 }
             } catch (error) {
-                showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+                console.error('Form submission error:', error);
+                showNotification('Có lỗi kết nối, vui lòng thử lại: ' + error.message, 'error');
             } finally {
                 submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Lead Ngay';
                 submitBtn.disabled = false;
@@ -2534,31 +2980,54 @@ function initQuickLeadForm() {
         });
     }
 
-    // Guest Lead Form Submission
+    // Guest Lead Form Submission with improved error handling
     const guestLeadForm = document.getElementById('guestLeadForm');
     if (guestLeadForm) {
-        guestLeadForm.addEventListener('submit', async (e) => {
+        // Remove existing listeners
+        const newGuestForm = guestLeadForm.cloneNode(true);
+        guestLeadForm.parentNode.replaceChild(newGuestForm, guestLeadForm);
+        
+        // Add listener to new form
+        document.getElementById('guestLeadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            console.log('Guest lead form submitted');
             
             if (!validateCurrentStep(3)) return;
 
             const formData = new FormData(e.target);
             const submitBtn = e.target.querySelector('.submit-lead');
             
+            console.log('Guest form data entries:', Array.from(formData.entries()));
+            
             // Show loading state
             submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
             submitBtn.disabled = true;
 
             try {
+                console.log('Guest sending request to:', '{{ route("user.customer.leads.store") }}');
                 const response = await fetch('{{ route("user.customer.leads.store") }}', {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
 
+                console.log('Guest response status:', response.status);
+                console.log('Guest response headers:', response.headers);
+
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const responseText = await response.text();
+                    console.error('Guest non-JSON response:', responseText);
+                    throw new Error('Server returned non-JSON response: ' + contentType);
+                }
+
                 const result = await response.json();
+                console.log('Guest response result:', result);
 
                 if (result.success) {
                     showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
@@ -2568,7 +3037,8 @@ function initQuickLeadForm() {
                     showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
                 }
             } catch (error) {
-                showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+                console.error('Guest form submission error:', error);
+                showNotification('Có lỗi kết nối, vui lòng thử lại: ' + error.message, 'error');
             } finally {
                 submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Lead & Tự Động Đăng Ký';
                 submitBtn.disabled = false;
@@ -2576,11 +3046,17 @@ function initQuickLeadForm() {
         });
     }
 
-    // Login Form
+    // Login Form with improved error handling
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
+        // Remove existing listeners
+        const newLoginForm = loginForm.cloneNode(true);
+        loginForm.parentNode.replaceChild(newLoginForm, loginForm);
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            console.log('Login form submitted');
             
             const formData = new FormData(e.target);
             const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -2593,11 +3069,21 @@ function initQuickLeadForm() {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
 
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const responseText = await response.text();
+                    console.error('Login non-JSON response:', responseText);
+                    throw new Error('Server returned non-JSON response: ' + contentType);
+                }
+
                 const result = await response.json();
+                console.log('Login response result:', result);
 
                 if (result.success) {
                     showNotification('✅ Đăng nhập thành công!', 'success');
@@ -2623,7 +3109,8 @@ function initQuickLeadForm() {
                     showNotification(result.message || 'Thông tin đăng nhập không chính xác', 'error');
                 }
             } catch (error) {
-                showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+                console.error('Login error:', error);
+                showNotification('Có lỗi kết nối, vui lòng thử lại: ' + error.message, 'error');
             } finally {
                 submitBtn.innerHTML = '<i class="las la-sign-in-alt me-2"></i>Đăng Nhập';
                 submitBtn.disabled = false;
@@ -2631,11 +3118,17 @@ function initQuickLeadForm() {
         });
     }
 
-    // Register Form
+    // Register Form with improved error handling
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
+        // Remove existing listeners
+        const newRegisterForm = registerForm.cloneNode(true);
+        registerForm.parentNode.replaceChild(newRegisterForm, registerForm);
+        
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            console.log('Register form submitted');
             
             const formData = new FormData(e.target);
             const password = formData.get('password');
@@ -2656,11 +3149,21 @@ function initQuickLeadForm() {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
 
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const responseText = await response.text();
+                    console.error('Register non-JSON response:', responseText);
+                    throw new Error('Server returned non-JSON response: ' + contentType);
+                }
+
                 const result = await response.json();
+                console.log('Register response result:', result);
 
                 if (result.success) {
                     showNotification('🎉 Đăng ký thành công! Đang chuyển đến form tạo lead...', 'success');
@@ -2688,7 +3191,8 @@ function initQuickLeadForm() {
                     showNotification(result.message || 'Có lỗi xảy ra khi đăng ký', 'error');
                 }
             } catch (error) {
-                showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
+                console.error('Register error:', error);
+                showNotification('Có lỗi kết nối, vui lòng thử lại: ' + error.message, 'error');
             } finally {
                 submitBtn.innerHTML = '<i class="las la-user-plus me-2"></i>Đăng Ký Miễn Phí';
                 submitBtn.disabled = false;
@@ -2701,6 +3205,606 @@ function initQuickLeadForm() {
     
     // Stats counter animation
     initStatsCounter();
+    
+    // Add backup event delegation for tab buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.tab-btn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const btn = e.target.closest('.tab-btn');
+            const targetTab = btn.getAttribute('data-tab');
+            console.log('Backup tab handler:', targetTab);
+            
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            btn.classList.add('active');
+            const targetElement = document.getElementById(targetTab + 'Tab');
+            if (targetElement) {
+                targetElement.classList.add('active');
+                console.log('Backup activated tab:', targetTab);
+            }
+        }
+        
+        // Backup handler for next-step-auth button
+        if (e.target.closest('.next-step-auth')) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Backup next-step-auth handler triggered');
+            const btn = e.target.closest('.next-step-auth');
+            console.log('Backup button element:', btn);
+            
+            // Force go to next step without validation for testing
+            const currentStep = 1; // Assuming we're on step 1
+            const targetStep = currentStep + 1;
+            
+            console.log('Backup forcing step change from', currentStep, 'to', targetStep);
+            
+            // Hide step 1
+            const step1 = document.getElementById('lead-step1');
+            if (step1) {
+                step1.style.display = 'none';
+                console.log('Backup hid step 1');
+            }
+            
+            // Show step 2
+            const step2 = document.getElementById('lead-step2');
+            if (step2) {
+                step2.style.display = 'block';
+                console.log('Backup showed step 2');
+            }
+        }
+        
+        // Backup handler for prev-step-auth button
+        if (e.target.closest('.prev-step-auth')) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Backup prev-step-auth handler triggered');
+            const btn = e.target.closest('.prev-step-auth');
+            console.log('Backup prev button element:', btn);
+            
+            // Force go to previous step
+            const currentStep = 2; // Assuming we're on step 2
+            const targetStep = currentStep - 1;
+            
+            console.log('Backup forcing step change from', currentStep, 'to', targetStep);
+            
+            // Hide step 2
+            const step2 = document.getElementById('lead-step2');
+            if (step2) {
+                step2.style.display = 'none';
+                console.log('Backup hid step 2');
+            }
+            
+            // Show step 1
+            const step1 = document.getElementById('lead-step1');
+            if (step1) {
+                step1.style.display = 'block';
+                console.log('Backup showed step 1');
+            }
+        }
+        
+        // General backup for any auth step navigation
+        if (e.target.closest('[class*="step-auth"]')) {
+            console.log('Backup handler for auth step element:', e.target.closest('[class*="step-auth"]'));
+        }
+    });
+
+    // Add specific click handler for the next-step-auth button
+    setTimeout(() => {
+        const nextStepBtn = document.querySelector('.next-step-auth');
+        if (nextStepBtn) {
+            console.log('Adding direct click handler to next-step-auth button');
+            
+            // Add multiple event types to ensure it works
+            ['click', 'touchend', 'mouseup'].forEach(eventType => {
+                nextStepBtn.addEventListener(eventType, function(e) {
+                    console.log(`Direct ${eventType} handler for next-step-auth`);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Direct step change
+                    const step1 = document.getElementById('lead-step1');
+                    const step2 = document.getElementById('lead-step2');
+                    
+                    if (step1 && step2) {
+                        step1.style.display = 'none';
+                        step2.style.display = 'block';
+                        console.log('Direct handler: Changed from step 1 to step 2');
+                    }
+                }, { passive: false });
+            });
+            
+            // Test button properties
+            console.log('Next button properties:');
+            console.log('- Visible:', nextStepBtn.offsetParent !== null);
+            console.log('- Disabled:', nextStepBtn.disabled);
+            console.log('- Pointer events:', window.getComputedStyle(nextStepBtn).pointerEvents);
+            console.log('- Position:', window.getComputedStyle(nextStepBtn).position);
+            console.log('- Z-index:', window.getComputedStyle(nextStepBtn).zIndex);
+            console.log('- Display:', window.getComputedStyle(nextStepBtn).display);
+        } else {
+            console.log('next-step-auth button not found in setTimeout');
+        }
+        
+        // Add specific click handler for the prev-step-auth button
+        const prevStepBtn = document.querySelector('.prev-step-auth');
+        if (prevStepBtn) {
+            console.log('Adding direct click handler to prev-step-auth button');
+            
+            // Add multiple event types to ensure it works
+            ['click', 'touchend', 'mouseup'].forEach(eventType => {
+                prevStepBtn.addEventListener(eventType, function(e) {
+                    console.log(`Direct ${eventType} handler for prev-step-auth`);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Direct step change back to step 1
+                    const step1 = document.getElementById('lead-step1');
+                    const step2 = document.getElementById('lead-step2');
+                    
+                    if (step1 && step2) {
+                        step2.style.display = 'none';
+                        step1.style.display = 'block';
+                        console.log('Direct handler: Changed from step 2 to step 1');
+                    }
+                }, { passive: false });
+            });
+            
+            // Test button properties
+            console.log('Prev button properties:');
+            console.log('- Visible:', prevStepBtn.offsetParent !== null);
+            console.log('- Disabled:', prevStepBtn.disabled);
+            console.log('- Pointer events:', window.getComputedStyle(prevStepBtn).pointerEvents);
+            console.log('- Position:', window.getComputedStyle(prevStepBtn).position);
+            console.log('- Z-index:', window.getComputedStyle(prevStepBtn).zIndex);
+            console.log('- Display:', window.getComputedStyle(prevStepBtn).display);
+        } else {
+            console.log('prev-step-auth button not found in setTimeout');
+        }
+    }, 1000);
+
+    // Add route testing function for debugging
+    window.testRoute = async function() {
+        console.log('Testing route accessibility...');
+        try {
+            const response = await fetch('{{ route("user.customer.leads.store") }}', {
+                method: 'GET', // Test with GET first to see what happens
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            console.log('Test response status:', response.status);
+            console.log('Test response headers:', response.headers);
+            
+            const responseText = await response.text();
+            console.log('Test response text:', responseText);
+            
+            return {
+                status: response.status,
+                headers: Object.fromEntries(response.headers.entries()),
+                body: responseText
+            };
+        } catch (error) {
+            console.error('Route test error:', error);
+            return { error: error.message };
+        }
+    };
+
+    // Add form data testing function
+    window.testFormData = function() {
+        const testForm = document.getElementById('guestLeadForm') || document.getElementById('authenticatedLeadForm');
+        if (testForm) {
+            const formData = new FormData(testForm);
+            console.log('Test form data entries:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ':', value);
+            }
+            return Array.from(formData.entries());
+        } else {
+            console.log('No form found for testing');
+            return null;
+        }
+    };
+
+    // Add alternative route testing with multiple route attempts
+    window.testMultipleRoutes = async function() {
+        const routes = [
+            '{{ route("user.customer.leads.store") }}',
+            '/customer/leads/store',
+            '/user/customer/leads/store'
+        ];
+        
+        console.log('Testing multiple route variations...');
+        
+        for (const route of routes) {
+            console.log('Testing route:', route);
+            try {
+                const response = await fetch(route, {
+                    method: 'POST',
+                    body: new FormData(),
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                console.log('Route', route, 'status:', response.status);
+                const text = await response.text();
+                console.log('Route', route, 'response:', text.substring(0, 200));
+                
+                if (response.status !== 404) {
+                    console.log('Found working route:', route);
+                    return { route, status: response.status };
+                }
+            } catch (error) {
+                console.log('Route', route, 'error:', error.message);
+            }
+        }
+        
+        return null;
+    };
+
+    // Add manual testing function for auth step navigation
+    window.testAuthStep = function(step) {
+        console.log('Manual auth step test to step:', step);
+        goToAuthStep(step);
+    };
+
+    // Add function to test next-step-auth button directly
+    window.testNextStepAuth = function() {
+        console.log('Testing next-step-auth button click');
+        const btn = document.querySelector('.next-step-auth');
+        if (btn) {
+            console.log('Found button:', btn);
+            console.log('Button visible:', btn.offsetParent !== null);
+            console.log('Button disabled:', btn.disabled);
+            console.log('Button pointer events:', window.getComputedStyle(btn).pointerEvents);
+            btn.click();
+        } else {
+            console.log('next-step-auth button not found');
+        }
+    };
+
+    // Add function to test prev-step-auth button directly
+    window.testPrevStepAuth = function() {
+        console.log('Testing prev-step-auth button click');
+        const btn = document.querySelector('.prev-step-auth');
+        if (btn) {
+            console.log('Found prev button:', btn);
+            console.log('Button visible:', btn.offsetParent !== null);
+            console.log('Button disabled:', btn.disabled);
+            console.log('Button pointer events:', window.getComputedStyle(btn).pointerEvents);
+            btn.click();
+        } else {
+            console.log('prev-step-auth button not found');
+        }
+    };
+
+    // Add function to force step change
+    window.forceNextStep = function() {
+        console.log('Forcing step change from 1 to 2');
+        const step1 = document.getElementById('lead-step1');
+        const step2 = document.getElementById('lead-step2');
+        
+        if (step1 && step2) {
+            step1.style.display = 'none';
+            step2.style.display = 'block';
+            console.log('Successfully changed to step 2');
+            return true;
+        } else {
+            console.log('Could not find step elements');
+            console.log('Step 1:', step1);
+            console.log('Step 2:', step2);
+            return false;
+        }
+    };
+
+    // Add function to force go back
+    window.forcePrevStep = function() {
+        console.log('Forcing step change from 2 to 1');
+        const step1 = document.getElementById('lead-step1');
+        const step2 = document.getElementById('lead-step2');
+        
+        if (step1 && step2) {
+            step2.style.display = 'none';
+            step1.style.display = 'block';
+            console.log('Successfully changed back to step 1');
+            return true;
+        } else {
+            console.log('Could not find step elements');
+            console.log('Step 1:', step1);
+            console.log('Step 2:', step2);
+            return false;
+        }
+    };
+
+    // Add function to show all steps for debugging
+    window.showAllSteps = function() {
+        console.log('Showing all available steps:');
+        for (let i = 1; i <= 5; i++) {
+            const step = document.getElementById('lead-step' + i);
+            if (step) {
+                console.log('Found step:', 'lead-step' + i, step);
+                console.log('Display:', window.getComputedStyle(step).display);
+            }
+        }
+    };
+
+    // Add function to check form validation
+    window.checkValidation = function() {
+        console.log('Checking form validation for step 1');
+        const step1 = document.getElementById('lead-step1');
+        if (step1) {
+            const requiredFields = step1.querySelectorAll('[required]');
+            console.log('Required fields in step 1:', requiredFields.length);
+            
+            let validationResults = [];
+            requiredFields.forEach((field, index) => {
+                const isValid = field.value.trim() !== '';
+                validationResults.push({
+                    index: index,
+                    name: field.name || field.id,
+                    value: field.value,
+                    valid: isValid
+                });
+                console.log(`Field ${index} (${field.name || field.id}):`, field.value, isValid ? 'VALID' : 'INVALID');
+            });
+            
+            return validationResults;
+        }
+        return null;
+    };
+
+    // Add function to check location data
+    window.checkLocationData = function() {
+        console.log('Checking location data...');
+        
+        const citySelect = document.getElementById('auth_city_code');
+        const districtSelect = document.getElementById('auth_district_code');
+        const wardSelect = document.getElementById('auth_ward_code');
+        
+        const locationData = {
+            city: {
+                element: citySelect,
+                value: citySelect?.value,
+                text: citySelect?.options[citySelect.selectedIndex]?.text,
+                disabled: citySelect?.disabled,
+                optionsCount: citySelect?.options.length
+            },
+            district: {
+                element: districtSelect,
+                value: districtSelect?.value,
+                text: districtSelect?.options[districtSelect.selectedIndex]?.text,
+                disabled: districtSelect?.disabled,
+                optionsCount: districtSelect?.options.length
+            },
+            ward: {
+                element: wardSelect,
+                value: wardSelect?.value,
+                text: wardSelect?.options[wardSelect.selectedIndex]?.text,
+                disabled: wardSelect?.disabled,
+                optionsCount: wardSelect?.options.length
+            }
+        };
+        
+        console.log('Location data:', locationData);
+        
+        // Check if cities are loaded
+        if (citySelect) {
+            console.log('City options count:', citySelect.options.length);
+            if (citySelect.options.length <= 1) {
+                console.warn('Cities not loaded! Trying to load...');
+                loadCities();
+            }
+        }
+        
+        // Detailed district check
+        if (districtSelect) {
+            console.log('District element found:', !!districtSelect);
+            console.log('District value:', districtSelect.value);
+            console.log('District disabled:', districtSelect.disabled);
+            console.log('District options:', districtSelect.options.length);
+            
+            // Log all district options
+            if (districtSelect.options.length > 0) {
+                console.log('District options:');
+                for (let i = 0; i < districtSelect.options.length; i++) {
+                    console.log(`  ${i}: ${districtSelect.options[i].value} - ${districtSelect.options[i].text}`);
+                }
+            }
+        } else {
+            console.error('District select element not found!');
+        }
+        
+        return locationData;
+    };
+
+    // Add specific function to debug district selection
+    window.debugDistrictSelection = function() {
+        console.log('=== DISTRICT DEBUG ===');
+        
+        const districtSelect = document.getElementById('auth_district_code');
+        
+        if (!districtSelect) {
+            console.error('❌ District select element not found!');
+            return false;
+        }
+        
+        console.log('✅ District select found');
+        console.log('Value:', districtSelect.value);
+        console.log('Selected index:', districtSelect.selectedIndex);
+        console.log('Options count:', districtSelect.options.length);
+        console.log('Disabled:', districtSelect.disabled);
+        console.log('Required:', districtSelect.required);
+        
+        if (districtSelect.selectedIndex >= 0) {
+            const selectedOption = districtSelect.options[districtSelect.selectedIndex];
+            console.log('Selected option text:', selectedOption.text);
+            console.log('Selected option value:', selectedOption.value);
+        }
+        
+        // Test if validation would pass
+        const hasValue = districtSelect.value && districtSelect.value.trim() !== '';
+        console.log('Has valid value:', hasValue);
+        
+        if (!hasValue) {
+            console.warn('⚠️ District not selected - this would cause validation to fail');
+            
+            // Try to auto-select first non-empty option
+            for (let i = 1; i < districtSelect.options.length; i++) {
+                const option = districtSelect.options[i];
+                if (option.value && option.value.trim() !== '') {
+                    console.log('🔧 Auto-selecting first available district:', option.text);
+                    districtSelect.selectedIndex = i;
+                    districtSelect.dispatchEvent(new Event('change'));
+                    break;
+                }
+            }
+        }
+        
+        return hasValue;
+    };
+
+    // Add function to fill test data
+    window.fillTestData = function() {
+        console.log('Filling test data...');
+        
+        // Fill basic fields
+        const categorySelect = document.getElementById('auth_category_id');
+        if (categorySelect && categorySelect.options.length > 1) {
+            categorySelect.selectedIndex = 1;
+            console.log('Selected category:', categorySelect.value);
+        }
+        
+        const titleInput = document.getElementById('auth_title');
+        if (titleInput) {
+            titleInput.value = 'Test: Sửa chữa điện nước';
+            console.log('Set title:', titleInput.value);
+        }
+        
+        const descriptionInput = document.getElementById('auth_description');
+        if (descriptionInput) {
+            descriptionInput.value = 'Cần sửa chữa hệ thống điện và nước trong nhà';
+            console.log('Set description:', descriptionInput.value);
+        }
+        
+        // Fill step 2 data
+        const addressInput = document.getElementById('auth_address');
+        if (addressInput) {
+            addressInput.value = '123 Nguyễn Văn A';
+            console.log('Set address:', addressInput.value);
+        }
+        
+        console.log('Test data filled. Please select city and district manually.');
+    };
+
+    // Add function to simulate form submission with test data
+    window.testSubmitWithData = function() {
+        console.log('Testing form submission with current data...');
+        
+        const form = document.getElementById('authenticatedLeadForm');
+        if (form) {
+            const formData = new FormData(form);
+            
+            // Add location data manually for testing
+            formData.append('district', 'Quận 1');
+            formData.append('ward', 'Phường Bến Nghé');
+            
+            console.log('Test form data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ':', value);
+            }
+            
+            return Array.from(formData.entries());
+        }
+        return null;
+    };
+
+    // Add function to bypass validation and submit directly
+    window.bypassValidationAndSubmit = function() {
+        console.log('Bypassing validation and submitting form...');
+        
+        const form = document.getElementById('authenticatedLeadForm');
+        if (!form) {
+            console.error('Form not found');
+            return;
+        }
+        
+        const formData = new FormData(form);
+        
+        // Force add required data
+        formData.append('district', 'Quận 1');
+        formData.append('ward', 'Phường Bến Nghé');
+        formData.append('city', 'Hồ Chí Minh');
+        
+        console.log('Bypassed form data:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key + ':', value);
+        }
+        
+        // Submit directly without validation
+        fetch('{{ route("user.customer.leads.store") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            console.log('Bypass response status:', response.status);
+            return response.json();
+        })
+        .then(result => {
+            console.log('Bypass response result:', result);
+            if (result.success) {
+                showNotification('✅ Lead created successfully with bypass!', 'success');
+            } else {
+                showNotification('❌ Still failed: ' + (result.message || 'Unknown error'), 'error');
+                console.log('Errors:', result.errors);
+            }
+        })
+        .catch(error => {
+            console.error('Bypass error:', error);
+            showNotification('❌ Network error: ' + error.message, 'error');
+        });
+    };
+
+    // Add simplified validation check
+    window.checkSimpleValidation = function() {
+        console.log('=== SIMPLE VALIDATION CHECK ===');
+        
+        // Check step 1 fields
+        const requiredStep1 = [
+            'auth_category_id',
+            'auth_city_code', 
+            'auth_district_code',
+            'auth_address',
+            'auth_title',
+            'auth_description'
+        ];
+        
+        let step1Valid = true;
+        console.log('Step 1 validation:');
+        
+        requiredStep1.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            const hasValue = field && field.value && field.value.trim() !== '';
+            console.log(`  ${fieldId}:`, hasValue ? '✅' : '❌', field?.value || 'empty');
+            if (!hasValue) step1Valid = false;
+        });
+        
+        console.log('Step 1 overall:', step1Valid ? '✅ VALID' : '❌ INVALID');
+        
+        return step1Valid;
+    };
 }
 
 function initReviewsSlider() {

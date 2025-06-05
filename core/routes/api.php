@@ -31,4 +31,12 @@ Route::middleware([
     'verified'
 ])->group(function () {
     // ... existing routes ...
-}); 
+});
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+// Lead Matching API
+Route::post('/find-matching-contractors', 'App\Http\Controllers\API\LeadMatchingController@findMatchingContractors');
+Route::get('/categories/{categoryId}/features', 'App\Http\Controllers\API\LeadMatchingController@getCategoryFeatures'); 

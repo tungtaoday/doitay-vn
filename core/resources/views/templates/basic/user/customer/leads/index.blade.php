@@ -107,7 +107,7 @@
                 <div class="lead-card card border-0 shadow-sm">
                     <div class="card-body">
                         <div class="row align-items-center">
-                            <!-- Lead Info -->
+                            <!-- Lead Details -->
                             <div class="col-lg-6">
                                 <div class="d-flex align-items-start">
                                     <div class="lead-icon me-3">
@@ -133,6 +133,26 @@
                                                 </span>
                                             @endif
                                         </div>
+
+                                        <!-- Selected Contractors Info -->
+                                        @if(isset($lead->customer_info['selected_contractors']) && !empty($lead->customer_info['selected_contractors']))
+                                            <div class="selected-contractors mt-2">
+                                                <small class="text-muted">
+                                                    <i class="las la-users me-1"></i>
+                                                    Đã chọn {{ count($lead->customer_info['selected_contractors']) }} thợ phù hợp
+                                                </small>
+                                            </div>
+                                        @endif
+
+                                        <!-- Feature Requirements -->
+                                        @if(!empty($lead->requirements))
+                                            <div class="feature-requirements mt-2">
+                                                <small class="text-muted">
+                                                    <i class="las la-star me-1"></i>
+                                                    Có yêu cầu đặc biệt về kỹ năng
+                                                </small>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -156,6 +176,29 @@
                                             </div>
                                         @endif
                                     </div>
+
+                                    <!-- Lead Progress -->
+                                    @if($lead->status == 'active')
+                                        <div class="lead-progress mt-2">
+                                            @php
+                                                $progressSteps = [
+                                                    'created' => ['label' => 'Đã tạo', 'icon' => 'las la-plus', 'status' => 'completed'],
+                                                    'published' => ['label' => 'Đã đăng', 'icon' => 'las la-bullhorn', 'status' => 'completed'],
+                                                    'received_interest' => ['label' => 'Có thợ quan tâm', 'icon' => 'las la-users', 'status' => $lead->purchased_count > 0 ? 'completed' : 'pending'],
+                                                    'in_progress' => ['label' => 'Đang thực hiện', 'icon' => 'las la-tools', 'status' => $lead->purchased_count >= 3 ? 'completed' : 'pending'],
+                                                ];
+                                            @endphp
+                                            
+                                            <div class="progress-timeline">
+                                                @foreach($progressSteps as $key => $step)
+                                                    <div class="progress-step {{ $step['status'] }}">
+                                                        <i class="{{ $step['icon'] }}"></i>
+                                                        <span>{{ $step['label'] }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
