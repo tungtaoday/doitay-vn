@@ -2411,43 +2411,96 @@ function initLocationSystem() {
 }
 
 function loadCities() {
-    console.log('Loading cities...');
+    console.log('🏙️ Loading cities...');
+    
+    // Check if select elements exist before fetching
+    const citySelects = $('select[name="city_code"]');
+    console.log('Found city selects:', citySelects.length);
+    
+    if (citySelects.length === 0) {
+        console.warn('⚠️ No city select elements found, retrying in 1 second...');
+        setTimeout(loadCities, 1000);
+        return;
+    }
+    
     $.ajax({
         url: '/localtion/api/cities',
         type: 'GET',
         dataType: 'text', // Changed back to 'text' 
         success: function(response) {
+            console.log('📡 Cities API response received');
             console.log('Raw cities API response:', response);
             const cleanResponse = response.replace(/<!--|-->/g, '').trim();
             console.log('Cleaned response:', cleanResponse);
             try {
                 const cities = JSON.parse(cleanResponse);
-                const citySelects = $('select[name="city_code"]');
+                console.log('📊 Cities data parsed:', cities);
+                console.log('📊 Number of cities:', cities.length);
                 
-                console.log('Found city selects:', citySelects.length);
-                console.log('Cities data:', cities);
+                if (!Array.isArray(cities) || cities.length === 0) {
+                    throw new Error('Invalid cities data received');
+                }
+                
+                citySelects.each(function() {
+                    const select = $(this);
+                    const selectId = select.attr('id');
+                    console.log('🔄 Populating select:', selectId);
+                    
+                    select.empty().append('<option value="">Chọn thành phố</option>');
+                    
+                    cities.forEach((city, index) => {
+                        if (index < 5) console.log(`City ${index + 1}:`, city);
+                        select.append(
+                            `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
+                        );
+                    });
+                    
+                    console.log('✅ Select populated, options count:', select.find('option').length);
+                });
+                
+                console.log('🎉 Cities loaded and populated successfully!');
+                
+                // Trigger change event to refresh dropdowns
+                citySelects.trigger('change');
+                
+            } catch (error) {
+                console.error("❌ Lỗi xử lý dữ liệu cities:", error);
+                console.error('❌ Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
+                
+                // Fallback with hardcoded major cities
+                console.log('🔄 Using fallback cities...');
+                const fallbackCities = [
+                    { City_code: '01', City: 'Hà Nội' },
+                    { City_code: '79', City: 'TP. Hồ Chí Minh' },
+                    { City_code: '48', City: 'Đà Nẵng' },
+                    { City_code: '31', City: 'Hải Phòng' },
+                    { City_code: '92', City: 'Cần Thơ' }
+                ];
                 
                 citySelects.each(function() {
                     const select = $(this);
                     select.empty().append('<option value="">Chọn thành phố</option>');
                     
-                    cities.forEach(city => {
-                        console.log('Adding city:', city);
+                    fallbackCities.forEach(city => {
                         select.append(
                             `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
                         );
                     });
+                    
+                    console.log('✅ Fallback cities populated for:', select.attr('id'));
                 });
                 
-                console.log('Cities loaded successfully');
-            } catch (error) {
-                console.error("Lỗi xử lý dữ liệu cities:", error);
-                showNotification('Có lỗi khi tải danh sách thành phố', 'error');
+                showNotification('Đang sử dụng danh sách thành phố cơ bản. Vui lòng thử lại sau.', 'warning');
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.error("Lỗi API (cities):", textStatus, errorThrown);
-            console.error("Response text:", jqXHR.responseText);
+            console.error("❌ Lỗi API (cities):", textStatus, errorThrown);
+            console.error("❌ Response text:", jqXHR.responseText);
+            console.error("❌ Status code:", jqXHR.status);
             showNotification('Không thể tải danh sách thành phố', 'error');
         }
     });
@@ -2742,20 +2795,58 @@ function initQuickLeadForm() {
         const currentStepEl = document.getElementById('step' + step);
         if (!currentStepEl) return true;
         
+        console.log('🔍 Validating guest step:', step);
+        
         const requiredFields = currentStepEl.querySelectorAll('[required]');
         let isValid = true;
+        let missingFields = [];
 
         requiredFields.forEach(field => {
+            // Skip validation for disabled fields (like district_code when no city is selected)
+            if (field.disabled) {
+                console.log('⏭️ Skipping disabled field:', field.name || field.id);
+                field.classList.remove('is-invalid');
+                return;
+            }
+            
             if (!field.value.trim()) {
                 field.classList.add('is-invalid');
+                const label = field.previousElementSibling?.textContent || field.name || field.placeholder || 'Unknown field';
+                missingFields.push(label);
                 isValid = false;
+                console.log('❌ Missing field:', label);
             } else {
                 field.classList.remove('is-invalid');
+                console.log('✅ Valid field:', field.name || field.id, '=', field.value);
             }
         });
 
+        // Special validation for step 1 - check if city is selected
+        if (step === 1) {
+            const citySelect = currentStepEl.querySelector('select[name="city_code"]');
+            if (citySelect && !citySelect.value) {
+                citySelect.classList.add('is-invalid');
+                missingFields.push('Thành phố');
+                isValid = false;
+                console.log('❌ City not selected');
+            }
+            
+            // Only check district if city is selected
+            const districtSelect = currentStepEl.querySelector('select[name="district_code"]');
+            if (citySelect && citySelect.value && districtSelect && !districtSelect.disabled && !districtSelect.value) {
+                districtSelect.classList.add('is-invalid');
+                missingFields.push('Quận/Huyện');
+                isValid = false;
+                console.log('❌ District not selected');
+            }
+        }
+
         if (!isValid) {
-            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+            const errorMessage = `Vui lòng điền đầy đủ thông tin bắt buộc:\n• ${missingFields.join('\n• ')}`;
+            showNotification(errorMessage, 'error');
+            console.log('❌ Validation failed for guest step', step, '- Missing fields:', missingFields);
+        } else {
+            console.log('✅ Validation passed for guest step', step);
         }
 
         return isValid;
@@ -2996,9 +3087,82 @@ function initQuickLeadForm() {
             if (!validateCurrentStep(3)) return;
 
             const formData = new FormData(e.target);
+            
+            // Add location data from selects (critical for validation)
+            const formContainer = e.target;
+            const citySelect = formContainer.querySelector('select[name="city_code"]');
+            const districtSelect = formContainer.querySelector('select[name="district_code"]');
+            const wardSelect = formContainer.querySelector('select[name="ward_code"]');
+            
+            console.log('🔍 Checking location data...');
+            console.log('City:', citySelect?.value, citySelect?.options[citySelect?.selectedIndex]?.text);
+            console.log('District:', districtSelect?.value, districtSelect?.options[districtSelect?.selectedIndex]?.text);
+            console.log('Ward:', wardSelect?.value, wardSelect?.options[wardSelect?.selectedIndex]?.text);
+            
+            // Add city name
+            if (citySelect && citySelect.value) {
+                const cityName = citySelect.options[citySelect.selectedIndex].text;
+                if (cityName && cityName !== 'Chọn thành phố') {
+                    formData.append('city', cityName);
+                    console.log('✅ Added city:', cityName);
+                }
+            }
+            
+            // Add district name - REQUIRED for validation
+            if (districtSelect && districtSelect.value) {
+                const districtName = districtSelect.options[districtSelect.selectedIndex].text;
+                if (districtName && districtName !== 'Chọn quận/huyện') {
+                    formData.append('district', districtName);
+                    console.log('✅ Added district:', districtName);
+                }
+            } else {
+                // Fallback district handling for guest form
+                console.warn('⚠️ No district selected, using fallback...');
+                
+                // Use city as district fallback
+                if (citySelect && citySelect.value) {
+                    const cityName = citySelect.options[citySelect.selectedIndex].text;
+                    if (cityName && cityName !== 'Chọn thành phố') {
+                        formData.append('district', cityName);
+                        console.log('🔄 Using city as district fallback:', cityName);
+                    }
+                } else {
+                    // Default fallback
+                    formData.append('district', 'Khu vực không xác định');
+                    console.log('🔄 Using default district fallback');
+                }
+            }
+            
+            // Add ward name with fallback
+            if (wardSelect && wardSelect.value) {
+                const wardName = wardSelect.options[wardSelect.selectedIndex].text;
+                if (wardName && wardName !== 'Chọn phường/xã') {
+                    formData.append('ward', wardName);
+                    console.log('✅ Added ward:', wardName);
+                }
+            } else {
+                // Ward fallback
+                if (districtSelect && districtSelect.value) {
+                    const districtName = districtSelect.options[districtSelect.selectedIndex].text;
+                    if (districtName && districtName !== 'Chọn quận/huyện') {
+                        formData.append('ward', districtName);
+                        console.log('🔄 Using district as ward fallback:', districtName);
+                    }
+                } else if (citySelect && citySelect.value) {
+                    const cityName = citySelect.options[citySelect.selectedIndex].text;
+                    if (cityName && cityName !== 'Chọn thành phố') {
+                        formData.append('ward', cityName);
+                        console.log('🔄 Using city as ward fallback:', cityName);
+                    }
+                } else {
+                    formData.append('ward', 'Phường/Xã không xác định');
+                    console.log('🔄 Using default ward fallback');
+                }
+            }
+            
             const submitBtn = e.target.querySelector('.submit-lead');
             
-            console.log('Guest form data entries:', Array.from(formData.entries()));
+            console.log('📤 Final guest form data entries:', Array.from(formData.entries()));
             
             // Show loading state
             submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
@@ -3034,7 +3198,16 @@ function initQuickLeadForm() {
                     e.target.reset();
                     goToStep(1);
                 } else {
-                    showNotification(result.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+                    let errorMessage = result.message || 'Có lỗi xảy ra, vui lòng thử lại';
+                    
+                    // Handle validation errors
+                    if (result.errors) {
+                        console.log('❌ Validation errors:', result.errors);
+                        const errorMessages = Object.values(result.errors).flat();
+                        errorMessage = errorMessages.join(', ');
+                    }
+                    
+                    showNotification('❌ ' + errorMessage, 'error');
                 }
             } catch (error) {
                 console.error('Guest form submission error:', error);
@@ -3805,6 +3978,158 @@ function initQuickLeadForm() {
         
         return step1Valid;
     };
+
+    // Add function to fill test location data for guest form
+    window.fillGuestTestLocationData = function() {
+        console.log('🧪 Filling guest test location data...');
+        
+        // Select first category
+        const categorySelect = document.getElementById('guest_category_id');
+        if (categorySelect && categorySelect.options.length > 1) {
+            categorySelect.selectedIndex = 1;
+            console.log('✅ Selected category:', categorySelect.value);
+        }
+        
+        // Fill basic required fields for step 1
+        const titleInput = document.getElementById('guest_title');
+        if (titleInput) {
+            titleInput.value = 'Test: Sửa chữa điện nước';
+            console.log('✅ Set title:', titleInput.value);
+        }
+        
+        const descriptionInput = document.getElementById('guest_description');
+        if (descriptionInput) {
+            descriptionInput.value = 'Cần sửa chữa hệ thống điện và nước trong nhà cho khách';
+            console.log('✅ Set description:', descriptionInput.value);
+        }
+        
+        // Fill step 2 contact info
+        const fullnameInput = document.getElementById('guest_fullname');
+        if (fullnameInput) {
+            fullnameInput.value = 'Nguyễn Văn Test';
+            console.log('✅ Set fullname:', fullnameInput.value);
+        }
+        
+        const mobileInput = document.getElementById('guest_mobile');
+        if (mobileInput) {
+            mobileInput.value = '0901234567';
+            console.log('✅ Set mobile:', mobileInput.value);
+        }
+        
+        const emailInput = document.getElementById('guest_email');
+        if (emailInput) {
+            emailInput.value = 'test@example.com';
+            console.log('✅ Set email:', emailInput.value);
+        }
+        
+        const addressInput = document.getElementById('guest_address');
+        if (addressInput) {
+            addressInput.value = '123 Test Street';
+            console.log('✅ Set address:', addressInput.value);
+        }
+        
+        // Check terms checkbox
+        const termsCheck = document.getElementById('agreeTerms');
+        if (termsCheck) {
+            termsCheck.checked = true;
+            console.log('✅ Checked terms');
+        }
+        
+        console.log('🎯 Test data filled! Now manually select city and district, then try navigation.');
+    };
+
+    // Test guest form step navigation
+    window.testGuestStepNavigation = function() {
+        console.log('🧪 Testing guest step navigation...');
+        
+        // Check current step
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        console.log('Step 1 visible:', step1 && window.getComputedStyle(step1).display !== 'none');
+        console.log('Step 2 visible:', step2 && window.getComputedStyle(step2).display !== 'none');
+        console.log('Step 3 visible:', step3 && window.getComputedStyle(step3).display !== 'none');
+        
+        // Test next step button
+        const nextBtn = document.querySelector('.next-step');
+        if (nextBtn) {
+            console.log('Next button found:', nextBtn);
+            console.log('Button visible:', nextBtn.offsetParent !== null);
+            console.log('Button disabled:', nextBtn.disabled);
+            console.log('Button text:', nextBtn.textContent.trim());
+        } else {
+            console.log('❌ Next button not found');
+        }
+        
+        return {
+            step1Visible: step1 && window.getComputedStyle(step1).display !== 'none',
+            step2Visible: step2 && window.getComputedStyle(step2).display !== 'none',
+            step3Visible: step3 && window.getComputedStyle(step3).display !== 'none',
+            nextButtonFound: !!nextBtn
+        };
+    };
+
+    // Force guest step navigation
+    window.forceGuestStep = function(stepNumber) {
+        console.log('🔧 Force moving to guest step:', stepNumber);
+        
+        // Hide all steps
+        for (let i = 1; i <= 3; i++) {
+            const step = document.getElementById('step' + i);
+            if (step) {
+                step.style.display = 'none';
+            }
+        }
+        
+        // Show target step
+        const targetStep = document.getElementById('step' + stepNumber);
+        if (targetStep) {
+            targetStep.style.display = 'block';
+            console.log('✅ Moved to step', stepNumber);
+            return true;
+        } else {
+            console.log('❌ Step', stepNumber, 'not found');
+            return false;
+        }
+    };
+
+    // Check guest form validation
+    window.checkGuestValidation = function(stepNumber = 1) {
+        console.log('🔍 Checking guest validation for step:', stepNumber);
+        
+        const step = document.getElementById('step' + stepNumber);
+        if (!step) {
+            console.log('❌ Step not found:', stepNumber);
+            return false;
+        }
+        
+        const requiredFields = step.querySelectorAll('[required]');
+        console.log('Required fields in step', stepNumber + ':', requiredFields.length);
+        
+        let validationResults = [];
+        requiredFields.forEach((field, index) => {
+            const isDisabled = field.disabled;
+            const hasValue = field.value.trim() !== '';
+            const isValid = isDisabled || hasValue;
+            
+            validationResults.push({
+                index: index,
+                name: field.name || field.id,
+                value: field.value,
+                disabled: isDisabled,
+                valid: isValid
+            });
+            
+            console.log(`Field ${index} (${field.name || field.id}):`, {
+                value: field.value,
+                disabled: isDisabled,
+                valid: isValid ? '✅' : '❌'
+            });
+        });
+        
+        return validationResults;
+    };
 }
 
 function initReviewsSlider() {
@@ -3937,6 +4262,147 @@ function showUserWelcome(user) {
         leadTab.insertAdjacentHTML('afterbegin', welcomeHTML);
     }
 }
+
+// Debug function to check dropdown state
+window.checkDropdownState = function() {
+    console.log('🔍 Checking dropdown state...');
+    
+    const authCitySelect = document.getElementById('auth_city_code');
+    const guestCitySelect = document.getElementById('guest_city_code');
+    
+    console.log('=== AUTH CITY SELECT ===');
+    if (authCitySelect) {
+        console.log('Element found:', authCitySelect);
+        console.log('Options count:', authCitySelect.options.length);
+        console.log('Disabled:', authCitySelect.disabled);
+        console.log('Visible:', window.getComputedStyle(authCitySelect).display !== 'none');
+        console.log('Parent visible:', window.getComputedStyle(authCitySelect.parentElement).display !== 'none');
+        
+        if (authCitySelect.options.length > 0) {
+            for (let i = 0; i < Math.min(5, authCitySelect.options.length); i++) {
+                console.log(`Option ${i}:`, authCitySelect.options[i].value, authCitySelect.options[i].text);
+            }
+        }
+    } else {
+        console.log('❌ Auth city select not found');
+    }
+    
+    console.log('=== GUEST CITY SELECT ===');
+    if (guestCitySelect) {
+        console.log('Element found:', guestCitySelect);
+        console.log('Options count:', guestCitySelect.options.length);
+        console.log('Disabled:', guestCitySelect.disabled);
+        console.log('Visible:', window.getComputedStyle(guestCitySelect).display !== 'none');
+        console.log('Parent visible:', window.getComputedStyle(guestCitySelect.parentElement).display !== 'none');
+        
+        if (guestCitySelect.options.length > 0) {
+            for (let i = 0; i < Math.min(5, guestCitySelect.options.length); i++) {
+                console.log(`Option ${i}:`, guestCitySelect.options[i].value, guestCitySelect.options[i].text);
+            }
+        }
+    } else {
+        console.log('❌ Guest city select not found');
+    }
+    
+    // Check if tabs are properly displayed
+    const guestTab = document.getElementById('guestTab');
+    const authTab = document.getElementById('leadTab');
+    
+    console.log('=== TAB VISIBILITY ===');
+    console.log('Guest tab active:', guestTab?.classList.contains('active'));
+    console.log('Auth tab active:', authTab?.classList.contains('active'));
+};
+
+// Force reload cities with retry mechanism
+window.forceReloadCities = function() {
+    console.log('🔄 Force reloading cities...');
+    
+    // Clear existing options first
+    const citySelects = $('select[name="city_code"]');
+    citySelects.each(function() {
+        $(this).empty().append('<option value="">Đang tải...</option>');
+    });
+    
+    // Reload after short delay
+    setTimeout(() => {
+        loadCities();
+    }, 500);
+};
+
+// Manual populate with test data
+window.populateTestCities = function() {
+    console.log('🧪 Populating test cities...');
+    
+    const testCities = [
+        { City_code: '01', City: 'Hà Nội' },
+        { City_code: '79', City: 'TP. Hồ Chí Minh' },
+        { City_code: '48', City: 'Đà Nẵng' },
+        { City_code: '31', City: 'Hải Phòng' },
+        { City_code: '92', City: 'Cần Thơ' },
+        { City_code: '26', City: 'Vĩnh Phúc' },
+        { City_code: '20', City: 'Thái Bình' }
+    ];
+    
+    const citySelects = $('select[name="city_code"]');
+    
+    citySelects.each(function() {
+        const select = $(this);
+        select.empty().append('<option value="">Chọn thành phố</option>');
+        
+        testCities.forEach(city => {
+            select.append(
+                `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
+            );
+        });
+        
+        console.log('✅ Test cities populated for:', select.attr('id'));
+    });
+    
+    showNotification('✅ Test cities populated successfully!', 'success');
+};
+
+// Auto-fill location data for testing
+window.fillTestLocationData = function() {
+    console.log('🔧 Filling test location data');
+    
+    // Load cities first
+    loadCities();
+    
+    setTimeout(() => {
+        // Select Ho Chi Minh City
+        const guestCitySelect = $('#guest_city_code');
+        if (guestCitySelect.length) {
+            // Find Ho Chi Minh City option
+            guestCitySelect.find('option').each(function() {
+                if ($(this).text().includes('Hồ Chí Minh') || $(this).text().includes('TP.HCM')) {
+                    guestCitySelect.val($(this).val()).trigger('change');
+                    console.log('Selected city:', $(this).text());
+                    return false;
+                }
+            });
+        }
+    }, 1000);
+    
+    setTimeout(() => {
+        // Select a district
+        const guestDistrictSelect = $('#guest_district_code');
+        if (guestDistrictSelect.length && guestDistrictSelect.find('option').length > 1) {
+            const firstDistrict = guestDistrictSelect.find('option:eq(1)');
+            guestDistrictSelect.val(firstDistrict.val()).trigger('change');
+            console.log('Selected district:', firstDistrict.text());
+        }
+    }, 3000);
+    
+    setTimeout(() => {
+        // Select a ward
+        const guestWardSelect = $('#guest_ward_code');
+        if (guestWardSelect.length && guestWardSelect.find('option').length > 1) {
+            const firstWard = guestWardSelect.find('option:eq(1)');
+            guestWardSelect.val(firstWard.val());
+            console.log('Selected ward:', firstWard.text());
+        }
+    }, 5000);
+};
 </script>
 @endpush
 
