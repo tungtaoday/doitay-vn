@@ -174,7 +174,7 @@ function getTemplates()
 {
     // Removed ViserLab template fetching for security and privacy
     // This function has been disabled to prevent external data transmission
-    return null;
+        return null;
 }
 
 function getPageSections($arr = false)

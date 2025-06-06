@@ -1,0 +1,82 @@
+/* Review Navigation Styles */
+.review-navigation {
+    margin-top: 1rem;
+}
+
+.review-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background-color: #dee2e6;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.review-dot:hover,
+.review-dot.active {
+    background-color: #0b92d4;
+    transform: scale(1.2);
+}
+
+/* Reviewer Avatar Styles */
+.reviewer-avatar img {
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Review Stars Styles */
+.review-stars {
+    font-size: 0.9rem;
+}
+
+.review-stars i {
+    margin-right: 2px;
+}
+
+/* Review Item Animation */
+.review-item {
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.5s ease;
+}
+
+.review-item.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Reviewer Info Styles */
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.reviewer-avatar {
+    flex-shrink: 0;
+}
+
+.reviewer-avatar img {
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reviewer-details {
+    text-align: left;
+    margin-left: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .reviewer-avatar img {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    .review-stars {
+        font-size: 0.8rem;
+    }
+} 

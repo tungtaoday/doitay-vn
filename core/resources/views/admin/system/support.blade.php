@@ -6,7 +6,7 @@
                 <div class="card-body">
                     <p class="text-center">@lang('For technical support and assistance, please contact our development team through alternative channels.')</p>
                     <!-- ViserLab support removed for security -->
-                </div>
+              </div>
             </div>
         </div>
     </div>

@@ -100,7 +100,7 @@ class CustomerLeadController extends Controller
                 
                 // First try to find by mobile
                 if (!empty($validated['mobile'])) {
-                    $user = \App\Models\User::where('mobile', $validated['mobile'])->first();
+                $user = \App\Models\User::where('mobile', $validated['mobile'])->first();
                 }
                 
                 // If not found by mobile, try by email
