@@ -107,16 +107,19 @@ class SocialLogin
             $lastName  = array_pop($pieces);
         }
 
-        $newUser              = new User();
-        $newUser->provider_id = $user->id;
-        $newUser->email       = $user->email;
-        $newUser->password    = Hash::make($password);
-        $newUser->firstname   = $firstName;
-        $newUser->lastname    = $lastName;
-        $newUser->status      = Status::VERIFIED;
-        $newUser->ev          = Status::VERIFIED;
-        $newUser->sv          = gs('sv') ? Status::UNVERIFIED : Status::VERIFIED;
-        $newUser->provider    = $provider;
+        $newUser                     = new User();
+        $newUser->provider_id        = $user->id;
+        $newUser->provider           = $provider;
+        $newUser->email              = $user->email;
+        $newUser->email_verified_at  = now();
+        $newUser->password           = Hash::make($password);
+        $newUser->firstname          = $firstName;
+        $newUser->lastname           = $lastName;
+        $newUser->name               = trim($firstName . ' ' . $lastName);
+        $newUser->status             = Status::USER_ACTIVE;
+        $newUser->ev                 = Status::VERIFIED;
+        $newUser->sv                 = gs('sv') ? Status::UNVERIFIED : Status::VERIFIED;
+        $newUser->referral_code      = User::generateReferralCode();
         $newUser->save();
 
         $adminNotification            = new AdminNotification();

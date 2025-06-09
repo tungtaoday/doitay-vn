@@ -65,7 +65,7 @@ Route::controller('SiteController')->group(function () {
     Route::get('contractors/{id}', 'contractorProfile')->name('contractors.profile');
 
     Route::get('/', 'index')->name('home');
-    Route::get('reactions/rating/{rating_id}',  'getReactionsByRating')->name('reactions.rating');
+    // Route::get('reactions/rating/{rating_id}',  'getReactionsByRating')->name('reactions.rating');
     Route::get('/about/doitay', 'about')->name('about');
     Route::post('add-click/{id}', 'addClick')->name('add.click');
     

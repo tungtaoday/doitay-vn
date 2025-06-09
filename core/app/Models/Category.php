@@ -18,6 +18,11 @@ class Category extends Model
         return $this->hasMany(Company::class);
     }
 
+    public function companies()
+    {
+        return $this->hasMany(Company::class);
+    }
+
     // Quan hệ hasMany với Feature
     public function feature()
     {

@@ -38,6 +38,7 @@ class ForgotPasswordController extends Controller
         $adminPasswordReset = new AdminPasswordReset();
         $adminPasswordReset->email = $admin->email;
         $adminPasswordReset->token = $code;
+        $adminPasswordReset->status = \App\Constants\Status::ENABLE;
         $adminPasswordReset->created_at = Carbon::now();
         $adminPasswordReset->save();
 
@@ -70,15 +71,34 @@ class ForgotPasswordController extends Controller
     public function verifyCode(Request $request)
     {
         $request->validate(['code' => 'required']);
-        $adminPasswordReset = AdminPasswordReset::where('email', session()->get('pass_res_mail'))->first();
+        $email = session()->get('pass_res_mail');
+        
+        if (!$email) {
+            $notify[] = ['error', 'Session expired. Please try again.'];
+            return to_route('admin.password.reset')->withNotify($notify);
+        }
+        
+        $adminPasswordReset = AdminPasswordReset::where('email', $email)->orderBy('created_at', 'desc')->first();
 
-        if ($adminPasswordReset->token != $request->token) {
-            $notify[] = ['error', 'Verification code dose\t match'];
-            return to_route('admin.login')->withNotify($notify);
+        if (!$adminPasswordReset) {
+            $notify[] = ['error', 'No reset request found for this email'];
+            return to_route('admin.password.reset')->withNotify($notify);
+        }
+        
+        // Clean input code (remove spaces, special chars)
+        $inputCode = preg_replace('/[^0-9]/', '', $request->code);
+        $dbToken = preg_replace('/[^0-9]/', '', $adminPasswordReset->token);
+
+        if ($dbToken != $inputCode) {
+            $notify[] = ['error', 'Verification code does not match. Please try again.'];
+            return to_route('admin.password.reset')->withNotify($notify);
         }
 
-        $notify[] = ['success', 'You can change your password'];
-        $code = str_replace(' ', '', $request->code);
-        return to_route('admin.password.reset.form', $code)->withNotify($notify);
+        // Update status to enable for the reset form
+        $adminPasswordReset->status = \App\Constants\Status::ENABLE;
+        $adminPasswordReset->save();
+
+        $notify[] = ['success', 'Code verified! You can now change your password.'];
+        return to_route('admin.password.reset.form', $inputCode)->withNotify($notify);
     }
 }

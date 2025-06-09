@@ -35,7 +35,7 @@
                         <div class="step-connector step-connector-1"></div>
                     </div>
                     <div class="step-content">
-                        <h4 class="step-title-modern">Tạo Lead</h4>
+                        <h4 class="step-title-modern">Tạo Nhu cầu</h4>
                         <p class="step-description-modern">Mô tả công việc cần làm, ngân sách và thời gian. Hệ thống tự động thông báo cho các thợ phù hợp trong khu vực.</p>
                         <div class="step-features">
                             <span class="feature-tag">✓ Miễn phí 100%</span>
@@ -3110,71 +3110,7 @@ function showNewUserModal(loginInfo) {
                 }
             }
         </style>
-    `;
-    
-    // Remove existing modal if any
-    const existingModal = document.getElementById('newUserModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Add modal to page
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Auto close after 15 seconds
-    setTimeout(() => {
-        closeNewUserModal();
-    }, 15000);
-}
-
-// Function to close new user modal
-window.closeNewUserModal = function() {
-    const modal = document.getElementById('newUserModal');
-    if (modal) {
-        modal.style.animation = 'modalSlideOut 0.3s ease-in';
-        setTimeout(() => {
-            modal.remove();
-        }, 300);
-    }
-};
-
-// Function to copy login information
-window.copyLoginInfo = function(username, email) {
-    const textToCopy = `Thông tin đăng nhập DoiTay.vn:\nTài khoản: ${username}\nEmail: ${email}\nMật khẩu: Đã gửi qua email/SMS`;
-    
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            showNotification('📋 Đã copy thông tin đăng nhập!', 'success', 2000);
-        }).catch(() => {
-            fallbackCopyTextToClipboard(textToCopy);
-        });
-    } else {
-        fallbackCopyTextToClipboard(textToCopy);
-    }
-};
-
-// Fallback copy function for older browsers
-function fallbackCopyTextToClipboard(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-        document.execCommand('copy');
-        showNotification('📋 Đã copy thông tin đăng nhập!', 'success', 2000);
-    } catch (err) {
-        showNotification('❌ Không thể copy, vui lòng copy thủ công', 'error');
-    }
-
-    document.body.removeChild(textArea);
-}
+   
 </style>
 
 @push('script')
@@ -3939,7 +3875,7 @@ function initQuickLeadForm() {
                         
                     } else {
                         // Standard success message for existing users
-                        showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
+                    showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
                     }
                     
                     e.target.reset();
@@ -3960,7 +3896,7 @@ function initQuickLeadForm() {
                 console.error('Form submission error:', error);
                 showNotification('Có lỗi kết nối, vui lòng thử lại: ' + error.message, 'error');
             } finally {
-                submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Lead Ngay';
+                submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Nhu cầu Ngay';
                 submitBtn.disabled = false;
             }
         });
@@ -4108,7 +4044,7 @@ function initQuickLeadForm() {
                 console.error('Guest form submission error:', error);
                 showNotification('Có lỗi kết nối, vui lòng thử lại: ' + error.message, 'error');
             } finally {
-                submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Lead & Tự Động Đăng Ký';
+                submitBtn.innerHTML = '<i class="las la-rocket me-2"></i>Tạo Nhu cầu & Tự Động Đăng Ký';
                 submitBtn.disabled = false;
             }
         });
@@ -4234,7 +4170,7 @@ function initQuickLeadForm() {
                 console.log('Register response result:', result);
 
                 if (result.success) {
-                    showNotification('🎉 Đăng ký thành công! Đang chuyển đến form tạo lead...', 'success');
+                    showNotification('🎉 Đăng ký thành công! Đang chuyển đến form tạo nhu cầu...', 'success');
                     e.target.reset();
                     
                     // Switch to lead tab instead of login tab
@@ -5146,7 +5082,7 @@ function showUserWelcome(user) {
             <div class="user-welcome">
                 <i class="las la-user-circle text-primary" style="font-size: 2rem;"></i>
                 <h5 class="mt-2 mb-1">Xin chào, ${user.firstname} ${user.lastname}!</h5>
-                <p class="text-muted">Tạo lead mới để tìm thợ chuyên nghiệp</p>
+                <p class="text-muted">Tạo Nhu cầu mới để tìm thợ chuyên nghiệp</p>
             </div>
         </div>
     `;

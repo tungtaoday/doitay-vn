@@ -31,7 +31,7 @@
                     <!-- Quick Action Buttons -->
                     <div class="hero-actions">
                         <a href="#quick-lead-form" class="btn btn-primary btn-lg me-3">
-                            <i class="las la-plus me-2"></i>Tạo Lead Ngay
+                            <i class="las la-plus me-2"></i>Tạo Nhu cầu Ngay
                         </a>
                         <a href="#contractor-search" class="btn btn-outline-light btn-lg">
                             <i class="las la-search me-2"></i>Tìm Thợ

@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->boolean('customer_info_unlocked')->default(false)->after('status');
-            $table->decimal('unlock_fee_paid', 10, 2)->nullable()->after('customer_info_unlocked');
-            $table->timestamp('info_unlocked_at')->nullable()->after('unlock_fee_paid');
+            $table->boolean('customer_info_unlocked')->default(false);
+            $table->decimal('unlock_fee_paid', 10, 2)->nullable();
+            $table->timestamp('info_unlocked_at')->nullable();
         });
     }
 

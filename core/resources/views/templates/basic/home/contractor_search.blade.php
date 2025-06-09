@@ -16,13 +16,13 @@
         </div>
         
         <div class="row g-3">
-            @foreach(App\Models\Category::where('status', 1)->take(12)->get() as $category)
+            @foreach(App\Models\Category::where('status', 1)->withCount('company')->take(12)->get() as $category)
             <div class="col-lg-2 col-md-3 col-sm-4 col-6">
                 <a href="{{ route('companies.category', $category->id) }}" class="category-card-compact">
                     <div class="category-card-content-compact">
                         <div class="category-icon-compact">
-                            <i class="las la-tools"></i>
-                            <span class="category-count-badge">{{ $category->companies_count ?? 0 }}</span>
+                            {!! $category->icon !!}
+                            <span class="category-count-badge">{{ $category->company_count ?? 0 }}</span>
                         </div>
                         <h6 class="category-title-compact">{{ $category->name }}</h6>
                         <div class="category-hover-effect">
@@ -55,7 +55,7 @@
         </div>
         
         <div class="row g-3">
-            @foreach(App\Models\Company::with(['user', 'ratings'])->approved()->take(8)->get() as $company)
+            @foreach(App\Models\Company::with(['user', 'ratings', 'category'])->where('status', 1)->take(8)->get() as $company)
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="contractor-card-compact">
                     <div class="contractor-header-compact">
@@ -86,7 +86,7 @@
                     
                     <div class="contractor-stats-compact">
                         <span class="stat-compact">{{ $company->ratings->count() }} dự án</span>
-                        <span class="stat-compact">{{ $company->created_at->diffInYears() }}+ năm KN</span>
+                        <!-- <span class="stat-compact">{{ $company->created_at->diffInYears() }}+ năm KN</span> -->
                     </div>
                 </div>
             </div>
@@ -102,7 +102,7 @@
 </section>
 
 <!-- Customer Testimonials -->
-<section class="py-5 testimonials-section">
+<!-- <section class="py-5 testimonials-section">
     <div class="container">
         <div class="text-center mb-5">
             <div class="section-badge-testimonials">
@@ -129,19 +129,28 @@
                     <p class="testimonial-text-compact">{{ Str::limit($review->suggest, 80) }}</p>
                     
                     <div class="reviewer-compact">
+                        @if($review->user)
                         <img src="{{ getImage(getFilePath('userProfile').'/'.$review->user->image, getFileSize('userProfile')) }}" 
                              alt="{{ $review->user->fullname }}" class="reviewer-img-compact">
                         <div class="reviewer-info-compact">
                             <h6 class="reviewer-name-compact">{{ $review->user->fullname }}</h6>
-                            <p class="reviewer-company-compact">{{ Str::limit($review->company->name, 15) }}</p>
+                            <p class="reviewer-company-compact">{{ $review->company ? Str::limit($review->company->name, 15) : 'N/A' }}</p>
                         </div>
+                        @else
+                        <img src="{{ getImage('', getFileSize('userProfile')) }}" 
+                             alt="Anonymous User" class="reviewer-img-compact">
+                        <div class="reviewer-info-compact">
+                            <h6 class="reviewer-name-compact">Anonymous User</h6>
+                            <p class="reviewer-company-compact">{{ $review->company ? Str::limit($review->company->name, 15) : 'N/A' }}</p>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
     </div>
-</section>
+</section> -->
 
 <!-- CTA Section for Contractors -->
 <section class="py-5 cta-section">
@@ -184,7 +193,7 @@
                         
                         <div class="cta-stats">
                             <div class="cta-stat">
-                                <span class="cta-stat-number">{{ App\Models\Company::approved()->count() }}+</span>
+                                <span class="cta-stat-number">{{ App\Models\Company::where('status', 1)->count() }}+</span>
                                 <span class="cta-stat-label">Thợ đã tham gia</span>
                             </div>
                             <div class="cta-stat">

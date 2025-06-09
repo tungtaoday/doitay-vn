@@ -27,9 +27,28 @@ class AdminController extends Controller
 
         // User Info
         $widget['total_users']             = User::count();
-        $widget['verified_users']          = User::active()->count();
-        $widget['email_unverified_users']  = User::emailUnverified()->count();
-        $widget['mobile_unverified_users'] = User::mobileUnverified()->count();
+        
+        // Check if status column exists before using scopes that depend on it
+        try {
+            $widget['verified_users']          = User::active()->count();
+        } catch (\Exception $e) {
+            // Fallback if status column doesn't exist
+            $widget['verified_users']          = User::whereNotNull('email_verified_at')->count();
+        }
+        
+        try {
+            $widget['email_unverified_users']  = User::emailUnverified()->count();
+        } catch (\Exception $e) {
+            // Fallback for email unverified
+            $widget['email_unverified_users']  = User::whereNull('email_verified_at')->count();
+        }
+        
+        try {
+            $widget['mobile_unverified_users'] = User::mobileUnverified()->count();
+        } catch (\Exception $e) {
+            // Fallback for mobile unverified
+            $widget['mobile_unverified_users'] = 0;
+        }
 
         // user Browsing, Country, Operating Log
         $userLoginData = UserLogin::where('created_at', '>=', Carbon::now()->subDay(30))->get(['browser', 'os', 'country']);

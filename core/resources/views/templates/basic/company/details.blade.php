@@ -346,70 +346,178 @@
             </div>
         </div>
 
-        <!-- Appointment Modal -->
+        <!-- Enhanced Appointment Modal -->
         <div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <form method="POST" action="{{ route('appointments.create') }}">
+                    <form method="POST" action="{{ route('appointments.create') }}" id="appointmentForm">
                         @csrf
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="appointmentModalLabel"><i class="las la-calendar-check me-2"></i>@lang('Đặt Hẹn')</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="appointmentModalLabel">
+                                <i class="las la-calendar-check me-2"></i>@lang('Đặt Hẹn với') {{ $company->name }}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body p-4">
                             <input type="hidden" name="company_id" value="{{ $company->id }}">
-                            @auth
-                                <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                            @endauth
-                            @guest
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">@lang('Email')</label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        class="form-control"
-                                        placeholder="@lang('Nhập email của bạn')"
-                                        required
-                                        onchange="checkEmailExists(this.value)">
-                                    <div id="email-error" class="text-danger mt-2" style="display: none;">
-                                        @lang('Email đã tồn tại, vui lòng') <a href="{{ route('user.login') }}">@lang('đăng nhập')</a>.
+                            
+                            <!-- Progress Steps -->
+                            <div class="booking-steps mb-4">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div class="step active" data-step="1">
+                                        <div class="step-number">1</div>
+                                        <div class="step-title">Liên hệ</div>
+                                    </div>
+                                    <div class="step" data-step="2">
+                                        <div class="step-number">2</div>
+                                        <div class="step-title">Thời gian</div>
+                                    </div>
+                                    <div class="step" data-step="3">
+                                        <div class="step-number">3</div>
+                                        <div class="step-title">Chi tiết</div>
                                     </div>
                                 </div>
-                            @endguest
-                            <div class="mb-3">
-                                <label for="name" class="form-label">@lang('Họ và tên')</label>
-                                <input type="text" id="name" name="recipient_name" class="form-control" required>
+                                <div class="progress" style="height: 3px;">
+                                    <div class="progress-bar bg-primary" style="width: 33%"></div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="phone" class="form-label">@lang('Số điện thoại')</label>
-                                <input type="text" id="phone" name="recipient_phone" class="form-control" required>
+
+                            <!-- Step 1: Contact Info -->
+                            <div class="booking-step-content" data-step="1">
+                                @auth
+                                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                                    <div class="user-info-card mb-3 p-3 bg-light rounded">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-primary text-white me-3">
+                                                {{ substr(auth()->user()->name, 0, 1) }}
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ auth()->user()->name }}</h6>
+                                                <small class="text-muted">{{ auth()->user()->email }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="recipient_name" value="{{ auth()->user()->name }}">
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">@lang('Số điện thoại')</label>
+                                        <input type="tel" id="phone" name="recipient_phone" class="form-control form-control-lg" 
+                                               value="{{ auth()->user()->mobile }}" placeholder="0901234567" required>
+                                    </div>
+                                @else
+                                    <div class="alert alert-info">
+                                        <i class="las la-info-circle me-2"></i>
+                                        Chúng tôi sẽ tạo tài khoản cho bạn để theo dõi lịch hẹn
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="name" class="form-label">@lang('Họ và tên') <span class="text-danger">*</span></label>
+                                            <input type="text" id="name" name="recipient_name" class="form-control form-control-lg" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="phone" class="form-label">@lang('Số điện thoại') <span class="text-danger">*</span></label>
+                                            <input type="tel" id="phone" name="recipient_phone" class="form-control form-control-lg" 
+                                                   placeholder="0901234567" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">@lang('Email') <span class="text-danger">*</span></label>
+                                        <input type="email" id="email" name="email" class="form-control form-control-lg"
+                                               placeholder="email@example.com" required>
+                                        <div id="email-error" class="text-danger mt-2" style="display: none;">
+                                            @lang('Email đã tồn tại, vui lòng') <a href="{{ route('user.login') }}">@lang('đăng nhập')</a>.
+                                        </div>
+                                    </div>
+                                @endauth
                             </div>
-                            <div class="mb-3">
-                                <label for="address" class="form-label">@lang('Địa chỉ')</label>
-                                <textarea id="address" name="recipient_address" class="form-control" rows="1"></textarea>
+
+                            <!-- Step 2: Date & Time -->
+                            <div class="booking-step-content d-none" data-step="2">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="appointmentDate" class="form-label">@lang('Chọn ngày') <span class="text-danger">*</span></label>
+                                        <input type="date" id="appointmentDate" name="appointmentDate" class="form-control form-control-lg" 
+                                               min="{{ date('Y-m-d') }}" required>
+                                        <small class="text-muted">Từ hôm nay trở đi</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="appointmentTime" class="form-label">@lang('Chọn giờ') <span class="text-danger">*</span></label>
+                                        <select id="appointmentTime" name="appointmentTime" class="form-select form-select-lg" required>
+                                            <option value="">Chọn giờ hẹn</option>
+                                            <option value="08:00">08:00 - Sáng sớm</option>
+                                            <option value="09:00">09:00 - Giờ hành chính</option>
+                                            <option value="10:00">10:00 - Giờ hành chính</option>
+                                            <option value="11:00">11:00 - Trước giờ nghỉ trưa</option>
+                                            <option value="13:00">13:00 - Sau giờ nghỉ trưa</option>
+                                            <option value="14:00">14:00 - Giờ hành chính</option>
+                                            <option value="15:00">15:00 - Giờ hành chính</option>
+                                            <option value="16:00">16:00 - Chiều tối</option>
+                                            <option value="17:00">17:00 - Sau giờ làm</option>
+                                            <option value="18:00">18:00 - Tối</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Quick Time Slots -->
+                                <div class="quick-time-slots mb-3">
+                                    <label class="form-label">@lang('Hoặc chọn nhanh:')</label>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button type="button" class="btn btn-outline-primary quick-time" data-time="09:00">9h Sáng</button>
+                                        <button type="button" class="btn btn-outline-primary quick-time" data-time="14:00">2h Chiều</button>
+                                        <button type="button" class="btn btn-outline-primary quick-time" data-time="16:00">4h Chiều</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="appointmentDate" class="form-label">@lang('Ngày')</label>
-                                <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="appointmentTime" class="form-label">@lang('Giờ')</label>
-                                <input type="time" id="appointmentTime" name="appointmentTime" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="notes" class="form-label">@lang('Ghi chú')</label>
-                                <textarea id="notes" name="notes" class="form-control" rows="1"></textarea>
+
+                            <!-- Step 3: Additional Details -->
+                            <div class="booking-step-content d-none" data-step="3">
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">@lang('Địa chỉ thực hiện dịch vụ')</label>
+                                    <textarea id="address" name="recipient_address" class="form-control" rows="2" 
+                                              placeholder="Nhập địa chỉ chi tiết..."></textarea>
+                                    <small class="text-muted">Để thợ có thể đến đúng địa điểm</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">@lang('Mô tả công việc')</label>
+                                    <textarea id="notes" name="notes" class="form-control" rows="3" 
+                                              placeholder="Mô tả chi tiết công việc cần làm..."></textarea>
+                                    <small class="text-muted">Thông tin chi tiết giúp thợ chuẩn bị tốt hơn</small>
+                                </div>
+                                
+                                <!-- Booking Summary -->
+                                <div class="booking-summary p-3 bg-light rounded">
+                                    <h6 class="mb-3">Tóm tắt lịch hẹn:</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong>Thợ:</strong><br>
+                                            <span>{{ $company->name }}</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>Thời gian:</strong><br>
+                                            <span id="summary-datetime">Chưa chọn</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('Đóng')</button>
-                            <button type="submit" class="btn btn-primary">@lang('Đặt lịch')</button>
+                        
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" id="prevStep" style="display: none;">
+                                <i class="las la-arrow-left me-1"></i> Quay lại
+                            </button>
+                            <div class="ms-auto">
+                                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Đóng</button>
+                                <button type="button" class="btn btn-primary" id="nextStep">
+                                    Tiếp theo <i class="las la-arrow-right ms-1"></i>
+                                </button>
+                                <button type="submit" class="btn btn-success" id="submitBooking" style="display: none;">
+                                    <i class="las la-calendar-check me-1"></i> Đặt lịch hẹn
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>    
+        </div>
         <div class="fixed-appointment-btn d-none">
             <button type="button" class="btn btn-primary btn-lg w-100 py-3 appointment-btn" data-bs-toggle="modal" data-bs-target="#appointmentModal">
                 <i class="las la-calendar-check me-2"></i>@lang('Đặt Hẹn với chuyên gia')
@@ -549,311 +657,137 @@
         align-items: center;
         justify-content: center;
         margin-right: 10px;
+        flex-shrink: 0;
     }
-    .single-company-info__list .content {
-        flex: 1;
-    }
-    .single-company-info__list .content a {
-        color: var(--base);
-        text-decoration: none;
-    }
-    .single-company-info__list .content a:hover {
-        text-decoration: underline;
-    }
-    .section-nav {
-        border-radius: 10px;
-        overflow: hidden;
-    }
-    .section-nav .nav-link {
+    .single-company-info__list .text {
         color: #6c757d;
-        font-weight: 500;
-        padding: 15px 20px;
-        transition: all 0.3s ease;
     }
-    .section-nav .nav-link:hover,
-    .section-nav .nav-link.active {
-        color: var(--base);
-        background: #f8f9fa;
-    }
-    .give-rating-area {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 10px;
-    }
-    .give-rating-person {
-        background: #fff;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    .give-rating-person .thumb {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        overflow: hidden;
-    }
-    .give-rating-person .thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .feature-rating {
-        margin-bottom: 15px;
-        padding: 10px;
-        background: #f8f9fa;
-        border-radius: 8px;
-    }
-    .feature-rating label {
-        font-size: 14px;
-        color: #333;
-        margin-bottom: 5px;
-        display: block;
-    }
-    .give-rating {
-        display: flex;
-        gap: 5px;
-    }
-    .give-rating input[type="radio"] {
-        display: none;
-    }
-    .give-rating label {
-        cursor: pointer;
-        color: #ddd;
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-    .give-rating input[type="radio"]:checked ~ label,
-    .give-rating label:hover,
-    .give-rating label:hover ~ label {
-        color: #ffc107;
-    }
-    .customer-review {
-        background: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-    }
-    .customer-review:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    .customer-review__thumb {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        overflow: hidden;
-    }
-    .customer-review__thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .customer-review__header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-    .customer-review__content {
-        flex: 1;
-        margin-left: 15px;
-    }
-    .customer-review__name {
+    .verified-badge {
+        background: #28a745;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
         font-weight: 600;
-        margin-bottom: 5px;
     }
-    .customer-review__date {
-        font-size: 12px;
-        color: #6c757d;
-    }
-    .customer-review__body {
-        margin-top: 15px;
-    }
-    .customer-review__features {
-        margin-top: 10px;
-    }
-    .customer-review__feature {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-    }
-    .customer-review__feature-name {
-        width: 120px;
-        font-size: 13px;
-        color: #6c757d;
-    }
-    .customer-review__feature-rating {
-        display: flex;
-        gap: 2px;
-    }
-    .customer-review__feature-rating i {
-        font-size: 12px;
-        color: #ffc107;
-    }
-    .customer-review__text {
-        margin-top: 10px;
-        font-size: 14px;
-        line-height: 1.6;
-    }
-    .customer-review__footer {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #eee;
-    }
-    .customer-review__actions {
-        display: flex;
-        gap: 10px;
-    }
-    .customer-review__action {
-        color: #6c757d;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    .customer-review__action:hover {
-        color: var(--base);
-    }
-    .reaction-icon {
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    .reaction-icon:hover {
-        transform: scale(1.2);
-    }
-    .reaction-icon.active {
-        color: var(--base);
-    }
-    .reaction-count {
-        font-size: 12px;
-        margin-left: 5px;
-    }
-    @media (max-width: 767px) {
-        .customer-review {
-            padding: 15px;
-        }
-        .customer-review__header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .customer-review__content {
-            margin-left: 0;
-            margin-top: 10px;
-        }
-        .customer-review__feature-name {
-            width: 100px;
-        }
+    .company-action-bar {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        border-bottom: 1px solid #e9ecef;
+        padding: 15px 0;
+        z-index: 100;
+        margin-bottom: 20px;
     }
     .fixed-appointment-btn {
         position: fixed;
-        right: 30px;
-        bottom: 30px;
-        z-index: 1000;
-        width: auto;
-        max-width: 300px;
-        animation: slideIn 0.5s ease-out;
-    }
-    .fixed-appointment-btn .appointment-btn {
-        border-radius: 50px;
-        padding: 15px 30px;
-        white-space: nowrap;
-        background: #0056b3 !important;
-    }
-    @media (max-width: 991px) {
-        .company-details-bg {
-            height: 200px;
-        }
-        .company-details-header {
-            margin-top: -50px;
-        }
-        .company-profile__name {
-            font-size: 20px;
-        }
-        .company-profile__address {
-            font-size: 14px;
-        }
-        .section-nav .nav-link {
-            padding: 10px 15px;
-            font-size: 14px;
-        }
-        .fixed-appointment-btn {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            max-width: 100%;
-            padding: 10px 15px;
-            background: #fff;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .fixed-appointment-btn .appointment-btn {
-            border-radius: 8px;
-            width: 100%;
-            background: #0056b3 !important;
-        }
-        .appointment-button {
-            display: none;
-        }
-    }
-    @keyframes slideIn {
-        from {
-            transform: translateY(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-    .appointment-button.hide {
-        display: none;
-    }
-    @media (max-width: 991px) {
-        body {
-            padding-bottom: 80px;
-        }
-    }
-    /* Appointment Button Styles */
-    .appointment-btn {
-        background: #0056b3 !important;
-        border: none;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-        color: #fff !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
-
-    .appointment-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
+        bottom: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: #003d82;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: -1;
+        right: 0;
+        background: #fff;
+        padding: 15px;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+    @media (min-width: 768px) {
+        .fixed-appointment-btn {
+            display: none !important;
+        }
     }
 
-    .appointment-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        color: #fff !important;
+    /* Enhanced Booking Modal Styles */
+    .booking-steps {
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 20px;
     }
-
-    .appointment-btn:hover::before {
-        opacity: 1;
+    
+    .step {
+        text-align: center;
+        position: relative;
+        flex: 1;
     }
-
-    .appointment-btn i {
-        font-size: 1.2em;
-        vertical-align: middle;
-        color: #fff !important;
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .step.active .step-number {
+        background: #007bff;
+        color: white;
+    }
+    
+    .step.completed .step-number {
+        background: #28a745;
+        color: white;
+    }
+    
+    .step-title {
+        font-size: 14px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .step.active .step-title {
+        color: #007bff;
+        font-weight: 600;
+    }
+    
+    .user-info-card {
+        border: 2px solid #007bff;
+    }
+    
+    .avatar-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 600;
+    }
+    
+    .quick-time-slots .btn {
+        border-radius: 25px;
+    }
+    
+    .quick-time-slots .btn.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    
+    .booking-summary {
+        border: 1px solid #dee2e6;
+    }
+    
+    .form-control-lg, .form-select-lg {
+        padding: 12px 16px;
+        font-size: 16px;
+    }
+    
+    /* Animation for step transitions */
+    .booking-step-content {
+        transition: all 0.3s ease;
+    }
+    
+    .booking-step-content.fade-in {
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
     }
 </style>
 @endpush
@@ -862,6 +796,123 @@
     <script>
         "use strict";
         $(document).ready(function() {
+            // Enhanced Booking Modal Script
+            let currentStep = 1;
+            const totalSteps = 3;
+            
+            // Initialize modal
+            function initBookingModal() {
+                updateStepDisplay();
+                updateButtonsVisibility();
+            }
+            
+            // Update step display
+            function updateStepDisplay() {
+                $('.step').removeClass('active completed');
+                $('.booking-step-content').addClass('d-none');
+                
+                // Mark completed steps
+                for(let i = 1; i < currentStep; i++) {
+                    $(`.step[data-step="${i}"]`).addClass('completed');
+                }
+                
+                // Mark current step as active
+                $(`.step[data-step="${currentStep}"]`).addClass('active');
+                $(`.booking-step-content[data-step="${currentStep}"]`).removeClass('d-none').addClass('fade-in');
+                
+                // Update progress bar
+                const progress = (currentStep / totalSteps) * 100;
+                $('.progress-bar').css('width', progress + '%');
+            }
+            
+            // Update buttons visibility
+            function updateButtonsVisibility() {
+                if(currentStep === 1) {
+                    $('#prevStep').hide();
+                } else {
+                    $('#prevStep').show();
+                }
+                
+                if(currentStep === totalSteps) {
+                    $('#nextStep').hide();
+                    $('#submitBooking').show();
+                } else {
+                    $('#nextStep').show();
+                    $('#submitBooking').hide();
+                }
+            }
+            
+            // Validate current step
+            function validateCurrentStep() {
+                let isValid = true;
+                const currentStepContent = $(`.booking-step-content[data-step="${currentStep}"]`);
+                
+                currentStepContent.find('input[required], select[required]').each(function() {
+                    if (!$(this).val()) {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                
+                return isValid;
+            }
+            
+            // Next step button
+            $('#nextStep').on('click', function() {
+                if (validateCurrentStep() && currentStep < totalSteps) {
+                    currentStep++;
+                    updateStepDisplay();
+                    updateButtonsVisibility();
+                    updateSummary();
+                }
+            });
+            
+            // Previous step button
+            $('#prevStep').on('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateStepDisplay();
+                    updateButtonsVisibility();
+                }
+            });
+            
+            // Quick time slot buttons
+            $('.quick-time').on('click', function() {
+                const time = $(this).data('time');
+                $('#appointmentTime').val(time);
+                $('.quick-time').removeClass('active');
+                $(this).addClass('active');
+            });
+            
+            // Update summary
+            function updateSummary() {
+                const date = $('#appointmentDate').val();
+                const time = $('#appointmentTime').val();
+                
+                if (date && time) {
+                    const formattedDate = new Date(date).toLocaleDateString('vi-VN');
+                    $('#summary-datetime').text(`${formattedDate} lúc ${time}`);
+                } else {
+                    $('#summary-datetime').text('Chưa chọn');
+                }
+            }
+            
+            // Date and time change events
+            $('#appointmentDate, #appointmentTime').on('change', updateSummary);
+            
+            // Initialize modal when opened
+            $('#appointmentModal').on('show.bs.modal', function() {
+                currentStep = 1;
+                initBookingModal();
+            });
+            
+            // Remove validation classes on input
+            $('#appointmentForm input, #appointmentForm select').on('input change', function() {
+                $(this).removeClass('is-invalid');
+            });
+            
             // Smooth scroll for nav links
             $('.section-nav .nav-link').on('click', function(e) {
                 e.preventDefault();
@@ -1000,6 +1051,7 @@
     </script>
 @endpush
 
+{{-- 
 @push('script')
     <script>
         "use strict";
@@ -1064,6 +1116,7 @@
         });
     </script>
 @endpush
+--}}
 
 @push('script')
     <script>

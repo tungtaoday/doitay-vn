@@ -106,7 +106,7 @@
                     <div class="ratings d-flex align-items-center justify-content-end">
                         @php
                             // Trung bình rating từ controller
-                            $avgRating = $review->avgRating ?? 0; // Nếu không có avgRating thì mặc định 0
+                            $avgRating = $review->avg_rating ?? 0; // Nếu không có avgRating thì mặc định 0
                         @endphp
                         
                         @for ($i = 1; $i <= 5; $i++)
@@ -121,7 +121,7 @@
             </div>
             <div class="customer-review__body">
                 <ul class="feature-ratings">
-                    @if(isset($review->ratingDetails) && is_array($review->ratingDetails))
+                    @if(isset($review->ratingDetails) && count($review->ratingDetails) > 0)
                         @foreach ($review->ratingDetails as $ratingDetail)
                             <li class="feature-rating-item mb-3">
                                 <div class="d-flex justify-content-between align-items-center">

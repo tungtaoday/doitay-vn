@@ -10,7 +10,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="blog-post rounded-3">
                             <div class="blog-post__thumb rounded-2">
-                                <a href="{{ route('blog.details', $blog->slug) }}" class="d-block w-100 h-100">
+                                <a href="{{ route('blog.details', [$blog->slug, $blog->id]) }}" class="d-block w-100 h-100">
                                     <img src="{{ frontendImage('blog', 'thumb_' . @$blog->data_values->image, '415x230') }}"
                                         alt="@lang(' Blog')" class="rounded-2">
                                 </a>
@@ -19,7 +19,7 @@
                             </div>
                             <div class="blog-post__content">
                                 <h5 class="blog-post__title">
-                                    <a href="{{ route('blog.details', $blog->slug) }}">
+                                    <a href="{{ route('blog.details', [$blog->slug, $blog->id]) }}">
                                         {{ __(strLimit($blog->data_values->title, 80)) }}</a>
                                 </h5>
                                 <p class="mt-2">
@@ -27,7 +27,7 @@
                                         echo __(strLimit(strip_tags($blog->data_values->description), 130));
                                     @endphp
                                 </p>
-                                <a href="{{ route('blog.details', $blog->slug) }}" class="blog-post__btn mt-3">
+                                <a href="{{ route('blog.details', [$blog->slug, $blog->id]) }}" class="blog-post__btn mt-3">
                                     @lang('Read More')
                                     <i class="las la-long-arrow-alt-right"></i>
                                 </a>

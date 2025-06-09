@@ -1,50 +1,113 @@
-<!-- Appointments List -->
+<!-- Enhanced Appointments List -->
 <div class="row">
     <div class="col-12">
+        <!-- Appointment Status Filter -->
+        <div class="appointment-filters mb-4">
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-outline-primary filter-btn active" data-status="all">
+                    Tất cả <span class="badge bg-primary ms-1">{{ $appointments->count() }}</span>
+                </button>
+                <button class="btn btn-outline-warning filter-btn" data-status="pending">
+                    Chờ xác nhận <span class="badge bg-warning ms-1">{{ $appointments->where('status', 'pending')->count() }}</span>
+                </button>
+                <button class="btn btn-outline-success filter-btn" data-status="confirmed">
+                    Đã xác nhận <span class="badge bg-success ms-1">{{ $appointments->where('status', 'confirmed')->count() }}</span>
+                </button>
+                <button class="btn btn-outline-info filter-btn" data-status="completed">
+                    Hoàn thành <span class="badge bg-info ms-1">{{ $appointments->where('status', 'completed')->count() }}</span>
+                </button>
+            </div>
+        </div>
+
         @if($appointments->count() > 0)
             <div class="appointments-timeline">
                 @foreach($appointments as $appointment)
-                    <div class="appointment-card card border-0 shadow-sm mb-3">
+                    <div class="appointment-card card border-0 shadow-sm mb-3" data-status="{{ $appointment->status }}">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-md-2 text-center mb-3 mb-md-0">
                                     <div class="appointment-date">
-                                        <div class="date-display bg-primary text-white rounded p-3">
+                                        <div class="date-display bg-primary text-white rounded p-3 position-relative">
                                             <div class="day fs-4 fw-bold">
                                                 {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d') }}
                                             </div>
                                             <div class="month">
                                                 {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M') }}
                                             </div>
+                                            @if($appointment->status === 'confirmed')
+                                                <div class="status-indicator confirmed"></div>
+                                            @elseif($appointment->status === 'pending')
+                                                <div class="status-indicator pending"></div>
+                                            @endif
                                         </div>
                                         <small class="text-muted d-block mt-2">
-                                            {{ $appointment->appointment_time }}
+                                            <i class="las la-clock me-1"></i>{{ $appointment->appointment_time }}
                                         </small>
                                     </div>
                                 </div>
                                 
                                 <div class="col-md-6 mb-3 mb-md-0">
                                     <div class="appointment-info">
-                                        <h5 class="mb-2">
-                                            <a href="{{ route('company.details', [$appointment->company->id, slug($appointment->company->name)]) }}" 
-                                               class="text-decoration-none">
-                                                {{ $appointment->company->name }}
-                                            </a>
-                                        </h5>
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="mb-0">
+                                                <a href="{{ route('company.details', [$appointment->company->id, slug($appointment->company->name)]) }}" 
+                                                   class="text-decoration-none">
+                                                    {{ $appointment->company->name }}
+                                                </a>
+                                            </h5>
+                                            <div class="appointment-actions dropdown">
+                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                    <i class="las la-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="{{ route('user.appointments.show', $appointment->id) }}">
+                                                        <i class="las la-eye me-2"></i>Xem chi tiết
+                                                    </a></li>
+                                                    @if($appointment->status === 'pending')
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="cancelAppointment({{ $appointment->id }})">
+                                                        <i class="las la-times me-2"></i>Hủy lịch hẹn
+                                                    </a></li>
+                                                    @endif
+                                                    @if($appointment->status === 'completed')
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#reviewModal" 
+                                                           onclick="openReviewModal({{ $appointment->id }}, '{{ $appointment->company->name }}')">
+                                                        <i class="las la-star me-2"></i>Đánh giá
+                                                    </a></li>
+                                                    @endif
+                                                </ul>
+                                            </div>
+                                        </div>
                                         <p class="text-muted mb-2">
                                             <i class="las la-map-marker text-primary me-1"></i>
                                             {{ $appointment->company->address }}
                                         </p>
-                                        <div class="service-details">
+                                        <div class="service-details mb-2">
                                             <strong>Dịch vụ:</strong> {{ $appointment->service_type ?? 'Tư vấn chung' }}
                                         </div>
                                         @if($appointment->message)
-                                            <div class="mt-2">
+                                            <div class="mb-2">
                                                 <small class="text-muted">
                                                     <strong>Ghi chú:</strong> {{ Str::limit($appointment->message, 100) }}
                                                 </small>
                                             </div>
                                         @endif
+                                        
+                                        <!-- Real-time Status Update -->
+                                        <div class="status-update-area">
+                                            @if($appointment->status === 'confirmed')
+                                                <div class="alert alert-success alert-sm mb-0">
+                                                    <i class="las la-check-circle me-2"></i>
+                                                    Thợ đã xác nhận và sẽ liên hệ với bạn sớm
+                                                </div>
+                                            @elseif($appointment->status === 'pending')
+                                                <div class="alert alert-warning alert-sm mb-0">
+                                                    <i class="las la-clock me-2"></i>
+                                                    Đang chờ thợ xác nhận lịch hẹn
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -65,15 +128,6 @@
                                                 <i class="las la-check-circle me-1"></i>
                                                 Hoàn thành
                                             </span>
-                                            @if(!$appointment->reviewed_by_customer)
-                                                <div class="mt-2">
-                                                    <button class="btn btn-sm btn-outline-warning" 
-                                                            onclick="showReviewModal({{ $appointment->id }})">
-                                                        <i class="las la-star me-1"></i>
-                                                        Đánh giá
-                                                    </button>
-                                                </div>
-                                            @endif
                                         @elseif($appointment->status === 'cancelled')
                                             <span class="badge bg-secondary px-3 py-2">
                                                 <i class="las la-times me-1"></i>
@@ -81,37 +135,42 @@
                                             </span>
                                         @endif
                                     </div>
+                                    
+                                    <!-- Estimated Time -->
+                                    @if($appointment->status === 'confirmed')
+                                        <div class="estimated-time mt-2">
+                                            <small class="text-muted">
+                                                <i class="las la-calendar-day me-1"></i>
+                                                {{ \Carbon\Carbon::parse($appointment->appointment_date)->diffForHumans() }}
+                                            </small>
+                                        </div>
+                                    @endif
                                 </div>
                                 
                                 <div class="col-md-2 text-center">
                                     <div class="appointment-actions">
                                         <a href="{{ route('user.appointments.show', $appointment->id) }}" 
                                            class="btn btn-outline-primary btn-sm mb-2">
-                                            <i class="las la-eye me-1"></i>
-                                            Chi tiết
+                                            <i class="las la-eye me-1"></i> Chi tiết
                                         </a>
                                         
-                                        @if($appointment->status === 'pending')
-                                            <button class="btn btn-outline-danger btn-sm" 
-                                                    onclick="cancelAppointment({{ $appointment->id }})">
-                                                <i class="las la-times me-1"></i>
-                                                Hủy
+                                        @if($appointment->status === 'confirmed')
+                                            <button class="btn btn-success btn-sm mb-2" disabled>
+                                                <i class="las la-phone me-1"></i> Chờ liên hệ
                                             </button>
                                         @endif
                                         
-                                        @if($appointment->status === 'confirmed')
-                                            <div class="mt-2">
-                                                <small class="text-success">
-                                                    <i class="las la-info-circle me-1"></i>
-                                                    Sẵn sàng phục vụ
-                                                </small>
-                                            </div>
+                                        @if($appointment->status === 'completed')
+                                            <button class="btn btn-warning btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#reviewModal"
+                                                    onclick="openReviewModal({{ $appointment->id }}, '{{ $appointment->company->name }}')">
+                                                <i class="las la-star me-1"></i> Đánh giá
+                                            </button>
                                         @endif
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Progress Bar -->
+                            <!-- Progress Indicator -->
                             @if($appointment->status !== 'cancelled')
                                 <div class="appointment-progress mt-3">
                                     <div class="progress" style="height: 6px;">

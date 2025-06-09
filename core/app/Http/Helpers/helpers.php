@@ -23,6 +23,9 @@ function systemDetails()
 
 function slug($string)
 {
+    if (empty($string)) {
+        return 'default-slug';
+    }
     return Str::slug($string);
 }
 

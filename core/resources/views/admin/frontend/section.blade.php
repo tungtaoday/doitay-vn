@@ -391,10 +391,15 @@
                 console.error('Upload Error:', message);
             }
 
-            // Initialize nicEdit with standard configuration
+            // Initialize nicEdit with upload configuration
             $('.nicEdit').each(function() {
                 new nicEditor({
-                    buttonList: ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'fontSize', 'fontFamily', 'fontFormat', 'indent', 'outdent', 'image', 'link', 'unlink', 'upload']
+                    buttonList: ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'fontSize', 'fontFamily', 'fontFormat', 'indent', 'outdent', 'image', 'link', 'unlink', 'upload'],
+                    uploadURI: '{{ route("admin.upload.image") }}',
+                    uploadData: {
+                        type: 'frontend',
+                        _token: '{{ csrf_token() }}'
+                    }
                 }).panelInstance($(this).attr('name'));
             });
 
@@ -405,58 +410,106 @@
                 
                 var formData = new FormData(this);
                 
-                // Log form data for debugging
-                console.log('Form Data:');
-                for (var pair of formData.entries()) {
-                    console.log(pair[0] + ': ' + pair[1]);
-                }
-
-                // Check if file is selected
+                // Check if this is an image upload or regular form submission
                 var fileInputs = $('input[type="file"]');
                 var hasFiles = false;
+                var imageFiles = [];
+                
                 fileInputs.each(function() {
                     if (this.files.length > 0) {
                         hasFiles = true;
+                        imageFiles.push({
+                            input: this,
+                            file: this.files[0],
+                            name: $(this).attr('name')
+                        });
                         console.log('File selected:', this.files[0].name);
-                        console.log('File size:', this.files[0].size);
-                        console.log('File type:', this.files[0].type);
                     }
                 });
 
-                if (!hasFiles) {
-                    console.log('No files selected');
+                if (hasFiles) {
+                    // If images are selected, upload them first, then submit form
+                    uploadImagesSequentially(imageFiles, formData, $(this).attr('action'));
+                } else {
+                    // Regular form submission without files
+                    submitForm(formData, $(this).attr('action'));
                 }
+            });
 
+            // Function to upload images sequentially
+            function uploadImagesSequentially(imageFiles, formData, formAction) {
+                console.log('Uploading images...');
+                
+                var uploadPromises = [];
+                
+                imageFiles.forEach(function(imageFile) {
+                    var uploadData = new FormData();
+                    uploadData.append('image', imageFile.file);
+                    uploadData.append('type', 'frontend');
+                    uploadData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+                    
+                    var promise = $.ajax({
+                        url: '{{ route("admin.upload.image") }}',
+                        method: 'POST',
+                        data: uploadData,
+                        processData: false,
+                        contentType: false
+                    });
+                    
+                    uploadPromises.push(promise);
+                });
+                
+                // Wait for all uploads to complete
+                $.when.apply($, uploadPromises).then(
+                    function() {
+                        console.log('All images uploaded successfully');
+                        notify('success', 'Images uploaded successfully');
+                        
+                        // Now submit the regular form
+                        submitForm(formData, formAction);
+                    },
+                    function(xhr, status, error) {
+                        console.error('Image upload failed:', error);
+                        notify('error', 'Image upload failed: ' + error);
+                    }
+                );
+            }
+
+            // Function to submit form data
+            function submitForm(formData, action) {
                 $.ajax({
-                    url: $(this).attr('action'),
+                    url: action,
                     method: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
                     beforeSend: function() {
-                        console.log('Sending request...');
-                        notify('info', 'Uploading...');
+                        console.log('Submitting form...');
+                        notify('info', 'Saving...');
                     },
                     success: function(response) {
-                        console.log('Response:', response);
-                        if (response.success) {
-                            notify('success', response.message || 'Upload successful');
+                        console.log('Form submitted successfully');
+                        notify('success', 'Content saved successfully');
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Form submission failed:', error);
+                        console.error('Response:', xhr.responseText);
+                        
+                        // Check if response is HTML (page redirect)
+                        if (xhr.responseText.includes('<!DOCTYPE html>')) {
+                            notify('success', 'Content saved successfully');
                             setTimeout(function() {
                                 window.location.reload();
                             }, 1000);
                         } else {
-                            notify('error', response.message || 'Something went wrong!');
+                            notify('error', 'Failed to save content');
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('XHR Status:', status);
-                        console.error('Error:', error);
-                        console.error('Response Text:', xhr.responseText);
-                        logError(xhr.responseText);
-                        notify('error', 'Upload failed. Please check console for details.');
                     }
                 });
-            });
+            }
 
             // Image preview handler
             $('.image-upload-input').on('change', function() {

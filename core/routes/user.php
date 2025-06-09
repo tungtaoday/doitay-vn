@@ -36,6 +36,17 @@ Route::namespace('User\Auth')->name('user.')->group(function () {
             Route::get('social-login/{provider}', 'socialLogin')->name('social.login');
             Route::get('social-login/callback/{provider}', 'callback')->name('social.login.callback');
         });
+
+        // Improved Authentication Routes
+        Route::controller('ImprovedAuthController')->group(function () {
+            Route::get('/login-v2', 'showLoginForm')->name('login.v2');
+            Route::post('/login-v2', 'login')->name('login.v2.post');
+            Route::get('/register-v2', 'showRegistrationForm')->name('register.v2');
+            Route::post('/register-v2', 'register')->name('register.v2.post');
+            Route::post('/check-user-v2', 'checkUser')->name('check.user.v2');
+            Route::post('/magic-link', 'sendMagicLink')->name('magic.link');
+            Route::get('/magic-login/{token}', 'loginWithMagicLink')->name('magic.login');
+        });
     });
 });
 
@@ -117,10 +128,10 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('delete', 'deleteReview')->name('delete');
             });
 
-            Route::controller('UserController')->prefix('reaction')->name('reaction.')->group(function () {
-                Route::post('/rating/{rating_id}/react/{reaction_type_id}', 'react')->name('react');
-                Route::post('/rating/{rating_id}/unreact/{reaction_type_id}', 'removeReaction')->name('remove');
-            });
+            // Route::controller('UserController')->prefix('reaction')->name('reaction.')->group(function () {
+//     Route::post('/rating/{rating_id}/react/{reaction_type_id}', 'react')->name('react');
+//     Route::post('/rating/{rating_id}/unreact/{reaction_type_id}', 'removeReaction')->name('remove');
+// });
 
             // Notification Management
             Route::controller('NotificationController')->prefix('notifications')->name('notifications.')->group(function () {

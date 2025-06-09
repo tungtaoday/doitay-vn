@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
 use App\Models\Rating;
 use App\Models\RatingDetail;
 use App\Models\Feature;
-use App\Models\ReactionType;
+// use App\Models\ReactionType;
 use App\Models\RatingReaction;
 
 class UserController extends Controller
@@ -477,6 +477,7 @@ class UserController extends Controller
         return readfile($filePath);
     }
 
+    /*
     public function react(Request $request, $rating_id, $reaction_type_id)
     {
         // Kiểm tra rating có tồn tại không
@@ -537,7 +538,8 @@ class UserController extends Controller
         }
 
         return response()->json(['error' => 'No reaction found'], 404);
-    }    
+    }
+    */    
 
 
 }

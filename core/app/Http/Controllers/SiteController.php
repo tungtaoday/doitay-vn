@@ -22,7 +22,7 @@ use App\Models\Rating;
 use App\Models\RatingDetail;
 use App\Models\Feature;
 use App\Models\RatingReaction;
-use App\Models\ReactionType;
+
 use Illuminate\Support\Facades\DB; // Thêm dòng này
 
 
@@ -158,10 +158,10 @@ class SiteController extends Controller
         return view('Template::blog', compact('pageTitle', 'blogs', 'latest', 'sections', 'seoContents', 'seoImage'));
     }
 
-    public function blogDetails($slug)
+    public function blogDetails($slug, $id)
     {
         $pageTitle   = 'Blog Details';
-        $blog        = Frontend::where('slug', $slug)->where('data_keys', 'blog.element')->firstOrFail();
+        $blog        = Frontend::where('slug', $slug)->where('id', $id)->where('data_keys', 'blog.element')->firstOrFail();
         $latestBlogs = Frontend::latest()->where('data_keys', 'blog.element')->where('slug', '!=', $slug)->limit(10)->get();
         $seoContents = $blog->seo_content;
         $seoImage    = @$seoContents->image ? frontendImage('blog', $seoContents->image, getFileSize('seo'), true) : null;
@@ -239,13 +239,61 @@ class SiteController extends Controller
 
     public function companies()
     {
-        $companies      = Company::approved()->withAvg('reviews', 'rating')->withCount('reviews')->with('category')->latest()->paginate(getPaginate());
-        // dd($companies);
-        $categories     = Category::where('status', Status::ENABLE)->with('company')->whereHas('company', function ($q) {
-            $q->approved();
-        })->get();
-        $pageTitle      = 'All Companies';
-        return view('Template::company.index', compact('pageTitle', 'companies', 'categories'));
+        $companies = Company::approved()
+                           ->with(['category', 'user', 'ratings'])
+                           ->withAvg('ratings', 'avg_rating')
+                           ->withCount('ratings')
+                           ->latest()
+                           ->paginate(12);
+                           
+        $categories = Category::where('status', Status::ENABLE)
+                            ->with('company')
+                            ->whereHas('company', function ($q) {
+                                $q->approved();
+                            })
+                            ->withCount(['company' => function($q) {
+                                $q->approved();
+                            }])
+                            ->get();
+
+        // Add location data for filtering
+        $locations = Company::approved()
+                           ->select('city')
+                           ->whereNotNull('city')
+                           ->where('city', '!=', '')
+                           ->groupBy('city')
+                           ->pluck('city')
+                           ->sort()
+                           ->values();
+
+        // Add experience levels
+        $experienceLevels = [
+            '0-1' => 'Dưới 1 năm',
+            '1-3' => '1-3 năm',
+            '3-5' => '3-5 năm', 
+            '5-10' => '5-10 năm',
+            '10+' => 'Trên 10 năm'
+        ];
+
+        // Add sorting options
+        $sortOptions = [
+            'latest' => 'Mới nhất',
+            'rating' => 'Đánh giá cao nhất',
+            'name' => 'Tên A-Z',
+            'experience' => 'Kinh nghiệm nhiều nhất'
+        ];
+
+        $pageTitle = 'Tất cả thợ chuyên nghiệp';
+        $seoContents = (object) [
+            'title' => 'Tìm thợ chuyên nghiệp uy tín tại Việt Nam',
+            'description' => 'Khám phá hàng ngàn thợ chuyên nghiệp được xác minh. Xem đánh giá, so sánh giá và đặt hẹn ngay.',
+            'keywords' => 'thợ chuyên nghiệp, sửa chữa, bảo trì, dịch vụ, tại nhà'
+        ];
+        
+        return view('Template::company.index', compact(
+            'pageTitle', 'companies', 'categories', 'locations', 
+            'experienceLevels', 'sortOptions', 'seoContents'
+        ));
     }
 
     public function filterCompanies(Request $request)
@@ -253,75 +301,105 @@ class SiteController extends Controller
         $validator = Validator::make($request->all(), [
             'category_id'   => 'nullable|exists:categories,id',
             'rating'        => 'nullable|min:1|max:5',
-            'review_time'   => 'nullable|integer',
-            'reg_start'     => 'nullable|integer',
-            'reg_end'       => 'nullable|integer'
+            'location'      => 'nullable|string',
+            'experience'    => 'nullable|string',
+            'sort_by'       => 'nullable|string|in:latest,rating,name,experience',
+            'search'        => 'nullable|string|max:255'
         ]);
 
-        $query = Company::approved()->with('category')->withAvg('reviews', 'rating')->withCount('reviews');
+        $query = Company::approved()
+                       ->with(['category', 'user', 'ratings'])
+                       ->withAvg('ratings', 'avg_rating')
+                       ->withCount('ratings');
 
-        if ($request->search_key) {
-            $query = $query->where('name', 'like', "%$request->search_key%")->orWhere('tags', 'like', "%$request->search_key%")->orWhereHas('category', function ($q) use ($request) {
-                $q->where('name', $request->search_key);
+        // Search functionality
+        if ($request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('tags', 'like', "%{$search}%")
+                  ->orWhereHas('category', function($cat) use ($search) {
+                      $cat->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
+        // Category filter
         if ($request->category_id) {
-            $query = $query->where('category_id', $request->category_id);
+            $query->where('category_id', $request->category_id);
         }
 
+        // Location filter
+        if ($request->location) {
+            $query->where('city', 'like', "%{$request->location}%");
+        }
+
+        // Rating filter
         if ($request->rating) {
-            $query = $query->whereBetween('avg_rating', [$request->rating - 1 + .1, $request->rating]);
+            $minRating = (float)$request->rating;
+            $query->having('ratings_avg_avg_rating', '>=', $minRating);
         }
 
-        if ($request->review_time) {
-            $startMonth = now()->subMonths($request->review);
-            $endMonth =  now();
-
-            $query = $query->whereHas('reviews', function ($q) use ($startMonth, $endMonth) {
-                $q->whereBetween('created_at', [$startMonth, $endMonth]);
-            });
+        // Experience filter
+        if ($request->experience) {
+            $experienceRange = explode('-', $request->experience);
+            if (count($experienceRange) == 2) {
+                $minYears = (int)$experienceRange[0];
+                $maxYears = $experienceRange[1] === '+' ? 100 : (int)$experienceRange[1];
+                
+                $startDate = now()->subYears($maxYears);
+                $endDate = now()->subYears($minYears);
+                
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
         }
 
-        if ($request->reg_start && $request->reg_end) {
-            $start = now()->subYear($request->reg_end);
-            $end   = now()->subYear($request->reg_start);
-            $query = $query->whereBetween('created_at', [$start, $end]);
-        } elseif ($request->reg_end) {
-            $start = now()->subYear($request->reg_end);
-            $end   = now();
-            $query = $query->whereBetween('created_at', [$start, $end]);
-        } elseif ($request->reg_start) {
-            $year = now()->subYear($request->reg_start);
-            $query = $query->whereDate('created_at', '<', $year);
-        } else {
-            $query = $query;
+        // Sorting
+        switch ($request->sort_by) {
+            case 'rating':
+                $query->orderBy('ratings_avg_avg_rating', 'desc');
+                break;
+            case 'name':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'experience':
+                $query->orderBy('created_at', 'asc');
+                break;
+            default:
+                $query->latest();
         }
 
-        $companies  = $query->latest()->with('category')->paginate(getPaginate());
+        $companies = $query->paginate(12);
 
-        $categories   = Category::where('status', Status::ENABLE)->with('company')->whereHas('company', function ($q) {
-            $q->approved();
-        })->get();
+        // For AJAX requests
+        if ($request->ajax()) {
+            return view('Template::company.companies', compact('companies'))->render();
+        }
+
+        // For regular requests
+        $categories = Category::where('status', Status::ENABLE)
+                            ->withCount(['company' => function($q) {
+                                $q->approved();
+                            }])
+                            ->get();
 
         return view('Template::company.companies', compact('categories', 'companies'));
     }
 
     public function companyDetails(Request $request, $id, $slug)
     {
-        $company = Company::where('id', $id)->active()->verified()->firstOrFail();
+        $company = Company::where('id', $id)->approved()->firstOrFail();
 
         $ratings = Rating::where('company_id', $company->id)->with('user', 'company')->where('status', 1)->latest()->take(20)->get();
 
-        $my_review = Rating::where('user_id', auth()->id() ?? 0)->where('company_id', $company->id)->first();
+        $myReview = Rating::where('user_id', auth()->id() ?? 0)->where('company_id', $company->id)->with('ratingDetails.feature')->first();
 
-        $reviews = Review::where('company_id', $company->id)->with('user')->latest()->get();
-
-        $reactionTypes = ReactionType::all();
+        $reviews = Rating::where('company_id', $company->id)->with(['user', 'ratingDetails.feature'])->where('status', 1)->latest()->paginate(10);
 
         $pageTitle = $company->name;
 
-        $avgRating = Rating::where('company_id', $company->id)->avg('rating') ?? 0;
+        $avgRating = Rating::where('company_id', $company->id)->avg('avg_rating') ?? 0;
 
         $averageRatings = [];
         $features = Feature::where('status', Status::ENABLE)->get();
@@ -333,7 +411,7 @@ class SiteController extends Controller
                 ->avg('rating') ?? 0;
         }
 
-        return view('Template::company.details', compact('pageTitle', 'company', 'reviews', 'ratings', 'features', 'my_review', 'averageRatings', 'reactionTypes'));
+        return view('Template::company.details', compact('pageTitle', 'company', 'reviews', 'ratings', 'features', 'myReview', 'averageRatings', 'avgRating'));
     }
     
     /**
@@ -344,8 +422,7 @@ class SiteController extends Controller
         $pageTitle = 'Tìm Thợ Chuyên Nghiệp';
         
         $query = Company::with(['user', 'category', 'ratings'])
-                        ->active()
-                        ->verified();
+                        ->approved();
         
         // Search filters
         if ($request->search) {
@@ -405,18 +482,17 @@ class SiteController extends Controller
         $category = Category::findOrFail($categoryId);
         $pageTitle = 'Thợ ' . $category->name;
         
-        $contractors = Company::with(['user', 'ratings'])
+        $companies = Company::with(['user', 'ratings'])
                              ->where('category_id', $categoryId)
-                             ->active()
-                             ->verified()
+                             ->where('status', Status::APPROVED)
                              ->withAvg('ratings', 'avg_rating')
                              ->orderBy('ratings_avg_avg_rating', 'desc')
                              ->paginate(12);
                              
         $categories = Category::where('status', 1)->get();
         
-        return view('Template::contractors.category', compact(
-            'pageTitle', 'contractors', 'category', 'categories'
+        return view('Template::company.index', compact(
+            'pageTitle', 'companies', 'category', 'categories', 'categoryId'
         ));
     }
     
@@ -426,8 +502,7 @@ class SiteController extends Controller
     public function contractorProfile($id)
     {
         $company = Company::with(['user', 'category', 'ratings.user'])
-                          ->active()
-                          ->verified()
+                          ->where('status', Status::APPROVED)
                           ->findOrFail($id);
                           
         $pageTitle = $company->name;
@@ -482,7 +557,7 @@ class SiteController extends Controller
         ]);    
     
         // Xác định công ty
-        $company = Company::approved()->findOrFail($id);
+        $company = Company::where('status', Status::APPROVED)->findOrFail($id);
 
         // Tạo hoặc cập nhật bảng ratings
         $rating = Rating::updateOrCreate(
@@ -492,29 +567,20 @@ class SiteController extends Controller
             ],
             values: [
                 'suggest' => $request->review,
-                'status' => 1, // Hoặc giá trị trạng thái mong muốn
+                'status' => 1,
             ]
         );
     
-         // Xóa các rating_detail cũ liên quan đến rating này
+        // Xóa các rating_detail cũ liên quan đến rating này
         RatingDetail::where('rating_id', $rating->id)->delete();
 
         // Lưu thông tin từng feature vào rating_details
         foreach ($request->rating as $featureId => $score) {
-            try {
             RatingDetail::create([
                 'rating_id' => $rating->id,
                 'feature_id' => $featureId,
-                'rating' => (int)$score,
+                'rating' => (float)$score,
             ]);
-            } catch (\Exception $e) {
-            dd([
-                'rating_id' => $rating->id,
-                'feature_id' => $featureId,
-                'rating' => $score,
-                'Error Message' => $e->getMessage(),
-            ]);
-            }
         }
     
         // Tính lại avg_rating cho bản ghi ratings
@@ -525,205 +591,121 @@ class SiteController extends Controller
         $rating->save();
         
         // Tính lại avg_rating của công ty từ bảng rating_details
-
         $averageRating = RatingDetail::join('ratings', 'rating_details.rating_id', '=', 'ratings.id')
-        ->where('ratings.company_id', $company->id)
-        ->avg('rating');
+            ->where('ratings.company_id', $id)
+            ->avg('rating_details.rating');
 
-        // Cập nhật avg_rating vào bảng công ty
-        $company->avg_rating = round($averageRating, 2);
+        // Cập nhật avg_rating vào bảng company (nếu cần)
+        $company->avg_rating = $averageRating ? round($averageRating, 2) : 0;
         $company->save();
-    
-        // Trả về thông báo thành công
-        $notify[] = ['success', 'Thanks for your detailed review'];
+
+        $notify[] = ['success', 'Review submitted successfully'];
         return back()->withNotify($notify);
-    }   
-    
+    }
     
     public function getReactionsByRating(Request $request, $rating_id)
-{
-    // 1. Tìm rating theo id
-    $rating = Rating::find($rating_id);
+    {
+        $reactions = RatingReaction::where('rating_id', $rating_id)
+                                  ->with('user', 'reactionType')
+                                  ->get();
 
-    // 2. Nếu không tồn tại, trả về lỗi
-    if (!$rating) {
-        return response()->json(['error' => 'Rating not found'], 404);
+        return response()->json(['reactions' => $reactions]);
     }
-
-    // 3. Tính số lượng các loại reaction liên quan đến rating này
-    $reactionCounts = RatingReaction::where('rating_id', $rating_id)
-        ->select('reaction_type_id', DB::raw('COUNT(*) as count')) // Đếm số lượng
-        ->groupBy('reaction_type_id') // Nhóm theo reaction_type_id
-        ->get()
-        ->keyBy('reaction_type_id'); // Tổ chức dữ liệu để dễ truy cập
-
-    $userReaction = RatingReaction::where('rating_id', $rating_id)
-        ->where('user_id', auth()->id()) // Lọc theo người dùng hiện tại
-        ->first();
-
-    // 4. Trả về dữ liệu
-    return response()->json([
-        'success' => true,
-        'rating_id' => $rating_id,
-        'reaction_counts' => $reactionCounts, // Số lượng phản ứng theo loại
-        'user_active_reaction' => $userReaction ? $userReaction->reaction_type_id : null, // Loại phản ứng của người dùng hiện tại
-
-    ]);
-}
-
-
 
     public function companyRating($id)
     {
-        header("Access-Control-Allow-Origin: *");
-        $id   = Crypt::decrypt($id);
-        $info = Company::where('id', $id)->where('status', 1)->withAvg('reviews', 'rating')->withCount('reviews')->first();
-        return response()->json([
-            'rating'  => $info->avg_rating,
-            'outOf'   => ' (' . $info->reviews_count . ' Ratings)',
-            'success' => true,
-        ]);
+        $company = Company::where('status', Status::APPROVED)->findOrFail($id);
+        $pageTitle = 'Rating for ' . $company->name;
+
+        return view('Template::rating.form', compact('pageTitle', 'company'));
     }
 
     public function addClick($id)
     {
-        $advertisement = Advertisement::findOrFail($id);
-        $advertisement->impression = $advertisement->impression + 1;
-        $advertisement->save();
-        return redirect($advertisement->link);
+        $company = Company::findOrFail($id);
+        $company->increment('total_click');
+        return response()->json(['success' => true]);
     }
 
     public function becomeContractor()
     {
-        $pageTitle = 'Trở thành thợ chuyên nghiệp';
-        $seoContents = (object) [
-            'title' => 'Trở thành thợ chuyên nghiệp - Kiếm tiền từ kỹ năng của bạn',
-            'description' => 'Tham gia Doitay.vn để kết nối với hàng ngàn khách hàng tiềm năng. Tự do về thời gian, thu nhập hấp dẫn.',
-            'keywords' => 'trở thành thợ, đăng ký thợ, kiếm tiền, freelancer, contractor'
-        ];
-        $seoImage = null;
+        $pageTitle = 'Become a Contractor';
+        $categories = Category::where('status', 1)->get();
         
-        // Get some statistics for display
-        $totalJobs = 5000; // This could come from database
-        $activeContractors = 1000;
-        $averageEarning = 15000000; // per month in VND
-        
-        return view('Template::become_contractor', compact('pageTitle', 'seoContents', 'seoImage', 'totalJobs', 'activeContractors', 'averageEarning'));
+        return view('Template::become_contractor', compact('pageTitle', 'categories'));
     }
 
     public function becomeContractorRegister(Request $request)
     {
-        // Handle the contractor registration process
         $request->validate([
-            'action' => 'required|in:login,register,create_contractor',
-            'fullname' => 'required_if:action,register',
-            'email' => 'required_if:action,register|email',
-            'mobile' => 'required_if:action,register',
-            'password' => 'required_if:action,register|min:6',
-            'username' => 'required_if:action,login',
-            'login_password' => 'required_if:action,login',
-            'company_name' => 'required_if:action,create_contractor',
-            'category_id' => 'required_if:action,create_contractor',
-            'description' => 'required_if:action,create_contractor',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'mobile' => 'required|string|max:20',
+            'category_id' => 'required|exists:categories,id',
+            'experience' => 'required|string',
+            'description' => 'required|string',
         ]);
 
-        if ($request->action === 'login') {
-            // Handle login
-            $credentials = [
-                'username' => $request->username,
-                'password' => $request->login_password
-            ];
-            
-            if (auth()->attempt($credentials)) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Đăng nhập thành công!',
-                    'redirect' => route('user.company.create')
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Thông tin đăng nhập không chính xác'
-                ]);
-            }
-        }
-
-        if ($request->action === 'register') {
-            // Handle user registration
-            try {
-                $user = new \App\Models\User();
-                $user->firstname = explode(' ', $request->fullname)[0];
-                $user->lastname = implode(' ', array_slice(explode(' ', $request->fullname), 1));
-                $user->username = $request->email;
-                $user->email = $request->email;
-                $user->mobile = $request->mobile;
-                $user->password = bcrypt($request->password);
-                $user->country_code = 'VN';
-                $user->country = 'Vietnam';
-                $user->save();
-
-                auth()->login($user);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Đăng ký thành công!',
-                    'next_step' => 'create_contractor'
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Có lỗi xảy ra khi đăng ký: ' . $e->getMessage()
-                ]);
-            }
-        }
-
-        if ($request->action === 'create_contractor') {
-            // Handle contractor profile creation
-            if (!auth()->check()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bạn cần đăng nhập để tạo hồ sơ thợ'
-                ]);
-            }
-
-            try {
-                $company = new \App\Models\Company();
-                $company->user_id = auth()->id();
-                $company->name = $request->company_name;
-                $company->category_id = $request->category_id;
-                $company->description = $request->description;
-                $company->address = $request->address ?? '';
-                $company->city = $request->city ?? 'Ho Chi Minh City';
-                $company->state = $request->state ?? 'Ho Chi Minh';
-                $company->country = 'Vietnam';
-                $company->zip_code = $request->zip_code ?? '70000';
-                $company->phone = $request->phone ?? auth()->user()->mobile;
-                $company->email = $request->company_email ?? auth()->user()->email;
-                $company->status = 0; // Pending approval
-                $company->save();
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Hồ sơ thợ đã được tạo thành công! Chúng tôi sẽ xem xét và phê duyệt trong vòng 24h.',
-                    'redirect' => route('user.company.index')
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Có lỗi xảy ra khi tạo hồ sơ thợ: ' . $e->getMessage()
-                ]);
-            }
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Hành động không hợp lệ'
+        // Create user account
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'mobile' => $request->mobile,
+            'password' => Hash::make(Str::random(8)), // Random password
+            'email_verified_at' => now(),
         ]);
+
+        // Create company profile
+        $company = Company::create([
+            'user_id' => $user->id,
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->mobile,
+            'experience' => $request->experience,
+            'description' => $request->description,
+            'status' => Status::PENDING, // Pending approval
+        ]);
+
+        // Send welcome email
+        // Mail::to($user->email)->send(new WelcomeContractorMail($user, $company));
+
+        $notify[] = ['success', 'Registration successful! We will review your application and contact you soon.'];
+        return redirect()->route('home')->withNotify($notify);
+    }
+
+    private function getPopularCategories()
+    {
+        return Category::withCount('companies')
+                      ->where('status', 1)
+                      ->orderBy('companies_count', 'desc')
+                      ->take(8)
+                      ->get();
+    }
+
+    private function getFeaturedCompanies()
+    {
+        return Company::with(['user', 'category'])
+                     ->where('status', Status::APPROVED)
+                     ->where('featured', 1)
+                     ->latest()
+                     ->take(12)
+                     ->get();
+    }
+
+    private function getTopRatedCompanies()
+    {
+        return Company::with(['user', 'category', 'ratings'])
+                     ->where('status', Status::APPROVED)
+                     ->withAvg('ratings', 'avg_rating')
+                     ->orderBy('ratings_avg_avg_rating', 'desc')
+                     ->take(8)
+                     ->get();
     }
 
     public function maintenance()
     {
-        $pageTitle = 'Under Maintenance';
-        return view('Template::maintenance', compact('pageTitle'));
+        $pageTitle = 'Maintenance Mode';
+        return view('maintenance', compact('pageTitle'));
     }
 }

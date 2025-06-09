@@ -12,7 +12,7 @@ class ExpertController extends Controller
     {
         $expert = Company::where('slug', $slug)->with(['ratings'])->firstOrFail();
         $features = Feature::all();
-        $myReview = auth()->check() ? $expert->ratings()->where('user_id', auth()->id())->first() : null;
+        $myReview = auth()->check() ? $expert->ratings()->where('user_id', auth()->id())->with('ratingDetails.feature')->first() : null;
 
         // Giả lập portfolio nếu chưa có bảng portfolios
         $expert->portfolio = [

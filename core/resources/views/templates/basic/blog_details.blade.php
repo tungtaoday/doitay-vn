@@ -72,7 +72,7 @@
                                         @foreach ($latestBlogs as $latestBlog)
                                             <li class="latest-blog-item">
                                                 <div class="has--link">
-                                                    <a href="{{ route('blog.details', $latestBlog->slug) }}" class="item--link"></a>
+                                                    <a href="{{ route('blog.details', [$latestBlog->slug, $latestBlog->id]) }}" class="item--link"></a>
                                                     <div class="company-review__top">
                                                         <div class="thumb">
                                                             <img src="{{ frontendImage('blog', 'thumb_' . @$latestBlog->data_values->image, '415x230') }}"

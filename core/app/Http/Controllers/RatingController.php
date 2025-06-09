@@ -22,10 +22,11 @@ use App\Models\Rating;
 use App\Models\RatingDetail;
 use App\Models\Feature;
 use App\Models\RatingReaction;
-use App\Models\ReactionType;
+// use App\Models\ReactionType;
 
 class RatingController extends Controller
 {
+    /*
     public function rateReaction(Request $request)
     {
         $request->validate( [
@@ -45,5 +46,6 @@ class RatingController extends Controller
 
         return response()->json(['success' => true, 'reaction' => $reaction]);
     }
+    */
 
 }

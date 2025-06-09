@@ -30,6 +30,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'mobile_verified_at' => 'datetime',
         'address' => 'object',
         'ver_code_send_at' => 'datetime'
     ];
@@ -37,7 +38,8 @@ class User extends Authenticatable
     protected $fillable = [
         'username', 'country_name', 'image', 'status','district','ward',
         'address', 'email', 'mobile', 'password', 'referral_code', 'referred_by',
-        'referral_count', 'total_referral_earnings'
+        'referral_count', 'total_referral_earnings', 'provider', 'provider_id',
+        'firstname', 'lastname', 'name', 'ev', 'sv'
     ];
 
     public function notifications()

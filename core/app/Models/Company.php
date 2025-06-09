@@ -74,18 +74,29 @@ class Company extends Model
         return $this->hasMany(Review::class);
     }
 
-    public function scopeApproved()
+    public function scopeActive($query)
     {
-        return $this->where('status', Status::APPROVED);
-    }
-    public function scopePending()
-    {
-        return $this->where('status', Status::PENDING);
+        return $query->where('status', Status::APPROVED);
     }
 
-    public function scopeRejected()
+    public function scopeVerified($query) 
     {
-        return $this->where('status', Status::REJECTED);
+        return $query->where('status', Status::APPROVED);
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', Status::APPROVED);
+    }
+    
+    public function scopePending($query)
+    {
+        return $query->where('status', Status::PENDING);
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('status', Status::REJECTED);
     }
 
     public function ratings()

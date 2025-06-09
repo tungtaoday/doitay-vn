@@ -58,8 +58,19 @@
             "use strict";
             
             $('form').on('submit', function() {
-                if ($(this).valid()) {
+                if (typeof $(this).valid === 'function' && $(this).valid()) {
                     $(':submit', this).attr('disabled', 'disabled');
+                } else if (typeof $(this).valid !== 'function') {
+                    // Fallback validation
+                    var isValid = true;
+                    $(this).find('[required]').each(function() {
+                        if (!$(this).val() || $(this).val().trim() === '') {
+                            isValid = false;
+                        }
+                    });
+                    if (isValid) {
+                        $(':submit', this).attr('disabled', 'disabled');
+                    }
                 }
             });
 
