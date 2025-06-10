@@ -1,0 +1,45 @@
+HƯỚNG DẪN IMPORT FILE CSV VÀO MYSQL (Manual Steps)
+
+1. Mở MySQL Command Line Client
+2. Đăng nhập: mysql -u root -p
+3. Nhập password: vuivui@123
+4. Chọn database: USE t_review_db;
+
+5. Tạo bảng locations:
+CREATE TABLE IF NOT EXISTS locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    city VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    city_code VARCHAR(10),
+    district VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    district_code VARCHAR(10),
+    ward VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    ward_code VARCHAR(10),
+    level VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    english_name VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_city_code (city_code),
+    INDEX idx_district_code (district_code),
+    INDEX idx_ward_code (ward_code),
+    INDEX idx_level (level)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+6. Set encoding:
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+7. Import CSV file:
+LOAD DATA LOCAL INFILE 'C:/xampp/htdocs/core/locations.csv'
+INTO TABLE locations
+CHARACTER SET utf8mb4
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(city, city_code, district, district_code, ward, ward_code, level, english_name);
+
+8. Kiểm tra kết quả:
+SELECT COUNT(*) FROM locations;
+SELECT city, district, ward FROM locations WHERE city LIKE '%Hà Nội%' LIMIT 5;
+
+HOẶC CHẠY LỆNH NÀY TRONG COMMAND PROMPT:
+mysql -u root -p t_review_db < import_locations.sql 
