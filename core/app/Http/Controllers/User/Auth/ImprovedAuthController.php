@@ -304,13 +304,13 @@ class ImprovedAuthController extends Controller
         $userId = cache('magic_link:' . $token);
         
         if (!$userId) {
-            return redirect()->route('user.login')->with('error', 'Invalid or expired magic link.');
+            return redirect()->route('user.login.v2')->with('error', 'Invalid or expired magic link.');
         }
 
         $user = User::find($userId);
         
         if (!$user || !$user->status) {
-            return redirect()->route('user.login')->with('error', 'Account not found or suspended.');
+            return redirect()->route('user.login.v2')->with('error', 'Account not found or suspended.');
         }
 
         // Clear token
@@ -521,6 +521,11 @@ class ImprovedAuthController extends Controller
         // Check if user needs verification
         if (!$user->ev || !$user->sv) {
             return route('user.authorization');
+        }
+
+        // Check if profile is incomplete - redirect to v2 form
+        if ($user->profile_complete != Status::YES) {
+            return route('user.data.v2');
         }
 
         // Check intended URL

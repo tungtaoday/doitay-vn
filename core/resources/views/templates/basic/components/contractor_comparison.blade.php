@@ -509,7 +509,7 @@ function consultExpert() {
         // Open chat or schedule consultation
         window.open('/chat/expert-consultation', '_blank', 'width=400,height=600');
     @else
-        window.location.href = '{{ route("user.login") }}';
+                        window.location.href = '{{ route("user.login.v2") }}';
     @endauth
 }
 

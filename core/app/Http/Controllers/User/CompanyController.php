@@ -17,14 +17,15 @@ class CompanyController extends Controller
 {
     public function index()
     {
-        $pageTitle = "My Companies";
+        $pageTitle = "Thợ của tôi";
         $companies = Company::with(['category', 'reviews'])
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
+            ->where('user_id', auth()->id()) // Only show companies belonging to current user
             ->latest()
             ->paginate(getPaginate());
         
-        $emptyMessage = 'No companies found';
+        $emptyMessage = 'Bạn chưa tạo thợ nào. Hãy tạo thông tin thợ đầu tiên!';
         return view('Template::user.company.index', compact('pageTitle', 'companies', 'emptyMessage'));
     }
 
@@ -46,8 +47,8 @@ class CompanyController extends Controller
 
     public function edit($id)
     {
-        $pageTitle = 'Cập nhật thông tin công ty';
-        $company = Company::findOrFail($id);
+        $pageTitle = 'Cập nhật thông tin thợ';
+        $company = Company::where('user_id', auth()->id())->findOrFail($id);
 
         $cities = DB::table('vietnam_districts')
             ->select('city', 'city_code')
@@ -82,24 +83,143 @@ class CompanyController extends Controller
 
     public function store(Request $request)
     {
-        $company = new Company();
-        $company->name = $request->name;
-        $company->address = $request->address;
-        $company->city = $request->city;
-        $company->district = $request->district;
-        $company->ward = $request->ward;
-        $company->category_id = $request->category;
-        $company->user_id = auth()->id();
-        $company->url = $request->url;
-        $company->email = $request->email;
-        $company->description = $request->description;
-        $company->tags = json_encode($request->tags);
-        $company->status = 2;
-        $company->image = 'default.jpg';
-        $company->save();
+        // Validation
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:255',
+            'category' => 'required|exists:categories,id',
+            'address' => 'required|string',
+            'city_code' => 'required',
+            'district_code' => 'required', 
+            'ward_code' => 'nullable',
+            'description' => 'required|string|min:50',
+            'experience' => 'nullable|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
 
-        return redirect()->back()->with('success', 'Company information updated successfully');
+        try {
+            DB::beginTransaction();
+
+            // Handle image upload
+            $imageName = 'default.jpg';
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                
+                // Ensure directory exists
+                $uploadPath = public_path('assets/images/company');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+                
+                $image->move($uploadPath, $imageName);
+            }
+
+            // Get location names from codes
+            $cityName = '';
+            $districtName = '';
+            $wardName = '';
+            
+            if ($request->city_code) {
+                $cityInfo = VietnamDistrict::where('city_code', $request->city_code)
+                    ->select('city')->first();
+                $cityName = $cityInfo ? $cityInfo->city : '';
+            }
+            
+            if ($request->district_code) {
+                $districtInfo = VietnamDistrict::where('district_code', $request->district_code)
+                    ->select('district')->first();
+                $districtName = $districtInfo ? $districtInfo->district : '';
+            }
+            
+            if ($request->ward_code) {
+                $wardInfo = VietnamDistrict::where('ward_code', $request->ward_code)
+                    ->select('ward')->first();
+                $wardName = $wardInfo ? $wardInfo->ward : '';
+            }
+
+            // Create company - with district and ward support after migration
+            $company = new Company();
+            $company->name = $request->name;
+            $company->email = $request->email;
+            $company->phone = $request->phone ?? '';
+            $company->address = $request->address;
+            $company->city = $cityName;
+            $company->district = $districtName; // Now using district column
+            $company->ward = $wardName; // Now using ward column  
+            $company->state = ''; // Keep state empty for now
+            $company->zip = $request->zip ?? '';
+            $company->country = 'Vietnam';
+            $company->description = $request->description;
+            $company->experience = $request->experience ?? 0;
+            $company->image = $imageName;
+            $company->category_id = $request->category;
+            $company->user_id = auth()->id();
+            $company->status = 2; // Pending approval
+            $company->save();
+
+            // Store certificates if provided
+            if ($request->has('certificates')) {
+                foreach ($request->certificates as $cert) {
+                    if (!empty($cert['name'])) {
+                        Certificate::create([
+                            'company_id' => $company->id,
+                            'name' => $cert['name'],
+                            'year' => $cert['year'] ?? null
+                        ]);
+                    }
+                }
+            }
+
+            // Store portfolio projects if provided
+            if ($request->has('projects')) {
+                foreach ($request->projects as $index => $project) {
+                    if (!empty($project['title'])) {
+                        $projectImageName = null;
+                        
+                        // Handle project image
+                        if ($request->hasFile("projects.{$index}.image")) {
+                            $projectImage = $request->file("projects.{$index}.image");
+                            $projectImageName = time() . '_project_' . $index . '.' . $projectImage->getClientOriginalExtension();
+                            
+                            // Ensure directory exists
+                            $portfolioPath = public_path('assets/images/portfolio');
+                            if (!file_exists($portfolioPath)) {
+                                mkdir($portfolioPath, 0755, true);
+                            }
+                            
+                            $projectImage->move($portfolioPath, $projectImageName);
+                        }
+
+                        Portfolio::create([
+                            'company_id' => $company->id,
+                            'title' => $project['title'],
+                            'description' => $project['description'] ?? '',
+                            'image' => $projectImageName
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            $notify[] = ['success', '🎉 Chúc mừng! Hồ sơ thợ chuyên nghiệp đã được tạo thành công. Chúng tôi sẽ xem xét và phê duyệt trong vòng 24h.'];
+            return redirect()->route('user.home')->withNotify($notify);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            // Log the actual error for debugging
+            \Log::error('Company creation error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            $notify[] = ['error', 'Có lỗi xảy ra khi tạo thông tin công ty: ' . $e->getMessage()];
+            return back()->withNotify($notify)->withInput();
+        }
     }
+
+
 
     /**
      * Example store method to call validation and saveCompany
@@ -119,21 +239,100 @@ class CompanyController extends Controller
     //  */
     public function update(Request $request, $id)
     {
-        $company = Company::findOrFail($id);
-        $this->validation($request, $id);
-        $this->saveCompany($company, $request);
+        // Only allow user to update their own company
+        $company = Company::where('user_id', auth()->id())->findOrFail($id);
+        
+        // Validation
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:255',
+            'category' => 'required|exists:categories,id',
+            'address' => 'required|string',
+            'city_code' => 'required',
+            'district_code' => 'required', 
+            'ward_code' => 'nullable',
+            'description' => 'required|string|min:50',
+            'experience' => 'nullable|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
 
-        $notify[] = ['success', 'Company updated successfully'];
-        return back()->withNotify($notify);
+        try {
+            DB::beginTransaction();
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                
+                // Ensure directory exists
+                $uploadPath = public_path('assets/images/company');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+                
+                $image->move($uploadPath, $imageName);
+                $company->image = $imageName;
+            }
+
+            // Get location names from codes
+            $cityName = '';
+            $districtName = '';
+            $wardName = '';
+            
+            if ($request->city_code) {
+                $cityInfo = VietnamDistrict::where('city_code', $request->city_code)
+                    ->select('city')->first();
+                $cityName = $cityInfo ? $cityInfo->city : '';
+            }
+            
+            if ($request->district_code) {
+                $districtInfo = VietnamDistrict::where('district_code', $request->district_code)
+                    ->select('district')->first();
+                $districtName = $districtInfo ? $districtInfo->district : '';
+            }
+            
+            if ($request->ward_code) {
+                $wardInfo = VietnamDistrict::where('ward_code', $request->ward_code)
+                    ->select('ward')->first();
+                $wardName = $wardInfo ? $wardInfo->ward : '';
+            }
+
+            // Update company
+            $company->name = $request->name;
+            $company->email = $request->email;
+            $company->phone = $request->phone ?? '';
+            $company->address = $request->address;
+            $company->city = $cityName;
+            $company->district = $districtName;
+            $company->ward = $wardName;
+            $company->description = $request->description;
+            $company->experience = $request->experience ?? 0;
+            $company->category_id = $request->category;
+            $company->save();
+
+            DB::commit();
+
+            $notify[] = ['success', 'Cập nhật thông tin thợ thành công!'];
+            return back()->withNotify($notify);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            \Log::error('Company update error: ' . $e->getMessage());
+            
+            $notify[] = ['error', 'Có lỗi xảy ra khi cập nhật: ' . $e->getMessage()];
+            return back()->withNotify($notify)->withInput();
+        }
     }
 
     // Thêm methods mới để xử lý AJAX requests
     public function getDistricts(Request $request)
     {
-        $districts = VietnamDistrict::where('City_code', $request->city_code)
-            ->select('District', 'District_code')
-            ->groupBy('District', 'District_code')
-            ->orderBy('District')
+        $districts = VietnamDistrict::where('city_code', $request->city_code)
+            ->select('district', 'district_code')
+            ->groupBy('district', 'district_code')
+            ->orderBy('district')
             ->get();
         
         return response()->json($districts);
@@ -141,10 +340,10 @@ class CompanyController extends Controller
 
     public function getWards(Request $request)
     {
-        $wards = VietnamDistrict::where('District_code', $request->district_code)
-            ->select('Ward', 'Ward_code')
-            ->groupBy('Ward', 'Ward_code')
-            ->orderBy('Ward')
+        $wards = VietnamDistrict::where('district_code', $request->district_code)
+            ->select('ward', 'ward_code')
+            ->groupBy('ward', 'ward_code')
+            ->orderBy('ward')
             ->get();
         
         return response()->json($wards);

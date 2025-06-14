@@ -228,7 +228,7 @@
                     <div class="auth-footer text-center mt-4">
                         <p class="mb-0">
                             Đã có tài khoản? 
-                            <a href="{{ route('user.login') }}" class="text-primary fw-medium">Đăng nhập ngay</a>
+                            <a href="{{ route('user.login.v2') }}" class="text-primary fw-medium">Đăng nhập ngay</a>
                         </p>
                         <div class="mt-2">
                             <small class="text-muted">

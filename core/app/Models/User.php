@@ -36,10 +36,11 @@ class User extends Authenticatable
     ];
 
     protected $fillable = [
-        'username', 'country_name', 'image', 'status','district','ward',
+        'username', 'country_name', 'country_code', 'image', 'status', 'city', 'district', 'ward',
         'address', 'email', 'mobile', 'password', 'referral_code', 'referred_by',
         'referral_count', 'total_referral_earnings', 'provider', 'provider_id',
-        'firstname', 'lastname', 'name', 'ev', 'sv'
+        'firstname', 'lastname', 'name', 'ev', 'sv', 'profile_complete', 'kyc_data',
+        'about', 'ver_code', 'ver_code_send_at', 'ban_reason'
     ];
 
     public function notifications()
@@ -181,6 +182,6 @@ class User extends Authenticatable
     // Get referral URL
     public function getReferralUrl()
     {
-        return route('user.register') . '?ref=' . $this->referral_code;
+        return route('user.register.v2') . '?ref=' . $this->referral_code;
     }
 }

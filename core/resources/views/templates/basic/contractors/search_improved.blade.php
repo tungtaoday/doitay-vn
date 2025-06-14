@@ -757,7 +757,7 @@ function quickHire(contractorId) {
         document.getElementById('contractorId').value = contractorId;
         new bootstrap.Modal(document.getElementById('quickHireModal')).show();
     @else
-        window.location.href = '{{ route("user.login") }}';
+        window.location.href = '{{ route("user.login.v2") }}';
     @endauth
 }
 
@@ -799,7 +799,7 @@ function saveContractor(contractorId) {
             }
         });
     @else
-        window.location.href = '{{ route("user.login") }}';
+        window.location.href = '{{ route("user.login.v2") }}';
     @endauth
 }
 

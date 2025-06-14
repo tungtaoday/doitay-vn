@@ -79,6 +79,7 @@ Route::middleware('admin')->group(function () {
         Route::get('rejected', 'index')->name('rejected');
 
         Route::get('details/{id}', 'details')->name('details');
+        Route::get('status/{id}', 'statusRedirect')->name('status.redirect');
         Route::post('status/{id}', 'status')->name('status');
     });
 

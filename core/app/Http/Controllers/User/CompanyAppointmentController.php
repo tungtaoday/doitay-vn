@@ -25,13 +25,44 @@ class CompanyAppointmentController extends Controller
 
     public function index()
     {
-        $pageTitle = 'Company Appointments';
+        $pageTitle = 'Quản lý lịch hẹn';
         $user = Auth::user();
         $appointments = Appointment::whereIn('company_id', $user->companies->pluck('id'))
             ->with('company')
+            ->latest()
             ->get();
 
-        return view('Template::user.companyAppointment', compact('pageTitle', 'appointments', 'user'));        // Bỏ 'user' nếu không dùng trong view
+        // Get wallet information for all companies
+        $companies = $user->companies()->with('wallet')->get();
+        $totalWalletBalance = 0;
+        $companiesWithoutWallet = [];
+        
+        foreach ($companies as $company) {
+            if ($company->wallet) {
+                $totalWalletBalance += $company->wallet->balance;
+            } else {
+                $companiesWithoutWallet[] = $company;
+            }
+        }
+
+        // Calculate potential earnings from pending appointments
+        $pendingAppointments = $appointments->where('status', 'pending');
+        $potentialCost = $pendingAppointments->count() * 50000; // 50k per appointment
+        
+        // Check if user can afford all pending appointments
+        $canAffordAll = $totalWalletBalance >= $potentialCost;
+        
+        // Calculate statistics
+        $stats = [
+            'total_balance' => $totalWalletBalance,
+            'pending_cost' => $potentialCost,
+            'can_afford_all' => $canAffordAll,
+            'companies_without_wallet' => $companiesWithoutWallet,
+            'appointments_this_month' => $appointments->where('created_at', '>=', now()->startOfMonth())->count(),
+            'revenue_this_month' => $appointments->where('status', 'confirmed')->where('created_at', '>=', now()->startOfMonth())->count() * 50000,
+        ];
+
+        return view(activeTemplate() . 'user.companyAppointment', compact('pageTitle', 'appointments', 'user', 'stats', 'companies'));
     }
 
     public function confirm($appointmentId)
@@ -151,8 +182,8 @@ class CompanyAppointmentController extends Controller
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
-        $pageTitle = 'Appointment Details';
-        $isCompany = true; // Đây là User
+        $pageTitle = 'Chi tiết lịch hẹn';
 
-        return view('Template::user.appointment_show', compact('appointment', 'pageTitle', 'isCompany','user'));    }
+        return view(activeTemplate() . 'user.company_appointment_details', compact('appointment', 'pageTitle', 'user'));
+    }
 }

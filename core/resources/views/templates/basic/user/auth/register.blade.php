@@ -16,7 +16,7 @@
                                             <h2 class="text-white mb-4">{{ __(@$regContent->data_values->heading) }}</h2>
                                             <p class="text-white mb-4">@lang('Welcome to ') {{ __(gs('site_name')) }}</p>
                                             <div class="mt-5">
-                                                <a href="{{ route('user.login') }}" class="btn btn--primary btn--sm">
+                                                <a href="{{ route('user.login.v2') }}" class="btn btn--primary btn--sm">
                                                     @lang('Bạn đã có tài khoản?') @lang('Đăng nhập ngay')
                                                 </a>
                                             </div>
@@ -43,7 +43,7 @@
                                             <div class="account-form-wrapper">
                                                 @include($activeTemplate . 'partials.social_login')
                                                 
-                                                <form action="{{ route('user.register') }}" method="POST" class="account-form verify-gcaptcha disableSubmission">
+                                                <form action="{{ route('user.register.v2.post') }}" method="POST" class="account-form verify-gcaptcha disableSubmission">
                                                     @csrf
                                                     <div class="row">
                                                         <div class="col-md-6">
@@ -139,7 +139,7 @@
                                                     <div class="form-group text-center">
                                                         <p class="mb-0">
                                                             @lang('Already have an account?')
-                                                            <a href="{{ route('user.login') }}" class="text--primary">@lang('Login')</a>
+                                                            <a href="{{ route('user.login.v2') }}" class="text--primary">@lang('Login')</a>
                                                         </p>
                                                         <div class="mt-3">
                                                             <a href="{{ route('home') }}" class="btn btn--primary">
@@ -176,7 +176,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-dark btn-sm" data-bs-dismiss="modal">@lang('Close')</button>
-                    <a href="{{ route('user.login') }}" class="btn btn--base btn-sm">@lang('Login')</a>
+                                                            <a href="{{ route('user.login.v2') }}" class="btn btn--base btn-sm">@lang('Login')</a>
                 </div>
             </div>
         </div>

@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('leads', function (Blueprint $table) {
-            $table->softDeletes(); // Adds deleted_at column
+        Schema::table('companies', function (Blueprint $table) {
+            $table->string('district')->nullable()->after('city');
+            $table->string('ward')->nullable()->after('district');
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('leads', function (Blueprint $table) {
-            $table->dropSoftDeletes(); // Removes deleted_at column
+        Schema::table('companies', function (Blueprint $table) {
+            $table->dropColumn(['district', 'ward']);
         });
     }
 };

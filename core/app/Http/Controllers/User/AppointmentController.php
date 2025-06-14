@@ -28,101 +28,124 @@ class AppointmentController extends Controller
     // Đặt lịch hẹn (User hoặc khách)
     public function create(Request $request)
     {
-        $user = Auth::user();
-
-        if (!$user) {
+        try {
+            $user = Auth::user();
             $rules = [
-                'email' => 'required|email|unique:users,email', // Bỏ t_review_db
                 'recipient_name' => 'required|string|max:255',
                 'recipient_phone' => 'required|string|max:15',
                 'recipient_address' => 'required|string',
                 'appointmentDate' => 'required|date',
                 'appointmentTime' => 'required',
                 'notes' => 'nullable|string',
-                'company_id' => 'required|exists:companies,id', // Bỏ t_review_db
+                'company_id' => 'required|exists:companies,id',
             ];
+
+            if (!$user) {
+                $rules['email'] = 'required|email|unique:users,email';
+            }
 
             $request->validate($rules);
 
-            $password = Str::random(8);
-            $user = User::create([
-                'name' => $request->recipient_name,
-                'mobile' => $request->recipient_phone,
-                'email' => $request->email,
-                'password' => Hash::make($password),
+            if (!$user) {
+                $password = Str::random(8);
+                $user = User::create([
+                    'name' => $request->recipient_name,
+                    'mobile' => $request->recipient_phone,
+                    'email' => $request->email,
+                    'password' => Hash::make($password),
+                ]);
+
+                Auth::login($user);
+            }
+
+            // Check if customer has already made appointment with this company
+            $existingAppointment = Appointment::where('user_id', $user->id)
+                ->where('company_id', $request->company_id)
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->first();
+
+            if ($existingAppointment) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Bạn đã có lịch hẹn với thợ này rồi!'
+                    ], 422);
+                }
+                return redirect()->back()->with('error', 'Bạn đã có lịch hẹn với thợ này rồi!');
+            }
+
+            $appointment = Appointment::create([
+                'user_id' => $user->id,
+                'company_id' => $request->company_id,
+                'recipient_name' => $request->recipient_name,
+                'recipient_phone' => $request->recipient_phone,
+                'recipient_address' => $request->recipient_address,
+                'appointment_date' => $request->appointmentDate,
+                'appointment_time' => $request->appointmentTime,
+                'notes' => $request->notes,
+                'status' => 'pending',
             ]);
 
-            Auth::login($user);
-        
-            $request->validate([
-                'recipient_name' => 'required|string|max:255',
-                'recipient_phone' => 'required|string|max:15',
-                'recipient_address' => 'required|string',
-                'appointmentDate' => 'required|date',
-                'appointmentTime' => 'required',
-                'notes' => 'nullable|string',
-                'company_id' => 'required|exists:companies,id', // Bỏ t_review_db
-            ]);
+            NotificationFacade::send($user, new NewAppointmentNotification($appointment));
+            $companyOwner = $appointment->company->user;
+            if ($companyOwner) {
+                NotificationFacade::send($companyOwner, new NewAppointmentNotification($appointment));
+            }
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đặt lịch thành công! Thợ sẽ liên hệ với bạn sớm.',
+                    'redirect' => route('appointment.success', ['id' => $appointment->id])
+                ]);
+            }
+
+            return redirect()->route('appointment.success', ['id' => $appointment->id])->with('success', 'Đặt lịch thành công! Thợ sẽ liên hệ với bạn sớm.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Có lỗi xảy ra, vui lòng thử lại'
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Có lỗi xảy ra, vui lòng thử lại');
         }
-
-        // Check if customer has already made appointment with this company
-        $existingAppointment = Appointment::where('user_id', $user->id)
-            ->where('company_id', $request->company_id)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->first();
-
-        if ($existingAppointment) {
-            return redirect()->back()->with('error', 'Bạn đã có lịch hẹn với thợ này rồi!');
-        }
-
-        $appointment = Appointment::create([
-            'user_id' => $user->id,
-            'company_id' => $request->company_id,
-            'recipient_name' => $request->recipient_name,
-            'recipient_phone' => $request->recipient_phone,
-            'recipient_address' => $request->recipient_address,
-            'appointment_date' => $request->appointmentDate,
-            'appointment_time' => $request->appointmentTime,
-            'notes' => $request->notes,
-            'status' => 'pending',
-        ]);
-
-        NotificationFacade::send($user, new NewAppointmentNotification($appointment));
-        $companyOwner = $appointment->company->user;
-        if ($companyOwner) {
-            NotificationFacade::send($companyOwner, new NewAppointmentNotification($appointment));
-        }
-
-        return redirect()->route('appointments.index')->with('success', 'Đặt lịch thành công! Thợ sẽ liên hệ với bạn sớm.');
     }
 
     // Danh sách lịch hẹn của User
     public function index()
     {
-        $pageTitle = 'Your Appointments';
+        $pageTitle = 'Lịch hẹn của tôi';
         $user = Auth::user();
         $appointments = Appointment::where('user_id', $user->id)
             ->with('company')
             ->latest()
             ->get();
 
-        return view('Template::user.appointments', compact('pageTitle', 'appointments', 'user'));
+        return view(activeTemplate() . 'user.appointments', compact('pageTitle', 'appointments', 'user'));
     }
 
     // Xem chi tiết lịch hẹn
     public function show($appointmentId)
     {
-        $appointment = Appointment::findOrFail($appointmentId);
+        $appointment = Appointment::with('company')->findOrFail($appointmentId);
         $user = Auth::user();
 
         if ($appointment->user_id !== $user->id) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
-        $pageTitle = 'Appointment Details';
-        $isCompany = false;
+        $pageTitle = 'Chi tiết lịch hẹn';
 
-        return view('Template::user.appointment_show', compact('appointment', 'pageTitle', 'isCompany', 'user'));
+        return view(activeTemplate() . 'user.appointment_details', compact('appointment', 'pageTitle', 'user'));
     }
 
     // Hủy lịch hẹn (User)
@@ -165,6 +188,15 @@ class AppointmentController extends Controller
         }
 
         return redirect()->back()->with('error', 'Invalid verification code.');
+    }
+
+    // Hiển thị trang success sau khi đặt lịch thành công
+    public function success($appointmentId)
+    {
+        $appointment = Appointment::with('company')->findOrFail($appointmentId);
+        $pageTitle = 'Đặt lịch thành công';
+        
+        return view(activeTemplate() . 'appointment_success', compact('appointment', 'pageTitle'));
     }
 
     // Các phương thức không cần cho User: confirm, complete

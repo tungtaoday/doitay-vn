@@ -21,33 +21,17 @@ class UserController extends Controller
 {
     public function home()
     {
-        $pageTitle = 'Dashboard';
         $user = auth()->user();
         
         // Kiểm tra user có company không
         $isContractor = $user->companies()->exists();
         
         if ($isContractor) {
-            // User là contractor - hiển thị dashboard contractor
-            return $this->contractorDashboard($user);
+            // User là contractor - redirect đến trang quản lý lịch hẹn
+            return redirect()->route('company.appointments.index');
         } else {
-            // User là customer - hiển thị dashboard minimal
-            $appointments = \App\Models\Appointment::where('user_id', $user->id)
-                ->with('company')
-                ->latest()
-                ->take(10)
-                ->get();
-                
-            $stats = [
-                'total_appointments' => \App\Models\Appointment::where('user_id', $user->id)->count(),
-                'pending_appointments' => \App\Models\Appointment::where('user_id', $user->id)->where('status', 'pending')->count(),
-                'completed_appointments' => \App\Models\Appointment::where('user_id', $user->id)->where('status', 'completed')->count(),
-                'loyalty_points' => $user->loyalty_points ?? 0,
-            ];
-            
-            return view('templates.basic.user.dashboard_minimal', compact(
-                'pageTitle', 'user', 'appointments', 'stats'
-            ));
+            // User là customer - redirect đến trang lịch hẹn của tôi
+            return redirect()->route('appointments.index');
         }
     }
     
@@ -379,6 +363,18 @@ class UserController extends Controller
         return view('Template::user.user_data', compact('pageTitle', 'user', 'countries', 'mobileCode'));
     }
 
+    public function userDataV2()
+    {
+        $user = auth()->user();
+
+        if ($user->profile_complete == Status::YES) {
+            return to_route('user.home');
+        }
+
+        $pageTitle = 'Complete Your Profile';
+        return view('Template::user.user_data_v2', compact('pageTitle', 'user'));
+    }
+
     public function userDataSubmit(Request $request)
     {
         $user = auth()->user();
@@ -422,7 +418,7 @@ class UserController extends Controller
         $user->mobile           = $request->mobile;
         $user->username         = $request->username;
         $user->address          = $request->address;
-        $user->city             = $city->City; ;
+        $user->city             = $city->City;
         $user->district         = $district->District;
         $user->ward             = $ward->Ward;
         // $user->country_name     = @$request->country;

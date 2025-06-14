@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('leads', function (Blueprint $table) {
-            $table->softDeletes(); // Adds deleted_at column
+            // Check if column doesn't exist before adding
+            if (!Schema::hasColumn('leads', 'deleted_at')) {
+                $table->softDeletes(); // Adds deleted_at column
+            }
         });
     }
 
@@ -22,7 +25,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('leads', function (Blueprint $table) {
-            $table->dropSoftDeletes(); // Removes deleted_at column
+            // Only drop if column exists
+            if (Schema::hasColumn('leads', 'deleted_at')) {
+                $table->dropSoftDeletes(); // Removes deleted_at column
+            }
         });
     }
 };

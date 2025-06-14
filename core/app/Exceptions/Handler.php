@@ -52,7 +52,7 @@ class Handler extends ExceptionHandler
                     'message' => ['error' => $notify]
                 ]);
             } else {
-                return redirect()->route('user.login');
+                return redirect()->route('user.login.v2');
             }
         }
     }

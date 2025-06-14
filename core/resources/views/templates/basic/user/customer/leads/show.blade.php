@@ -7,9 +7,9 @@
         <div class="col-12 mb-4">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('user.home') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('user.customer.leads.index') }}">Leads của tôi</a></li>
-                    <li class="breadcrumb-item active">{{ $lead->title }}</li>
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('user.customer.leads.index') }}">Yêu cầu của tôi</a></li>
+                    <li class="breadcrumb-item active">Chi tiết yêu cầu</li>
                 </ol>
             </nav>
         </div>

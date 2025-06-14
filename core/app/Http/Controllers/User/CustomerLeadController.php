@@ -379,7 +379,7 @@ class CustomerLeadController extends Controller
                 \Mail::send('emails.welcome_guest', [
                     'user' => $user,
                     'password' => $password,
-                    'login_url' => route('user.login'),
+                    'login_url' => route('user.login.v2'),
                     'website_name' => config('app.name', 'DoiTay.vn')
                 ], function ($message) use ($user) {
                     $message->to($user->email, $user->firstname . ' ' . $user->lastname)
@@ -394,7 +394,7 @@ class CustomerLeadController extends Controller
             
             // Send SMS notification with password
             if (!empty($user->mobile)) {
-                $smsMessage = "Chào mừng bạn đến với DoiTay.vn! Tài khoản: {$user->mobile}, Mật khẩu: {$password}. Đăng nhập tại: " . route('user.login');
+                $smsMessage = "Chào mừng bạn đến với DoiTay.vn! Tài khoản: {$user->mobile}, Mật khẩu: {$password}. Đăng nhập tại: " . route('user.login.v2');
                 
                 // Use your SMS service here
                 $this->sendSMS($user->mobile, $smsMessage);

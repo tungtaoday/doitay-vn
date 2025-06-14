@@ -1,3 +1,6 @@
+@php
+    $user = auth()->user();
+@endphp
 <div class="profile-sidebar">
     <div class="profile-widget">
         <div class="thumb">

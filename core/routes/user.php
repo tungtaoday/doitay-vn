@@ -52,6 +52,7 @@ Route::namespace('User\Auth')->name('user.')->group(function () {
 
 Route::middleware('auth')->name('user.')->group(function () {
     Route::get('user-data', 'User\UserController@userData')->name('data');
+    Route::get('user-data-v2', 'User\UserController@userDataV2')->name('data.v2');
     Route::post('user-data-submit', 'User\UserController@userDataSubmit')->name('data.submit');
     Route::get('get-districts', 'User\CompanyController@getDistricts')->name('get.districts');
     Route::get('get-wards', 'User\CompanyController@getWards')->name('get.wards');
@@ -151,6 +152,9 @@ Route::controller('User\CustomerLeadController')->prefix('customer/leads')->name
     Route::post('store', 'store')->name('store');
 });
 
+// Success page (accessible to both guests and authenticated users)
+Route::get('/appointment/success/{id}', [AppointmentController::class, 'success'])->name('appointment.success');
+
 Route::middleware('auth')->group(function () {
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::post('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
@@ -169,6 +173,7 @@ Route::group(['prefix' => 'company', 'middleware' => 'auth'], function () {
 });
 
 Route::get('/check-email', [AppointmentController::class, 'checkEmail']);
+
 // Company Statistics Routes
 Route::prefix('company')->name('user.company.')->group(function () {
     Route::get('statistics', [CompanyStatisticsController::class, 'index'])->name('statistics');

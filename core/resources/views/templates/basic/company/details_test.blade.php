@@ -164,7 +164,7 @@
                     @else
                         <div class="give-rating-area mb-5">
                             <p class="text-center">@lang('You need to')
-                                <a href="{{ route('user.login') }}" class="text--base">@lang('Login')</a>
+                                <a href="{{ route('user.login.v2') }}" class="text--base">@lang('Login')</a>
                                 @lang(' first to submit your review.')
                             </p>
                         </div>

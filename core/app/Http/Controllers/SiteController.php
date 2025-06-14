@@ -184,31 +184,66 @@ class SiteController extends Controller
 
     public function placeholderImage($size = null)
     {
-        $imgWidth  = explode('x', $size)[0];
-        $imgHeight = explode('x', $size)[1];
-        $text      = $imgWidth . '×' . $imgHeight;
-        $fontFile  = realpath('assets/font/solaimanLipi_bold.ttf');
-        $fontSize  = round(($imgWidth - 50) / 8);
-        if ($fontSize <= 9) {
-            $fontSize = 9;
-        }
-        if ($imgHeight < 100 && $fontSize > 30) {
-            $fontSize = 30;
+        // For debugging - let's see what's going on
+        \Log::info('Placeholder image called with size: ' . $size);
+        
+        try {
+            // Simple validation
+            if (!$size) {
+                return response('Invalid size parameter', 400);
+            }
+
+            // Check if contains 'x'
+            if (!str_contains($size, 'x')) {
+                return response('Size must contain x', 400);
+            }
+
+            $parts = explode('x', $size);
+            if (count($parts) != 2) {
+                return response('Invalid size format', 400);
         }
 
-        $image     = imagecreatetruecolor($imgWidth, $imgHeight);
-        $colorFill = imagecolorallocate($image, 100, 100, 100);
-        $bgFill    = imagecolorallocate($image, 255, 255, 255);
-        imagefill($image, 0, 0, $bgFill);
-        $textBox    = imagettfbbox($fontSize, 0, $fontFile, $text);
-        $textWidth  = abs($textBox[4] - $textBox[0]);
-        $textHeight = abs($textBox[5] - $textBox[1]);
-        $textX      = ($imgWidth - $textWidth) / 2;
-        $textY      = ($imgHeight + $textHeight) / 2;
-        header('Content-Type: image/jpeg');
-        imagettftext($image, $fontSize, 0, $textX, $textY, $colorFill, $fontFile, $text);
+            $width = (int) $parts[0];
+            $height = (int) $parts[1];
+            
+            if ($width <= 0 || $height <= 0) {
+                return response('Invalid dimensions', 400);
+        }
+
+            // Create a simple image with Response instead of direct headers
+            $image = imagecreatetruecolor($width, $height);
+            $gray = imagecolorallocate($image, 240, 240, 240);
+            $text_color = imagecolorallocate($image, 100, 100, 100);
+            
+            imagefill($image, 0, 0, $gray);
+            
+            $text = $width . 'x' . $height;
+            $font_size = 3;
+            
+            $text_width = imagefontwidth($font_size) * strlen($text);
+            $text_height = imagefontheight($font_size);
+            
+            $x = ($width - $text_width) / 2;
+            $y = ($height - $text_height) / 2;
+            
+            imagestring($image, $font_size, $x, $y, $text, $text_color);
+            
+            // Capture image output
+            ob_start();
         imagejpeg($image);
+            $imageData = ob_get_contents();
+            ob_end_clean();
+            
         imagedestroy($image);
+            
+            return response($imageData, 200)
+                ->header('Content-Type', 'image/jpeg')
+                ->header('Cache-Control', 'public, max-age=86400');
+                
+        } catch (\Exception $e) {
+            \Log::error('Placeholder image error: ' . $e->getMessage());
+            return response('Error generating image: ' . $e->getMessage(), 500);
+        }
     }
 
     public function categoryCompany($id)
@@ -402,7 +437,10 @@ class SiteController extends Controller
         $avgRating = Rating::where('company_id', $company->id)->avg('avg_rating') ?? 0;
 
         $averageRatings = [];
-        $features = Feature::where('status', Status::ENABLE)->get();
+        // Only get features that belong to the company's category
+        $features = Feature::where('status', Status::ENABLE)
+                          ->where('category_id', $company->category_id)
+                          ->get();
         foreach ($features as $feature) {
             $averageRatings[$feature->id] = RatingDetail::where('feature_id', $feature->id)
                 ->whereHas('rating', function ($query) use ($company) {
@@ -511,8 +549,10 @@ class SiteController extends Controller
         $avgRating = $company->ratings->avg('avg_rating') ?? 0;
         $totalReviews = $company->ratings->count();
         
-        // Get feature ratings
-        $features = Feature::where('status', Status::ENABLE)->get();
+        // Get feature ratings for this company's category only
+        $features = Feature::where('status', Status::ENABLE)
+                          ->where('category_id', $company->category_id)
+                          ->get();
         $averageRatings = [];
         foreach ($features as $feature) {
             $averageRatings[$feature->id] = RatingDetail::where('feature_id', $feature->id)
@@ -707,5 +747,157 @@ class SiteController extends Controller
     {
         $pageTitle = 'Maintenance Mode';
         return view('maintenance', compact('pageTitle'));
+    }
+
+    // ===========================
+    // V2 COMPANY CREATE METHODS
+    // ===========================
+    
+    public function createCompanyV2()
+    {
+        $pageTitle = 'Create Company Profile V2';
+        $categories = Category::where('status', Status::ENABLE)->get();
+        
+        // Get existing companies for testing
+        $sampleCompanies = Company::with(['category', 'ratings'])
+                                 ->where('status', Status::APPROVED)
+                                 ->take(3)
+                                 ->get();
+        
+        return view(activeTemplate() . 'company.create_v2', compact('pageTitle', 'categories', 'sampleCompanies'));
+    }
+    
+    public function storeCompanyV2(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:20',
+            'category_id' => 'required|exists:categories,id',
+            'description' => 'required|string|min:20',
+            'experience' => 'required|integer|min:0|max:50',
+            'address' => 'required|string',
+            'city' => 'required|string',
+            'district' => 'nullable|string',
+            'ward' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'specialty_services' => 'nullable|array|max:6',
+            'specialty_services.*' => 'nullable|string|max:100',
+            'weekday_start' => 'required|date_format:H:i',
+            'weekday_end' => 'required|date_format:H:i',
+            'weekend_start' => 'required|date_format:H:i',
+            'weekend_end' => 'required|date_format:H:i',
+            'available_247' => 'nullable|boolean',
+            'project_images' => 'nullable|array|max:10',
+            'project_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'featured_project_description' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            DB::beginTransaction();
+            
+            // Create company
+            $company = new Company();
+            $company->user_id = auth()->id() ?? 1; // Fallback for testing
+            $company->category_id = $request->category_id;
+            $company->name = $request->name;
+            $company->email = $request->email;
+            $company->phone = $request->phone;
+            $company->description = $request->description;
+            $company->experience = $request->experience;
+            $company->address = $request->address;
+            $company->city = $request->city;
+            $company->district = $request->district;
+            $company->ward = $request->ward;
+            $company->status = Status::PENDING;
+            
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('assets/images/company'), $imageName);
+                $company->image = $imageName;
+            }
+            
+            $company->save();
+            
+            // Handle services
+            if ($request->services) {
+                // You can create a pivot table or store as JSON
+                // For now, let's store as JSON in a services column
+                // $company->services = json_encode($request->services);
+                // $company->save();
+            }
+            
+            // Handle certificates
+            if ($request->hasFile('certificates')) {
+                foreach ($request->file('certificates') as $certificate) {
+                    $certName = time() . '_' . uniqid() . '.' . $certificate->getClientOriginalExtension();
+                    $certificate->move(public_path('assets/images/certificates'), $certName);
+                    
+                    // Store in certificates table if exists
+                    // Certificate::create([
+                    //     'company_id' => $company->id,
+                    //     'file_name' => $certName,
+                    //     'original_name' => $certificate->getClientOriginalName(),
+                    // ]);
+                }
+            }
+            
+            // Handle portfolio images
+            if ($request->hasFile('portfolio_images')) {
+                foreach ($request->file('portfolio_images') as $portfolio) {
+                    $portfolioName = time() . '_' . uniqid() . '.' . $portfolio->getClientOriginalExtension();
+                    $portfolio->move(public_path('assets/images/portfolios'), $portfolioName);
+                    
+                    // Store in portfolios table if exists
+                    // Portfolio::create([
+                    //     'company_id' => $company->id,
+                    //     'image' => $portfolioName,
+                    //     'description' => $request->portfolio_descriptions[$key] ?? '',
+                    // ]);
+                }
+            }
+            
+            DB::commit();
+            
+            $notify[] = ['success', 'Company profile created successfully! It will be reviewed by our team.'];
+            return redirect()->route('company.preview.v2', ['id' => $company->id])->withNotify($notify);
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            $notify[] = ['error', 'An error occurred while creating the company profile. Please try again.'];
+            return back()->withInput()->withNotify($notify);
+        }
+    }
+    
+    public function previewCompanyV2(Request $request)
+    {
+        $companyId = $request->get('id');
+        
+        if ($companyId) {
+            $company = Company::with(['category', 'ratings'])->findOrFail($companyId);
+        } else {
+            // Create a sample company for preview
+            $company = (object) [
+                'id' => 0,
+                'name' => 'Sample Company Name',
+                'description' => 'This is a sample description for the company profile preview.',
+                'experience' => 5,
+                'address' => '123 Sample Street, Sample District',
+                'city' => 'Ho Chi Minh City',
+                'phone' => '0123456789',
+                'email' => 'sample@company.com',
+                'image' => 'default-company.jpg',
+                'avg_rating' => 4.5,
+                'category' => (object) ['name' => 'Sample Category'],
+                'ratings' => collect([]),
+            ];
+        }
+        
+        $pageTitle = 'Preview Company Profile V2';
+        
+        return view(activeTemplate() . 'company.preview_v2', compact('pageTitle', 'company'));
     }
 }

@@ -46,11 +46,11 @@
         <!-- Action Buttons -->
         <div class="header-actions">
                             @guest
-                <a href="{{ route('user.login') }}" class="btn-login">
+                <a href="{{ route('user.login.v2') }}" class="btn-login">
                     <i class="las la-sign-in-alt"></i>
                     <span>@lang('Đăng nhập')</span>
                                 </a>
-                <a href="{{ route('user.register') }}" class="btn-register">
+                <a href="{{ route('user.register.v2') }}" class="btn-register">
                     <i class="las la-user-plus"></i>
                     <span>@lang('Đăng ký')</span>
                                 </a>
@@ -66,16 +66,26 @@
                         <i class="las la-chevron-down"></i>
                     </button>
                     <div class="user-menu">
-                        <a href="{{ route('user.home') }}">
-                            <i class="las la-tachometer-alt"></i>
-                            @lang('Dashboard')
-                        </a>
                         @if(auth()->user()->companies->count() > 0)
+                            {{-- Menu cho thợ --}}
+                            <a href="{{ route('company.appointments.index') }}">
+                                <i class="las la-calendar-check"></i>
+                                @lang('Quản lý lịch hẹn')
+                            </a>
+                            <a href="{{ route('user.wallet.index') }}">
+                                <i class="las la-wallet"></i>
+                                @lang('Quản lý ví')
+                            </a>
                             <a href="{{ route('user.company.index') }}">
                                 <i class="las la-tools"></i>
                                 @lang('Nhóm thợ của tôi')
                             </a>
                         @else
+                            {{-- Menu cho khách hàng --}}
+                            <a href="{{ route('appointments.index') }}">
+                                <i class="las la-calendar-alt"></i>
+                                @lang('Lịch hẹn của tôi')
+                            </a>
                             <a href="{{ route('user.company.create') }}">
                                 <i class="las la-plus-circle"></i>
                                 @lang('Trở thành Người Thợ')
@@ -169,11 +179,11 @@
             <!-- Mobile Auth Actions -->
             <div class="mobile-auth">
                 @guest
-                    <a href="{{ route('user.login') }}" class="mobile-btn mobile-btn-primary">
+                    <a href="{{ route('user.login.v2') }}" class="mobile-btn mobile-btn-primary">
                         <i class="las la-sign-in-alt"></i>
                         @lang('Đăng nhập')
                     </a>
-                    <a href="{{ route('user.register') }}" class="mobile-btn mobile-btn-secondary">
+                    <a href="{{ route('user.register.v2') }}" class="mobile-btn mobile-btn-secondary">
                         <i class="las la-user-plus"></i>
                         @lang('Đăng ký')
                     </a>
@@ -189,16 +199,26 @@
                         </div>
                     </div>
                     <div class="mobile-user-actions">
-                        <a href="{{ route('user.home') }}" class="mobile-action-btn">
-                            <i class="las la-tachometer-alt"></i>
-                            @lang('Dashboard')
-                        </a>
                         @if(auth()->user()->companies->count() > 0)
+                            {{-- Mobile menu cho thợ --}}
+                            <a href="{{ route('company.appointments.index') }}" class="mobile-action-btn">
+                                <i class="las la-calendar-check"></i>
+                                @lang('Quản lý lịch hẹn')
+                            </a>
+                            <a href="{{ route('user.wallet.index') }}" class="mobile-action-btn">
+                                <i class="las la-wallet"></i>
+                                @lang('Quản lý ví')
+                            </a>
                             <a href="{{ route('user.company.index') }}" class="mobile-action-btn">
                                 <i class="las la-tools"></i>
                                 @lang('Nhóm thợ của tôi')
                             </a>
                         @else
+                            {{-- Mobile menu cho khách hàng --}}
+                            <a href="{{ route('appointments.index') }}" class="mobile-action-btn">
+                                <i class="las la-calendar-alt"></i>
+                                @lang('Lịch hẹn của tôi')
+                            </a>
                             <a href="{{ route('user.company.create') }}" class="mobile-action-btn">
                                 <i class="las la-plus-circle"></i>
                                 @lang('Trở thành Người Thợ')

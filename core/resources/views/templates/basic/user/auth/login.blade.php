@@ -15,7 +15,7 @@
                                         <h2 class="text-white mb-4">{{ __(@$loginContent->data_values->heading) }}</h2>
                                         <p class="text-white mb-4">{{ __(@$loginContent->data_values->greeting) }} {{ __(gs('site_name')) }}</p>
                                         <div class="mt-5">
-                                            <a href="{{ route('user.register') }}" class="btn btn--primary btn--sm">
+                                            <a href="{{ route('user.register.v2') }}" class="btn btn--primary btn--sm">
                                                 @lang("Nếu bạn chưa có tài khoản?") @lang('Tạo tài khoản')
                                             </a>
                                         </div>
@@ -34,7 +34,7 @@
                                         <div class="account-form-wrapper">
                                             @include($activeTemplate . 'partials.social_login')
                                             
-                                            <form class="account-form verify-gcaptcha disableSubmission" method="POST" action="{{ route('user.login') }}">
+                                            <form class="account-form verify-gcaptcha disableSubmission" method="POST" action="{{ route('user.login.v2.post') }}">
                                                 @csrf
                                                 <div class="form-group">
                                                     <label class="form-label text-dark">@lang('Username or Email')</label>

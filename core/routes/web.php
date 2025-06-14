@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\Admin\CompanyWalletController;
+
+// Include user routes
+require __DIR__.'/user.php';
+
 Route::get('/clear', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
 });
@@ -29,6 +33,11 @@ Route::prefix('company')->name('company.')->group(function () {
     Route::get('category/{id}/{slug}', action: [SiteController::class, 'categoryCompany'])->name('category');
     Route::get('filter', action: [SiteController::class, 'filterCompanies'])->name('filter');
     Route::get('{id}/{slug}', action: [SiteController::class, 'companyDetails'])->name('details');
+    
+    // V2 Create Company Routes (Independent Flow)
+    Route::get('create-v2', action: [SiteController::class, 'createCompanyV2'])->name('create.v2');
+    Route::post('store-v2', action: [SiteController::class, 'storeCompanyV2'])->name('store.v2');
+    Route::get('preview-v2', action: [SiteController::class, 'previewCompanyV2'])->name('preview.v2');
     
     Route::middleware('check.status')->group(function () {
         Route::post('review/{id}', action: [SiteController::class, 'review'])->name('user.review');
@@ -146,6 +155,41 @@ Route::get('/test-dashboard', function() {
     return view('Template::user.test_dashboard', compact('pageTitle', 'user'));
 });
 
+// Test success page
+Route::get('/test-success', function() {
+    $appointment = \App\Models\Appointment::with('company')->first();
+    if (!$appointment) {
+        return 'No appointments found in database';
+    }
+    $pageTitle = 'Đặt lịch thành công';
+    return view(activeTemplate() . 'appointment_success', compact('appointment', 'pageTitle'));
+});
+
+// Create test appointment
+Route::get('/create-test-appointment', function() {
+    // Get first user and company
+    $user = \App\Models\User::first();
+    $company = \App\Models\Company::first();
+    
+    if (!$user || !$company) {
+        return 'Need at least 1 user and 1 company in database';
+    }
+    
+    $appointment = \App\Models\Appointment::create([
+        'user_id' => $user->id,
+        'company_id' => $company->id,
+        'recipient_name' => 'Test Customer',
+        'recipient_phone' => '0123456789',
+        'recipient_address' => 'Test Address',
+        'appointment_date' => now()->addDays(1)->format('Y-m-d'),
+        'appointment_time' => '10:00',
+        'notes' => 'Test appointment',
+        'status' => 'pending',
+    ]);
+    
+    return 'Test appointment created with ID: ' . $appointment->id . '. <a href="/test-success">View success page</a>';
+});
+
 // ViserLab fallback routes to prevent errors
 Route::get('activate', function() {
     return redirect()->route('home')->with('info', 'System activation is no longer required.');
@@ -157,4 +201,30 @@ Route::post('activate_system_submit', function() {
         'message' => 'System activation has been disabled for security reasons.'
     ]);
 })->name('activate_system_submit');
+
+// Test route để kiểm tra UX mới
+Route::get('/test-ux', function() {
+    if (auth()->check()) {
+        $user = auth()->user();
+        $isContractor = $user->companies()->exists();
+        
+        return response()->json([
+            'user_id' => $user->id,
+            'username' => $user->username,
+            'is_contractor' => $isContractor,
+            'companies_count' => $user->companies->count(),
+            'redirect_url' => $isContractor ? route('company.appointments.index') : route('appointments.index'),
+            'menu_items' => $isContractor ? [
+                'Quản lý lịch hẹn' => route('company.appointments.index'),
+                'Quản lý ví' => route('user.wallet.index'),
+                'Nhóm thợ của tôi' => route('user.company.index')
+            ] : [
+                'Lịch hẹn của tôi' => route('appointments.index'),
+                'Trở thành Người Thợ' => route('user.company.create')
+            ]
+        ]);
+    }
+    
+    return response()->json(['error' => 'Not authenticated']);
+})->name('test.ux');
 

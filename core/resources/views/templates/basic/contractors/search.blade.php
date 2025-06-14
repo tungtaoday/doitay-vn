@@ -409,7 +409,7 @@ function createLeadForContractor(contractorId) {
         const modal = new bootstrap.Modal(document.getElementById('quickLeadModal'));
         modal.show();
     @else
-        window.location.href = '{{ route("user.login") }}';
+                        window.location.href = '{{ route("user.login.v2") }}';
     @endauth
 }
 

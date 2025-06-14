@@ -183,7 +183,7 @@
                             @endif
                         @else
                             <div class="give-rating-area mt-4 text-center">
-                                <p>Bạn cần <a href="{{ route('user.login') }}" class="text-primary">đăng nhập</a> để gửi đánh giá.</p>
+                                <p>Bạn cần <a href="{{ route('user.login.v2') }}" class="text-primary">đăng nhập</a> để gửi đánh giá.</p>
                             </div>
                         @endauth
                         <!-- Review List -->
@@ -212,7 +212,7 @@
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" id="email" name="email" class="form-control" placeholder="Nhập email của bạn" required onchange="checkEmailExists(this.value)">
                                     <div id="email-error" class="text-danger mt-2" style="display: none;">
-                                        Email đã tồn tại, vui lòng <a href="{{ route('user.login') }}">đăng nhập</a>.
+                                        Email đã tồn tại, vui lòng <a href="{{ route('user.login.v2') }}">đăng nhập</a>.
                                     </div>
                                 </div>
                             @endauth

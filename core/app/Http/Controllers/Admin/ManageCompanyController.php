@@ -48,6 +48,13 @@ class ManageCompanyController extends Controller
         return view('admin.company.details', compact('pageTitle', 'company'));
     }
 
+    public function statusRedirect($id)
+    {
+        // Redirect GET requests to company details page with a message
+        $notify[] = ['info', 'Please use the approve/reject buttons to change company status.'];
+        return redirect()->route('admin.company.details', $id)->withNotify($notify);
+    }
+
     public function status(Request $request, $id)
     {
 

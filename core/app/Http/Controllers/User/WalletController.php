@@ -40,7 +40,7 @@ class WalletController extends Controller
             })
         ];
 
-        return view('Template::user.wallet.index', compact('pageTitle', 'wallets', 'stats'));
+        return view(activeTemplate() . 'user.wallet.index', compact('pageTitle', 'wallets', 'stats'));
     }
 
     public function show($walletId)
@@ -65,7 +65,7 @@ class WalletController extends Controller
             'monthly_spending' => $wallet->getMonthlySpending()
         ];
 
-        return view('Template::user.wallet.show', compact('pageTitle', 'wallet', 'transactions', 'stats'));
+        return view(activeTemplate() . 'user.wallet.show', compact('pageTitle', 'wallet', 'transactions', 'stats'));
     }
 
     public function transactions(Request $request)
@@ -110,7 +110,7 @@ class WalletController extends Controller
             'refund' => 'Hoàn tiền'
         ];
 
-        return view('Template::user.wallet.transactions', compact('pageTitle', 'transactions', 'transactionTypes'));
+        return view(activeTemplate() . 'user.wallet.transactions', compact('pageTitle', 'transactions', 'transactionTypes'));
     }
 
     public function createWallet(Request $request)
@@ -192,6 +192,6 @@ class WalletController extends Controller
             ];
         }
 
-        return view('Template::user.wallet.dashboard', compact('pageTitle', 'wallets', 'stats', 'recentTransactions', 'monthlyData'));
+        return view(activeTemplate() . 'user.wallet.dashboard', compact('pageTitle', 'wallets', 'stats', 'recentTransactions', 'monthlyData'));
     }
 }

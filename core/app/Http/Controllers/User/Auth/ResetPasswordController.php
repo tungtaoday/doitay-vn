@@ -31,7 +31,7 @@ class ResetPasswordController extends Controller
         $reset = PasswordReset::where('token', $request->token)->orderBy('created_at', 'desc')->first();
         if (!$reset) {
             $notify[] = ['error', 'Invalid verification code'];
-            return to_route('user.login')->withNotify($notify);
+            return to_route('user.login.v2')->withNotify($notify);
         }
 
         $user = User::where('email', $reset->email)->first();
@@ -51,7 +51,7 @@ class ResetPasswordController extends Controller
 
 
         $notify[] = ['success', 'Password changed successfully'];
-        return to_route('user.login')->withNotify($notify);
+        return to_route('user.login.v2')->withNotify($notify);
     }
 
 
