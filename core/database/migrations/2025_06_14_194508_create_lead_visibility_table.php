@@ -11,12 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Add soft delete to leads table
-        Schema::table('leads', function (Blueprint $table) {
-            $table->softDeletes();
-        });
-        
-        // Create lead_visibility table for smart distribution
         Schema::create('lead_visibility', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lead_id')->constrained()->onDelete('cascade');
@@ -40,9 +34,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('lead_visibility');
-        
-        Schema::table('leads', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-        });
     }
 };

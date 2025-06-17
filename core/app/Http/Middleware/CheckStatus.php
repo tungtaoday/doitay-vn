@@ -18,9 +18,31 @@ class CheckStatus
     {
         if (Auth::check()) {
             $user = auth()->user();
-            if ($user->status  && $user->ev  && $user->sv) {
-                return $next($request);
-            } else {
+            
+            // Check if user account is active
+            if (!$user->status) {
+                if ($request->is('api/*')) {
+                    $notify[] = 'Your account is suspended.';
+                    return response()->json([
+                        'remark'  => 'suspended',
+                        'status'  => 'error',
+                        'message' => ['error' => $notify],
+                        'data'    => [
+                            'user' => $user
+                        ],
+                    ]);
+                } else {
+                    return to_route('user.authorization');
+                }
+            }
+            
+            // Check email verification only if enabled in settings
+            $emailVerificationRequired = gs('ev') && !$user->ev;
+            
+            // Check mobile verification only if enabled in settings  
+            $mobileVerificationRequired = gs('sv') && !$user->sv;
+            
+            if ($emailVerificationRequired || $mobileVerificationRequired) {
                 if ($request->is('api/*')) {
                     $notify[] = 'You need to verify your account first.';
                     return response()->json([
@@ -35,6 +57,8 @@ class CheckStatus
                     return to_route('user.authorization');
                 }
             }
+            
+            return $next($request);
         }
         abort(403);
     }

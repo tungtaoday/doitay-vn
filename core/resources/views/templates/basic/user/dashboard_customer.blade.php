@@ -152,9 +152,9 @@
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
-                            <a href="{{ route('user.profile.setting') }}" class="btn btn-outline-info w-100 py-3">
+                            <a href="{{ route('user.profile.view') }}" class="btn btn-outline-info w-100 py-3">
                                 <i class="las la-user-cog fs-4 d-block mb-2"></i>
-                                Cập nhật hồ sơ
+                                Thông tin cá nhân
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">

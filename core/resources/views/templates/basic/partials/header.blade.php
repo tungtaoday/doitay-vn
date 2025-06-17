@@ -91,9 +91,9 @@
                                 @lang('Trở thành Người Thợ')
                             </a>
                         @endif
-                        <a href="{{ route('user.profile.setting') }}">
+                                                        <a href="{{ route('user.profile.view') }}">
                             <i class="las la-user-cog"></i>
-                            @lang('Hồ sơ')
+                            @lang('Thông tin cá nhân')
                         </a>
                         <a href="{{ route('ticket.index') }}">
                             <i class="las la-life-ring"></i>
@@ -224,9 +224,9 @@
                                 @lang('Trở thành Người Thợ')
                             </a>
                         @endif
-                        <a href="{{ route('user.profile.setting') }}" class="mobile-action-btn">
+                                                        <a href="{{ route('user.profile.view') }}" class="mobile-action-btn">
                             <i class="las la-user-cog"></i>
-                            @lang('Hồ sơ')
+                            @lang('Thông tin cá nhân')
                         </a>
                         <a href="{{ route('ticket.index') }}" class="mobile-action-btn">
                             <i class="las la-life-ring"></i>

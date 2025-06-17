@@ -252,24 +252,73 @@ class CustomerLeadController extends Controller
     private function notifyMatchingContractors($lead)
     {
         try {
-            // Find contractors in the same category and district
+            // Find contractors in the same category and district with smart filtering
             $contractors = \App\Models\Company::where('category_id', $lead->category_id)
                 ->where('district', $lead->district)
-                ->where('status', 1)
-                ->where('is_approved', 1)
-                ->with('user')
-                ->limit(10) // Limit to prevent spam
-                ->get();
+                ->where('status', 1) // APPROVED status
+                ->with(['user', 'ratings'])
+                ->get()
+                ->map(function($company) {
+                    // Calculate rating score
+                    $avgRating = $company->ratings->avg('rating') ?? 0;
+                    $reviewCount = $company->ratings->count();
+                    
+                    // Weighted score: rating + review count bonus
+                    $company->smart_score = $avgRating + ($reviewCount * 0.1);
+                    
+                    return $company;
+                })
+                ->sortByDesc('smart_score') // Sort by highest score first
+                ->take(3) // Only top 3 contractors
+                ->filter(function($company) {
+                    // Additional filters
+                    return $company->user && 
+                           $company->smart_score >= 3.0 && // Minimum rating 3.0
+                           $company->hasActiveWallet(); // Must have wallet to participate
+                });
 
             foreach ($contractors as $contractor) {
-                if ($contractor->user) {
-                    $contractor->user->notify(new \App\Notifications\NewLeadNotification($lead));
-                }
+                // Create lead visibility record
+                \App\Models\LeadVisibility::create([
+                    'lead_id' => $lead->id,
+                    'company_id' => $contractor->id,
+                    'priority_score' => $contractor->smart_score,
+                    'notified_at' => now(),
+                    'expires_at' => now()->addHours(24) // 24h exclusive access
+                ]);
+                
+                // Send notification
+                $contractor->user->notify(new \App\Notifications\SmartLeadNotification($lead, $contractor->smart_score));
             }
             
-            \Log::info('Notified matching contractors:', ['lead_id' => $lead->id, 'contractor_count' => $contractors->count()]);
+            \Log::info('Smart lead distribution completed:', [
+                'lead_id' => $lead->id, 
+                'contractors_notified' => $contractors->count(),
+                'contractors' => $contractors->pluck('name', 'id')->toArray()
+            ]);
+            
         } catch (\Exception $e) {
-            \Log::error('Failed to notify matching contractors:', ['error' => $e->getMessage()]);
+            \Log::error('Failed to distribute lead smartly:', ['error' => $e->getMessage()]);
+            
+            // Fallback to old method if smart distribution fails
+            $this->fallbackNotifyContractors($lead);
+        }
+    }
+    
+    private function fallbackNotifyContractors($lead)
+    {
+        // Original logic as backup
+        $contractors = \App\Models\Company::where('category_id', $lead->category_id)
+            ->where('district', $lead->district)
+            ->where('status', 1) // APPROVED status
+            ->with('user')
+            ->limit(5)
+            ->get();
+
+        foreach ($contractors as $contractor) {
+            if ($contractor->user) {
+                $contractor->user->notify(new \App\Notifications\NewLeadNotification($lead));
+            }
         }
     }
 

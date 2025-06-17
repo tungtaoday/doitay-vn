@@ -152,4 +152,34 @@ class Company extends Model
     {
         return $this->hasMany(LeadPurchase::class);
     }
+
+    public function leadVisibilities()
+    {
+        return $this->hasMany(LeadVisibility::class);
+    }
+
+    // Methods
+    public function hasActiveWallet()
+    {
+        return $this->wallet && $this->wallet->balance > 0;
+    }
+
+    public function getAverageRating()
+    {
+        return $this->ratings()->avg('rating') ?? 0;
+    }
+
+    public function getTotalReviews()
+    {
+        return $this->ratings()->count();
+    }
+
+    public function getSmartScore()
+    {
+        $avgRating = $this->getAverageRating();
+        $reviewCount = $this->getTotalReviews();
+        
+        // Weighted score: rating + review count bonus (max 0.5 bonus)
+        return $avgRating + min($reviewCount * 0.1, 0.5);
+    }
 }

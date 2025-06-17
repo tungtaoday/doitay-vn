@@ -22,6 +22,10 @@ use App\Models\Rating;
 use App\Models\RatingDetail;
 use App\Models\Feature;
 use App\Models\RatingReaction;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Str;
+use App\Models\User;
 
 use Illuminate\Support\Facades\DB; // Thêm dòng này
 
@@ -672,46 +676,187 @@ class SiteController extends Controller
         $pageTitle = 'Become a Contractor';
         $categories = Category::where('status', 1)->get();
         
-        return view('Template::become_contractor', compact('pageTitle', 'categories'));
+        // Get statistics for the hero section
+        $totalJobs = \App\Models\Appointment::count();
+        $activeContractors = \App\Models\Company::where('status', 1)->count();
+        $averageEarning = 15000000; // 15M VND average monthly earning
+        
+        // Check if user is authenticated and has company
+        $isAuthenticated = Auth::check();
+        $hasCompany = false;
+        $existingCompany = null;
+        
+        if ($isAuthenticated) {
+            $existingCompany = Company::where('user_id', Auth::id())->first();
+            $hasCompany = $existingCompany ? true : false;
+        }
+        
+        return view('Template::become_contractor', compact(
+            'pageTitle', 
+            'categories', 
+            'totalJobs', 
+            'activeContractors', 
+            'averageEarning',
+            'isAuthenticated',
+            'hasCompany',
+            'existingCompany'
+        ));
     }
 
     public function becomeContractorRegister(Request $request)
     {
+        $action = $request->input('action');
+        
+        switch ($action) {
+            case 'login':
+                return $this->handleLogin($request);
+            case 'register':
+                return $this->handleRegister($request);
+            case 'create_contractor':
+                return $this->handleCreateContractor($request);
+            default:
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid action'
+                ]);
+        }
+    }
+    
+    private function handleLogin(Request $request)
+    {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'username' => 'required|string',
+            'login_password' => 'required|string',
+        ]);
+
+        $credentials = [];
+        $username = $request->username;
+        
+        // Check if username is email or mobile
+        if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            $credentials['email'] = $username;
+        } else {
+            $credentials['mobile'] = $username;
+        }
+        $credentials['password'] = $request->login_password;
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            
+            // Check if user already has a company
+            $existingCompany = Company::where('user_id', $user->id)->first();
+            
+            if ($existingCompany) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đăng nhập thành công! Bạn đã có hồ sơ thợ.',
+                    'redirect' => route('user.company.index')
+                ]);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đăng nhập thành công! Hãy tạo hồ sơ thợ.',
+                    'next_step' => 'create_contractor'
+                ]);
+            }
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Thông tin đăng nhập không chính xác'
+            ]);
+        }
+    }
+    
+    private function handleRegister(Request $request)
+    {
+        $request->validate([
+            'fullname' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'mobile' => 'required|string|max:20',
+            'mobile' => 'required|string|max:20|unique:users,mobile',
+            'password' => 'required|string|min:6',
+        ]);
+
+        try {
+            // Create user account
+            $user = User::create([
+                'name' => $request->fullname,
+                'email' => $request->email,
+                'mobile' => $request->mobile,
+                'password' => Hash::make($request->password),
+                'email_verified_at' => now(),
+            ]);
+
+            // Auto login the user
+            Auth::login($user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng ký thành công! Hãy tạo hồ sơ thợ.',
+                'next_step' => 'create_contractor'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi đăng ký. Vui lòng thử lại.'
+            ]);
+        }
+    }
+    
+    private function handleCreateContractor(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vui lòng đăng nhập trước khi tạo hồ sơ thợ'
+            ]);
+        }
+        
+        $request->validate([
+            'company_name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'experience' => 'required|string',
-            'description' => 'required|string',
+            'description' => 'required|string|min:20',
         ]);
 
-        // Create user account
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'mobile' => $request->mobile,
-            'password' => Hash::make(Str::random(8)), // Random password
-            'email_verified_at' => now(),
-        ]);
+        try {
+            // Check if user already has a company
+            $existingCompany = Company::where('user_id', Auth::id())->first();
+            
+            if ($existingCompany) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn đã có hồ sơ thợ rồi!'
+                ]);
+            }
 
-        // Create company profile
-        $company = Company::create([
-            'user_id' => $user->id,
-            'category_id' => $request->category_id,
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->mobile,
-            'experience' => $request->experience,
-            'description' => $request->description,
-            'status' => Status::PENDING, // Pending approval
-        ]);
+            // Create company profile
+            $company = Company::create([
+                'user_id' => Auth::id(),
+                'category_id' => $request->category_id,
+                'name' => $request->company_name,
+                'email' => Auth::user()->email,
+                'phone' => Auth::user()->mobile ?? '',
+                'description' => $request->description,
+                'experience' => 0,
+                'address' => '',
+                'city' => '',
+                'district' => '',
+                'ward' => '',
+                'status' => Status::PENDING, // Pending approval
+            ]);
 
-        // Send welcome email
-        // Mail::to($user->email)->send(new WelcomeContractorMail($user, $company));
-
-        $notify[] = ['success', 'Registration successful! We will review your application and contact you soon.'];
-        return redirect()->route('home')->withNotify($notify);
+            return response()->json([
+                'success' => true,
+                'message' => 'Tạo hồ sơ thợ thành công! Chúng tôi sẽ xem xét và liên hệ với bạn sớm.',
+                'redirect' => route('user.company.edit', $company->id)
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi tạo hồ sơ. Vui lòng thử lại.'
+            ]);
+        }
     }
 
     private function getPopularCategories()

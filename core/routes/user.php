@@ -51,9 +51,19 @@ Route::namespace('User\Auth')->name('user.')->group(function () {
 });
 
 Route::middleware('auth')->name('user.')->group(function () {
+    // Redirect user.home to homepage
+    Route::get('home', function() {
+        return redirect()->route('home');
+    })->name('home');
+    
     Route::get('user-data', 'User\UserController@userData')->name('data');
     Route::get('user-data-v2', 'User\UserController@userDataV2')->name('data.v2');
     Route::post('user-data-submit', 'User\UserController@userDataSubmit')->name('data.submit');
+    
+    // New Profile Routes
+    Route::get('profile', 'User\UserController@profileView')->name('profile.view');
+    Route::get('profile/edit', 'User\UserController@profileEdit')->name('profile.edit');
+    
     Route::get('get-districts', 'User\CompanyController@getDistricts')->name('get.districts');
     Route::get('get-wards', 'User\CompanyController@getWards')->name('get.wards');
     
@@ -68,7 +78,7 @@ Route::middleware('auth')->name('user.')->group(function () {
     Route::middleware(['check.status', 'registration.complete'])->group(function () {
         Route::namespace('User')->group(function () {
             Route::controller('UserController')->group(function () {
-                Route::get('dashboard', 'home')->name('home');
+                Route::get('dashboard', 'home')->name('dashboard');
                 Route::get('download-attachments/{file_hash}', 'downloadAttachment')->name('download.attachment');
 
 

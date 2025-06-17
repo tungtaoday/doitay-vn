@@ -769,34 +769,82 @@ class UserDataFormV2 {
     }
 
     init() {
+        console.log('🚀 UserDataFormV2 initializing...');
         this.bindEvents();
-        this.loadLocationData();
+        // Delay location loading to ensure DOM is ready
+        setTimeout(() => {
+            this.loadLocationData();
+        }, 500);
         this.updateSummary();
     }
 
     bindEvents() {
+        console.log('📎 Binding events...');
+        
         // Navigation buttons
-        document.querySelector('.btn-next').addEventListener('click', () => this.nextStep());
-        document.querySelector('.btn-prev').addEventListener('click', () => this.prevStep());
+        const btnNext = document.querySelector('.btn-next');
+        const btnPrev = document.querySelector('.btn-prev');
+        
+        if (btnNext) {
+            btnNext.addEventListener('click', () => this.nextStep());
+            console.log('✅ Next button bound');
+        } else {
+            console.warn('❌ .btn-next not found');
+        }
+        
+        if (btnPrev) {
+            btnPrev.addEventListener('click', () => this.prevStep());
+            console.log('✅ Prev button bound');
+        } else {
+            console.warn('❌ .btn-prev not found');
+        }
         
         // Form validation
-        document.querySelectorAll('.checkUser').forEach(input => {
+        const checkUserInputs = document.querySelectorAll('.checkUser');
+        console.log('📝 Found checkUser inputs:', checkUserInputs.length);
+        
+        checkUserInputs.forEach(input => {
             input.addEventListener('blur', (e) => this.validateField(e.target));
             input.addEventListener('input', (e) => this.clearValidation(e.target));
         });
 
         // Location selects
-        document.getElementById('city').addEventListener('change', () => this.loadDistricts());
-        document.getElementById('district').addEventListener('change', () => this.loadWards());
+        const citySelect = document.getElementById('city');
+        const districtSelect = document.getElementById('district');
+        
+        if (citySelect) {
+            citySelect.addEventListener('change', () => this.loadDistricts());
+            console.log('✅ City select bound');
+        } else {
+            console.warn('❌ #city not found');
+        }
+        
+        if (districtSelect) {
+            districtSelect.addEventListener('change', () => this.loadWards());
+            console.log('✅ District select bound');
+        } else {
+            console.warn('❌ #district not found');
+        }
         
         // Expert option
-        document.querySelector('.option-card').addEventListener('click', () => this.toggleExpertOption());
+        const optionCard = document.querySelector('.option-card');
+        if (optionCard) {
+            optionCard.addEventListener('click', () => this.toggleExpertOption());
+            console.log('✅ Option card bound');
+        } else {
+            console.warn('❌ .option-card not found');
+        }
         
         // Form inputs for summary
-        this.form.addEventListener('input', () => this.updateSummary());
+        if (this.form) {
+            this.form.addEventListener('input', () => this.updateSummary());
+            this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+            console.log('✅ Form events bound');
+        } else {
+            console.error('❌ Form not found!');
+        }
         
-        // Form submission
-        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        console.log('📎 Events binding completed');
     }
 
     nextStep() {
@@ -816,8 +864,13 @@ class UserDataFormV2 {
     }
 
     updateStepDisplay() {
+        console.log('📊 Updating step display to:', this.currentStep);
+        
         // Update progress steps
-        document.querySelectorAll('.step').forEach((step, index) => {
+        const steps = document.querySelectorAll('.step');
+        console.log('📊 Found steps:', steps.length);
+        
+        steps.forEach((step, index) => {
             const stepNumber = index + 1;
             step.classList.remove('active', 'completed');
             
@@ -829,7 +882,10 @@ class UserDataFormV2 {
         });
 
         // Update form steps
-        document.querySelectorAll('.form-step').forEach((step, index) => {
+        const formSteps = document.querySelectorAll('.form-step');
+        console.log('📊 Found form steps:', formSteps.length);
+        
+        formSteps.forEach((step, index) => {
             step.classList.remove('active');
             if (index + 1 === this.currentStep) {
                 step.classList.add('active');
@@ -841,14 +897,16 @@ class UserDataFormV2 {
         const nextBtn = document.querySelector('.btn-next');
         const submitBtn = document.querySelector('.btn-submit');
 
-        prevBtn.style.display = this.currentStep > 1 ? 'inline-flex' : 'none';
+        if (prevBtn) {
+            prevBtn.style.display = this.currentStep > 1 ? 'inline-flex' : 'none';
+        }
         
         if (this.currentStep === this.totalSteps) {
-            nextBtn.style.display = 'none';
-            submitBtn.style.display = 'inline-flex';
+            if (nextBtn) nextBtn.style.display = 'none';
+            if (submitBtn) submitBtn.style.display = 'inline-flex';
         } else {
-            nextBtn.style.display = 'inline-flex';
-            submitBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'inline-flex';
+            if (submitBtn) submitBtn.style.display = 'none';
         }
 
         // Update summary on last step
@@ -859,7 +917,15 @@ class UserDataFormV2 {
 
     validateCurrentStep() {
         const currentStepEl = document.querySelector(`.form-step[data-step="${this.currentStep}"]`);
+        
+        if (!currentStepEl) {
+            console.warn(`❌ Current step element not found: ${this.currentStep}`);
+            return false;
+        }
+        
         const requiredFields = currentStepEl.querySelectorAll('[required]');
+        console.log(`🔍 Validating step ${this.currentStep}, required fields:`, requiredFields.length);
+        
         let isValid = true;
 
         requiredFields.forEach(field => {
@@ -868,6 +934,7 @@ class UserDataFormV2 {
             }
         });
 
+        console.log(`✅ Step ${this.currentStep} validation result:`, isValid);
         return isValid;
     }
 
@@ -960,20 +1027,62 @@ class UserDataFormV2 {
     }
 
     async loadLocationData() {
+        console.log('🏙️ Starting cities load...');
+        
+        const citySelect = document.getElementById('city');
+        if (!citySelect) {
+            console.error('❌ City select element not found!');
+            return;
+        }
+        
+        citySelect.innerHTML = '<option value="">Đang tải thành phố...</option>';
+        
         try {
-            const response = await fetch('/localtion/api/cities');
-            const text = await response.text();
-            const cleanResponse = text.replace(/<!--|-->/g, '').trim();
-            const cities = JSON.parse(cleanResponse);
-
-            const citySelect = document.getElementById('city');
-            citySelect.innerHTML = '<option value="">Chọn Thành phố</option>';
+            const response = await fetch('/localtion/api/cities', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const text = await response.text();
+            console.log('📡 Cities API response length:', text.length);
+            
+            const cleanResponse = text.replace(/<!--|-->/g, '').trim();
+            
+            const cities = JSON.parse(cleanResponse);
+            console.log('🏙️ Cities loaded:', cities.length);
+            
+            citySelect.innerHTML = '<option value="">Chọn Thành phố</option>';
             cities.forEach(city => {
                 citySelect.innerHTML += `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`;
             });
+            
+            console.log('✅ Cities populated successfully');
+            
         } catch (error) {
-            console.error('Error loading cities:', error);
+            console.error('❌ Cities load error:', error);
+            
+            // Fallback cities
+            const fallbackCities = [
+                { City_code: '01', City: 'Hà Nội' },
+                { City_code: '79', City: 'TP. Hồ Chí Minh' }, 
+                { City_code: '48', City: 'Đà Nẵng' },
+                { City_code: '31', City: 'Hải Phòng' },
+                { City_code: '92', City: 'Cần Thơ' }
+            ];
+            
+            citySelect.innerHTML = '<option value="">Chọn Thành phố</option>';
+            fallbackCities.forEach(city => {
+                citySelect.innerHTML += `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`;
+            });
+            
+            this.showNotification('Lỗi tải danh sách thành phố. Sử dụng danh sách cơ bản.', 'warning');
         }
     }
 
@@ -982,27 +1091,51 @@ class UserDataFormV2 {
         const districtSelect = document.getElementById('district');
         const wardSelect = document.getElementById('ward');
 
+        console.log('🏢 Loading districts for city:', cityCode);
+
         // Reset dependent selects
         districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
         wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
         districtSelect.disabled = !cityCode;
         wardSelect.disabled = true;
 
-        if (!cityCode) return;
+        if (!cityCode) {
+            return;
+        }
+
+        districtSelect.innerHTML = '<option value="">Đang tải quận/huyện...</option>';
 
         try {
-            const response = await fetch(`/localtion/api/districts/${cityCode}`);
+            const response = await fetch(`/localtion/api/districts/${cityCode}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const text = await response.text();
             const cleanResponse = text.replace(/<!--|-->/g, '').trim();
             const districts = JSON.parse(cleanResponse);
+            
+            console.log('🏢 Districts loaded:', districts.length);
 
+            districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
             districts.forEach(district => {
                 districtSelect.innerHTML += `<option value="${district.District_code}" data-name="${district.District}">${district.District}</option>`;
             });
             
             districtSelect.disabled = false;
+            console.log('✅ Districts populated successfully');
+            
         } catch (error) {
-            console.error('Error loading districts:', error);
+            console.error('❌ Districts load error:', error);
+            districtSelect.innerHTML = '<option value="">Lỗi tải quận/huyện</option>';
+            this.showNotification('Không thể tải danh sách quận/huyện', 'error');
         }
     }
 
@@ -1010,24 +1143,48 @@ class UserDataFormV2 {
         const districtCode = document.getElementById('district').value;
         const wardSelect = document.getElementById('ward');
 
+        console.log('🏘️ Loading wards for district:', districtCode);
+
         wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
         wardSelect.disabled = !districtCode;
 
-        if (!districtCode) return;
+        if (!districtCode) {
+            return;
+        }
+
+        wardSelect.innerHTML = '<option value="">Đang tải phường/xã...</option>';
 
         try {
-            const response = await fetch(`/localtion/api/wards/${districtCode}`);
+            const response = await fetch(`/localtion/api/wards/${districtCode}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const text = await response.text();
             const cleanResponse = text.replace(/<!--|-->/g, '').trim();
             const wards = JSON.parse(cleanResponse);
+            
+            console.log('🏘️ Wards loaded:', wards.length);
 
+            wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
             wards.forEach(ward => {
                 wardSelect.innerHTML += `<option value="${ward.Ward_code}" data-name="${ward.Ward}">${ward.Ward}</option>`;
             });
             
             wardSelect.disabled = false;
+            console.log('✅ Wards populated successfully');
+            
         } catch (error) {
-            console.error('Error loading wards:', error);
+            console.error('❌ Wards load error:', error);
+            wardSelect.innerHTML = '<option value="">Lỗi tải phường/xã</option>';
+            this.showNotification('Không thể tải danh sách phường/xã', 'error');
         }
     }
 
@@ -1040,19 +1197,35 @@ class UserDataFormV2 {
     }
 
     updateSummary() {
-        const username = document.querySelector('[name="username"]').value || '-';
-        const mobile = document.querySelector('[name="mobile"]').value || '-';
+        console.log('📝 Updating summary...');
         
-        const cityName = document.querySelector('#city option:checked')?.dataset.name || '';
-        const districtName = document.querySelector('#district option:checked')?.dataset.name || '';
-        const wardName = document.querySelector('#ward option:checked')?.dataset.name || '';
-        const address = document.querySelector('[name="address"]').value || '';
+        const usernameInput = document.querySelector('[name="username"]');
+        const mobileInput = document.querySelector('[name="mobile"]');
+        const addressInput = document.querySelector('[name="address"]');
+        
+        const username = usernameInput ? usernameInput.value || '-' : '-';
+        const mobile = mobileInput ? mobileInput.value || '-' : '-';
+        
+        const cityOption = document.querySelector('#city option:checked');
+        const districtOption = document.querySelector('#district option:checked');
+        const wardOption = document.querySelector('#ward option:checked');
+        
+        const cityName = cityOption?.dataset.name || '';
+        const districtName = districtOption?.dataset.name || '';
+        const wardName = wardOption?.dataset.name || '';
+        const address = addressInput ? addressInput.value || '' : '';
         
         let fullAddress = [wardName, districtName, cityName, address].filter(Boolean).join(', ') || '-';
 
-        document.getElementById('summary-username').textContent = username;
-        document.getElementById('summary-mobile').textContent = mobile;
-        document.getElementById('summary-address').textContent = fullAddress;
+        const summaryUsername = document.getElementById('summary-username');
+        const summaryMobile = document.getElementById('summary-mobile');
+        const summaryAddress = document.getElementById('summary-address');
+        
+        if (summaryUsername) summaryUsername.textContent = username;
+        if (summaryMobile) summaryMobile.textContent = mobile;
+        if (summaryAddress) summaryAddress.textContent = fullAddress;
+        
+        console.log('📝 Summary updated');
     }
 
     async handleSubmit(e) {
@@ -1085,6 +1258,42 @@ class UserDataFormV2 {
         input.name = name;
         input.value = value;
         this.form.appendChild(input);
+    }
+
+    showNotification(message, type = 'info') {
+        // Remove existing notifications
+        document.querySelectorAll('.location-notification').forEach(n => n.remove());
+        
+        const notification = document.createElement('div');
+        notification.className = `location-notification alert alert-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'info'} alert-dismissible fade show`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+            min-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        notification.innerHTML = `
+            <i class="las la-${type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation' : 'info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 150);
+            }
+        }, 3000);
     }
 }
 

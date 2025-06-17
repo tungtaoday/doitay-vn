@@ -351,85 +351,151 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->profile_complete == Status::YES) {
-            return to_route('user.home');
+        // Nếu profile chưa đầy đủ, chuyển đến trang tạo profile
+        if ($user->profile_complete != Status::YES) {
+            return redirect()->route('user.data.v2');
         }
 
-        $pageTitle  = 'User Data';
+        // Redirect to profile view instead of edit form
+        return redirect()->route('user.profile.view');
+    }
+
+    public function profileView()
+    {
+        $user = auth()->user();
+
+        // Nếu profile chưa đầy đủ, chuyển đến trang tạo profile
+        if ($user->profile_complete != Status::YES) {
+            return redirect()->route('user.data.v2');
+        }
+
+        $pageTitle = 'Hồ sơ cá nhân';
+        return view('Template::user.profile_view', compact('pageTitle', 'user'));
+    }
+
+    public function profileEdit()
+    {
+        $user = auth()->user();
+
+        // Nếu profile chưa đầy đủ, chuyển đến trang tạo profile
+        if ($user->profile_complete != Status::YES) {
+            return redirect()->route('user.data.v2');
+        }
+
+        $pageTitle  = 'Cập nhật thông tin cá nhân';
         $info       = json_decode(json_encode(getIpInfo()), true);
         $mobileCode = @implode(',', $info['code']);
         $countries  = json_decode(file_get_contents(resource_path('views/partials/country.json')));
 
-        return view('Template::user.user_data', compact('pageTitle', 'user', 'countries', 'mobileCode'));
+        // Tìm location codes từ tên để pre-select dropdowns
+        $userLocationCodes = [
+            'city_code' => null,
+            'district_code' => null,
+            'ward_code' => null
+        ];
+
+        if ($user->city) {
+            $cityRecord = VietnamDistrict::where('city', $user->city)
+                ->orWhere('City', $user->city)
+                ->first();
+            $userLocationCodes['city_code'] = $cityRecord ? ($cityRecord->city_code ?: $cityRecord->City_code) : null;
+        }
+
+        if ($user->district) {
+            $districtRecord = VietnamDistrict::where('district', $user->district)
+                ->orWhere('District', $user->district)
+                ->first();
+            $userLocationCodes['district_code'] = $districtRecord ? ($districtRecord->district_code ?: $districtRecord->District_code) : null;
+        }
+
+        if ($user->ward) {
+            $wardRecord = VietnamDistrict::where('ward', $user->ward)
+                ->orWhere('Ward', $user->ward)
+                ->first();
+            $userLocationCodes['ward_code'] = $wardRecord ? ($wardRecord->ward_code ?: $wardRecord->Ward_code) : null;
+        }
+
+        return view('Template::user.profile_edit', compact('pageTitle', 'user', 'countries', 'mobileCode', 'userLocationCodes'));
     }
 
     public function userDataV2()
     {
         $user = auth()->user();
 
+        // Nếu profile đã đầy đủ, chuyển đến trang xem profile
         if ($user->profile_complete == Status::YES) {
-            return to_route('user.home');
+            return redirect()->route('user.data');
         }
 
-        $pageTitle = 'Complete Your Profile';
+        $pageTitle = 'Hoàn thiện hồ sơ cá nhân';
         return view('Template::user.user_data_v2', compact('pageTitle', 'user'));
     }
 
     public function userDataSubmit(Request $request)
     {
         $user = auth()->user();
+        $isUpdating = $user->profile_complete == Status::YES;
 
-        if ($user->profile_complete == Status::YES) {
-            return to_route('user.home');
+        // Validation
+        $rules = [
+            'username' => $isUpdating 
+                ? 'required|unique:users,username,' . $user->id . '|min:6'
+                : 'required|unique:users|min:6',
+            'mobile' => 'required|regex:/^([0-9]{10,11})$/',
+            'city' => 'required',
+            'district' => 'required',
+            'ward' => 'required',
+            'address' => 'required|string|max:255'
+        ];
+
+        $request->validate($rules);
+
+        // Tìm thông tin địa phương
+        $city = VietnamDistrict::where('city_code', $request->city)
+            ->orWhere('City_code', $request->city)
+            ->first();
+        if (!$city) {
+            return redirect()->back()->withErrors(['city' => 'Thành phố không tồn tại.']);
         }
 
-        // Tìm ID của city trong bảng VietnamDistrict
-        $city = VietnamDistrict::where('City_code', $request->city)
-            ->first(); // Chỉ lấy cột City
-
-        // Tìm ID của district trong bảng VietnamDistrict
-        $district = VietnamDistrict::where('District_code', $request->district)
+        $district = VietnamDistrict::where('district_code', $request->district)
+            ->orWhere('District_code', $request->district)
             ->first();
         if (!$district) {
-            return redirect()->back()->withErrors(['district' => 'District không tồn tại.']);
+            return redirect()->back()->withErrors(['district' => 'Quận/Huyện không tồn tại.']);
         }
 
-        // Tìm ID của ward trong bảng VietnamDistrict
-        $ward = VietnamDistrict::where('Ward_code', $request->ward)
+        $ward = VietnamDistrict::where('ward_code', $request->ward)
+            ->orWhere('Ward_code', $request->ward)
             ->first();
         if (!$ward) {
-            return redirect()->back()->withErrors(['ward' => 'Ward không tồn tại.']);
+            return redirect()->back()->withErrors(['ward' => 'Phường/Xã không tồn tại.']);
         }
 
-        // $countryData  = (array)json_decode(file_get_contents(resource_path('views/partials/country.json')));
-        // $countryCodes = implode(',', array_keys($countryData));
-        // $mobileCodes  = implode(',', array_column($countryData, 'dial_code'));
-        // $countries    = implode(',', array_column($countryData, 'country'));
-
-        // $request->validate([
-        //     'country_code' => 'required|in:' . $countryCodes,
-        //     'country'      => 'required|in:' . $countries,
-        //     'mobile_code'  => 'required|in:' . $mobileCodes,
-        //     'username'     => 'required|unique:users|min:6',
-        //     'mobile'       => ['required','regex:/^([0-9]*)$/',Rule::unique('users')->where('dial_code',$request->mobile_code)],
-        // ]);
-
-        // $user->country_code     = $request->country_code;
+        // Cập nhật thông tin user
         $user->mobile           = $request->mobile;
         $user->username         = $request->username;
         $user->address          = $request->address;
-        $user->city             = $city->City;
-        $user->district         = $district->District;
-        $user->ward             = $ward->Ward;
-        // $user->country_name     = @$request->country;
-        // $user->dial_code        = $request->mobile_code;
+        $user->city             = $city->city ?: $city->City;
+        $user->district         = $district->district ?: $district->District;
+        $user->ward             = $ward->ward ?: $ward->Ward;
         $user->profile_complete = Status::YES;
         $user->save();
+
+        // Xử lý theo context
         if ($request->has('register_as_expert')) {
-            return redirect()->route('user.company.create'); // Chuyển sang trang chuyên gia
+            // User muốn đăng ký làm chuyên gia (cả lần đầu và update)
+            $notify[] = ['success', $isUpdating ? 'Thông tin đã được cập nhật!' : 'Hồ sơ đã được tạo thành công!'];
+            return redirect()->route('user.company.create')->withNotify($notify);
+        } elseif ($isUpdating) {
+            // Cập nhật profile hiện có, không muốn làm chuyên gia
+            $notify[] = ['success', 'Thông tin cá nhân đã được cập nhật thành công!'];
+            return redirect()->route('user.profile.view')->withNotify($notify);
+        } else {
+            // Lần đầu tạo profile, không đăng ký chuyên gia
+            $notify[] = ['success', 'Hồ sơ đã được tạo thành công!'];
+            return redirect()->route('user.profile.view')->withNotify($notify);
         }
-    
-        return to_route('user.home');
     }
 
     public function addDeviceToken(Request $request)

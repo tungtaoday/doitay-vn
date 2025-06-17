@@ -36,12 +36,16 @@
                     </div>
 
                     <div class="hero-actions">
-                        <a href="#registration-form" class="btn btn-primary btn-lg">
+                        <a href="#registration-form" class="btn btn-primary btn-lg scroll-to-form" onclick="scrollToForm(event); return false;">
                             <i class="las la-rocket me-2"></i>Đăng ký ngay
                         </a>
-                        <a href="#why-choose-us" class="btn btn-outline-light btn-lg">
+                        <a href="{{ route('home') }}" class="btn btn-outline-light btn-lg" onclick="goToHome(event); return false;">
                             <i class="las la-play-circle me-2"></i>Tìm hiểu thêm
                         </a>
+                        <!-- Debug button -->
+                        <!-- <button type="button" class="btn btn-warning btn-sm" onclick="alert('Button works!'); console.log('Debug button clicked');">
+                            Test Click
+                        </button> -->
                     </div>
                 </div>
             </div>
@@ -83,7 +87,7 @@
             <div class="col-lg-4 mb-4">
                 <div class="benefit-card">
                     <div class="benefit-icon">
-                        <i class="las la-users text-primary"></i>
+                        <i class="las la-users" style="color: #48bbe2;"></i>
                     </div>
                     <h4>Khách hàng chất lượng</h4>
                     <p>Kết nối với hàng ngàn khách hàng đã được xác minh, có nhu cầu thực sự và ngân sách rõ ràng.</p>
@@ -97,7 +101,7 @@
             <div class="col-lg-4 mb-4">
                 <div class="benefit-card">
                     <div class="benefit-icon">
-                        <i class="las la-clock text-success"></i>
+                        <i class="las la-clock" style="color: #48bbe2;"></i>
                     </div>
                     <h4>Tự do thời gian</h4>
                     <p>Làm việc theo lịch trình của bạn, chọn công việc phù hợp với khả năng và thời gian rảnh.</p>
@@ -111,7 +115,7 @@
             <div class="col-lg-4 mb-4">
                 <div class="benefit-card">
                     <div class="benefit-icon">
-                        <i class="las la-dollar-sign text-warning"></i>
+                        <i class="las la-dollar-sign" style="color: #ffa500;"></i>
                     </div>
                     <h4>Thu nhập cao</h4>
                     <p>Mức giá cạnh tranh, thanh toán nhanh chóng và cơ hội kiếm thu nhập cao từ kỹ năng của bạn.</p>
@@ -180,138 +184,94 @@
 </section>
 
 <!-- Registration Form -->
-<section id="registration-form" class="py-5 bg-primary text-white">
+<section id="registration-form" class="py-5 text-white" style="background: linear-gradient(135deg, #102f4b 0%, #1a4568 100%);">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="text-center mb-5">
-                    <h2 class="text-white">Sẵn sàng bắt đầu?</h2>
-                    <p class="text-white-50">Đăng ký ngay để tham gia mạng lưới thợ chuyên nghiệp</p>
+                    @if($isAuthenticated)
+                        @if($hasCompany)
+                            <h2 class="text-white">Bạn đã có hồ sơ thợ!</h2>
+                            <p class="text-white-50">Hồ sơ thợ của bạn đang được xem xét hoặc đã được phê duyệt</p>
+                        @else
+                            <h2 class="text-white">Tạo hồ sơ thợ chuyên nghiệp</h2>
+                            <p class="text-white-50">Hoàn thành thông tin để trở thành thợ cung cấp dịch vụ</p>
+                        @endif
+                    @else
+                        <h2 class="text-white">Sẵn sàng bắt đầu?</h2>
+                        <p class="text-white-50">Đăng ký ngay để tham gia mạng lưới thợ chuyên nghiệp</p>
+                    @endif
                 </div>
                 
-                <div class="registration-container">
-                    <div class="registration-tabs">
-                        <button class="tab-btn active" data-tab="check-account">
-                            <i class="las la-user-check"></i>
-                            Kiểm tra tài khoản
-                        </button>
-                        <button class="tab-btn" data-tab="register-user">
-                            <i class="las la-user-plus"></i>
-                            Đăng ký mới
-                        </button>
-                        <button class="tab-btn" data-tab="create-contractor">
-                            <i class="las la-tools"></i>
-                            Tạo hồ sơ thợ
-                        </button>
-                    </div>
-
-                    <!-- Check Account Tab -->
-                    <div class="tab-content active" id="checkAccountTab">
-                        <form id="loginForm" class="contractor-form">
-                            @csrf
-                            <input type="hidden" name="action" value="login">
-                            
-                            <div class="form-group mb-3">
-                                <label class="form-label">Email hoặc Số điện thoại</label>
-                                <input type="text" name="username" class="form-control" 
-                                       placeholder="Nhập email hoặc số điện thoại" required>
-                            </div>
-                            
-                            <div class="form-group mb-4">
-                                <label class="form-label">Mật khẩu</label>
-                                <input type="password" name="login_password" class="form-control" 
-                                       placeholder="Nhập mật khẩu" required>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-light btn-lg w-100">
-                                <i class="las la-sign-in-alt me-2"></i>Đăng nhập & Tạo hồ sơ thợ
-                            </button>
-                            
-                            <div class="text-center mt-3">
-                                <p class="text-white-50">Chưa có tài khoản? 
-                                    <a href="#" class="text-warning" onclick="switchTab('register-user')">Đăng ký ngay</a>
+                @if($isAuthenticated)
+                    @if($hasCompany)
+                        <!-- User already has company -->
+                        <div class="registration-container text-center">
+                            <div class="alert alert-success bg-white text-dark rounded-4 p-4 mb-4">
+                                <i class="las la-check-circle text-success" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3 mb-2">Hồ sơ thợ đã tồn tại</h4>
+                                <p class="mb-3">Bạn đã có hồ sơ thợ với tên: <strong>{{ $existingCompany->name }}</strong></p>
+                                <p class="text-muted mb-4">
+                                    Trạng thái: 
+                                    @if($existingCompany->status == 1)
+                                        <span class="badge bg-success">Đã phê duyệt</span>
+                                    @elseif($existingCompany->status == 2)
+                                        <span class="badge bg-warning">Đang chờ duyệt</span>
+                                    @else
+                                        <span class="badge bg-danger">Bị từ chối</span>
+                                    @endif
                                 </p>
                             </div>
-                        </form>
-                    </div>
-
-                    <!-- Register User Tab -->
-                    <div class="tab-content" id="registerUserTab">
-                        <form id="registerForm" class="contractor-form">
-                            @csrf
-                            <input type="hidden" name="action" value="register">
                             
-                            <div class="form-group mb-3">
-                                <label class="form-label">Họ và tên</label>
-                                <input type="text" name="fullname" class="form-control" 
-                                       placeholder="Nguyễn Văn A" required>
+                            <div class="d-flex gap-3 justify-content-center">
+                                <a href="{{ route('user.company.index') }}" class="btn btn-light btn-lg">
+                                    <i class="las la-eye me-2"></i>Xem hồ sơ
+                                </a>
+                                <a href="{{ route('user.company.edit', $existingCompany->id) }}" class="btn btn-outline-light btn-lg">
+                                    <i class="las la-edit me-2"></i>Chỉnh sửa
+                                </a>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Authenticated user without company - Redirect to create company -->
+                        <div class="registration-container text-center">
+                            <div class="mb-4">
+                                <i class="las la-tools" style="font-size: 4rem; color: #ffa500;"></i>
+                                <h4 class="text-white mt-3 mb-3">Bước cuối cùng!</h4>
+                                <p class="text-white-50 mb-4">Bạn đã đăng nhập thành công. Hãy tạo hồ sơ thợ để bắt đầu nhận việc.</p>
                             </div>
                             
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control" 
-                                           placeholder="email@domain.com" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Số điện thoại</label>
-                                    <input type="tel" name="mobile" class="form-control" 
-                                           placeholder="0123456789" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group mb-4">
-                                <label class="form-label">Mật khẩu</label>
-                                <input type="password" name="password" class="form-control" 
-                                       placeholder="Tối thiểu 6 ký tự" required>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-light btn-lg w-100">
+                            <a href="{{ url('user-data-v2') }}" class="btn btn-light btn-lg">
+                                <i class="las la-plus-circle me-2"></i>Tạo hồ sơ thợ ngay
+                            </a>
+                        </div>
+                    @endif
+                @else
+                    <!-- Not authenticated - Show simple action buttons -->
+                    <div class="registration-container text-center">
+                        <div class="mb-4">
+                            <i class="las la-user-circle" style="font-size: 4rem; color: #ffa500;"></i>
+                            <h4 class="text-white mt-3 mb-3">Bắt đầu hành trình của bạn</h4>
+                            <p class="text-white-50 mb-4">Đăng ký hoặc đăng nhập để tạo hồ sơ thợ chuyên nghiệp và bắt đầu kiếm tiền từ kỹ năng của bạn.</p>
+                        </div>
+                        
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            <a href="{{ route('user.register') }}" class="btn btn-light btn-lg">
                                 <i class="las la-user-plus me-2"></i>Đăng ký tài khoản
-                            </button>
-                            
-                            <div class="text-center mt-3">
-                                <p class="text-white-50">Đã có tài khoản? 
-                                    <a href="#" class="text-warning" onclick="switchTab('check-account')">Đăng nhập</a>
-                                </p>
-                            </div>
-                        </form>
+                            </a>
+                            <a href="{{ route('user.login') }}" class="btn btn-outline-light btn-lg">
+                                <i class="las la-sign-in-alt me-2"></i>Đăng nhập
+                            </a>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <p class="text-white-50 small">
+                                <i class="las la-info-circle me-1"></i>
+                                Sau khi đăng nhập, bạn sẽ được chuyển đến trang tạo hồ sơ thợ
+                            </p>
+                        </div>
                     </div>
-
-                    <!-- Create Contractor Tab -->
-                    <div class="tab-content" id="createContractorTab">
-                        <form id="contractorForm" class="contractor-form">
-                            @csrf
-                            <input type="hidden" name="action" value="create_contractor">
-                            
-                            <div class="form-group mb-3">
-                                <label class="form-label">Tên công ty/Tên thợ</label>
-                                <input type="text" name="company_name" class="form-control" 
-                                       placeholder="VD: Thợ điện Minh An" required>
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label class="form-label">Chuyên môn</label>
-                                <select name="category_id" class="form-select" required>
-                                    <option value="">Chọn chuyên môn</option>
-                                    @foreach(App\Models\Category::where('status', 1)->get() as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            
-                            <div class="form-group mb-4">
-                                <label class="form-label">Mô tả kỹ năng & kinh nghiệm</label>
-                                <textarea name="description" class="form-control" rows="4" 
-                                          placeholder="Mô tả chi tiết về kỹ năng, kinh nghiệm và dịch vụ bạn cung cấp..." required></textarea>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-success btn-lg w-100">
-                                <i class="las la-tools me-2"></i>Tạo hồ sơ thợ chuyên nghiệp
-                            </button>
-                        </form>
-                    </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -404,10 +364,23 @@
 <style>
 /* Contractor Hero Section */
 .contractor-hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #102f4b 0%, #1a4568 100%);
     color: white;
     position: relative;
     overflow: hidden;
+}
+
+/* Section Title */
+.section-title {
+    color: #102f4b;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    color: #5a6c7d;
+    font-size: 1.1rem;
+    opacity: 0.85;
 }
 
 .contractor-hero::before {
@@ -419,6 +392,12 @@
     bottom: 0;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></svg>') repeat;
     animation: float 6s ease-in-out infinite;
+    pointer-events: none; /* Important: Allow clicks to pass through */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 5;
 }
 
 .hero-badge {
@@ -438,10 +417,11 @@
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 1.5rem;
+    color: #ffa500;
 }
 
 .gradient-text {
-    background: linear-gradient(45deg, #ffd700, #ffa500);
+    background: linear-gradient(45deg, #48bbe2, #ffa500);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -468,24 +448,42 @@
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
+    color: #ffa500;
 }
 
 .stat-item p {
     font-size: 0.9rem;
-    opacity: 0.8;
+    opacity: 0.9;
     margin: 0;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .hero-actions {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
 }
 
 .hero-actions .btn {
     padding: 1rem 2rem;
     font-weight: 600;
     border-radius: 12px;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.hero-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
 }
 
 /* Hero Visual */
@@ -503,6 +501,18 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.visual-card h4 {
+    color: #ffa500;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.visual-card p {
+    color: white;
+    font-weight: 500;
+    margin: 0;
+}
+
 .earning-chart {
     display: flex;
     gap: 0.5rem;
@@ -512,7 +522,7 @@
 }
 
 .bar {
-    background: linear-gradient(45deg, #ffd700, #ffa500);
+    background: linear-gradient(45deg, #48bbe2, #ffa500);
     border-radius: 4px;
     flex: 1;
     animation: grow 2s ease;
@@ -528,7 +538,7 @@
     background: rgba(255, 255, 255, 0.1);
     padding: 0.5rem 1rem;
     border-radius: 8px;
-    border-left: 3px solid #ffd700;
+    border-left: 3px solid #ffa500;
     animation: slideIn 1s ease;
 }
 
@@ -550,7 +560,7 @@
 .benefit-icon {
     width: 60px;
     height: 60px;
-    background: rgba(11, 146, 212, 0.1);
+    background: rgba(72, 187, 226, 0.15);
     border-radius: 15px;
     display: flex;
     align-items: center;
@@ -565,7 +575,13 @@
 .benefit-card h4 {
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #2c3e50;
+    color: #102f4b;
+}
+
+.benefit-card p {
+    color: #5a6c7d;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
 }
 
 .benefit-card ul {
@@ -576,7 +592,7 @@
 
 .benefit-card ul li {
     padding: 0.25rem 0;
-    color: #28a745;
+    color: #48bbe2;
     font-weight: 500;
 }
 
@@ -593,6 +609,17 @@
     transition: transform 0.3s ease;
 }
 
+.process-card h5 {
+    color: #102f4b;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.process-card p {
+    color: #5a6c7d;
+    line-height: 1.6;
+}
+
 .process-card:hover {
     transform: translateY(-5px);
 }
@@ -601,7 +628,7 @@
     position: absolute;
     top: -15px;
     right: -15px;
-    background: #0b92d4;
+    background: #48bbe2;
     color: white;
     width: 30px;
     height: 30px;
@@ -615,7 +642,7 @@
 .step-icon {
     width: 60px;
     height: 60px;
-    background: rgba(11, 146, 212, 0.1);
+    background: rgba(72, 187, 226, 0.15);
     border-radius: 15px;
     display: flex;
     align-items: center;
@@ -625,7 +652,7 @@
 
 .step-icon i {
     font-size: 2rem;
-    color: #0b92d4;
+    color: #48bbe2;
 }
 
 /* Registration Section */
@@ -635,65 +662,6 @@
     padding: 2rem;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.registration-tabs {
-    display: flex;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 0.25rem;
-    margin-bottom: 2rem;
-}
-
-.registration-tabs .tab-btn {
-    flex: 1;
-    border: none;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.7);
-    padding: 1rem;
-    border-radius: 10px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.registration-tabs .tab-btn.active {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-.contractor-form .form-control,
-.contractor-form .form-select {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 12px;
-    padding: 0.75rem 1rem;
-    color: #2c3e50;
-}
-
-.contractor-form .form-control:focus,
-.contractor-form .form-select:focus {
-    background: white;
-    border-color: #ffd700;
-    box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.2);
-}
-
-.contractor-form .form-label {
-    color: white;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
 }
 
 /* Success Stories */
@@ -706,6 +674,18 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease;
+}
+
+.story-card h5 {
+    color: #102f4b;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.story-card p {
+    color: #5a6c7d;
+    line-height: 1.6;
+    font-style: italic;
 }
 
 .story-card:hover {
@@ -740,17 +720,19 @@
 .story-stats .stat strong {
     display: block;
     font-size: 1.25rem;
-    color: #0b92d4;
+    color: #48bbe2;
 }
 
 .story-stats .stat span {
     font-size: 0.875rem;
-    color: #6c757d;
+    color: #5a6c7d;
+    opacity: 0.9;
 }
 
 .rating {
     margin-top: 1rem;
     color: #ffa500;
+    font-weight: 600;
 }
 
 /* Animations */
@@ -779,6 +761,39 @@
     50% { transform: translateY(-10px) rotate(5deg); }
 }
 
+/* Additional Improvements */
+.hero-actions .btn-primary {
+    background: linear-gradient(45deg, #48bbe2, #ffa500);
+    border: none;
+    box-shadow: 0 4px 15px rgba(72, 187, 226, 0.3);
+}
+
+/* Override btn-light with orange theme */
+.btn-light {
+    background: #ffa500 !important;
+    border-color: #ffa500 !important;
+    color: white !important;
+    font-weight: 600;
+}
+
+.btn-light:hover {
+    background: #e6940e !important;
+    border-color: #e6940e !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 165, 0, 0.3);
+}
+
+.hero-actions .btn-primary:hover {
+    background: linear-gradient(45deg, #3a9bc1, #e6940e);
+    box-shadow: 0 6px 20px rgba(72, 187, 226, 0.4);
+}
+
+.hero-actions .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .hero-title {
@@ -805,6 +820,14 @@
     .story-stats {
         gap: 1rem;
     }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+    }
 }
 </style>
 
@@ -812,116 +835,39 @@
 <script>
 "use strict";
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle tab switching
-    window.switchTab = function(tabName) {
-        // Remove active class from all tabs and contents
-        document.querySelectorAll('.registration-tabs .tab-btn').forEach(btn => {
-            btn.classList.remove('active');
+// Global functions for inline onclick handlers
+window.scrollToForm = function(event) {
+    event.preventDefault();
+    console.log('Scroll to form clicked');
+    const target = document.querySelector('#registration-form');
+    if (target) {
+        target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
         });
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-        
-        // Add active class to target tab and content
-        const targetBtn = document.querySelector(`[data-tab="${tabName}"]`);
-        const targetContent = document.getElementById(tabName.replace('-', '') + 'Tab');
-        
-        if (targetBtn) targetBtn.classList.add('active');
-        if (targetContent) targetContent.classList.add('active');
-    };
+    } else {
+        console.log('Registration form not found');
+    }
+};
 
-    // Tab click handlers
-    document.querySelectorAll('.registration-tabs .tab-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const tabName = this.getAttribute('data-tab');
-            switchTab(tabName);
+window.goToHome = function(event) {
+    console.log('Go to home clicked');
+    window.location.href = '{{ route("home") }}';
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Become contractor page loaded');
+    
+    // Smooth scroll for "Đăng ký ngay" button
+    document.querySelectorAll('.scroll-to-form').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Scroll button clicked via event listener');
+            scrollToForm(e);
         });
     });
 
-    // Form submissions
-    document.getElementById('loginForm').addEventListener('submit', handleFormSubmit);
-    document.getElementById('registerForm').addEventListener('submit', handleFormSubmit);
-    document.getElementById('contractorForm').addEventListener('submit', handleFormSubmit);
-
-    async function handleFormSubmit(e) {
-        e.preventDefault();
-        
-        const form = e.target;
-        const formData = new FormData(form);
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
-        // Show loading state
-        submitBtn.innerHTML = '<i class="las la-spinner la-spin me-2"></i>Đang xử lý...';
-        submitBtn.disabled = true;
-
-        try {
-            const response = await fetch('{{ route("become.contractor.register") }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                showNotification(result.message, 'success');
-                
-                if (result.next_step === 'create_contractor') {
-                    // Switch to contractor creation tab
-                    setTimeout(() => switchTab('create-contractor'), 1000);
-                } else if (result.redirect) {
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = result.redirect;
-                    }, 2000);
-                } else {
-                    form.reset();
-                }
-            } else {
-                showNotification(result.message, 'error');
-            }
-        } catch (error) {
-            showNotification('Có lỗi kết nối, vui lòng thử lại', 'error');
-        } finally {
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }
-    }
-
-    function showNotification(message, type = 'info') {
-        // Remove existing notifications
-        document.querySelectorAll('.contractor-notification').forEach(n => n.remove());
-        
-        const notification = document.createElement('div');
-        notification.className = `contractor-notification alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show`;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 99999;
-            min-width: 300px;
-            animation: slideInRight 0.3s ease;
-        `;
-        notification.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 5000);
-    }
-
-    // Smooth scrolling
+    // Smooth scrolling for all anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();

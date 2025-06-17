@@ -15,9 +15,17 @@ class LeadController extends Controller
 {
     public function index(Request $request)
     {
-        $pageTitle = 'Tìm kiếm Leads';
+        $pageTitle = 'Leads Dành Cho Bạn';
+        
+        $userCompanyIds = Auth::user()->companies->pluck('id');
+        
+        // Get leads that are visible to user's companies
+        $visibleLeadIds = \App\Models\LeadVisibility::whereIn('company_id', $userCompanyIds)
+            ->active()
+            ->pluck('lead_id');
         
         $query = Lead::with(['category', 'customer'])
+            ->whereIn('id', $visibleLeadIds)
             ->available()
             ->latest();
 
@@ -50,9 +58,35 @@ class LeadController extends Controller
         }
 
         $leads = $query->paginate(15);
+        
+        // Add visibility info to each lead
+        $leads->getCollection()->transform(function ($lead) use ($userCompanyIds) {
+            $visibility = \App\Models\LeadVisibility::where('lead_id', $lead->id)
+                ->whereIn('company_id', $userCompanyIds)
+                ->first();
+            
+            $lead->visibility = $visibility;
+            return $lead;
+        });
+        
         $categories = Category::all();
 
-        return view('Template::user.leads.index', compact('pageTitle', 'leads', 'categories'));
+        // Stats for smart leads
+        $stats = [
+            'exclusive_leads' => \App\Models\LeadVisibility::whereIn('company_id', $userCompanyIds)
+                ->active()
+                ->count(),
+            'high_priority' => \App\Models\LeadVisibility::whereIn('company_id', $userCompanyIds)
+                ->active()
+                ->where('priority_score', '>=', 4.0)
+                ->count(),
+            'expiring_soon' => \App\Models\LeadVisibility::whereIn('company_id', $userCompanyIds)
+                ->active()
+                ->where('expires_at', '<=', now()->addHours(6))
+                ->count()
+        ];
+
+        return view('Template::user.leads.index', compact('pageTitle', 'leads', 'categories', 'stats'));
     }
 
     public function show($id)

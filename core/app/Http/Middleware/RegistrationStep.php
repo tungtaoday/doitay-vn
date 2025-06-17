@@ -26,7 +26,7 @@ class RegistrationStep
                     'message'=>['error'=>$notify],
                 ]);
             }else{
-                return to_route('user.data');
+                return to_route('user.data.v2');
             }
         }
         return $next($request);

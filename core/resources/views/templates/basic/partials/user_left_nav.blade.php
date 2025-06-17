@@ -33,8 +33,8 @@
     <div class="profile-widget mt-4">
         <h5 class="profile-widget__title">@lang('Menu nhanh')</h5>
         <div class="d-grid gap-2">
-            <a href="{{ route('user.profile.setting') }}" class="btn btn-outline-primary btn-sm">
-                <i class="las la-user-cog me-2"></i>@lang('Cập nhật hồ sơ')
+            <a href="{{ route('user.profile.view') }}" class="btn btn-outline-primary btn-sm">
+                <i class="las la-user-cog me-2"></i>@lang('Thông tin cá nhân')
             </a>
             <a href="{{ route('user.change.password') }}" class="btn btn-outline-secondary btn-sm">
                 <i class="las la-key me-2"></i>@lang('Đổi mật khẩu')

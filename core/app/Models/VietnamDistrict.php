@@ -13,15 +13,46 @@ class VietnamDistrict extends Model
 
     // Đặt các cột có thể mass-assignable
     protected $fillable = [
-        'city',
-        'city_code',
-        'district',
-        'district_code',
-        'ward',
-        'ward_code',
+        'city', 'City',
+        'city_code', 'City_code',
+        'district', 'District',
+        'district_code', 'District_code',
+        'ward', 'Ward',
+        'ward_code', 'Ward_code',
         'level',
         'english_name',
     ];
+    
+    // Accessor methods for backward compatibility
+    public function getCityAttribute($value)
+    {
+        return $value ?: $this->attributes['City'] ?? null;
+    }
+    
+    public function getCityCodeAttribute($value)
+    {
+        return $value ?: $this->attributes['City_code'] ?? null;
+    }
+    
+    public function getDistrictAttribute($value)
+    {
+        return $value ?: $this->attributes['District'] ?? null;
+    }
+    
+    public function getDistrictCodeAttribute($value)
+    {
+        return $value ?: $this->attributes['District_code'] ?? null;
+    }
+    
+    public function getWardAttribute($value)
+    {
+        return $value ?: $this->attributes['Ward'] ?? null;
+    }
+    
+    public function getWardCodeAttribute($value)
+    {
+        return $value ?: $this->attributes['Ward_code'] ?? null;
+    }
 
     // Đặt các cột cần được kiểu hóa
     protected $casts = [

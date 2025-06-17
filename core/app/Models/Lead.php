@@ -69,6 +69,11 @@ class Lead extends Model
         return $this->hasMany(LeadPurchase::class)->where('status', '!=', 'lost');
     }
 
+    public function visibilities()
+    {
+        return $this->hasMany(LeadVisibility::class);
+    }
+
     // Scopes
     public function scopeActive($query)
     {
@@ -170,13 +175,14 @@ class Lead extends Model
     public function getBudgetRange()
     {
         if ($this->budget_min && $this->budget_max) {
-            return number_format($this->budget_min) . ' - ' . number_format($this->budget_max) . ' VNĐ';
+            return number_format($this->budget_min) . '₫ - ' . number_format($this->budget_max) . '₫';
         } elseif ($this->budget_min) {
-            return 'Từ ' . number_format($this->budget_min) . ' VNĐ';
+            return 'Từ ' . number_format($this->budget_min) . '₫';
         } elseif ($this->budget_max) {
-            return 'Tối đa ' . number_format($this->budget_max) . ' VNĐ';
+            return 'Tối đa ' . number_format($this->budget_max) . '₫';
+        } else {
+            return 'Thỏa thuận';
         }
-        return 'Thỏa thuận';
     }
 
     public function getTimeLeft()

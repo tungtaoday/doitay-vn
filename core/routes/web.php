@@ -117,6 +117,33 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 //     Route::get('/dashboard', [App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard');
 // });
 
+// Location API routes
+Route::get('/localtion/api/cities', function() {
+    return \DB::table('vietnam_districts')
+        ->select('city_code', 'city')
+        ->groupBy('city_code', 'city')
+        ->orderBy('city')
+        ->get();
+});
+
+Route::get('/localtion/api/districts/{cityCode}', function($cityCode) {
+    return \DB::table('vietnam_districts')
+        ->select('district_code', 'district')
+        ->where('city_code', $cityCode)
+        ->groupBy('district_code', 'district')
+        ->orderBy('district')
+        ->get();
+});
+
+Route::get('/localtion/api/wards/{districtCode}', function($districtCode) {
+    return \DB::table('vietnam_districts')
+        ->select('ward_code', 'ward')
+        ->where('district_code', $districtCode)
+        ->groupBy('ward_code', 'ward')
+        ->orderBy('ward')
+        ->get();
+});
+
 Route::get('/localtion/api/districts-by-name/{city}', function($city) {
     return \DB::table('vietnam_districts')
         ->select('district')
@@ -132,6 +159,51 @@ Route::get('/localtion/api/wards-by-name/{district}', function($district) {
         ->groupBy('ward')
         ->orderBy('ward')
         ->get();
+});
+
+// API routes for Vietnam locations (backward compatible)
+Route::prefix('api/vietnam-locations')->group(function() {
+    Route::get('cities', function() {
+        $cities = \DB::table('vietnam_districts')
+            ->selectRaw('COALESCE(city_code, City_code) as city_code, COALESCE(city, City) as city')
+            ->groupBy(\DB::raw('COALESCE(city_code, City_code), COALESCE(city, City)'))
+            ->orderBy(\DB::raw('COALESCE(city, City)'))
+            ->get();
+        return response()->json($cities);
+    });
+    
+    Route::get('districts/{cityCode}', function($cityCode) {
+        $districts = \DB::table('vietnam_districts')
+            ->selectRaw('COALESCE(district_code, District_code) as district_code, COALESCE(district, District) as district')
+            ->where(function($query) use ($cityCode) {
+                $query->where('city_code', $cityCode)->orWhere('City_code', $cityCode);
+            })
+            ->groupBy(\DB::raw('COALESCE(district_code, District_code), COALESCE(district, District)'))
+            ->orderBy(\DB::raw('COALESCE(district, District)'))
+            ->get();
+        return response()->json($districts);
+    });
+    
+    Route::get('wards/{districtCode}', function($districtCode) {
+        $wards = \DB::table('vietnam_districts')
+            ->selectRaw('COALESCE(ward_code, Ward_code) as ward_code, COALESCE(ward, Ward) as ward')
+            ->where(function($query) use ($districtCode) {
+                $query->where('district_code', $districtCode)->orWhere('District_code', $districtCode);
+            })
+            ->groupBy(\DB::raw('COALESCE(ward_code, Ward_code), COALESCE(ward, Ward)'))
+            ->orderBy(\DB::raw('COALESCE(ward, Ward)'))
+            ->get();
+        return response()->json($wards);
+    });
+});
+
+// Test database structure
+Route::get('/test-db-structure', function() {
+    $sample = \DB::table('vietnam_districts')->first();
+    return response()->json([
+        'sample_record' => $sample,
+        'columns' => array_keys((array)$sample)
+    ]);
 });
 
 // Test auth route
@@ -227,4 +299,93 @@ Route::get('/test-ux', function() {
     
     return response()->json(['error' => 'Not authenticated']);
 })->name('test.ux');
+
+// Test smart lead distribution
+Route::get('/test-smart-leads', function() {
+    if (!auth()->check()) {
+        return response()->json(['error' => 'Not authenticated']);
+    }
+    
+    $user = auth()->user();
+    $userCompanyIds = $user->companies->pluck('id');
+    
+    // Get visible leads
+    $visibleLeads = \App\Models\LeadVisibility::whereIn('company_id', $userCompanyIds)
+        ->with(['lead', 'company'])
+        ->active()
+        ->get();
+    
+    // Get company smart scores
+    $companies = $user->companies->map(function($company) {
+        return [
+            'id' => $company->id,
+            'name' => $company->name,
+            'avg_rating' => $company->getAverageRating(),
+            'total_reviews' => $company->getTotalReviews(),
+            'smart_score' => $company->getSmartScore(),
+            'has_wallet' => $company->hasActiveWallet(),
+            'wallet_balance' => $company->wallet ? $company->wallet->balance : 0
+        ];
+    });
+    
+    return response()->json([
+        'user_id' => $user->id,
+        'companies' => $companies,
+        'visible_leads_count' => $visibleLeads->count(),
+        'visible_leads' => $visibleLeads->map(function($visibility) {
+            return [
+                'lead_id' => $visibility->lead_id,
+                'lead_title' => $visibility->lead->title,
+                'priority_score' => $visibility->priority_score,
+                'expires_at' => $visibility->expires_at,
+                'time_remaining' => $visibility->getTimeRemaining(),
+                'is_active' => $visibility->isActive()
+            ];
+        })
+    ]);
+})->name('test.smart.leads');
+
+// Test create smart lead
+Route::post('/test-create-smart-lead', function() {
+    try {
+        $lead = \App\Models\Lead::create([
+            'customer_id' => 1, // Test customer
+            'category_id' => 1, // Test category
+            'title' => 'Test Smart Lead - ' . now()->format('H:i:s'),
+            'description' => 'This is a test lead for smart distribution system',
+            'location' => 'Quận 1, Phường Bến Nghé',
+            'district' => 'Quận 1',
+            'ward' => 'Phường Bến Nghé',
+            'address' => ['detail' => '123 Test Street'],
+            'budget_min' => 500000,
+            'budget_max' => 1000000,
+            'urgency' => 'medium',
+            'status' => 'active',
+            'needed_by' => now()->addDays(7),
+            'max_contractors' => 3,
+            'lead_price' => 50000,
+            'expires_at' => now()->addDays(30),
+        ]);
+        
+        // Trigger smart distribution
+        $controller = new \App\Http\Controllers\User\CustomerLeadController();
+        $reflection = new ReflectionClass($controller);
+        $method = $reflection->getMethod('notifyMatchingContractors');
+        $method->setAccessible(true);
+        $method->invoke($controller, $lead);
+        
+        return response()->json([
+            'success' => true,
+            'lead_id' => $lead->id,
+            'lead_title' => $lead->title,
+            'message' => 'Smart lead created and distributed successfully'
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+})->name('test.create.smart.lead');
 

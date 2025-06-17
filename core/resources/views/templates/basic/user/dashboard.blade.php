@@ -11,8 +11,8 @@
                     <p class="text-muted mb-0">Tổng quan hoạt động và quản lý công việc</p>
                 </div>
                 <div>
-                    <a href="{{ route('user.profile.setting') }}" class="btn btn-outline-success me-2">
-                        <i class="las la-user-cog"></i> Hồ sơ cá nhân
+                    <a href="{{ route('user.data') }}" class="btn btn-outline-success me-2">
+                        <i class="las la-user-cog"></i> Thông tin cá nhân
                     </a>
                     <a href="{{ route('company.all') }}" class="btn btn--base me-2">
                         <i class="las la-users"></i> Xem thợ chuyên nghiệp

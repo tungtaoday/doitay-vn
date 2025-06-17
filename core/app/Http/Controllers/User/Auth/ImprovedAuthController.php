@@ -518,8 +518,8 @@ class ImprovedAuthController extends Controller
      */
     private function getRedirectUrl($user)
     {
-        // Check if user needs verification
-        if (!$user->ev || !$user->sv) {
+        // Check if user needs verification (only if verification is enabled in settings)
+        if ((gs('ev') && !$user->ev) || (gs('sv') && !$user->sv)) {
             return route('user.authorization');
         }
 

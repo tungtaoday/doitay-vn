@@ -46,9 +46,9 @@
     @include($activeTemplate . 'partials.header')
 
     <div class="main-wrapper">
-        @if (!request()->routeIs('home') && !request()->routeIs('user.home') && !request()->routeIs('company.details'))
+        <!-- @if (!request()->routeIs('home') && !request()->routeIs('user.home') && !request()->routeIs('company.details'))
             @include($activeTemplate . 'partials.breadcrumb')
-        @endif
+        @endif -->
         @yield('content')
     </div>
 

@@ -71,8 +71,8 @@
                     <a href="{{ route('user.customer.leads.index') }}" class="btn btn-info me-2">
                         <i class="las la-list me-1"></i>Leads của tôi
                     </a>
-                    <a href="/user/user/profile-setting" class="btn btn-secondary">
-                        <i class="las la-user-edit me-1"></i>Cập nhật hồ sơ
+                    <a href="{{ route('user.data') }}" class="btn btn-secondary">
+                        <i class="las la-user-edit me-1"></i>Xem thông tin cá nhân
                     </a>
                 </div>
             </div>

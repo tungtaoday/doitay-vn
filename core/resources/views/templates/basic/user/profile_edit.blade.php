@@ -12,18 +12,18 @@
                         </div>
                     </div>
                     <div class="profile-info">
-                        <h2>Thông tin cá nhân</h2>
-                        <p>Quản lý và cập nhật thông tin tài khoản của bạn</p>
+                        <h2>Cập nhật thông tin</h2>
+                        <p>Chỉnh sửa và cập nhật thông tin tài khoản của bạn</p>
                         <div class="profile-status">
-                            <span class="status-badge success">
-                                <i class="las la-check-circle"></i>
-                                Hồ sơ đã hoàn thiện
+                            <span class="status-badge warning">
+                                <i class="las la-edit"></i>
+                                Chế độ chỉnh sửa
                             </span>
                         </div>
                     </div>
                     <div class="profile-actions">
-                        <a href="{{ route('user.home') }}" class="btn btn-outline-primary">
-                            <i class="las la-arrow-left me-2"></i>Quay lại
+                        <a href="{{ route('user.profile.view') }}" class="btn btn-outline-secondary">
+                            <i class="las la-times me-2"></i>Hủy
                         </a>
                     </div>
                 </div>
@@ -155,36 +155,13 @@
                             </div>
                         </div>
 
-                        <!-- Expert Registration Section -->
-                        <div class="form-section">
-                            <div class="section-header">
-                                <h4><i class="las la-briefcase me-2"></i>Cơ hội kinh doanh</h4>
-                                <p>Trở thành nhà cung cấp dịch vụ và tăng thu nhập</p>
-                            </div>
-                            
-                            <div class="section-content">
-                                <div class="expert-option">
-                                    <div class="option-content">
-                                        <div class="option-icon">
-                                            <i class="las la-tools"></i>
-                                        </div>
-                                        <div class="option-text">
-                                            <h5>Đăng ký làm chuyên gia</h5>
-                                            <p>Tạo hồ sơ chuyên gia và bắt đầu nhận việc từ khách hàng</p>
-                                        </div>
-                                        <div class="option-toggle">
-                                            <label class="switch">
-                                                <input type="checkbox" id="registerAsExpert" name="register_as_expert" value="1">
-                                                <span class="slider"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
 
                         <!-- Submit Section -->
                         <div class="form-actions">
+                            <a href="{{ route('user.profile.view') }}" class="btn btn-secondary btn-lg me-3">
+                                <i class="las la-times me-2"></i>Hủy bỏ
+                            </a>
                             <button type="submit" class="btn btn-success btn-lg">
                                 <i class="las la-save me-2"></i>Cập nhật thông tin
                             </button>
@@ -274,6 +251,19 @@
         color: white;
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(72, 187, 226, 0.3);
+    }
+
+    .profile-actions .btn-outline-secondary {
+        border-color: #6c757d;
+        color: #6c757d;
+    }
+
+    .profile-actions .btn-outline-secondary:hover {
+        background: #6c757d;
+        border-color: #6c757d;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
     }
 
     .profile-form-container {
@@ -524,9 +514,35 @@
     }
 
     .form-actions {
-        text-align: center;
         padding: 40px;
         background: #f8f9fa;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .form-actions .btn {
+        border-radius: 12px;
+        padding: 16px 32px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        min-width: 160px;
+    }
+
+    .form-actions .btn-secondary {
+        background: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+
+    .form-actions .btn-secondary:hover {
+        background: #5a6268;
+        border-color: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(90, 98, 104, 0.3);
     }
 
     .btn-success {
@@ -546,6 +562,17 @@
         transform: translateY(-2px);
         box-shadow: 0 12px 35px rgba(255, 165, 0, 0.4);
         color: white;
+    }
+
+    .form-actions .btn-success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        color: white;
+    }
+
+    .form-actions .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
     }
 
     /* Responsive Design */
@@ -571,6 +598,11 @@
 
         .form-actions {
             padding: 30px 20px;
+            flex-direction: column-reverse;
+        }
+
+        .form-actions .btn {
+            width: 100%;
         }
     }
 
@@ -671,6 +703,12 @@
         background: linear-gradient(135deg, #d4edda, #c3e6cb);
         color: #155724;
         border: 1px solid #c3e6cb;
+    }
+
+    .status-badge.warning {
+        background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        color: #856404;
+        border: 1px solid #ffeaa7;
     }
 
     .status-badge i {
@@ -775,57 +813,100 @@
 
         console.log('🔍 Current user data:', currentUserData);
 
+        // Function to load cities
+        function loadCities() {
+            $.ajax({
+                url: '/api/vietnam-locations/cities',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    var citySelect = $('#city');
+                    citySelect.empty().append('<option value="">Chọn Thành phố</option>');
+                    
+                    data.forEach(function(city) {
+                        var cityCode = city.city_code || city.City_code;
+                        var cityName = city.city || city.City;
+                        var selected = currentUserData.city_code == cityCode ? 'selected' : '';
+                        citySelect.append('<option value="' + cityCode + '" data-name="' + cityName + '" ' + selected + '>' + cityName + '</option>');
+                    });
+                    
+                    // If city is pre-selected, load districts
+                    if (currentUserData.city_code) {
+                        loadDistricts(currentUserData.city_code);
+                    }
+                },
+                error: function() {
+                    console.error('Error loading cities');
+                    $('#city').html('<option value="">Lỗi tải dữ liệu thành phố</option>');
+                }
+            });
+        }
+        
+        // Function to load districts
+        function loadDistricts(cityCode) {
+            $.ajax({
+                url: `/api/vietnam-locations/districts/${cityCode}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    var districtSelect = $('#district');
+                    districtSelect.empty().append('<option value="">Chọn Quận/Huyện</option>').prop('disabled', false);
+                    
+                    data.forEach(function(district) {
+                        var districtCode = district.district_code || district.District_code;
+                        var districtName = district.district || district.District;
+                        var selected = currentUserData.district_code == districtCode ? 'selected' : '';
+                        districtSelect.append('<option value="' + districtCode + '" data-name="' + districtName + '" ' + selected + '>' + districtName + '</option>');
+                    });
+                    
+                    // If district is pre-selected, load wards  
+                    if (currentUserData.district_code) {
+                        loadWards(currentUserData.district_code);
+                    }
+                },
+                error: function() {
+                    console.error('Error loading districts');
+                    $('#district').html('<option value="">Lỗi tải dữ liệu quận/huyện</option>');
+                }
+            });
+        }
+        
+        // Function to load wards
+        function loadWards(districtCode) {
+            $.ajax({
+                url: `/api/vietnam-locations/wards/${districtCode}`,
+                type: 'GET', 
+                dataType: 'json',
+                success: function(data) {
+                    var wardSelect = $('#ward');
+                    wardSelect.empty().append('<option value="">Chọn Phường/Xã</option>').prop('disabled', false);
+                    
+                    data.forEach(function(ward) {
+                        var wardCode = ward.ward_code || ward.Ward_code;
+                        var wardName = ward.ward || ward.Ward;
+                        var selected = currentUserData.ward_code == wardCode ? 'selected' : '';
+                        wardSelect.append('<option value="' + wardCode + '" data-name="' + wardName + '" ' + selected + '>' + wardName + '</option>');
+                    });
+                },
+                error: function() {
+                    console.error('Error loading wards');
+                    $('#ward').html('<option value="">Lỗi tải dữ liệu phường/xã</option>');
+                }
+            });
+        }
+
         loadCities();
 
 // Load districts when a city is selected
 $('#city').change(function() {
     let cityCode = $(this).val();
-    let cityName = $(this).find('option:selected').text();
     
     $('#district').empty().append('<option value="">Chọn Quận/Huyện</option>').prop('disabled', !cityCode);
     $('#ward').empty().append('<option value="">Chọn Phường/Xã</option>').prop('disabled', true);
 
     if (cityCode) {
         $('#district').html('<option value="">Đang tải quận/huyện...</option>');
-        
-        $.ajax({
-            url: `/localtion/api/districts/${cityCode}`,
-            type: 'GET',
-            dataType: 'text',
-            success: function(response) {
-                const cleanResponse = response.replace(/<!--|-->/g, '').trim();
-
-                try {
-                    const jsonResponse = JSON.parse(cleanResponse);
-                    $('#district').empty().append('<option value="">Chọn Quận/Huyện</option>').prop('disabled', false);
-                    jsonResponse.forEach(function(district) {
-                        const isSelected = currentUserData.district_code === district.District_code ? 'selected' : '';
-                        $('#district').append(
-                            `<option value="${district.District_code}" data-name="${district.District}" ${isSelected}>${district.District}</option>`
-                        );
-                    });
-                    
-                    // Nếu có district được chọn, load wards
-                    if ($('#district').val()) {
-                        $('#district').trigger('change');
-                    }
-                    
-                    // Hiệu ứng thành công
-                    $('#district').parent().find('.select-arrow').html('<i class="las la-check" style="color: #28a745;"></i>');
-                    setTimeout(() => {
-                        $('#district').parent().find('.select-arrow').html('<i class="las la-chevron-down"></i>');
-                    }, 1500);
-                    
-                } catch (error) {
-                    console.error("🚨 Lỗi phân tích JSON (districts):", error);
-                    $('#district').html('<option value="">Lỗi tải dữ liệu</option>');
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("🚨 Lỗi API (districts):", textStatus, errorThrown);
-                $('#district').html('<option value="">Lỗi kết nối</option>');
-            }
-        });
+        loadDistricts(cityCode);
     }
 });
 
@@ -836,40 +917,7 @@ $('#district').change(function() {
 
     if (districtCode) {
         $('#ward').html('<option value="">Đang tải phường/xã...</option>');
-        
-        $.ajax({
-            url: `/localtion/api/wards/${districtCode}`,
-            type: 'GET',
-            dataType: 'text',
-            success: function(response) {
-                const cleanResponse = response.replace(/<!--|-->/g, '').trim();
-
-                try {
-                    const jsonResponse = JSON.parse(cleanResponse);
-                    $('#ward').empty().append('<option value="">Chọn Phường/Xã</option>').prop('disabled', false);
-                    jsonResponse.forEach(function(ward) {
-                        const isSelected = currentUserData.ward_code === ward.Ward_code ? 'selected' : '';
-                        $('#ward').append(
-                            `<option value="${ward.Ward_code}" data-name="${ward.Ward}" ${isSelected}>${ward.Ward}</option>`
-                        );
-                    });
-                    
-                    // Hiệu ứng thành công
-                    $('#ward').parent().find('.select-arrow').html('<i class="las la-check" style="color: #28a745;"></i>');
-                    setTimeout(() => {
-                        $('#ward').parent().find('.select-arrow').html('<i class="las la-chevron-down"></i>');
-                    }, 1500);
-                    
-                } catch (error) {
-                    console.error("🚨 Lỗi phân tích JSON (wards):", error);
-                    $('#ward').html('<option value="">Lỗi tải dữ liệu</option>');
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("🚨 Lỗi API (wards):", textStatus, errorThrown);
-                $('#ward').html('<option value="">Lỗi kết nối</option>');
-            }
-        });
+        loadWards(districtCode);
     }
 });
 
