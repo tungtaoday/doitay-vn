@@ -17,7 +17,7 @@
                             <div class="contractor-info">
                                 <div class="contractor-avatar-section">
                                     <div class="avatar-container">
-                                        <img src="{{ getImage(getFilePath('company') . '/' . $company->image) }}" 
+                                        <img src="{{ getCompanyAvatar($company) }}" 
                                              alt="{{ $company->name }}" class="contractor-avatar">
                                         <div class="status-badge">
                                             <i class="las la-shield-alt"></i>
@@ -1899,12 +1899,81 @@
     
     .quick-time-slots .btn {
         border-radius: 25px;
+        color: #007bff !important;
+        border-color: #007bff !important;
+        background: transparent !important;
+    }
+    
+    .quick-time-slots .btn:hover {
+        background: #007bff !important;
+        color: white !important;
+        border-color: #007bff !important;
     }
     
     .quick-time-slots .btn.active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
+        background: #007bff !important;
+        color: white !important;
+        border-color: #007bff !important;
+    }
+    
+    /* Additional specificity for btn-outline-primary in quick-time-slots */
+    .quick-time-slots .btn.btn-outline-primary {
+        color: #007bff !important;
+        border-color: #007bff !important;
+        background-color: transparent !important;
+    }
+    
+    .quick-time-slots .btn.btn-outline-primary:hover {
+        background-color: #007bff !important;
+        color: white !important;
+        border-color: #007bff !important;
+    }
+    
+    .quick-time-slots .btn.btn-outline-primary.active {
+        background-color: #007bff !important;
+        color: white !important;
+        border-color: #007bff !important;
+    }
+    
+    /* Maximum specificity to override any global CSS */
+    .quick-time-slots .d-flex .btn.btn-outline-primary.quick-time {
+        color: #007bff !important;
+        border-color: #007bff !important;
+        background-color: transparent !important;
+        font-weight: 500 !important;
+    }
+    
+    .quick-time-slots .d-flex .btn.btn-outline-primary.quick-time:hover,
+    .quick-time-slots .d-flex .btn.btn-outline-primary.quick-time:focus {
+        background-color: #007bff !important;
+        color: white !important;
+        border-color: #007bff !important;
+    }
+    
+    .quick-time-slots .d-flex .btn.btn-outline-primary.quick-time.active {
+        background-color: #007bff !important;
+        color: white !important;
+        border-color: #007bff !important;
+    }
+    
+    /* Ultra-specific selector to ensure color is visible */
+    button.btn.btn-outline-primary.quick-time[data-time] {
+        color: #007bff !important;
+        border: 1px solid #007bff !important;
+        background: transparent !important;
+        text-decoration: none !important;
+    }
+    
+    button.btn.btn-outline-primary.quick-time[data-time]:hover {
+        background: #007bff !important;
+        color: #ffffff !important;
+        border-color: #007bff !important;
+    }
+    
+    button.btn.btn-outline-primary.quick-time[data-time].active {
+        background: #007bff !important;
+        color: #ffffff !important;
+        border-color: #007bff !important;
     }
     
     .booking-summary {

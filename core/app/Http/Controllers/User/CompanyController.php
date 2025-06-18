@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\Certificate;
 use App\Models\Portfolio;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CompanyController extends Controller
 {
@@ -78,7 +79,11 @@ class CompanyController extends Controller
 
         $categories = Category::all();
 
-        return view('Template::user.company.edit', compact('company', 'cities', 'districts', 'wards', 'categories', 'pageTitle'));
+        // Load certificates and projects
+        $certificates = $company->certificates()->get()->toArray();
+        $projects = $company->portfolios()->get()->toArray();
+
+        return view('Template::user.company.edit', compact('company', 'cities', 'districts', 'wards', 'categories', 'certificates', 'projects', 'pageTitle'));
     }
 
     public function store(Request $request)
@@ -107,8 +112,8 @@ class CompanyController extends Controller
                 $image = $request->file('image');
                 $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
                 
-                // Ensure directory exists
-                $uploadPath = public_path('assets/images/company');
+                // Ensure directory exists - use root assets folder
+                $uploadPath = base_path('../assets/images/company');
                 if (!file_exists($uploadPath)) {
                     mkdir($uploadPath, 0755, true);
                 }
@@ -183,8 +188,8 @@ class CompanyController extends Controller
                             $projectImage = $request->file("projects.{$index}.image");
                             $projectImageName = time() . '_project_' . $index . '.' . $projectImage->getClientOriginalExtension();
                             
-                            // Ensure directory exists
-                            $portfolioPath = public_path('assets/images/portfolio');
+                            // Ensure directory exists - use root assets folder
+                            $portfolioPath = base_path('../assets/images/portfolio');
                             if (!file_exists($portfolioPath)) {
                                 mkdir($portfolioPath, 0755, true);
                             }
@@ -246,14 +251,9 @@ class CompanyController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:255',
             'category' => 'required|exists:categories,id',
             'address' => 'required|string',
-            'city_code' => 'required',
-            'district_code' => 'required', 
-            'ward_code' => 'nullable',
             'description' => 'required|string|min:50',
-            'experience' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
@@ -265,8 +265,8 @@ class CompanyController extends Controller
                 $image = $request->file('image');
                 $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
                 
-                // Ensure directory exists
-                $uploadPath = public_path('assets/images/company');
+                // Ensure directory exists - use root assets folder
+                $uploadPath = base_path('../assets/images/company');
                 if (!file_exists($uploadPath)) {
                     mkdir($uploadPath, 0755, true);
                 }
@@ -275,51 +275,96 @@ class CompanyController extends Controller
                 $company->image = $imageName;
             }
 
-            // Get location names from codes
-            $cityName = '';
-            $districtName = '';
-            $wardName = '';
-            
-            if ($request->city_code) {
-                $cityInfo = VietnamDistrict::where('city_code', $request->city_code)
-                    ->select('city')->first();
-                $cityName = $cityInfo ? $cityInfo->city : '';
-            }
-            
-            if ($request->district_code) {
-                $districtInfo = VietnamDistrict::where('district_code', $request->district_code)
-                    ->select('district')->first();
-                $districtName = $districtInfo ? $districtInfo->district : '';
-            }
-            
-            if ($request->ward_code) {
-                $wardInfo = VietnamDistrict::where('ward_code', $request->ward_code)
-                    ->select('ward')->first();
-                $wardName = $wardInfo ? $wardInfo->ward : '';
-            }
+            // Get location names directly from form
+            $cityName = $request->city ?? '';
+            $districtName = $request->district ?? '';
+            $wardName = $request->ward ?? '';
 
-            // Update company
+            // Update company - only update fields that definitely exist
             $company->name = $request->name;
             $company->email = $request->email;
-            $company->phone = $request->phone ?? '';
             $company->address = $request->address;
-            $company->city = $cityName;
-            $company->district = $districtName;
-            $company->ward = $wardName;
             $company->description = $request->description;
-            $company->experience = $request->experience ?? 0;
             $company->category_id = $request->category;
+            
+            // Update location fields if they exist in database
+            if (Schema::hasColumn('companies', 'city')) {
+                $company->city = $cityName;
+            }
+            if (Schema::hasColumn('companies', 'district')) {
+                $company->district = $districtName;
+            }
+            if (Schema::hasColumn('companies', 'ward')) {
+                $company->ward = $wardName;
+            }
+            
+            // Update optional fields if they exist
+            if (Schema::hasColumn('companies', 'phone')) {
+                $company->phone = $request->phone ?? '';
+            }
+            if (Schema::hasColumn('companies', 'experience')) {
+                $company->experience = $request->experience ?? 0;
+            }
+            
+            // Handle tags - only if column exists
+            if (Schema::hasColumn('companies', 'tags') && $request->has('tags') && is_array($request->tags)) {
+                $company->tags = $request->tags;
+            }
+            
             $company->save();
+
+            // Handle portfolio projects if provided
+            if ($request->has('projects')) {
+                \Log::info('Processing projects: ' . json_encode($request->projects));
+                
+                foreach ($request->projects as $index => $project) {
+                    if (!empty($project['title'])) {
+                        $projectImageName = null;
+                        
+                        // Handle project image
+                        if ($request->hasFile("projects.{$index}.image")) {
+                            $projectImage = $request->file("projects.{$index}.image");
+                            $projectImageName = time() . '_project_' . $index . '.' . $projectImage->getClientOriginalExtension();
+                            
+                            // Ensure directory exists - use root assets folder
+                            $portfolioPath = base_path('../assets/images/portfolio');
+                            if (!file_exists($portfolioPath)) {
+                                mkdir($portfolioPath, 0755, true);
+                            }
+                            
+                            $projectImage->move($portfolioPath, $projectImageName);
+                            \Log::info("Project image uploaded: $projectImageName");
+                        } else {
+                            \Log::info("No project image uploaded for index: $index");
+                        }
+
+                        // Update or create portfolio
+                        $portfolio = Portfolio::updateOrCreate(
+                            [
+                                'company_id' => $company->id,
+                                'title' => $project['title']
+                            ],
+                            [
+                                'description' => $project['description'] ?? '',
+                                'image' => $projectImageName ?: (Portfolio::where('company_id', $company->id)->where('title', $project['title'])->first()->image ?? null)
+                            ]
+                        );
+                        \Log::info('Portfolio saved: ' . json_encode($portfolio->toArray()));
+                    }
+                }
+            }
 
             DB::commit();
 
             $notify[] = ['success', 'Cập nhật thông tin thợ thành công!'];
-            return back()->withNotify($notify);
+            return redirect()->route('user.company.edit', $company->id)->withNotify($notify);
 
         } catch (\Exception $e) {
             DB::rollback();
             
             \Log::error('Company update error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            \Log::error('Request data: ' . json_encode($request->all()));
             
             $notify[] = ['error', 'Có lỗi xảy ra khi cập nhật: ' . $e->getMessage()];
             return back()->withNotify($notify)->withInput();

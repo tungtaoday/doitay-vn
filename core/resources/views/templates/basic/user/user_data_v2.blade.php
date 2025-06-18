@@ -773,7 +773,7 @@ class UserDataFormV2 {
         this.bindEvents();
         // Delay location loading to ensure DOM is ready
         setTimeout(() => {
-            this.loadLocationData();
+        this.loadLocationData();
         }, 500);
         this.updateSummary();
     }
@@ -837,8 +837,8 @@ class UserDataFormV2 {
         
         // Form inputs for summary
         if (this.form) {
-            this.form.addEventListener('input', () => this.updateSummary());
-            this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.form.addEventListener('input', () => this.updateSummary());
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
             console.log('✅ Form events bound');
         } else {
             console.error('❌ Form not found!');
@@ -898,7 +898,7 @@ class UserDataFormV2 {
         const submitBtn = document.querySelector('.btn-submit');
 
         if (prevBtn) {
-            prevBtn.style.display = this.currentStep > 1 ? 'inline-flex' : 'none';
+        prevBtn.style.display = this.currentStep > 1 ? 'inline-flex' : 'none';
         }
         
         if (this.currentStep === this.totalSteps) {
@@ -1038,7 +1038,7 @@ class UserDataFormV2 {
         citySelect.innerHTML = '<option value="">Đang tải thành phố...</option>';
         
         try {
-            const response = await fetch('/localtion/api/cities', {
+            const response = await fetch('/api/vietnam-locations/cities', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -1050,17 +1050,14 @@ class UserDataFormV2 {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            const text = await response.text();
-            console.log('📡 Cities API response length:', text.length);
-            
-            const cleanResponse = text.replace(/<!--|-->/g, '').trim();
-            
-            const cities = JSON.parse(cleanResponse);
+            const cities = await response.json();
             console.log('🏙️ Cities loaded:', cities.length);
-            
+
             citySelect.innerHTML = '<option value="">Chọn Thành phố</option>';
             cities.forEach(city => {
-                citySelect.innerHTML += `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`;
+                const cityName = city.City || city.city || city.name;
+                const cityCode = city.City_code || city.city_code || city.code;
+                citySelect.innerHTML += `<option value="${cityCode}" data-name="${cityName}">${cityName}</option>`;
             });
             
             console.log('✅ Cities populated successfully');
@@ -1106,7 +1103,7 @@ class UserDataFormV2 {
         districtSelect.innerHTML = '<option value="">Đang tải quận/huyện...</option>';
 
         try {
-            const response = await fetch(`/localtion/api/districts/${cityCode}`, {
+            const response = await fetch(`/api/vietnam-locations/districts/${cityCode}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -1118,15 +1115,15 @@ class UserDataFormV2 {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            const text = await response.text();
-            const cleanResponse = text.replace(/<!--|-->/g, '').trim();
-            const districts = JSON.parse(cleanResponse);
-            
+            const districts = await response.json();
+
             console.log('🏢 Districts loaded:', districts.length);
 
             districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
             districts.forEach(district => {
-                districtSelect.innerHTML += `<option value="${district.District_code}" data-name="${district.District}">${district.District}</option>`;
+                const districtName = district.District || district.district || district.name;
+                const districtCode = district.District_code || district.district_code || district.code;
+                districtSelect.innerHTML += `<option value="${districtCode}" data-name="${districtName}">${districtName}</option>`;
             });
             
             districtSelect.disabled = false;
@@ -1155,7 +1152,7 @@ class UserDataFormV2 {
         wardSelect.innerHTML = '<option value="">Đang tải phường/xã...</option>';
 
         try {
-            const response = await fetch(`/localtion/api/wards/${districtCode}`, {
+            const response = await fetch(`/api/vietnam-locations/wards/${districtCode}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -1167,15 +1164,15 @@ class UserDataFormV2 {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            const text = await response.text();
-            const cleanResponse = text.replace(/<!--|-->/g, '').trim();
-            const wards = JSON.parse(cleanResponse);
-            
+            const wards = await response.json();
+
             console.log('🏘️ Wards loaded:', wards.length);
 
             wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
             wards.forEach(ward => {
-                wardSelect.innerHTML += `<option value="${ward.Ward_code}" data-name="${ward.Ward}">${ward.Ward}</option>`;
+                const wardName = ward.Ward || ward.ward || ward.name;
+                const wardCode = ward.Ward_code || ward.ward_code || ward.code;
+                wardSelect.innerHTML += `<option value="${wardCode}" data-name="${wardName}">${wardName}</option>`;
             });
             
             wardSelect.disabled = false;

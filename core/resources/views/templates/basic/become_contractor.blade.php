@@ -239,8 +239,8 @@
                                 <i class="las la-tools" style="font-size: 4rem; color: #ffa500;"></i>
                                 <h4 class="text-white mt-3 mb-3">Bước cuối cùng!</h4>
                                 <p class="text-white-50 mb-4">Bạn đã đăng nhập thành công. Hãy tạo hồ sơ thợ để bắt đầu nhận việc.</p>
-                            </div>
-                            
+                                </div>
+                                
                             <a href="{{ url('user-data-v2') }}" class="btn btn-light btn-lg">
                                 <i class="las la-plus-circle me-2"></i>Tạo hồ sơ thợ ngay
                             </a>
@@ -254,7 +254,7 @@
                             <h4 class="text-white mt-3 mb-3">Bắt đầu hành trình của bạn</h4>
                             <p class="text-white-50 mb-4">Đăng ký hoặc đăng nhập để tạo hồ sơ thợ chuyên nghiệp và bắt đầu kiếm tiền từ kỹ năng của bạn.</p>
                         </div>
-                        
+
                         <div class="d-flex gap-3 justify-content-center flex-wrap">
                             <a href="{{ route('user.register') }}" class="btn btn-light btn-lg">
                                 <i class="las la-user-plus me-2"></i>Đăng ký tài khoản
@@ -262,8 +262,8 @@
                             <a href="{{ route('user.login') }}" class="btn btn-outline-light btn-lg">
                                 <i class="las la-sign-in-alt me-2"></i>Đăng nhập
                             </a>
-                        </div>
-                        
+                                </div>
+                                
                         <div class="mt-4">
                             <p class="text-white-50 small">
                                 <i class="las la-info-circle me-1"></i>

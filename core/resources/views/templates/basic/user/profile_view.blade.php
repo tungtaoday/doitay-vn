@@ -8,11 +8,7 @@
                 <div class="profile-header">
                     <div class="profile-avatar">
                         <div class="avatar-circle">
-                            @if($user->image)
-                                <img src="{{ getImage(getFilePath('userProfile') . '/' . $user->image, getFileSize('userProfile'), isAvatar:true) }}" alt="Profile">
-                            @else
-                                <i class="las la-user"></i>
-                            @endif
+                            <img src="{{ getUserAvatar($user) }}" alt="Profile">
                         </div>
                     </div>
                     <div class="profile-info">
@@ -248,9 +244,13 @@
                                         </div>
                                     </div>
                                     <div class="company-actions">
-                                        <a href="{{ route('user.company.statistics.detail', $company->id) }}" class="btn btn-sm btn-outline-primary">
-                                            <i class="las la-external-link-alt"></i>
+                                        <a href="{{ route('company.details', [$company->id, slug($company->name)]) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="las la-eye"></i>
                                             Xem chi tiết
+                                        </a>
+                                        <a href="{{ route('user.company.edit', $company->id) }}" class="btn btn-sm btn-primary">
+                                            <i class="las la-edit"></i>
+                                            Chỉnh sửa
                                         </a>
                                     </div>
                                 </div>
@@ -541,11 +541,20 @@
         gap: 4px;
     }
 
+    .company-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
     .company-actions .btn {
         border-radius: 8px;
         padding: 8px 16px;
         font-weight: 500;
         transition: all 0.3s ease;
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
     }
 
     @media (max-width: 768px) {

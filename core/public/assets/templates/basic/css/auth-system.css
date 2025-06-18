@@ -106,12 +106,32 @@
 .auth-section {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     min-height: 100vh;
-    padding: var(--space-md) 0;
+    min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    padding: var(--space-lg) 0;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 767.98px) {
+    .auth-section {
+        min-height: 100vh;
+        min-height: calc(var(--vh, 1vh) * 100); /* Fallback for browsers without dvh support */
+        padding: var(--space-md) var(--space-sm);
+        align-items: flex-start;
+        padding-top: max(var(--space-xl), env(safe-area-inset-top, 20px));
+    }
+    
+    .auth-section .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 40px);
+        min-height: calc(100dvh - 40px);
+    }
 }
 
 .auth-section::before {
@@ -856,6 +876,80 @@
 }
 
 /* Responsive Design */
+
+/* Mobile-first optimizations */
+@media (max-width: 575.98px) {
+    .auth-card {
+        margin: var(--space-sm);
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        max-width: calc(100vw - 32px);
+    }
+    
+    .auth-title {
+        font-size: var(--font-size-xl);
+        margin-bottom: var(--space-xs);
+        line-height: 1.3;
+    }
+    
+    .auth-subtitle {
+        font-size: var(--font-size-xs);
+        margin-bottom: var(--space-sm);
+    }
+    
+    .btn-social {
+        padding: 12px var(--space-md);
+        font-size: var(--font-size-sm);
+        min-height: 48px;
+    }
+    
+    .form-control,
+    .input-group-text {
+        padding: 12px var(--space-sm);
+        font-size: var(--font-size-sm);
+        min-height: 48px;
+    }
+    
+    .btn {
+        padding: 12px var(--space-md);
+        font-size: var(--font-size-sm);
+        min-height: 48px;
+    }
+    
+    .auth-header {
+        margin-bottom: var(--space-md);
+    }
+    
+    .social-auth-section {
+        margin-bottom: var(--space-md);
+    }
+    
+    .form-group {
+        margin-bottom: var(--space-md);
+    }
+    
+    .auth-footer {
+        margin-top: var(--space-md);
+    }
+    
+    /* Fix input group height on mobile */
+    .input-group {
+        align-items: stretch;
+    }
+    
+    .input-group .form-control {
+        height: auto;
+        min-height: 48px;
+    }
+    
+    .input-group-text {
+        height: auto;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+    }
+}
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {

@@ -31,7 +31,7 @@ class CheckStatus
                             'user' => $user
                         ],
                     ]);
-                } else {
+            } else {
                     return to_route('user.authorization');
                 }
             }

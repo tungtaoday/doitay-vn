@@ -152,7 +152,7 @@
                                         @csrf
                                         <div class="give-rating-person d-flex align-items-center mb-3">
                                             <div class="thumb me-3">
-                                                <img src="{{ getImage(getFilePath('userProfile') . '/' . auth()->user()->image, isAvatar: true) }}" alt="User">
+                                                <img src="{{ getUserAvatar(auth()->user()) }}" alt="User">
                                             </div>
                                             <div class="content">
                                                 <h6>{{ auth()->user()->fullname }}</h6>

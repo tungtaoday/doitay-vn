@@ -1,9 +1,9 @@
 @extends($activeTemplate . 'layouts.frontend')
 @section('content')
 <section class="profile-section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
                 <!-- Profile Header -->
                 <div class="profile-header">
                     <div class="profile-avatar">
@@ -31,7 +31,7 @@
                 <!-- Profile Form -->
                 <div class="profile-form-container">
                     <form method="POST" action="{{ route('user.data.submit') }}" class="modern-form disableSubmission">
-                        @csrf
+                                @csrf
                         
                         <!-- Basic Information Section -->
                         <div class="form-section">
@@ -95,7 +95,7 @@
                                             <div class="select-wrapper">
                                                 <select id="city" class="modern-select" name="city" required>
                                                     <option value="">@lang('Chọn Thành phố')</option>
-                                                </select>
+                                        </select>
                                                 <div class="select-arrow">
                                                     <i class="las la-chevron-down"></i>
                                                 </div>
@@ -111,8 +111,8 @@
                                             </label>
                                             <div class="select-wrapper">
                                                 <select id="district" class="modern-select" name="district" disabled required>
-                                                    <option value="">@lang('Chọn Quận/Huyện')</option>
-                                                </select>
+                                            <option value="">@lang('Chọn Quận/Huyện')</option>
+                                        </select>
                                                 <div class="select-arrow">
                                                     <i class="las la-chevron-down"></i>
                                                 </div>
@@ -128,15 +128,15 @@
                                             </label>
                                             <div class="select-wrapper">
                                                 <select id="ward" class="modern-select" name="ward" disabled required>
-                                                    <option value="">@lang('Chọn Phường/Xã')</option>
-                                                </select>
+                                            <option value="">@lang('Chọn Phường/Xã')</option>
+                                        </select>
                                                 <div class="select-arrow">
                                                     <i class="las la-chevron-down"></i>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    
+                                    </div>                                    
+
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="modern-label">
@@ -160,8 +160,8 @@
                             <div class="section-header">
                                 <h4><i class="las la-briefcase me-2"></i>Cơ hội kinh doanh</h4>
                                 <p>Trở thành nhà cung cấp dịch vụ và tăng thu nhập</p>
-                            </div>
-                            
+                                </div>
+                                
                             <div class="section-content">
                                 <div class="expert-option">
                                     <div class="option-content">
@@ -174,27 +174,27 @@
                                         </div>
                                         <div class="option-toggle">
                                             <label class="switch">
-                                                <input type="checkbox" id="registerAsExpert" name="register_as_expert" value="1">
+                                        <input type="checkbox" id="registerAsExpert" name="register_as_expert" value="1">
                                                 <span class="slider"></span>
-                                            </label>
+                                    </label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
+                                </div>
+                                
                         <!-- Submit Section -->
                         <div class="form-actions">
                             <button type="submit" class="btn btn-success btn-lg">
                                 <i class="las la-save me-2"></i>Cập nhật thông tin
-                            </button>
-                        </div>
-                    </form>
+                                    </button>
+                                </div>
+                            </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 @endsection
 
 @push('style-lib')
@@ -725,20 +725,20 @@
         function loadCities() {
             $('#city').html('<option value="">Đang tải thành phố... <span class="loading-spinner"></span></option>');
             
-            $.ajax({
-                url: '/localtion/api/cities',
-                type: 'GET',
+$.ajax({
+    url: '/localtion/api/cities',
+    type: 'GET',
                 dataType: 'text',
-                success: function(response) {
-                    const cleanResponse = response.replace(/<!--|-->/g, '').trim();
-                    
-                    try {
+    success: function(response) {
+        const cleanResponse = response.replace(/<!--|-->/g, '').trim();
+
+        try {
                         const jsonResponse = JSON.parse(cleanResponse);
-                        $('#city').empty().append('<option value="">Chọn Thành phố</option>');
-                        jsonResponse.forEach(city => {
+            $('#city').empty().append('<option value="">Chọn Thành phố</option>');
+            jsonResponse.forEach(city => {
                             const isSelected = currentUserData.city_code === city.City_code ? 'selected' : '';
                             $('#city').append(`<option value="${city.City_code}" data-name="${city.City}" ${isSelected}>${city.City}</option>`);
-                        });
+            });
                         
                         // Nếu có city được chọn, load districts
                         if ($('#city').val()) {
@@ -751,12 +751,12 @@
                             $('#city').parent().find('.select-arrow').html('<i class="las la-chevron-down"></i>');
                         }, 2000);
                         
-                    } catch (error) {
+        } catch (error) {
                         console.error("🚨 Lỗi phân tích JSON:", error);
                         $('#city').html('<option value="">Lỗi tải dữ liệu</option>');
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
+        }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
                     console.error("🚨 Lỗi API cities:", textStatus, errorThrown);
                     $('#city').html('<option value="">Lỗi kết nối</option>');
                 }
@@ -816,7 +816,7 @@ $('#city').change(function() {
                         $('#district').parent().find('.select-arrow').html('<i class="las la-chevron-down"></i>');
                     }, 1500);
                     
-                } catch (error) {
+                    } catch (error) {
                     console.error("🚨 Lỗi phân tích JSON (districts):", error);
                     $('#district').html('<option value="">Lỗi tải dữ liệu</option>');
                 }
@@ -904,7 +904,7 @@ $('form').on('submit', function(e) {
     const submitBtn = $(this).find('button[type="submit"]');
     const originalText = submitBtn.html();
     submitBtn.prop('disabled', true).html('<i class="las la-spinner la-spin me-2"></i>Đang xử lý...');
-    
+
     let cityName = $('#city option:selected').data('name');
     let districtName = $('#district option:selected').data('name');
     let wardName = $('#ward option:selected').data('name');
@@ -929,7 +929,7 @@ $('form').on('submit', function(e) {
 
     // Reset form after 2 seconds (simulation)
     setTimeout(() => {
-        this.submit();
+    this.submit();
     }, 1000);
 });
 

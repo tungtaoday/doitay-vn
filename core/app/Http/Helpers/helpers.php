@@ -511,3 +511,43 @@ function avgRating($comAvgRating)
         return $star;
     }
 }
+
+/**
+ * Get user avatar with fallback to generated avatar
+ */
+function getUserAvatar($user)
+{
+    return \App\Helpers\AvatarHelper::getUserAvatar($user);
+}
+
+/**
+ * Get company avatar with fallback to generated avatar
+ */
+function getCompanyAvatar($company)
+{
+    return \App\Helpers\AvatarHelper::getCompanyAvatar($company);
+}
+
+/**
+ * Generate avatar with initials
+ */
+function generateAvatar($name, $id = null)
+{
+    return \App\Helpers\AvatarHelper::generateInitialsAvatar($name, $id);
+}
+
+/**
+ * Get random user avatar
+ */
+function getRandomUserAvatar($userId = null)
+{
+    return \App\Helpers\AvatarHelper::getRandomUserAvatar($userId);
+}
+
+/**
+ * Get random company avatar  
+ */
+function getRandomCompanyAvatar($companyId = null)
+{
+    return \App\Helpers\AvatarHelper::getRandomCompanyAvatar($companyId);
+}

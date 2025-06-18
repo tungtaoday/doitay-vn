@@ -933,5 +933,20 @@ class LoginFlow {
         return /^[0-9+\-\s()]{10,15}$/.test(phone);
     }
 }
+
+// Fix viewport height for mobile browsers
+function setViewportHeight() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+// Set initial viewport height
+setViewportHeight();
+
+// Update viewport height on resize
+window.addEventListener('resize', setViewportHeight);
+window.addEventListener('orientationchange', () => {
+    setTimeout(setViewportHeight, 100);
+});
 </script>
 @endpush 

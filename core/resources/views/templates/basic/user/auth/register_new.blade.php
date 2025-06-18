@@ -8,8 +8,11 @@
 <script src="{{ asset('assets/global/js/jquery.validate.min.js') }}"></script>
 @endpush
 
+@push('meta')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+@endpush
+
 @section('content')
-<meta name="csrf-token" content="{{ csrf_token() }}")
 <section class="auth-section">
     <div class="container">
         <div class="row justify-content-center min-vh-100 align-items-center">
@@ -1159,5 +1162,20 @@ class RegistrationFlow {
         };
     }
 }
+
+// Fix viewport height for mobile browsers
+function setViewportHeight() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+// Set initial viewport height
+setViewportHeight();
+
+// Update viewport height on resize
+window.addEventListener('resize', setViewportHeight);
+window.addEventListener('orientationchange', () => {
+    setTimeout(setViewportHeight, 100);
+});
 </script>
 @endpush 

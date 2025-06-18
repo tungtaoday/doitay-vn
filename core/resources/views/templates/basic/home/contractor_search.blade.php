@@ -60,7 +60,7 @@
                 <div class="contractor-card-compact">
                     <div class="contractor-header-compact">
                         <div class="contractor-avatar-compact">
-                            <img src="{{ getImage(getFilePath('company') . '/' . $company->image, getFileSize('company')) }}" 
+                            <img src="{{ getCompanyAvatar($company) }}" 
                                  alt="{{ $company->name }}" class="contractor-img">
                             <div class="verified-badge-compact">
                                 <i class="las la-check"></i>
@@ -130,7 +130,7 @@
                     
                     <div class="reviewer-compact">
                         @if($review->user)
-                        <img src="{{ getImage(getFilePath('userProfile').'/'.$review->user->image, getFileSize('userProfile')) }}" 
+                                                        <img src="{{ getUserAvatar($review->user) }}" 
                              alt="{{ $review->user->fullname }}" class="reviewer-img-compact">
                         <div class="reviewer-info-compact">
                             <h6 class="reviewer-name-compact">{{ $review->user->fullname }}</h6>

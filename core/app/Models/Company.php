@@ -12,26 +12,11 @@ class Company extends Model
 {
     use UserNotify, Notifiable;
 
-    protected $casts = [];
+    protected $casts = [
+        'tags' => 'array'
+    ];
 
-    protected function tags(): Attribute
-    {
-        return Attribute::make(
-            get: function ($value) {
-                if (is_string($value)) {
-                    $decoded = json_decode($value, true);
-                    return is_array($decoded) ? $decoded : [];
-                }
-                return is_array($value) ? $value : [];
-            },
-            set: function ($value) {
-                if (is_array($value)) {
-                    return json_encode($value);
-                }
-                return $value;
-            }
-        );
-    }
+
 
     public function user()
     {

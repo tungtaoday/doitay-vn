@@ -8,7 +8,7 @@
                 <div class="profile-header">
                     <div class="profile-avatar">
                         <div class="avatar-circle">
-                            <i class="las la-user"></i>
+                            <img src="{{ getUserAvatar($user) }}" alt="Profile">
                         </div>
                     </div>
                     <div class="profile-info">

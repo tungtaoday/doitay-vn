@@ -49,7 +49,7 @@
         <!-- @if (!request()->routeIs('home') && !request()->routeIs('user.home') && !request()->routeIs('company.details'))
             @include($activeTemplate . 'partials.breadcrumb')
         @endif -->
-        @yield('content')
+        <!-- @yield('content') -->
     </div>
 
     @php

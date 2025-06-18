@@ -5,7 +5,7 @@
 @if ($myReview && (request()->page == 1 || request()->page == null))
     <div class="customer-review mb-3">
         <div class="customer-review__thumb">
-            <img src="{{ getImage(getFilePath('userProfile') . '/' . @$myReview->user->image, isAvatar:true) }}" alt="image" />
+                            <img src="{{ getUserAvatar($myReview->user) }}" alt="image" />
         </div>
         <div class="customer-review__content">
             <div class="customer-review__header">
@@ -91,7 +91,7 @@
 @foreach ($reviews as $review)
     <div class="customer-review mb-3">
         <div class="customer-review__thumb">
-            <img src="{{ getImage(getFilePath('userProfile') . '/' . @$review->user->image, isAvatar:true) }}" alt="image" />
+                                    <img src="{{ getUserAvatar($review->user) }}" alt="image" />
         </div>
         <div class="customer-review__content">
             <div class="customer-review__header">

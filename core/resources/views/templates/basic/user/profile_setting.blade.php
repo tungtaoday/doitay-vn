@@ -15,7 +15,7 @@
                             <div class="profile-thumb justify-content-center">
                                 <div class="avatar-preview">
                                     <div class="profilePicPreview"
-                                        style="background-image: url('{{ getImage(getFilePath('userProfile') . '/' . $user->image,isAvatar:true )}}');">
+                                        style="background-image: url('{{ getUserAvatar($user) }}');">
                                     </div>
                                     <div class="avatar-edit">
                                         <input type='file' class="profilePicUpload" name="image" id="profilePicUpload1"

@@ -640,6 +640,85 @@
     font-weight: 500;
 }
 
+/* Fix btn-outline-primary color issue */
+.appointment-actions .btn.btn-outline-primary {
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    background-color: transparent !important;
+}
+
+.appointment-actions .btn.btn-outline-primary:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+}
+
+.appointment-actions .btn.btn-outline-primary:focus {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+}
+
+/* Fix btn-outline-danger color issue */
+.appointment-actions .btn.btn-outline-danger {
+    color: var(--danger) !important;
+    border-color: var(--danger) !important;
+    background-color: transparent !important;
+}
+
+.appointment-actions .btn.btn-outline-danger:hover {
+    background-color: var(--danger) !important;
+    color: white !important;
+    border-color: var(--danger) !important;
+}
+
+/* Fix btn-outline-warning color issue */
+.appointment-actions .btn.btn-outline-warning {
+    color: var(--warning) !important;
+    border-color: var(--warning) !important;
+    background-color: transparent !important;
+}
+
+.appointment-actions .btn.btn-outline-warning:hover {
+    background-color: var(--warning) !important;
+    color: white !important;
+    border-color: var(--warning) !important;
+}
+
+/* Fix small button variants */
+.btn.btn-outline-primary.btn-sm {
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    background-color: transparent !important;
+}
+
+.btn.btn-outline-primary.btn-sm:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+}
+
+/* Global fix for all btn-outline-primary buttons on this page */
+.appointments-page .btn.btn-outline-primary {
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    background-color: transparent !important;
+}
+
+.appointments-page .btn.btn-outline-primary:hover,
+.appointments-page .btn.btn-outline-primary:focus {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+}
+
+.appointments-page .btn.btn-outline-primary:active {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+}
+
 .appointment-time small {
     color: var(--gray-500);
 }

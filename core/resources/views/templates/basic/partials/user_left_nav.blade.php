@@ -4,7 +4,7 @@
 <div class="profile-sidebar">
     <div class="profile-widget">
         <div class="thumb">
-            <img src="{{ getImage(getFilePath('userProfile') . '/' . $user->image, getFileSize('userProfile'),isAvatar:true) }}" />
+                            <img src="{{ getUserAvatar($user) }}" />
         </div>
         <h4 class="profile-name text-center mt-4"> {{ __(@ucwords($user->fullname)) }} </h4>
         <p class="text-center"><i class="la la-map-marker-alt"></i>

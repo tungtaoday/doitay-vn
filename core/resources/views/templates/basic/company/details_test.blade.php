@@ -135,7 +135,7 @@
                                     <div class="give-rating-person">
                                         <div class="thumb">
                                             <img
-                                                src="{{ getImage(getFilePath('userProfile') . '/' . auth()->user()->image,isAvatar:true) }}" />
+                                                src="{{ getUserAvatar(auth()->user()) }}" />
                                         </div>
                                         <div class="content">
                                             <h6>{{ auth()->user()->fullname }}</h6>

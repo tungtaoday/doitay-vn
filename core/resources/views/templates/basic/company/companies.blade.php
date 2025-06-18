@@ -6,7 +6,7 @@
             <div class="contractor-card">
                 <div class="contractor-card-header">
                     <div class="contractor-avatar">
-                        <img src="{{ getImage(getFilePath('company') . '/' . @$company->image, getFileSize('company')) }}" 
+                        <img src="{{ getCompanyAvatar($company) }}" 
                              alt="{{ $company->name }}" class="avatar-img">
                         @if($company->featured ?? false)
                             <div class="featured-badge">
