@@ -408,7 +408,14 @@ function gs($key = null)
         $general = GeneralSetting::first();
         Cache::put('GeneralSetting', $general);
     }
-    if ($key) return @$general->$key;
+    if ($key) {
+        $value = @$general->$key;
+        // Decode JSON for specific config fields
+        if (in_array($key, ['mail_config', 'sms_config', 'socialite_credentials']) && is_string($value)) {
+            return json_decode($value);
+        }
+        return $value;
+    }
     return $general;
 }
 

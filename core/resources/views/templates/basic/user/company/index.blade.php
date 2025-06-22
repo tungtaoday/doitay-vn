@@ -4,80 +4,78 @@
         <div class="shape-one"></div>
         <div class="shape-two"></div>
         <div class="shape-three"></div>
-        <div class="container">
+        <div class="main-container">
             <!-- Header Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h2 class="text-white mb-2">
-                                <i class="las la-store me-2 text--base"></i>
-                                @lang('Thợ của tôi')
-                            </h2>
-                            <p class="text-white-50 mb-0">@lang('Quản lý và theo dõi thông tin thợ của bạn')</p>
-                        </div>
-                        <div>
-                            <a href="{{ route('user.company.create') }}" class="btn btn--base btn-create">
-                                <i class="las la-plus me-2"></i>
-                                @lang('Tạo thợ mới')
-                            </a>
-                        </div>
+            <div class="header-section">
+                <div class="header-content">
+                    <div class="header-info">
+                        <h2 class="header-title-force">
+                            <i class="las la-store me-2"></i>
+                            @lang('Thợ của tôi')
+                        </h2>
+                        <p class="header-subtitle-force">@lang('Quản lý và theo dõi thông tin thợ của bạn')</p>
+                    </div>
+                    <div class="header-actions">
+                        <a href="{{ route('user.company.create') }}" class="btn-create">
+                            <i class="las la-plus"></i>
+                            @lang('Tạo thợ mới')
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Filter & Search Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="filter-card">
-                        <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <div class="search-box">
-                                    <input type="text" id="searchInput" class="form-control search-input" placeholder="@lang('Tìm kiếm theo tên thợ...')" autocomplete="off">
-                                    <i class="las la-search search-icon"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="filter-buttons">
-                                    <button class="filter-btn active" data-filter="all">
-                                        <i class="las la-list"></i>
-                                        @lang('Tất cả') 
-                                        <span class="badge">{{ $companies->total() }}</span>
-                                    </button>
-                                    <button class="filter-btn" data-filter="approved">
-                                        <i class="las la-check-circle"></i>
-                                        @lang('Đã duyệt')
-                                    </button>
-                                    <button class="filter-btn" data-filter="pending">
-                                        <i class="las la-clock"></i>
-                                        @lang('Chờ duyệt')
-                                    </button>
-                                    <button class="filter-btn" data-filter="rejected">
-                                        <i class="las la-times-circle"></i>
-                                        @lang('Từ chối')
-                                    </button>
-                                </div>
-                                                </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                            </div>
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="search-section">
+                        <div class="search-container">
+                            <input type="text" id="searchInput" class="modern-search-input" placeholder="@lang('Tìm kiếm theo tên thợ...')" autocomplete="off">
+                            <i class="las la-search search-icon-modern"></i>
+                        </div>
+                    </div>
+                    <div class="filters-section">
+                        <button class="modern-filter-btn active" data-filter="all">
+                            <i class="las la-list"></i>
+                            @lang('Tất cả') 
+                            <span class="filter-badge">{{ $companies->total() }}</span>
+                        </button>
+                        <button class="modern-filter-btn" data-filter="approved">
+                            <i class="las la-check-circle"></i>
+                            @lang('Đã duyệt')
+                        </button>
+                        <button class="modern-filter-btn" data-filter="pending">
+                            <i class="las la-clock"></i>
+                            @lang('Chờ duyệt')
+                        </button>
+                        <button class="modern-filter-btn" data-filter="rejected">
+                            <i class="las la-times-circle"></i>
+                            @lang('Từ chối')
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <!-- Companies Grid -->
-            <div class="row" id="companiesGrid">
-                @forelse($companies as $company)
-                    <div class="col-lg-6 col-xl-4 mb-4 company-card" data-status="{{ $company->status }}">
-                        <div class="company-item">
-                            <div class="company-header">
-                                <div class="company-image">
-                                    <img src="{{ getImage(getFilePath('company') . '/' . ($company->image ?? 'default.png'), getFileSize('company')) }}" alt="{{ $company->name }}">
-                                    <div class="status-overlay">
-                                                @php echo $company->statusBadge @endphp
+            <div class="companies-grid-section">
+                <div class="companies-grid" id="companiesGrid">
+                    @forelse($companies as $company)
+                        <div class="modern-company-card company-card" data-status="{{ $company->status }}">
+                            <div class="modern-card-header">
+                                <div class="modern-image-container">
+                                    @if ($company->status == 1)
+                                        <a href="{{ route('company.details', [$company->id, slug($company->name)]) }}" class="image-link">
+                                            <img src="{{ getImage(getFilePath('company') . '/' . ($company->image ?? 'default.png'), getFileSize('company')) }}" alt="{{ $company->name }}" class="modern-company-image">
+                                        </a>
+                                    @else
+                                        <img src="{{ getImage(getFilePath('company') . '/' . ($company->image ?? 'default.png'), getFileSize('company')) }}" alt="{{ $company->name }}" class="modern-company-image">
+                                    @endif
+                                    <div class="modern-status-badge">
+                                        @php echo $company->statusBadge @endphp
                                     </div>
                                 </div>
-                                <div class="company-actions">
-                                    @if ($company->status == 1)
-                                        <button class="action-btn action-btn-primary infoScript" data-bs-toggle="modal" 
+                                <div class="modern-actions">
+                                    <!-- @if ($company->status == 1)
+                                        <button class="modern-action-btn primary infoScript" data-bs-toggle="modal" 
                                             title="@lang('Mã nhúng đánh giá')" data-bs-target="#scriptModal" 
                                             data-name="{{ $company->name }}" data-id="{{ $company->id }}"
                                             data-sitename="{{ gs('site_name') }}" 
@@ -85,101 +83,99 @@
                                             data-redirectURL="{{ route('company.details', [$company->id, slug($company->name)]) }}">
                                             <i class="las la-code"></i>
                                         </button>
-                                    @endif
-                                    <a href="{{ route('user.company.edit', $company->id) }}" class="action-btn action-btn-warning" title="@lang('Chỉnh sửa')">
+                                    @endif -->
+                                    <a href="{{ route('user.company.edit', $company->id) }}" class="modern-action-btn warning" title="@lang('Chỉnh sửa')">
                                         <i class="las la-edit"></i>
                                     </a>
-                                    @if ($company->admin_feedback)
-                                        <button class="action-btn action-btn-info feedback" data-bs-toggle="modal"
+                                    <!-- @if ($company->admin_feedback)
+                                        <button class="modern-action-btn info feedback" data-bs-toggle="modal"
                                             data-bs-target="#companyFeedBackModal" title="@lang('Phản hồi từ admin')"
-                                                        data-feedback="{{ $company->admin_feedback }}">
+                                            data-feedback="{{ $company->admin_feedback }}">
                                             <i class="las la-comment-dots"></i>
-                                                    </button>
-                                                @endif
-                                            </div>
+                                        </button>
+                                    @endif -->
+                                </div>
                             </div>
                             
-                            <div class="company-body">
-                                <div class="company-title">
-                                                @if ($company->status == 1)
-                                        <a href="{{ route('company.details', [$company->id, $company->name]) }}" class="title-link">
+                            <div class="modern-card-body">
+                                <div class="modern-company-title">
+                                    @if ($company->status == 1)
+                                        <a href="{{ route('company.details', [$company->id, $company->name]) }}" class="modern-title-link">
                                             {{ $company->name }}
                                         </a>
                                     @else
-                                        <span class="title-text">{{ $company->name }}</span>
+                                        <span class="modern-title-text">{{ $company->name }}</span>
                                     @endif
-                                    <div class="category-badge">
+                                    <div class="modern-category-badge">
                                         <i class="las la-tag"></i>
                                         {{ $company->category->name ?? 'N/A' }}
                                     </div>
                                 </div>
                                 
-                                <div class="company-meta">
-                                    <div class="meta-item">
-                                        <i class="las la-map-marker-alt"></i>
-                                        <span>{{ Str::limit($company->address, 30) }}</span>
+                                <div class="modern-company-meta">
+                                    <div class="modern-meta-item">
+                                        <i class="las la-map-marker-alt modern-meta-icon"></i>
+                                        <span>{{ Str::limit($company->address, 40) }}</span>
                                     </div>
-                                    <div class="meta-item">
-                                        <i class="las la-phone"></i>
+                                    <div class="modern-meta-item">
+                                        <i class="las la-phone modern-meta-icon"></i>
                                         <span>{{ $company->phone ?: 'Chưa cập nhật' }}</span>
                                     </div>
-                                    <div class="meta-item">
-                                        <i class="las la-calendar"></i>
+                                    <div class="modern-meta-item">
+                                        <i class="las la-calendar modern-meta-icon"></i>
                                         <span>{{ $company->created_at->format('d/m/Y') }}</span>
                                     </div>
                                 </div>
 
-                                <div class="rating-section">
+                                <div class="modern-rating-section">
                                     <div class="rating-stars">
                                         @php echo avgRating($company->avg_rating); @endphp
                                     </div>
-                                    <div class="rating-info">
-                                        <span class="rating-score">{{ number_format($company->avg_rating, 1) }}</span>
-                                        <span class="rating-count">({{ $company->reviews_count }} đánh giá)</span>
+                                    <div class="modern-rating-info">
+                                        <span class="modern-rating-score">{{ number_format($company->avg_rating, 1) }}</span>
+                                        <span class="modern-rating-count">({{ $company->reviews_count }} đánh giá)</span>
                                     </div>
                                 </div>
 
                                 @if($company->experience)
-                                    <div class="experience-badge">
+                                    <div class="modern-experience-badge">
                                         <i class="las la-medal"></i>
                                         {{ $company->experience }} năm kinh nghiệm
                                     </div>
-                                                @endif
+                                @endif
                             </div>
 
-                            <div class="company-footer">
-                                <div class="stats-grid">
-                                    <div class="stat-item">
-                                        <span class="stat-value">0</span>
-                                        <span class="stat-label">Dự án</span>
+                            <div class="modern-card-footer">
+                                <div class="modern-stats-grid">
+                                    <div class="modern-stat-item">
+                                        <span class="modern-stat-value">0</span>
+                                        <span class="modern-stat-label">Dự án</span>
                                     </div>
-                                    <div class="stat-item">
-                                        <span class="stat-value">{{ $company->reviews_count }}</span>
-                                        <span class="stat-label">Đánh giá</span>
+                                    <div class="modern-stat-item">
+                                        <span class="modern-stat-value">{{ $company->reviews_count }}</span>
+                                        <span class="modern-stat-label">Đánh giá</span>
                                     </div>
-                                    <div class="stat-item">
-                                        <span class="stat-value">0</span>
-                                        <span class="stat-label">Lượt xem</span>
+                                    <div class="modern-stat-item">
+                                        <span class="modern-stat-value">0</span>
+                                        <span class="modern-stat-label">Lượt xem</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                                            </div>
-                                @empty
-                    <div class="col-12">
-                                            <div class="empty-state">
-                            <div class="empty-icon">
+                    @empty
+                        <div class="modern-empty-state">
+                            <div class="modern-empty-icon">
                                 <i class="las la-store"></i>
                             </div>
-                            <h3>@lang('Chưa có thợ nào')</h3>
-                            <p>@lang('Bạn chưa tạo thông tin thợ nào. Hãy tạo thợ đầu tiên để bắt đầu nhận việc!')</p>
-                            <a href="{{ route('user.company.create') }}" class="btn btn--base btn-lg">
-                                <i class="las la-plus me-2"></i>
+                            <h3 class="modern-empty-title">@lang('Chưa có thợ nào')</h3>
+                            <p class="modern-empty-description">@lang('Bạn chưa tạo thông tin thợ nào. Hãy tạo thợ đầu tiên để bắt đầu nhận việc!')</p>
+                            <a href="{{ route('user.company.create') }}" class="btn-create">
+                                <i class="las la-plus"></i>
                                 @lang('Tạo thợ đầu tiên')
                             </a>
-                                            </div>
-                    </div>
-                @endforelse
+                        </div>
+                    @endforelse
+                </div>
             </div>
 
             <!-- Pagination -->
@@ -251,6 +247,7 @@
     --danger-color: #ef4444;
     --info-color: #06b6d4;
     --dark-color: #1f2937;
+    --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
     --gray-200: #e5e7eb;
     --gray-300: #d1d5db;
@@ -262,460 +259,707 @@
     --gray-900: #111827;
 }
 
-/* Header Styles */
-.btn-create {
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.btn-create:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-}
-
-/* Filter Card */
-.filter-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Search Box */
-.search-box {
+/* MODERN CONTAINER SYSTEM */
+.contact-section {
+    padding: 2rem 0 4rem 0 !important;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     position: relative;
+    overflow: hidden;
 }
 
-.search-input {
-    padding: 12px 16px 12px 45px;
-    border: 2px solid var(--gray-200);
-    border-radius: 12px;
-    background: white;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-.search-input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-    outline: none;
-}
-
-.search-icon {
+.contact-section::before {
+    content: '';
     position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gray-400);
-    font-size: 18px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
 }
 
-/* Filter Buttons */
-.filter-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-.filter-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border: 2px solid var(--gray-200);
-    background: white;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.filter-btn:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-.filter-btn.active {
-    border-color: var(--primary-color);
-    background: var(--primary-color);
-    color: white;
-}
-
-.filter-btn .badge {
-    background: rgba(255, 255, 255, 0.2);
-    color: inherit;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-}
-
-/* Company Cards */
-.company-item {
-    background: white;
-    border-radius: 16px;
-        overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.company-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-}
-
-/* Company Header */
-.company-header {
+.main-container {
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
     position: relative;
-    height: 200px;
-        overflow: hidden;
-    }
+    z-index: 1;
+}
 
-.company-image {
+/* MODERN CONTAINER SYSTEM */
+.contact-section {
+    padding: 2rem 0 4rem 0 !important;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     position: relative;
-    width: 100%;
-    height: 100%;
+    overflow: hidden;
 }
 
-.company-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.company-item:hover .company-image img {
-    transform: scale(1.05);
-}
-
-.status-overlay {
+.contact-section::before {
+    content: '';
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
 }
 
-.company-actions {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
+.main-container {
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
+    position: relative;
+    z-index: 1;
 }
 
-.company-item:hover .company-actions {
-    opacity: 1;
-    transform: translateY(0);
+/* ELEGANT HEADER SECTION */
+.header-section {
+    background: #102f4b !important;
+    backdrop-filter: blur(20px) !important;
+    border-radius: 20px !important;
+    padding: 2.5rem !important;
+    margin-bottom: 2.5rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important; */
 }
 
-.action-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+.header-content {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 1.5rem !important;
 }
 
-.action-btn-primary { background: var(--primary-color); }
-.action-btn-warning { background: var(--warning-color); }
-.action-btn-info { background: var(--info-color); }
-
-.action-btn:hover {
-    transform: scale(1.1);
+.header-info h2.header-title-force {
+    color: #ffffff !important;
+    font-size: 2.25rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 0.75rem !important;
+    /* text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8) !important;
+    background: rgba(0, 0, 0, 0.5) !important; */
+    padding: 12px 20px !important;
+    border-radius: 12px !important;
+    display: inline-block !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Company Body */
-.company-body {
-    padding: 20px;
-        flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.header-info p.header-subtitle-force {
+    color: #ffffff !important;
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8) !important;
+    /* background: rgba(0, 0, 0, 0.4) !important; */
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    display: inline-block !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
-.company-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
+.header-actions .btn-create {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
 }
 
-.title-link {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--dark-color);
-    text-decoration: none;
-    line-height: 1.3;
-    transition: color 0.3s ease;
+.header-actions .btn-create:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+    color: white !important;
 }
 
-.title-link:hover {
-    color: var(--primary-color);
+/* MODERN FILTER SECTION */
+.filter-section {
+    background: white !important;
+    border-radius: 20px !important;
+    padding: 2rem !important;
+    margin-bottom: 2.5rem !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid #f1f5f9 !important;
 }
 
-.title-text {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--dark-color);
-    line-height: 1.3;
+.filter-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 1.5rem !important;
+    align-items: center !important;
 }
 
-.category-badge {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: var(--gray-100);
-    color: var(--gray-600);
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
+.search-section {
+    flex: 1 !important;
+    min-width: 300px !important;
 }
 
-/* Company Meta */
-.company-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.search-container {
+    position: relative !important;
+    width: 100% !important;
+}
+
+.modern-search-input {
+    width: 100% !important;
+    padding: 1rem 1rem 1rem 3rem !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    font-size: 1rem !important;
+    background: #f8fafc !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+}
+
+.modern-search-input:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    background: white !important;
+}
+
+.search-icon-modern {
+    position: absolute !important;
+    left: 1rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #64748b !important;
+    font-size: 1.25rem !important;
+    pointer-events: none !important;
+}
+
+.filters-section {
+    display: flex !important;
+    gap: 0.75rem !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+.modern-filter-btn {
+    padding: 0.75rem 1.25rem !important;
+    border: 2px solid #e2e8f0 !important;
+    background: white !important;
+    border-radius: 10px !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    font-size: 0.875rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    white-space: nowrap !important;
+}
+
+.modern-filter-btn:hover {
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important;
+}
+
+.modern-filter-btn.active {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.filter-badge {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: inherit !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 6px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+
+.modern-filter-btn.active .filter-badge {
+    background: rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+}
+
+/* BEAUTIFUL COMPANIES GRID - COMPACT DESIGN */
+.companies-grid-section {
+    background: transparent !important;
+    max-width: 1200px !important; /* Limit max width */
+    margin: 0 auto !important; /* Center the grid */
+    padding: 0 1rem !important; /* Add some padding */
+}
+
+.companies-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important; /* Smaller cards */
+    gap: 1.5rem !important; /* Reduced gap */
+    margin-bottom: 3rem !important;
+    max-width: 100% !important;
+}
+
+/* COMPACT COMPANY CARDS */
+.modern-company-card {
+    background: white !important;
+    border-radius: 16px !important; /* Slightly smaller radius */
+    overflow: hidden !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important; /* Softer shadow */
+    transition: all 0.3s ease !important;
+    border: 1px solid #e2e8f0 !important;
+    position: relative !important;
+    height: auto !important; /* Auto height for compact design */
+    display: flex !important;
+    flex-direction: column !important;
+    max-width: 400px !important; /* Limit card width */
+    margin: 0 auto !important; /* Center cards */
+}
+
+.modern-company-card:hover {
+    transform: translateY(-4px) !important; /* Reduced hover effect */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* COMPACT CARD HEADER */
+.modern-card-header {
+    position: relative !important;
+    height: 160px !important; /* Reduced height */
+    overflow: hidden !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+}
+
+.modern-image-container {
+    width: 100% !important;
+    height: 100% !important;
+    position: relative !important;
+}
+
+.image-link,
+.modern-image-container {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+}
+
+.modern-company-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: transform 0.4s ease !important;
+}
+
+.modern-company-card:hover .modern-company-image {
+    transform: scale(1.05) !important;
+}
+
+.modern-status-badge {
+    position: absolute !important;
+    top: 1rem !important;
+    left: 1rem !important;
+    z-index: 2 !important;
+}
+
+/* SOPHISTICATED ACTION BUTTONS */
+.modern-actions {
+    position: absolute !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    display: flex !important;
+    gap: 0.5rem !important;
+    opacity: 0 !important;
+    transform: translateY(-10px) !important;
+    transition: all 0.3s ease !important;
+    z-index: 3 !important;
+}
+
+.modern-company-card:hover .modern-actions {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+.modern-action-btn {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+    border: 2px solid rgba(255, 255, 255, 0.9) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 18px !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.modern-action-btn.primary { background: #3b82f6 !important; }
+.modern-action-btn.warning { background: #f59e0b !important; }
+.modern-action-btn.info { background: #06b6d4 !important; }
+
+.modern-action-btn:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+    border-color: white !important;
+    color: white !important;
+}
+
+/* COMPACT CARD BODY */
+.modern-card-body {
+    padding: 1.25rem !important; /* Reduced padding */
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important; /* Reduced gap */
+}
+
+.modern-company-title {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.modern-title-link,
+.modern-title-text {
+    font-size: 1.125rem !important; /* Slightly smaller */
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    text-decoration: none !important;
+    line-height: 1.3 !important;
+    flex: 1 !important;
+    margin: 0 !important;
+}
+
+.modern-title-link:hover {
+    color: var(--primary-color) !important;
+}
+
+.modern-category-badge {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0) !important;
+    color: #475569 !important;
+    padding: 0.375rem 0.625rem !important; /* Smaller padding */
+    border-radius: 6px !important;
+    font-size: 0.7rem !important; /* Smaller font */
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.25rem !important;
+    flex-shrink: 0 !important;
+}
+
+.modern-company-meta {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important; /* Reduced gap */
+}
+
+.modern-meta-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    color: #64748b !important;
+    font-size: 0.8rem !important; /* Smaller font */
+}
+
+.modern-meta-icon {
+    color: #94a3b8 !important;
+    font-size: 1rem !important;
+    width: 18px !important;
+    flex-shrink: 0 !important;
+}
+
+.modern-rating-section {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9) !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0.75rem !important; /* Reduced padding */
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.modern-rating-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+}
+
+.modern-rating-score {
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+    color: #f59e0b !important;
+}
+
+.modern-rating-count {
+    color: #64748b !important;
+    font-size: 0.875rem !important;
+}
+
+.modern-experience-badge {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+    color: white !important;
+    padding: 0.375rem 0.75rem !important; /* Smaller padding */
+    border-radius: 16px !important;
+    font-size: 0.7rem !important; /* Smaller font */
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.375rem !important;
+    align-self: flex-start !important;
+}
+
+/* COMPACT CARD FOOTER */
+.modern-card-footer {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9) !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 1rem 1.25rem !important; /* Reduced padding */
+    margin-top: auto !important;
+}
+
+.modern-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1rem !important; /* Reduced gap */
+}
+
+.modern-stat-item {
+    text-align: center !important;
+}
+
+.modern-stat-value {
+    display: block !important;
+    font-size: 1.25rem !important; /* Smaller font */
+    font-weight: 700 !important;
+    color: #3b82f6 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.modern-stat-label {
+    font-size: 0.7rem !important; /* Smaller font */
+    color: #64748b !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* BEAUTIFUL EMPTY STATE */
+.modern-empty-state {
+    text-align: center !important;
+    padding: 4rem 2rem !important;
+    background: white !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid #f1f5f9 !important;
+}
+
+.modern-empty-icon {
+    width: 120px !important;
+    height: 120px !important;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto 2rem !important;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3) !important;
+}
+
+.modern-empty-icon i {
+    font-size: 3rem !important;
+    color: white !important;
+}
+
+.modern-empty-title {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    margin-bottom: 1rem !important;
+}
+
+.modern-empty-description {
+    color: #64748b !important;
+    margin-bottom: 2rem !important;
+    max-width: 400px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    line-height: 1.6 !important;
+}
+
+/* RESPONSIVE DESIGN - COMPACT */
+@media (max-width: 1024px) {
+    .main-container {
+        padding: 0 1.5rem !important;
     }
-
-.meta-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.meta-item i {
-    color: var(--gray-400);
-    width: 16px;
-}
-
-/* Rating Section */
-.rating-section {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px;
-    background: var(--gray-100);
-    border-radius: 8px;
-}
-
-.rating-info {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.rating-score {
-    font-weight: 700;
-    color: var(--warning-color);
-}
-
-.rating-count {
-    color: var(--gray-500);
-    font-size: 12px;
-}
-
-/* Experience Badge */
-.experience-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: linear-gradient(135deg, var(--warning-color), #fbbf24);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-        font-weight: 600;
-    align-self: flex-start;
-}
-
-/* Company Footer */
-.company-footer {
-    padding: 16px 20px;
-    background: var(--gray-100);
-    border-top: 1px solid var(--gray-200);
+    
+    .companies-grid-section {
+        max-width: 100% !important;
+        padding: 0 0.5rem !important;
     }
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-}
-
-.stat-item {
-    text-align: center;
+    
+    .companies-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+        gap: 1.25rem !important;
     }
-
-.stat-value {
-    display: block;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--dark-color);
-}
-
-.stat-label {
-    display: block;
-    font-size: 12px;
-    color: var(--gray-500);
-    margin-top: 2px;
-}
-
-/* Empty State */
-    .empty-state {
-        text-align: center;
-    padding: 60px 20px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-}
-
-.empty-icon {
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-}
-
-.empty-icon i {
-    font-size: 48px;
-        color: white;
+    
+    .modern-company-card {
+        max-width: 350px !important;
     }
-
-.empty-state h3 {
-    color: var(--dark-color);
-    margin-bottom: 12px;
-    }
-
-.empty-state p {
-    color: var(--gray-600);
-    margin-bottom: 24px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-/* Pagination */
-.pagination-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
-}
-
-/* Advertisement */
-.advertisement-section {
-    text-align: center;
-    margin-top: 40px;
-        }
-
-/* Modal Improvements */
-.modal-content {
-    border-radius: 16px;
-    border: none;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-}
-
-.modal-header {
-    border-bottom: 1px solid var(--gray-200);
-    padding: 20px 24px;
-}
-
-.modal-body {
-    padding: 24px;
-        }
-
-.modal-footer {
-    border-top: 1px solid var(--gray-200);
-    padding: 16px 24px;
-}
-
-.feedback-content {
-    background: var(--gray-100);
-    border-radius: 8px;
-    padding: 16px;
-    font-style: italic;
-    color: var(--gray-700);
-}
-
-.code-container {
-    background: var(--gray-100);
-    border-radius: 8px;
-    padding: 16px;
-}
-
-.companyScript {
-    background: #1f2937;
-    color: #e5e7eb;
-    padding: 16px;
-            border-radius: 8px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    line-height: 1.4;
-    word-break: break-all;
-    white-space: pre-wrap;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-    .filter-buttons {
-        justify-content: flex-start;
-        margin-top: 16px;
+    .main-container {
+        padding: 0 1rem !important;
     }
     
-    .filter-btn {
-        font-size: 14px;
-        padding: 6px 12px;
+    .header-section {
+        padding: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
     }
     
-    .company-actions {
-        opacity: 1;
-        transform: translateY(0);
+    .header-content {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        text-align: center !important;
     }
     
-    .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        }
+    .header-info h2.header-title-force {
+        font-size: 1.75rem !important; /* Smaller on mobile */
+        padding: 8px 16px !important;
+    }
     
-    .stat-value {
-        font-size: 16px;
+    .header-info p.header-subtitle-force {
+        font-size: 1rem !important; /* Smaller on mobile */
+        padding: 6px 12px !important;
+    }
+    
+    .filter-section {
+        padding: 1.25rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .filter-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1rem !important;
+    }
+    
+    .search-section {
+        min-width: auto !important;
+    }
+    
+    .filters-section {
+        justify-content: center !important;
+    }
+    
+    .companies-grid-section {
+        padding: 0 !important;
+    }
+    
+    .companies-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    .modern-company-card {
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    .modern-actions {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        position: static !important;
+        justify-content: center !important;
+        margin-top: 1rem !important;
+    }
+    
+    .modern-card-header {
+        height: 140px !important;
+    }
+    
+    .modern-company-title {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+    }
+    
+    .modern-stats-grid {
+        gap: 0.75rem !important;
+    }
+    
+    .modern-stat-value {
+        font-size: 1.125rem !important;
+    }
+    
+    .modern-stat-label {
+        font-size: 0.65rem !important;
     }
 }
 
-/* Animation Classes */
-.company-card {
-    animation: fadeInUp 0.5s ease-out;
+@media (max-width: 480px) {
+    .header-section {
+        padding: 1rem !important;
+        border-radius: 16px !important;
+    }
+    
+    .header-info h2.header-title-force {
+        font-size: 1.5rem !important;
+        padding: 6px 12px !important;
+    }
+    
+    .header-info p.header-subtitle-force {
+        font-size: 0.9rem !important;
+        padding: 4px 8px !important;
+    }
+    
+    .filter-section {
+        padding: 1rem !important;
+        border-radius: 16px !important;
+    }
+    
+    .modern-card-body {
+        padding: 1rem !important;
+    }
+    
+    .modern-card-footer {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .filters-section {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .modern-filter-btn {
+        justify-content: center !important;
+        padding: 0.625rem 1rem !important;
+    }
+    
+    .modern-company-card {
+        border-radius: 12px !important;
+    }
+    
+    .modern-card-header {
+        height: 120px !important;
+    }
 }
 
-.company-card:nth-child(2) { animation-delay: 0.1s; }
-.company-card:nth-child(3) { animation-delay: 0.2s; }
-.company-card:nth-child(4) { animation-delay: 0.3s; }
-
-@keyframes fadeInUp {
+/* SMOOTH ANIMATIONS */
+@keyframes slideInUp {
     from {
         opacity: 0;
         transform: translateY(30px);
@@ -726,13 +970,16 @@
     }
 }
 
-/* Status Badges Custom Styles */
-.badge {
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: 600;
-    }
+.modern-company-card {
+    animation: slideInUp 0.6s ease-out;
+}
+
+.modern-company-card:nth-child(1) { animation-delay: 0.1s; }
+.modern-company-card:nth-child(2) { animation-delay: 0.2s; }
+.modern-company-card:nth-child(3) { animation-delay: 0.3s; }
+.modern-company-card:nth-child(4) { animation-delay: 0.4s; }
+.modern-company-card:nth-child(5) { animation-delay: 0.5s; }
+.modern-company-card:nth-child(6) { animation-delay: 0.6s; }
 </style>
 @endpush
 
@@ -744,7 +991,7 @@
     $('#searchInput').on('input', function() {
         const searchTerm = $(this).val().toLowerCase();
         $('.company-card').each(function() {
-            const companyName = $(this).find('.title-link, .title-text').text().toLowerCase();
+            const companyName = $(this).find('.modern-title-link, .modern-title-text').text().toLowerCase();
             if (companyName.includes(searchTerm)) {
                 $(this).show().addClass('animate__animated animate__fadeIn');
             } else {
@@ -754,8 +1001,8 @@
     });
 
     // Filter functionality
-    $('.filter-btn').on('click', function() {
-        $('.filter-btn').removeClass('active');
+    $('.modern-filter-btn').on('click', function() {
+        $('.modern-filter-btn').removeClass('active');
         $(this).addClass('active');
         
         const filter = $(this).data('filter');

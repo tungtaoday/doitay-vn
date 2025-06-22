@@ -69,7 +69,7 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label>@lang('Subject')</label>
-                                    <input type="text" class="form-control form-control-lg" placeholder="@lang('Email subject')" name="subject" value="{{ $template->subj }}" required/>
+                                    <input type="text" class="form-control form-control-lg" placeholder="@lang('Email subject')" name="subject" value="{{ $template->subject }}" required/>
                                 </div>
                             </div>
                             <div class="col-md-4">

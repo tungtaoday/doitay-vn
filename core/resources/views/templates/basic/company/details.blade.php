@@ -316,20 +316,35 @@
                                 </h2>
                                 
                                 <div class="photo-gallery">
-                                    <div class="main-photo">
-                                        <img src="{{ getImage(getFilePath('company') . '/' . $company->image) }}" 
-                                             alt="{{ $company->name }}" class="gallery-main-image">
-                                    </div>
-                                    
-                                    <div class="photo-grid">
-                                        <!-- Sample photos - you can replace with actual portfolio images -->
-                                        @for($i = 1; $i <= 8; $i++)
-                                            <div class="photo-item">
-                                                <img src="{{ getImage(getFilePath('company') . '/' . $company->image) }}" 
-                                                     alt="Dự án {{ $i }}" class="gallery-image">
+                                    @if($company->portfolios->count() > 0)
+                                        <div class="main-photo">
+                                            <img src="{{ getImage(getFilePath('portfolio') . '/' . $company->portfolios->first()->image) }}" 
+                                                 alt="{{ $company->portfolios->first()->title }}" class="gallery-main-image">
+                                        </div>
+                                        
+                                        <div class="photo-grid">
+                                            @foreach($company->portfolios->take(8) as $portfolio)
+                                                <div class="photo-item">
+                                                    <img src="{{ getImage(getFilePath('portfolio') . '/' . $portfolio->image) }}" 
+                                                         alt="{{ $portfolio->title }}" class="gallery-image"
+                                                         title="{{ $portfolio->title }}">
+                                                    @if($portfolio->title)
+                                                        <div class="photo-overlay">
+                                                            <span class="photo-title">{{ $portfolio->title }}</span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="no-portfolio-message">
+                                            <div class="no-portfolio-icon">
+                                                <i class="las la-images"></i>
                                             </div>
-                                        @endfor
-                                    </div>
+                                            <h4>Chưa có dự án nào</h4>
+                                            <p>{{ $company->name }} chưa tải lên hình ảnh dự án nào.</p>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -741,6 +756,8 @@
     align-items: center;
     gap: 4px;
     box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    z-index: 10;
 }
 
 .contractor-details {
@@ -1357,6 +1374,69 @@
     transform: scale(1.05);
 }
 
+/* Photo Overlay */
+.photo-item {
+    position: relative;
+}
+
+.photo-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    padding: 12px 8px 8px;
+    opacity: 0;
+    transition: var(--transition-normal);
+}
+
+.photo-item:hover .photo-overlay {
+    opacity: 1;
+}
+
+.photo-title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    display: block;
+}
+
+/* No Portfolio Message */
+.no-portfolio-message {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border: 2px dashed var(--gray-300);
+}
+
+.no-portfolio-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: var(--gray-200);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-400);
+    font-size: 2.5rem;
+}
+
+.no-portfolio-message h4 {
+    color: var(--gray-600);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.no-portfolio-message p {
+    color: var(--gray-500);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
 /* === SIDEBAR === */
 .profile-sidebar {
     display: flex;
@@ -1588,6 +1668,15 @@
         height: 80px;
     }
     
+    .status-badge {
+        bottom: -6px;
+        right: -6px;
+        padding: 5px 10px;
+        font-size: 11px;
+        border-radius: 16px;
+        transform: scale(0.9);
+    }
+    
     .contractor-avatar-section {
         gap: 16px;
         margin-bottom: 24px;
@@ -1660,6 +1749,15 @@
     .contractor-avatar {
         width: 90px;
         height: 90px;
+    }
+    
+    .status-badge {
+        bottom: -4px;
+        right: -4px;
+        padding: 4px 8px;
+        font-size: 10px;
+        border-radius: 12px;
+        transform: scale(0.85);
     }
     
     .contractor-meta {

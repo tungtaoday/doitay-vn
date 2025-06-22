@@ -41,16 +41,23 @@ class Email extends NotifyProcess implements Notifiable{
 		//get message from parent
 		$message = $this->getMessage();
 		if (gs('en') && $message) {
-			//Send mail
-			$methodName = gs('mail_config')->name;
-			$method = $this->mailMethods($methodName);
-			try{
-				$this->$method();
-				$this->createLog('email');
-			}catch(\Exception $e){
-				$this->createErrorLog($e->getMessage());
-				session()->flash('mail_error',$e->getMessage());
-			}
+							//Send mail
+		$mailConfig = gs('mail_config');
+		if (!$mailConfig || !isset($mailConfig->name)) {
+			throw new Exception('Invalid mail configuration');
+		}
+		$methodName = $mailConfig->name;
+		$method = $this->mailMethods($methodName);
+		if (!$method) {
+			throw new Exception('Mail method not found: ' . $methodName);
+		}
+		try{
+			$this->$method();
+			$this->createLog('email');
+		}catch(\Exception $e){
+			$this->createErrorLog($e->getMessage());
+			session()->flash('mail_error',$e->getMessage());
+		}
 		}
 
 	}
@@ -67,7 +74,7 @@ class Email extends NotifyProcess implements Notifiable{
 			'sendgrid'=>'sendSendGridMail',
 			'mailjet'=>'sendMailjetMail',
 		];
-		return $methods[$name];
+		return $methods[$name] ?? null;
 	}
 
 	protected function sendPhpMail(){

@@ -428,7 +428,7 @@ class SiteController extends Controller
 
     public function companyDetails(Request $request, $id, $slug)
     {
-        $company = Company::where('id', $id)->approved()->firstOrFail();
+        $company = Company::where('id', $id)->approved()->with('portfolios')->firstOrFail();
 
         $ratings = Rating::where('company_id', $company->id)->with('user', 'company')->where('status', 1)->latest()->take(20)->get();
 

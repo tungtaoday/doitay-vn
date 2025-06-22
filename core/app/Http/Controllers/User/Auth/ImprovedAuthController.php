@@ -470,8 +470,37 @@ class ImprovedAuthController extends Controller
         $adminNotification->click_url = urlPath('admin.users.detail', $user->id);
         $adminNotification->save();
 
-        // Queue welcome email
-        // dispatch(new SendWelcomeEmailJob($user));
+        // Send welcome email to user
+        try {
+            notify($user, 'USER_WELCOME', [
+                'fullname' => $user->fullname,
+                'site' => gs('site_name'),
+                'login_url' => route('user.login')
+            ]);
+            
+            // Debug log
+            file_put_contents('improved_auth_debug.log', "[" . date('Y-m-d H:i:s') . "] Welcome email sent successfully to: " . $user->email . "\n", FILE_APPEND);
+        } catch (\Exception $e) {
+            // Log error but don't fail registration
+            Log::error('Failed to send welcome email: ' . $e->getMessage());
+            file_put_contents('improved_auth_debug.log', "[" . date('Y-m-d H:i:s') . "] ERROR sending welcome email: " . $e->getMessage() . "\n", FILE_APPEND);
+        }
+
+        // Send admin notification email
+        try {
+            $admin = \App\Models\Admin::first();
+            if ($admin) {
+                notify($admin, 'ADMIN_NEW_USER', [
+                    'fullname' => $user->fullname,
+                    'email' => $user->email,
+                    'date' => now()->format('d/m/Y H:i:s'),
+                    'ip' => request()->ip(),
+                    'user_url' => url('/admin/users/detail/' . $user->id)
+                ], ['email']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to send admin notification: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -89,7 +89,7 @@
                             </div>
                             <div class="contact-item">
                                 <i class="las la-phone"></i>
-                                <span>{{ gs('phone') ?? '+84 901 234 567' }}</span>
+                                <span>{{ gs('phone') ?? '+84 972 585 990' }}</span>
                             </div>
                             <div class="contact-item">
                                 <i class="las la-envelope"></i>

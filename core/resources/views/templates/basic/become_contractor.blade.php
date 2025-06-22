@@ -209,9 +209,9 @@
                         <div class="registration-container text-center">
                             <div class="alert alert-success bg-white text-dark rounded-4 p-4 mb-4">
                                 <i class="las la-check-circle text-success" style="font-size: 3rem;"></i>
-                                <h4 class="mt-3 mb-2">Hồ sơ thợ đã tồn tại</h4>
-                                <p class="mb-3">Bạn đã có hồ sơ thợ với tên: <strong>{{ $existingCompany->name }}</strong></p>
-                                <p class="text-muted mb-4">
+                                <h4 class="text-white mt-3 mb-2">Hồ sơ thợ đã tồn tại</h4>
+                                <p class="text-white mb-3">Bạn đã có hồ sơ thợ với tên: <strong>{{ $existingCompany->name }}</strong></p>
+                                <p class="text-white mb-4">
                                     Trạng thái: 
                                     @if($existingCompany->status == 1)
                                         <span class="badge bg-success">Đã phê duyệt</span>
@@ -289,7 +289,7 @@
             <div class="col-lg-4 mb-4">
                 <div class="story-card">
                     <div class="story-avatar">
-                        <img src="{{ asset('assets/images/avatar-placeholder.png') }}" alt="Anh Minh">
+                        <img src="{{ asset('assets/images/frontend/success_stories/6354dee02fa141666506464.jpg') }}" alt="Anh Minh">
                     </div>
                     <h5>Anh Minh - Thợ điện</h5>
                     <div class="story-stats">
@@ -313,7 +313,7 @@
             <div class="col-lg-4 mb-4">
                 <div class="story-card">
                     <div class="story-avatar">
-                        <img src="{{ asset('assets/images/avatar-placeholder.png') }}" alt="Chị Lan">
+                        <img src="{{ asset('assets/images/frontend/success_stories/6354df261f44e1666506534.jpg') }}" alt="Chị Lan">
                     </div>
                     <h5>Chị Lan - Thợ trang trí</h5>
                     <div class="story-stats">

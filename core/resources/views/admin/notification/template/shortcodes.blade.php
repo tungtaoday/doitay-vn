@@ -11,22 +11,46 @@
                         </tr>
                         </thead>
                         <tbody class="list">
-                            @foreach($template->shortcodes as $shortcode => $key)
-                            <tr>
-                                {{-- blade-formatter-disable --}}
-                                <td><span class="short-codes">@php echo "{{". $shortcode ."}}"  @endphp</span></td>
-                                {{-- blade-formatter-enable --}}
-                                <td>{{ __($key) }}</td>
-                            </tr>
-                            @endforeach
-                            @foreach(gs('global_shortcodes') as $shortCode => $codeDetails)
-                            <tr>
-                                {{-- blade-formatter-disable --}}
-                                <td><span class="short-codes">@{{@php echo $shortCode @endphp}}</span></td>
-                                {{-- blade-formatter-enable --}}
-                                <td>{{ __($codeDetails) }}</td>
-                            </tr>
-                            @endforeach
+                            @php
+                                $templateShortcodes = $template->shortcodes;
+                                // Convert object to array if needed
+                                if (is_object($templateShortcodes)) {
+                                    $templateShortcodes = (array) $templateShortcodes;
+                                } elseif (is_string($templateShortcodes)) {
+                                    $templateShortcodes = json_decode($templateShortcodes, true);
+                                }
+                                $templateShortcodes = $templateShortcodes ?: [];
+                                
+                                $globalShortcodes = gs('global_shortcodes');
+                                if (is_object($globalShortcodes)) {
+                                    $globalShortcodes = (array) $globalShortcodes;
+                                } elseif (is_string($globalShortcodes)) {
+                                    $globalShortcodes = json_decode($globalShortcodes, true);
+                                }
+                                $globalShortcodes = $globalShortcodes ?: [];
+                            @endphp
+                            
+                            @if($templateShortcodes && is_array($templateShortcodes))
+                                @foreach($templateShortcodes as $shortcode => $key)
+                                <tr>
+                                    {{-- blade-formatter-disable --}}
+                                    <td><span class="short-codes">@php echo "{{". $shortcode ."}}"  @endphp</span></td>
+                                    {{-- blade-formatter-enable --}}
+                                    <td>{{ __($key) }}</td>
+                                </tr>
+                                @endforeach
+                            @endif
+                            
+                            @if($globalShortcodes && is_array($globalShortcodes))
+                                @foreach($globalShortcodes as $shortCode => $codeDetails)
+                                <tr>
+                                    {{-- blade-formatter-disable --}}
+                                    <td><span class="short-codes">@{{@php echo $shortCode @endphp}}</span></td>
+                                    {{-- blade-formatter-enable --}}
+                                    <td>{{ __($codeDetails) }}</td>
+                                </tr>
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>

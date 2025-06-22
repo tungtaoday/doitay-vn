@@ -104,6 +104,9 @@ class RegisterController extends Controller
 
     protected function create(array $data)
     {
+        // Debug log - user creation started
+        file_put_contents('registration_debug.log', "[" . date('Y-m-d H:i:s') . "] User creation started for: " . $data['email'] . "\n", FILE_APPEND);
+        
         //User Create
         $user            = new User();
         $user->email     = strtolower($data['email']);
@@ -122,10 +125,48 @@ class RegisterController extends Controller
         }
         
         $user->save();
+        
+        // Debug log - user saved
+        file_put_contents('registration_debug.log', "[" . date('Y-m-d H:i:s') . "] User saved with ID: " . $user->id . "\n", FILE_APPEND);
 
         // Process referral reward if applicable
         if ($user->referred_by) {
             $this->processReferralReward($user);
+        }
+
+        // Debug log - about to send email
+        file_put_contents('registration_debug.log', "[" . date('Y-m-d H:i:s') . "] About to send welcome email to: " . $user->email . "\n", FILE_APPEND);
+        
+        // Send welcome email to user
+        try {
+            notify($user, 'USER_WELCOME', [
+                'fullname' => $user->fullname,
+                'site' => gs('site_name'),
+                'login_url' => route('user.login')
+            ]);
+            
+            // Debug log
+            file_put_contents('registration_debug.log', "[" . date('Y-m-d H:i:s') . "] Welcome email sent successfully to: " . $user->email . "\n", FILE_APPEND);
+        } catch (\Exception $e) {
+            // Log error but don't fail registration
+            \Log::error('Failed to send welcome email: ' . $e->getMessage());
+            file_put_contents('registration_debug.log', "[" . date('Y-m-d H:i:s') . "] ERROR sending welcome email: " . $e->getMessage() . "\n", FILE_APPEND);
+        }
+
+        // Send admin notification email
+        try {
+            $admin = \App\Models\Admin::first();
+            if ($admin) {
+                notify($admin, 'ADMIN_NEW_USER', [
+                    'fullname' => $user->fullname,
+                    'email' => $user->email,
+                    'date' => now()->format('d/m/Y H:i:s'),
+                    'ip' => getRealIP(),
+                    'user_url' => url('/admin/users/detail/' . $user->id)
+                ], ['email']);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send admin notification: ' . $e->getMessage());
         }
 
         $adminNotification            = new AdminNotification();

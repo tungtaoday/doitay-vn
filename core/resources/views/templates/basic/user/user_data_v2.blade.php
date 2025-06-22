@@ -1028,8 +1028,8 @@ class UserDataFormV2 {
 
     async loadLocationData() {
         console.log('🏙️ Starting cities load...');
-        
-        const citySelect = document.getElementById('city');
+
+            const citySelect = document.getElementById('city');
         if (!citySelect) {
             console.error('❌ City select element not found!');
             return;

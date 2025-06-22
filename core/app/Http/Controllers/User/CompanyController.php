@@ -207,6 +207,44 @@ class CompanyController extends Controller
                 }
             }
 
+            // Send welcome email to company owner
+            try {
+                $category = \App\Models\Category::find($company->category_id);
+                
+                notify($company->user, 'COMPANY_CREATED', [
+                    'fullname' => $company->user->fullname,
+                    'company_name' => $company->name,
+                    'company_email' => $company->email,
+                    'category' => $category ? $category->name : 'N/A',
+                    'address' => $company->address,
+                    'site' => gs('site_name'),
+                    'dashboard_url' => route('user.home')
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send company creation email: ' . $e->getMessage());
+            }
+
+            // Send admin notification email
+            try {
+                $admin = \App\Models\Admin::first();
+                if ($admin) {
+                    $category = \App\Models\Category::find($company->category_id);
+                    
+                    notify($admin, 'ADMIN_NEW_COMPANY', [
+                        'company_name' => $company->name,
+                        'owner_name' => $company->user->fullname,
+                        'company_email' => $company->email,
+                        'category' => $category ? $category->name : 'N/A',
+                        'address' => $company->address,
+                        'date' => now()->format('d/m/Y H:i:s'),
+                        'company_url' => url('/admin/companies/detail/' . $company->id),
+                        'approve_url' => url('/admin/companies/approved/' . $company->id)
+                    ], ['email']);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Failed to send admin company notification: ' . $e->getMessage());
+            }
+
             DB::commit();
 
             $notify[] = ['success', '🎉 Chúc mừng! Hồ sơ thợ chuyên nghiệp đã được tạo thành công. Chúng tôi sẽ xem xét và phê duyệt trong vòng 24h.'];
