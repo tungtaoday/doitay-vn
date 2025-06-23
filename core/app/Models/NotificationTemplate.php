@@ -20,11 +20,49 @@ class NotificationTemplate extends Model
         'push_status',
         'email_sent_from_name',
         'email_sent_from_address',
-        'sms_sent_from'
+        'sms_sent_from',
+        'flow_type',
+        'flow_description',
+        'priority',
+        'is_scheduled',
+        'scheduled_at',
+        'recipient_criteria',
+        'sent_count',
+        'last_sent_at'
     ];
 
     protected $casts = [
-        'shortcodes' => 'object'
+        'shortcodes' => 'object',
+        'recipient_criteria' => 'array',
+        'is_scheduled' => 'boolean',
+        'scheduled_at' => 'datetime',
+        'last_sent_at' => 'datetime'
     ];
 
+    // Scopes for different flows
+    public function scopeAutoFlow($query)
+    {
+        return $query->where('flow_type', 'auto');
+    }
+
+    public function scopeMarketingFlow($query)
+    {
+        return $query->where('flow_type', 'marketing');
+    }
+
+    public function scopeSystemFlow($query)
+    {
+        return $query->where('flow_type', 'system');
+    }
+
+    public function scopeScheduled($query)
+    {
+        return $query->where('is_scheduled', true);
+    }
+
+    public function scopeReadyToSend($query)
+    {
+        return $query->where('is_scheduled', true)
+                    ->where('scheduled_at', '<=', now());
+    }
 }

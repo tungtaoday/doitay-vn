@@ -6,6 +6,7 @@ use App\Constants\Status;
 use App\Models\AdminNotification;
 use App\Models\NotificationLog;
 use App\Models\NotificationTemplate;
+use App\Services\EmailTemplateService;
 
 class NotifyProcess{
 
@@ -187,11 +188,26 @@ class NotifyProcess{
         //set subject to property
         $this->getSubject();
 
-
-        $this->finalMessage = $message;
+        // Apply professional email formatting for email notifications
+        if ($this->template && $this->body == 'email_body') {
+            try {
+                $userEmail = $user ? $user->email : $this->toAddress;
+                $processedEmail = EmailTemplateService::wrapWithProfessionalTemplate(
+                    $message, 
+                    $this->subject, 
+                    $userEmail
+                );
+                $this->finalMessage = $processedEmail;
+            } catch (\Exception $e) {
+                // Fallback to original message if professional template fails
+                $this->finalMessage = $message;
+            }
+        } else {
+            $this->finalMessage = $message;
+        }
 
         //return the final message
-	    return $message;
+	    return $this->finalMessage;
 	}
 
     /**
@@ -263,9 +279,16 @@ class NotifyProcess{
 			$notifyConfig = $this->notifyConfig;
 			$config = gs($notifyConfig);
 			$notificationLog = new NotificationLog();
+            
+            // Handle different user types
             if (@$this->user->id) {
-                $notificationLog->$userColumn = $this->user->id;
+                if (get_class($this->user) === 'App\Models\Admin') {
+                    $notificationLog->admin_id = $this->user->id;
+                } else {
+                    $notificationLog->user_id = $this->user->id;
             }
+            }
+            
 		    $notificationLog->notification_type = $type;
 		    $notificationLog->sender = @$config->name ?? 'firebase';
 		    $notificationLog->sent_from = $this->sentFrom;

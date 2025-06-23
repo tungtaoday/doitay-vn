@@ -120,6 +120,18 @@ Route::middleware('admin')->group(function () {
         Route::get('notification-log/{id}', 'notificationLog')->name('notification.log');
     });
 
+    // User Notifications Management Routes
+    Route::controller('UserNotificationController')->name('user.notifications.')->prefix('user-notifications')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('statistics', 'statistics')->name('statistics');
+        Route::get('create', 'create')->name('create');
+        Route::post('store', 'store')->name('store');
+        Route::post('bulk-send', 'sendBulkNotification')->name('bulk.send');
+        Route::delete('{id}', 'destroy')->name('delete');
+        Route::post('bulk-delete', 'bulkDelete')->name('bulk.delete');
+        Route::post('cleanup', 'cleanup')->name('cleanup');
+    });
+
 
 
     // Report
@@ -218,6 +230,15 @@ Route::middleware('admin')->group(function () {
         Route::get('templates','templates')->name('templates');
         Route::get('template/edit/{type}/{id}','templateEdit')->name('template.edit');
         Route::post('template/update/{type}/{id}','templateUpdate')->name('template.update');
+        
+        // Flow management routes
+        Route::get('template/flow/edit/{id}', 'editFlow')->name('template.flow.edit');
+        Route::post('template/flow/update/{id}', 'updateFlow')->name('template.flow.update');
+        Route::post('template/flow/change', 'changeFlowType')->name('template.flow.change');
+        Route::get('template/flow/create', 'createFlow')->name('template.flow.create');
+        Route::post('template/flow/store', 'storeFlow')->name('template.flow.store');
+        Route::get('template/flow/initialize', 'initializeAppointmentFlow')->name('template.flow.initialize');
+        Route::post('template/campaign/send', 'sendCampaign')->name('template.campaign.send');
 
         //Email Setting
         Route::get('email/setting','emailSetting')->name('email');
@@ -231,6 +252,26 @@ Route::middleware('admin')->group(function () {
 
         Route::get('notification/push/setting', 'pushSetting')->name('push');
         Route::post('notification/push/setting', 'pushSettingUpdate');
+    });
+
+    // Email Flow Management
+    Route::name('email.flow.')->controller('EmailFlowController')->prefix('email-flow')->group(function(){
+        // Auto Flow (Appointment Notifications)
+        Route::get('auto', 'autoFlow')->name('auto');
+        Route::post('auto/integrate-appointments', 'updateAppointmentTemplatesFlow')->name('auto.integrate');
+        Route::get('auto/create', 'createAutoTemplate')->name('auto.create');
+        Route::post('auto/store', 'storeAutoTemplate')->name('auto.store');
+        
+        // Marketing Flow (Campaigns)
+        Route::get('marketing', 'marketingFlow')->name('marketing');
+        Route::get('marketing/create', 'createMarketingTemplate')->name('marketing.create');
+        Route::post('marketing/store', 'storeMarketingTemplate')->name('marketing.store');
+        Route::post('marketing/send/{id}', 'sendMarketingCampaign')->name('marketing.send');
+        
+        // Common Flow Management
+        Route::get('statistics', 'flowStatistics')->name('statistics');
+        Route::get('edit/{id}', 'editFlowTemplate')->name('edit');
+        Route::post('update/{id}', 'updateFlowTemplate')->name('update');
     });
 
     // Plugin

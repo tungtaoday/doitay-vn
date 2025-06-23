@@ -136,7 +136,7 @@ class RegisterController extends Controller
 
         // Debug log - about to send email
         file_put_contents('registration_debug.log', "[" . date('Y-m-d H:i:s') . "] About to send welcome email to: " . $user->email . "\n", FILE_APPEND);
-        
+
         // Send welcome email to user
         try {
             notify($user, 'USER_WELCOME', [

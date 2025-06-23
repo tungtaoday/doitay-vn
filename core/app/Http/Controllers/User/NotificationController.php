@@ -3,92 +3,249 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        $pageTitle = 'Thông báo';
+        $this->middleware('auth');
+    }
+
+    /**
+     * Get notifications for the authenticated user
+     */
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
         
-        $notifications = Auth::user()->notifications()
-            ->latest()
-            ->paginate(20);
+        $query = UserNotification::forUser($user->id, $userType)
+            ->active()
+            ->orderBy('is_important', 'desc')
+            ->orderBy('created_at', 'desc');
 
-        // Mark as read when viewed
-        Auth::user()->unreadNotifications->markAsRead();
+        // Filter by type if specified
+        if ($request->has('type') && $request->type != 'all') {
+            $query->byType($request->type);
+        }
 
-        return view('Template::user.notifications.index', compact('pageTitle', 'notifications'));
+        // Filter by read status
+        if ($request->has('status')) {
+            if ($request->status == 'unread') {
+                $query->unread();
+            } elseif ($request->status == 'read') {
+                $query->read();
+            }
+        }
+
+        $notifications = $query->paginate(20);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'notifications' => $notifications->items(),
+                'pagination' => [
+                    'current_page' => $notifications->currentPage(),
+                    'last_page' => $notifications->lastPage(),
+                    'total' => $notifications->total()
+                ]
+            ]);
+        }
+
+        $pageTitle = "Notifications";
+        return view('user.notifications.index', compact('notifications', 'pageTitle'));
     }
 
-    public function markAsRead($id)
+    /**
+     * Get unread notifications count and recent notifications for header
+     */
+    public function headerData()
     {
-        $notification = Auth::user()->notifications()->findOrFail($id);
-        $notification->markAsRead();
-
-        return response()->json(['success' => true]);
-    }
-
-    public function markAllAsRead()
-    {
-        Auth::user()->unreadNotifications->markAsRead();
-
-        return response()->json(['success' => true]);
-    }
-
-    public function getUnreadCount()
-    {
-        $count = Auth::user()->unreadNotifications->count();
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
         
+        $unreadCount = UserNotification::forUser($user->id, $userType)
+            ->unread()
+            ->active()
+            ->count();
+
+        $recentNotifications = UserNotification::forUser($user->id, $userType)
+            ->active()
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
         return response()->json([
-            'count' => $count,
-            'notifications' => Auth::user()->unreadNotifications->take(5)->map(function($notification) {
+            'success' => true,
+            'unread_count' => $unreadCount,
+            'notifications' => $recentNotifications->map(function($notification) {
                 return [
                     'id' => $notification->id,
-                    'title' => $notification->data['title'] ?? 'Thông báo mới',
-                    'message' => $notification->data['message'] ?? '',
-                    'time' => $notification->created_at->diffForHumans(),
-                    'type' => $this->getNotificationType($notification->type),
-                    'action_url' => $this->getActionUrl($notification)
+                    'title' => $notification->title,
+                    'message' => $notification->message,
+                    'icon' => $notification->icon,
+                    'color' => $notification->color,
+                    'is_read' => $notification->is_read,
+                    'is_important' => $notification->is_important,
+                    'time_ago' => $notification->time_ago,
+                    'action_url' => $notification->action_url
                 ];
             })
         ]);
     }
 
-    private function getNotificationType($type)
+    /**
+     * Mark notification as read
+     */
+    public function markAsRead($id)
     {
-        $typeMap = [
-            'App\Notifications\NewLeadNotification' => 'lead',
-            'App\Notifications\NewAppointmentNotification' => 'appointment',
-            'App\Notifications\AppointmentConfirmedNotification' => 'appointment',
-            'App\Notifications\AppointmentCanceledNotification' => 'appointment',
-            'App\Notifications\AppointmentCompletedNotification' => 'appointment',
-        ];
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        
+        $notification = UserNotification::forUser($user->id, $userType)
+            ->findOrFail($id);
+            
+        $notification->markAsRead();
 
-        return $typeMap[$type] ?? 'general';
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification marked as read'
+        ]);
     }
 
-    private function getActionUrl($notification)
+    /**
+     * Mark notification as unread
+     */
+    public function markAsUnread($id)
     {
-        $data = $notification->data;
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
         
-        if (isset($data['lead_id'])) {
-            return route('user.leads.show', $data['lead_id']);
-        }
-        
-        if (isset($data['appointment_id'])) {
-            return route('appointments.show', $data['appointment_id']);
-        }
+        $notification = UserNotification::forUser($user->id, $userType)
+            ->findOrFail($id);
+            
+        $notification->markAsUnread();
 
-        return route('user.notifications.index');
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification marked as unread'
+        ]);
     }
 
+    /**
+     * Mark all notifications as read
+     */
+    public function markAllAsRead()
+    {
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        
+        UserNotification::forUser($user->id, $userType)
+            ->unread()
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'All notifications marked as read'
+        ]);
+    }
+
+    /**
+     * Delete notification
+     */
     public function delete($id)
     {
-        $notification = Auth::user()->notifications()->findOrFail($id);
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        
+        $notification = UserNotification::forUser($user->id, $userType)
+            ->findOrFail($id);
+            
         $notification->delete();
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification deleted'
+        ]);
+    }
+
+    /**
+     * Delete all read notifications
+     */
+    public function deleteAllRead()
+    {
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        
+        $deletedCount = UserNotification::forUser($user->id, $userType)
+            ->read()
+            ->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Deleted {$deletedCount} read notifications"
+        ]);
+    }
+
+    /**
+     * Get notification statistics
+     */
+    public function statistics()
+    {
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        
+        $stats = [
+            'total' => UserNotification::forUser($user->id, $userType)->active()->count(),
+            'unread' => UserNotification::forUser($user->id, $userType)->unread()->active()->count(),
+            'important' => UserNotification::forUser($user->id, $userType)->important()->active()->count(),
+            'today' => UserNotification::forUser($user->id, $userType)->whereDate('created_at', today())->count(),
+            'this_week' => UserNotification::forUser($user->id, $userType)->where('created_at', '>=', now()->startOfWeek())->count(),
+        ];
+
+        // By type statistics
+        $typeStats = UserNotification::forUser($user->id, $userType)
+            ->active()
+            ->selectRaw('type, count(*) as count')
+            ->groupBy('type')
+            ->pluck('count', 'type')
+            ->toArray();
+
+        return response()->json([
+            'success' => true,
+            'stats' => $stats,
+            'type_stats' => $typeStats
+        ]);
+    }
+
+    /**
+     * Handle notification click (mark as read and redirect)
+     */
+    public function click(Request $request, $id)
+    {
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        
+        $notification = UserNotification::forUser($user->id, $userType)
+            ->findOrFail($id);
+            
+        // Mark as read if not already read
+        if (!$notification->is_read) {
+            $notification->markAsRead();
+        }
+
+        // Redirect to action URL if exists
+        if ($notification->action_url) {
+            return redirect($notification->action_url);
+        }
+
+        // Default redirect to notifications page
+        return redirect()->route('user.notifications.index');
     }
 } 

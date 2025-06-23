@@ -78,6 +78,212 @@ class NotificationController extends Controller
         return view('admin.notification.template.index',compact('pageTitle','templates'));
     }
 
+    // ========== FLOW MANAGEMENT METHODS ==========
+    
+    /**
+     * Edit flow settings for a template
+     */
+    public function editFlow($id)
+    {
+        $template = NotificationTemplate::findOrFail($id);
+        $pageTitle = 'Edit Flow Settings - ' . $template->name;
+        return view('admin.notification.template.flow_edit', compact('template', 'pageTitle'));
+    }
+
+    /**
+     * Update flow settings
+     */
+    public function updateFlow(Request $request, $id)
+    {
+        $template = NotificationTemplate::findOrFail($id);
+        
+        $request->validate([
+            'flow_type' => 'required|in:auto,marketing,system',
+            'priority' => 'required|in:low,normal,high',
+            'flow_description' => 'nullable|string|max:500',
+            'is_scheduled' => 'boolean',
+            'scheduled_at' => 'nullable|date',
+            'recipient_criteria' => 'nullable|array'
+        ]);
+
+        $updateData = [
+            'flow_type' => $request->flow_type,
+            'priority' => $request->priority,
+            'flow_description' => $request->flow_description,
+            'is_scheduled' => $request->is_scheduled ?? false,
+            'scheduled_at' => $request->scheduled_at,
+            'recipient_criteria' => $request->recipient_criteria ?? []
+        ];
+
+        $template->update($updateData);
+
+        $notify[] = ['success', 'Flow settings updated successfully'];
+        return redirect()->route('admin.setting.notification.templates')->withNotify($notify);
+    }
+
+    /**
+     * Change flow type
+     */
+    public function changeFlowType(Request $request)
+    {
+        $request->validate([
+            'template_id' => 'required|exists:notification_templates,id',
+            'flow_type' => 'required|in:auto,marketing,system',
+            'priority' => 'required|in:low,normal,high',
+            'flow_description' => 'nullable|string|max:500'
+        ]);
+
+        $template = NotificationTemplate::findOrFail($request->template_id);
+        
+        $template->update([
+            'flow_type' => $request->flow_type,
+            'priority' => $request->priority,
+            'flow_description' => $request->flow_description
+        ]);
+
+        $notify[] = ['success', 'Flow type changed successfully'];
+        return back()->withNotify($notify);
+    }
+
+    /**
+     * Create new flow template
+     */
+    public function createFlow()
+    {
+        $pageTitle = 'Create Flow Template';
+        $type = request('type', 'system');
+        return view('admin.notification.template.flow_create', compact('pageTitle', 'type'));
+    }
+
+    /**
+     * Store new flow template
+     */
+    public function storeFlow(Request $request)
+    {
+        $request->validate([
+            'act' => 'required|string|unique:notification_templates,act',
+            'name' => 'required|string|max:255',
+            'subject' => 'required|string|max:255',
+            'email_body' => 'required',
+            'flow_type' => 'required|in:auto,marketing,system',
+            'priority' => 'required|in:low,normal,high',
+            'flow_description' => 'nullable|string|max:500',
+            'is_scheduled' => 'boolean',
+            'scheduled_at' => 'nullable|date',
+            'recipient_criteria' => 'nullable|array'
+        ]);
+
+        NotificationTemplate::create([
+            'act' => $request->act,
+            'name' => $request->name,
+            'subject' => $request->subject,
+            'email_body' => $request->email_body,
+            'flow_type' => $request->flow_type,
+            'priority' => $request->priority,
+            'flow_description' => $request->flow_description,
+            'is_scheduled' => $request->is_scheduled ?? false,
+            'scheduled_at' => $request->scheduled_at,
+            'recipient_criteria' => $request->recipient_criteria ?? [],
+            'email_status' => Status::ENABLE,
+            'sms_status' => Status::DISABLE,
+            'push_status' => Status::DISABLE,
+            'shortcodes' => json_encode([])
+        ]);
+
+        $notify[] = ['success', 'Flow template created successfully'];
+        return redirect()->route('admin.setting.notification.templates')->withNotify($notify);
+    }
+
+    /**
+     * Initialize appointment flow
+     */
+    public function initializeAppointmentFlow()
+    {
+        $appointmentActs = ['NEW_APPOINTMENT', 'APPOINTMENT_CONFIRMED', 'APPOINTMENT_COMPLETED', 'APPOINTMENT_CANCELED'];
+        
+        $updated = NotificationTemplate::whereIn('act', $appointmentActs)->update([
+            'flow_type' => 'auto',
+            'flow_description' => 'Tự động gửi email khi có sự kiện appointment',
+            'priority' => 'high'
+        ]);
+
+        $notify[] = ['success', "Đã tích hợp {$updated} appointment templates vào auto flow"];
+        return redirect()->route('admin.setting.notification.templates')->withNotify($notify);
+    }
+
+    /**
+     * Send marketing campaign
+     */
+    public function sendCampaign(Request $request)
+    {
+        $request->validate([
+            'template_id' => 'required|exists:notification_templates,id'
+        ]);
+
+        $template = NotificationTemplate::findOrFail($request->template_id);
+        
+        if ($template->flow_type !== 'marketing') {
+            $notify[] = ['error', 'This template is not a marketing campaign'];
+            return back()->withNotify($notify);
+        }
+
+        // Get recipients based on criteria
+        $recipients = $this->getMarketingRecipients($template->recipient_criteria);
+        
+        $sentCount = 0;
+        foreach ($recipients as $user) {
+            try {
+                notify($user, $template->act, [
+                    'user_name' => $user->name,
+                    'user_email' => $user->email
+                ]);
+                $sentCount++;
+            } catch (\Exception $e) {
+                \Log::error('Marketing email failed for user ' . $user->id . ': ' . $e->getMessage());
+            }
+        }
+
+        // Update sent statistics
+        $template->update([
+            'sent_count' => ($template->sent_count ?? 0) + $sentCount,
+            'last_sent_at' => now()
+        ]);
+
+        $notify[] = ['success', "Marketing campaign sent to {$sentCount} recipients"];
+        return back()->withNotify($notify);
+    }
+
+    /**
+     * Get recipients for marketing campaigns
+     */
+    private function getMarketingRecipients($criteria)
+    {
+        $query = \App\Models\User::where('status', Status::ENABLE);
+
+        if (!empty($criteria)) {
+            // Filter by user type
+            if (isset($criteria['user_type'])) {
+                if ($criteria['user_type'] === 'customers') {
+                    $query->whereDoesntHave('company');
+                } elseif ($criteria['user_type'] === 'companies') {
+                    $query->whereHas('company');
+                }
+            }
+
+            // Filter by registration date
+            if (isset($criteria['registered_after'])) {
+                $query->where('created_at', '>=', $criteria['registered_after']);
+            }
+
+            // Filter by activity
+            if (isset($criteria['has_appointments']) && $criteria['has_appointments']) {
+                $query->whereHas('appointments');
+            }
+        }
+
+        return $query->limit(100)->get(); // Limit to prevent overwhelming
+    }
+
     public function templateEdit($type,$id)
     {
         $template = NotificationTemplate::findOrFail($id);

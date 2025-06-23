@@ -389,3 +389,138 @@ Route::post('/test-create-smart-lead', function() {
     }
 })->name('test.create.smart.lead');
 
+// Test email template preview route
+Route::get('/email-preview/{template?}', function($template = 'NEW_APPOINTMENT') {
+    $templates = [
+        'NEW_APPOINTMENT' => [
+            'name' => 'New Appointment Notification',
+            'subject' => '🎉 Your Appointment Request Has Been Received',
+            'body' => '
+                <div class="greeting">Hello John Doe,</div>
+                
+                <div class="success-box">
+                    <h3>🎉 Your Appointment Has Been Successfully Created!</h3>
+                    <p>We have received your appointment request and are excited to serve you.</p>
+                </div>
+                
+                <div class="appointment-details">
+                    <h3>📅 Appointment Details</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Appointment ID:</span>
+                        <span class="detail-value">#12345</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date:</span>
+                        <span class="detail-value">January 25, 2025</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Time:</span>
+                        <span class="detail-value">2:00 PM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Service Provider:</span>
+                        <span class="detail-value">ABC Cleaning Services</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value" style="color: #f39c12; font-weight: bold;">⏳ Pending Confirmation</span>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <h3>📋 What happens next?</h3>
+                    <ul>
+                        <li>The service provider will review your request</li>
+                        <li>You will receive a confirmation email within 24 hours</li>
+                        <li>Please prepare any required documents or information</li>
+                    </ul>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="#" class="btn btn-primary">View Appointment Details</a>
+                    <a href="#" class="btn">Contact Support</a>
+                </div>
+                
+                <p>If you have any questions or need to make changes, please don\'t hesitate to contact us.</p>
+                
+                <p style="margin-top: 30px;">
+                    <strong>Best regards,</strong><br>
+                    The Service Platform Team
+                </p>
+            '
+        ],
+        'WELCOME_CAMPAIGN' => [
+            'name' => 'Welcome Campaign',
+            'subject' => '🎉 Welcome to Service Platform - Your Journey Starts Here!',
+            'body' => '
+                <div class="greeting">Hello New User,</div>
+                
+                <div class="highlight-box">
+                    <h3>🎉 Welcome to the Service Platform Family!</h3>
+                    <p>We\'re thrilled to have you join thousands of satisfied customers who trust us with their service needs.</p>
+                </div>
+                
+                <div class="content-section">
+                    <h2>🚀 Get Started in 3 Easy Steps</h2>
+                    
+                    <div class="info-box">
+                        <h3>Step 1: Complete Your Profile</h3>
+                        <p>Add your details to get personalized service recommendations.</p>
+                        <a href="#" class="btn btn-primary">Complete Profile</a>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h3>Step 2: Browse Our Services</h3>
+                        <p>Discover hundreds of verified service providers in your area.</p>
+                        <a href="#" class="btn btn-primary">Browse Services</a>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h3>Step 3: Book Your First Appointment</h3>
+                        <p>Choose your provider and schedule your appointment in minutes.</p>
+                        <a href="#" class="btn btn-success">Book Now</a>
+                    </div>
+                </div>
+                
+                <div class="success-box">
+                    <h3>🎁 Special Welcome Offer</h3>
+                    <p>Get <strong>10% OFF</strong> your first service booking! Use code: <strong>WELCOME10</strong></p>
+                    <p><em>Valid for the next 30 days</em></p>
+                </div>
+                
+                <p>Need help getting started? Our friendly support team is ready to assist you every step of the way.</p>
+                
+                <p style="margin-top: 30px;">
+                    <strong>Welcome aboard!</strong><br>
+                    The Service Platform Team
+                </p>
+            '
+        ]
+    ];
+    
+    $selectedTemplate = $templates[$template] ?? $templates['NEW_APPOINTMENT'];
+    
+    // Simulate EmailTemplateService processing
+    $gs = \App\Models\GeneralSetting::first();
+    $siteName = $gs->site_name ?? 'Service Platform';
+    $siteUrl = url('/');
+    $logoUrl = asset('assets/images/logo_icon/logo.png');
+    
+    // Load professional wrapper
+    $wrapperTemplate = view('email_templates.professional_wrapper')->render();
+    
+    // Replace placeholders
+    $wrapperTemplate = str_replace('{{subject}}', $selectedTemplate['subject'], $wrapperTemplate);
+    $wrapperTemplate = str_replace('{{logo_url}}', $logoUrl, $wrapperTemplate);
+    $wrapperTemplate = str_replace('{{site_name}}', $siteName, $wrapperTemplate);
+    $wrapperTemplate = str_replace('{{site_url}}', $siteUrl, $wrapperTemplate);
+    $wrapperTemplate = str_replace('{{current_year}}', date('Y'), $wrapperTemplate);
+    $wrapperTemplate = str_replace('{{user_email}}', 'user@example.com', $wrapperTemplate);
+    $wrapperTemplate = str_replace('{{unsubscribe_url}}', $siteUrl . '/unsubscribe', $wrapperTemplate);
+    $wrapperTemplate = str_replace('{!! $email_body !!}', $selectedTemplate['body'], $wrapperTemplate);
+    
+    return $wrapperTemplate;
+});
+
+
+

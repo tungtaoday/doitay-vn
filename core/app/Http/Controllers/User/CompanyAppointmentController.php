@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Notification as NotificationFacade;
 use App\Notifications\AppointmentConfirmedNotification;
 use App\Notifications\AppointmentCanceledNotification;
 use App\Notifications\AppointmentCompletedNotification;
+use App\Services\NotificationService;
 
 class CompanyAppointmentController extends Controller
 {
@@ -108,12 +109,34 @@ class CompanyAppointmentController extends Controller
             // Increment hires count
             $this->statisticsService->incrementHires($company);
 
-            // Send notifications
+            // Send notifications using auto flow
             $customer = User::find($appointment->user_id);
             if ($customer) {
-                NotificationFacade::send($customer, new AppointmentConfirmedNotification($appointment));
+                notify($customer, 'APPOINTMENT_CONFIRMED', [
+                    'customer_name' => $appointment->recipient_name,
+                    'customer_phone' => $appointment->recipient_phone,
+                    'customer_address' => $appointment->recipient_address,
+                    'appointment_date' => $appointment->appointment_date,
+                    'appointment_time' => $appointment->appointment_time,
+                    'notes' => $appointment->notes ?? 'N/A',
+                    'company_name' => $appointment->company->name ?? 'Unknown Company'
+                ]);
+                
+                // Send in-app notification to customer
+                NotificationService::sendAppointmentNotification($customer, $appointment, 'appointment_confirmed');
             }
-            NotificationFacade::send($user, new AppointmentConfirmedNotification($appointment));
+            notify($user, 'APPOINTMENT_CONFIRMED', [
+                'customer_name' => $appointment->recipient_name,
+                'customer_phone' => $appointment->recipient_phone,
+                'customer_address' => $appointment->recipient_address,
+                'appointment_date' => $appointment->appointment_date,
+                'appointment_time' => $appointment->appointment_time,
+                'notes' => $appointment->notes ?? 'N/A',
+                'company_name' => $appointment->company->name ?? 'Unknown Company'
+            ]);
+            
+            // Send in-app notification to company owner
+            NotificationService::sendAppointmentNotification($user, $appointment, 'appointment_confirmed');
 
             return redirect()->back()->with('success', 'Xác nhận lịch hẹn thành công! Thông tin khách hàng đã được mở khóa.');
 
@@ -138,11 +161,34 @@ class CompanyAppointmentController extends Controller
         $appointment->status = 'canceled';
         $appointment->save();
 
+        // Send notifications using auto flow
         $customer = User::find($appointment->user_id);
         if ($customer) {
-            NotificationFacade::send($customer, new AppointmentCanceledNotification($appointment));
+            notify($customer, 'APPOINTMENT_CANCELED', [
+                'customer_name' => $appointment->recipient_name,
+                'customer_phone' => $appointment->recipient_phone,
+                'customer_address' => $appointment->recipient_address,
+                'appointment_date' => $appointment->appointment_date,
+                'appointment_time' => $appointment->appointment_time,
+                'notes' => $appointment->notes ?? 'N/A',
+                'company_name' => $appointment->company->name ?? 'Unknown Company'
+            ]);
+            
+            // Send in-app notification to customer
+            NotificationService::sendAppointmentNotification($customer, $appointment, 'appointment_cancelled');
         }
-        NotificationFacade::send($user, new AppointmentCanceledNotification($appointment));
+        notify($user, 'APPOINTMENT_CANCELED', [
+            'customer_name' => $appointment->recipient_name,
+            'customer_phone' => $appointment->recipient_phone,
+            'customer_address' => $appointment->recipient_address,
+            'appointment_date' => $appointment->appointment_date,
+            'appointment_time' => $appointment->appointment_time,
+            'notes' => $appointment->notes ?? 'N/A',
+            'company_name' => $appointment->company->name ?? 'Unknown Company'
+        ]);
+        
+        // Send in-app notification to company owner
+        NotificationService::sendAppointmentNotification($user, $appointment, 'appointment_cancelled');
 
         return redirect()->back()->with('success', 'Appointment canceled successfully!');
     }
@@ -163,12 +209,34 @@ class CompanyAppointmentController extends Controller
         $appointment->status = 'completed';
         $appointment->save();
 
-        // Thêm thông báo nếu cần
+        // Send notifications using auto flow
         $customer = User::find($appointment->user_id);
         if ($customer) {
-            NotificationFacade::send($customer, new AppointmentCompletedNotification($appointment));
+            notify($customer, 'APPOINTMENT_COMPLETED', [
+                'customer_name' => $appointment->recipient_name,
+                'customer_phone' => $appointment->recipient_phone,
+                'customer_address' => $appointment->recipient_address,
+                'appointment_date' => $appointment->appointment_date,
+                'appointment_time' => $appointment->appointment_time,
+                'notes' => $appointment->notes ?? 'N/A',
+                'company_name' => $appointment->company->name ?? 'Unknown Company'
+            ]);
+            
+            // Send in-app notification to customer
+            NotificationService::sendAppointmentNotification($customer, $appointment, 'appointment_completed');
         }
-        NotificationFacade::send($user, new AppointmentCompletedNotification($appointment));
+        notify($user, 'APPOINTMENT_COMPLETED', [
+            'customer_name' => $appointment->recipient_name,
+            'customer_phone' => $appointment->recipient_phone,
+            'customer_address' => $appointment->recipient_address,
+            'appointment_date' => $appointment->appointment_date,
+            'appointment_time' => $appointment->appointment_time,
+            'notes' => $appointment->notes ?? 'N/A',
+            'company_name' => $appointment->company->name ?? 'Unknown Company'
+        ]);
+        
+        // Send in-app notification to company owner
+        NotificationService::sendAppointmentNotification($user, $appointment, 'appointment_completed');
 
         return redirect()->back()->with('success', 'Appointment completed successfully!');
     }

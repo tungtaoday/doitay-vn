@@ -147,10 +147,14 @@ Route::middleware('auth')->name('user.')->group(function () {
             // Notification Management
             Route::controller('NotificationController')->prefix('notifications')->name('notifications.')->group(function () {
                 Route::get('/', 'index')->name('index');
-                Route::get('unread-count', 'getUnreadCount')->name('unread-count');
-                Route::post('mark-as-read/{id}', 'markAsRead')->name('mark-as-read');
-                Route::post('mark-all-read', 'markAllAsRead')->name('mark-all-read');
-                Route::delete('delete/{id}', 'delete')->name('delete');
+                Route::get('header-data', 'headerData')->name('header.data');
+                Route::post('{id}/read', 'markAsRead')->name('read');
+                Route::post('{id}/unread', 'markAsUnread')->name('unread');
+                Route::post('read-all', 'markAllAsRead')->name('read.all');
+                Route::delete('{id}', 'delete')->name('delete');
+                Route::delete('read-all/delete', 'deleteAllRead')->name('delete.all.read');
+                Route::get('statistics', 'statistics')->name('statistics');
+                Route::get('{id}/click', 'click')->name('click');
             });
 
         });

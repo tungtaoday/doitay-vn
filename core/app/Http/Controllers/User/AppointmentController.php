@@ -15,6 +15,7 @@ use App\Notifications\AppointmentCanceledNotification;
 use App\Notifications\AppointmentCompletedNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Services\NotificationService;
 
 class AppointmentController extends Controller
 {
@@ -86,10 +87,35 @@ class AppointmentController extends Controller
                 'status' => 'pending',
             ]);
 
-            NotificationFacade::send($user, new NewAppointmentNotification($appointment));
+            // Send email to customer using auto flow
+            notify($user, 'NEW_APPOINTMENT', [
+                'customer_name' => $appointment->recipient_name,
+                'customer_phone' => $appointment->recipient_phone,
+                'customer_address' => $appointment->recipient_address,
+                'appointment_date' => $appointment->appointment_date,
+                'appointment_time' => $appointment->appointment_time,
+                'notes' => $appointment->notes ?? 'N/A',
+                'company_name' => $appointment->company->name ?? 'Unknown Company'
+            ]);
+
+            // Send in-app notification to customer
+            NotificationService::sendAppointmentNotification($user, $appointment, 'appointment_created');
+
+            // Send email to company owner using auto flow
             $companyOwner = $appointment->company->user;
             if ($companyOwner) {
-                NotificationFacade::send($companyOwner, new NewAppointmentNotification($appointment));
+                notify($companyOwner, 'NEW_APPOINTMENT', [
+                    'customer_name' => $appointment->recipient_name,
+                    'customer_phone' => $appointment->recipient_phone,
+                    'customer_address' => $appointment->recipient_address,
+                    'appointment_date' => $appointment->appointment_date,
+                    'appointment_time' => $appointment->appointment_time,
+                    'notes' => $appointment->notes ?? 'N/A',
+                    'company_name' => $appointment->company->name ?? 'Unknown Company'
+                ]);
+                
+                // Send in-app notification to company owner
+                NotificationService::sendAppointmentNotification($companyOwner, $appointment, 'appointment_created');
             }
 
             if ($request->ajax()) {
@@ -165,10 +191,32 @@ class AppointmentController extends Controller
         $appointment->status = 'canceled';
         $appointment->save();
 
-        NotificationFacade::send($user, new AppointmentCanceledNotification($appointment));
+        // Send email to customer using auto flow
+        notify($user, 'APPOINTMENT_CANCELED', [
+            'customer_name' => $appointment->recipient_name,
+            'customer_phone' => $appointment->recipient_phone,
+            'customer_address' => $appointment->recipient_address,
+            'appointment_date' => $appointment->appointment_date,
+            'appointment_time' => $appointment->appointment_time,
+            'notes' => $appointment->notes ?? 'N/A',
+            'company_name' => $appointment->company->name ?? 'Unknown Company'
+        ]);
+
+        // Send in-app notification to customer
+        NotificationService::sendAppointmentNotification($user, $appointment, 'appointment_cancelled');
+
+        // Send email to company owner using auto flow
         $companyOwner = $appointment->company->user;
         if ($companyOwner) {
-            NotificationFacade::send($companyOwner, new AppointmentCanceledNotification($appointment));
+            notify($companyOwner, 'APPOINTMENT_CANCELED', [
+                'customer_name' => $appointment->recipient_name,
+                'customer_phone' => $appointment->recipient_phone,
+                'customer_address' => $appointment->recipient_address,
+                'appointment_date' => $appointment->appointment_date,
+                'appointment_time' => $appointment->appointment_time,
+                'notes' => $appointment->notes ?? 'N/A',
+                'company_name' => $appointment->company->name ?? 'Unknown Company'
+            ]);
         }
 
         return redirect()->back()->with('success', 'Appointment canceled successfully!');

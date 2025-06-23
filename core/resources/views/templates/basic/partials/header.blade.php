@@ -45,7 +45,11 @@
 
         <!-- Action Buttons -->
         <div class="header-actions">
-                            @guest
+                        @auth
+                <!-- Notification Bell -->
+                @include('user.partials.notification_bell')
+            @endauth
+            @guest
                 <a href="{{ route('user.login.v2') }}" class="btn-login">
                     <i class="las la-sign-in-alt"></i>
                     <span>@lang('Đăng nhập')</span>
@@ -197,6 +201,11 @@
                             <h4>{{ auth()->user()->username }}</h4>
                             <p>{{ auth()->user()->email }}</p>
                         </div>
+                        <!-- Mobile Notification -->
+                        <a href="{{ route('user.notifications.index') }}" class="mobile-notification-btn">
+                            <i class="las la-bell"></i>
+                            <span class="mobile-notification-badge" id="mobileNotificationBadge" style="display: none;">0</span>
+                        </a>
                     </div>
                     <div class="mobile-user-actions">
                         @if(auth()->user()->companies->count() > 0)
@@ -673,6 +682,51 @@
     background: rgba(11, 146, 212, 0.05);
     border-radius: 16px;
     margin-bottom: 24px;
+    position: relative;
+}
+
+.mobile-notification-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    color: #0b92d4;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mobile-notification-btn:hover {
+    background: #0b92d4;
+    color: white;
+    border-color: #0b92d4;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.mobile-notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #dc2626;
+    color: white;
+    border-radius: 12px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
 }
 
 .mobile-user-avatar {
@@ -749,6 +803,38 @@
     
     .mobile-menu-trigger {
         display: flex;
+    }
+    
+    /* Force notification bell positioning on mobile - Absolute positioning */
+    .header-container {
+        position: relative !important;
+        justify-content: space-between !important;
+    }
+    
+    .notification-bell {
+        position: absolute !important;
+        right: 26px !important; /* Very close to mobile trigger button */
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        z-index: 10 !important;
+    }
+    
+    .header-actions {
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .mobile-menu-trigger {
+        position: absolute !important;
+        right: 16px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        z-index: 11 !important;
+    }
+    
+    .logo {
+        flex: 0 0 auto !important;
     }
 }
 
