@@ -48,8 +48,13 @@ class Category extends Model
     }
 
     public function ratings()
-{
-    return $this->hasManyThrough(Rating::class, Feature::class);
-}
+    {
+        return $this->hasManyThrough(Rating::class, Feature::class);
+    }
+
+    public function leads()
+    {
+        return $this->hasMany(Lead::class);
+    }
 
 }

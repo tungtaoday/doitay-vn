@@ -16,12 +16,43 @@
                 </div>
                 <div class="col-lg-4 text-lg-end">
                     <div class="page-actions">
-                        <a href="{{ route('company.all') }}" class="btn btn-primary btn-lg">
+                        <!-- Navigation Toggle -->
+                        <div class="service-nav-toggle mb-3">
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('appointments.index') }}" class="btn btn-primary active">
+                                    <i class="las la-calendar-check me-1"></i>
+                                    Lịch hẹn
+                                </a>
+                                <a href="{{ route('user.customer.leads.index') }}" class="btn btn-outline-primary">
+                                    <i class="las la-file-contract me-1"></i>
+                                    Leads
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <a href="{{ route('company.all') }}" class="btn btn-success btn-lg">
                             <i class="las la-plus me-2"></i>
                             Đặt lịch mới
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Switch Banner -->
+    <div class="quick-switch-banner">
+        <div class="container">
+            <div class="alert alert-info d-flex align-items-center">
+                <i class="las la-info-circle me-2"></i>
+                <div class="flex-grow-1">
+                    <strong>Mẹo:</strong> Bạn có thể chuyển sang xem <strong>Leads</strong> để theo dõi các yêu cầu đang tìm thợ, 
+                    hoặc ở lại đây để xem <strong>Lịch hẹn</strong> đã đặt trực tiếp.
+                </div>
+                <a href="{{ route('user.customer.leads.index') }}" class="btn btn-sm btn-outline-primary ms-3">
+                    <i class="las la-arrow-right me-1"></i>
+                    Xem Leads
+                </a>
             </div>
         </div>
     </div>
@@ -848,6 +879,99 @@
 
 .appointment-card.hidden {
     display: none;
+}
+
+/* Service Navigation Toggle */
+.service-nav-toggle .btn-group {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.service-nav-toggle .btn {
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.service-nav-toggle .btn:not(.active) {
+    background: #f8f9fa;
+    color: #6c757d;
+}
+
+.service-nav-toggle .btn:not(.active):hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.service-nav-toggle .btn.active {
+    background: var(--bs-primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+}
+
+.service-nav-toggle .btn i {
+    font-size: 0.9rem;
+}
+
+/* Quick Switch Banner */
+.quick-switch-banner .alert {
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    border-left: 4px solid #2196f3;
+    margin-bottom: 0;
+}
+
+.quick-switch-banner .alert-info {
+    color: #0c5460;
+}
+
+.quick-switch-banner .btn {
+    border-radius: 6px;
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .service-nav-toggle {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .service-nav-toggle .btn-group {
+        width: 100%;
+    }
+    
+    .service-nav-toggle .btn {
+        flex: 1;
+    }
+    
+    .quick-switch-banner .alert {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .quick-switch-banner .btn {
+        margin-top: 0.5rem;
+        margin-left: 0 !important;
+    }
+}
+
+/* Animation for smooth transitions */
+.service-nav-toggle .btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-nav-toggle .btn:hover {
+    transform: translateY(-1px);
+}
+
+.service-nav-toggle .btn.active {
+    transform: translateY(-2px);
 }
 </style>
 @endpush

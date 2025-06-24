@@ -89,6 +89,16 @@ Route::middleware('admin')->group(function () {
         Route::post('delete/{id}/{slug}', 'delete')->name('delete');
     });
 
+    //== Lead Management ==
+    Route::controller('LeadController')->name('leads.')->prefix('leads')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('show/{id}', 'show')->name('show');
+        Route::get('analytics', 'analytics')->name('analytics');
+        Route::get('notifications', 'notifications')->name('notifications');
+        Route::get('companies', 'companies')->name('companies');
+        Route::patch('status/{id}', 'updateStatus')->name('status.update');
+        Route::post('bulk-action', 'bulkAction')->name('bulk.action');
+    });
 
     // == Advertisement ===
     Route::controller('AdvertisementController')->name('advertisement.')->prefix('advertisement')->group(function () {
@@ -130,6 +140,7 @@ Route::middleware('admin')->group(function () {
         Route::delete('{id}', 'destroy')->name('delete');
         Route::post('bulk-delete', 'bulkDelete')->name('bulk.delete');
         Route::post('cleanup', 'cleanup')->name('cleanup');
+        Route::post('mark-read', 'markAsRead')->name('mark.read');
     });
 
 

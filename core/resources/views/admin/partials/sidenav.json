@@ -96,6 +96,50 @@
         "route_name": "admin.advertisement.index",
         "menu_active": "admin.advertisement.index"
     },
+    "lead_management": {
+        "keyword": [
+            "lead",
+            "leads",
+            "lead management",
+            "customer lead",
+            "customer leads",
+            "lead analytics",
+            "lead notification",
+            "lead companies",
+            "contractor performance",
+            "lead tracking",
+            "lead monitoring"
+        ],
+        "title": "Lead Management",
+        "icon": "las la-briefcase",
+        "menu_active": "admin.leads*",
+        "submenu": [
+            {
+                "keyword": ["all leads", "lead list", "lead overview", "lead dashboard"],
+                "title": "All Leads",
+                "route_name": "admin.leads.index",
+                "menu_active": "admin.leads.index"
+            },
+            {
+                "keyword": ["lead analytics", "lead statistics", "lead reports", "lead performance"],
+                "title": "Analytics",
+                "route_name": "admin.leads.analytics",
+                "menu_active": "admin.leads.analytics"
+            },
+            {
+                "keyword": ["lead notifications", "notification monitoring", "lead alerts"],
+                "title": "Notifications",
+                "route_name": "admin.leads.notifications",
+                "menu_active": "admin.leads.notifications"
+            },
+            {
+                "keyword": ["contractor performance", "company performance", "lead companies"],
+                "title": "Company Performance",
+                "route_name": "admin.leads.companies",
+                "menu_active": "admin.leads.companies"
+            }
+        ]
+    },
     "manage_users": {
         "title": "Manage Users",
         "icon": "las la-users",
@@ -139,6 +183,40 @@
                 "title": "Send Notification",
                 "route_name": "admin.users.notification.all",
                 "menu_active": "admin.users.notification.all"
+            }
+        ]
+    },
+    "user_notifications": {
+        "keyword": [
+            "user notifications",
+            "notification management",
+            "notification system",
+            "custom notifications",
+            "bulk notifications",
+            "notification statistics",
+            "notification monitoring"
+        ],
+        "title": "User Notifications",
+        "icon": "las la-bell",
+        "menu_active": "admin.user.notifications*",
+        "submenu": [
+            {
+                "keyword": ["all notifications", "notification list", "notification overview"],
+                "title": "All Notifications",
+                "route_name": "admin.user.notifications.index",
+                "menu_active": "admin.user.notifications.index"
+            },
+            {
+                "keyword": ["notification statistics", "notification analytics", "notification reports"],
+                "title": "Statistics",
+                "route_name": "admin.user.notifications.statistics",
+                "menu_active": "admin.user.notifications.statistics"
+            },
+            {
+                "keyword": ["send notification", "create notification", "custom notification"],
+                "title": "Send Notification",
+                "route_name": "admin.user.notifications.create",
+                "menu_active": "admin.user.notifications.create"
             }
         ]
     },

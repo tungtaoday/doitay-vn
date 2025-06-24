@@ -198,4 +198,100 @@ class Lead extends Model
 
         return $this->expires_at->diffForHumans($now);
     }
+
+    public function getTimeline()
+    {
+        $timeline = [];
+
+        // Lead created
+        $timeline[] = [
+            'title' => 'Lead được tạo',
+            'description' => "Lead được tạo bởi {$this->customer->firstname} {$this->customer->lastname}",
+            'timestamp' => $this->created_at,
+            'icon' => 'las la-plus-circle',
+            'color' => 'primary'
+        ];
+
+        // Notifications sent
+        foreach ($this->visibilities as $visibility) {
+            $timeline[] = [
+                'title' => 'Gửi thông báo',
+                'description' => "Thông báo gửi đến {$visibility->company->name} (Điểm ưu tiên: {$visibility->priority_score})",
+                'timestamp' => $visibility->notified_at,
+                'icon' => 'las la-bell',
+                'color' => 'info'
+            ];
+        }
+
+        // Lead purchases
+        foreach ($this->purchases as $purchase) {
+            $timeline[] = [
+                'title' => 'Lead được mua',
+                'description' => "{$purchase->company->name} đã mua lead với giá " . number_format($purchase->price_paid) . '₫',
+                'timestamp' => $purchase->created_at,
+                'icon' => 'las la-shopping-cart',
+                'color' => 'success'
+            ];
+
+            if ($purchase->contacted_at) {
+                $timeline[] = [
+                    'title' => 'Đã liên hệ khách hàng',
+                    'description' => "{$purchase->company->name} đã liên hệ với khách hàng",
+                    'timestamp' => $purchase->contacted_at,
+                    'icon' => 'las la-phone',
+                    'color' => 'warning'
+                ];
+            }
+
+            if ($purchase->quoted_at) {
+                $timeline[] = [
+                    'title' => 'Báo giá',
+                    'description' => "{$purchase->company->name} đã báo giá " . number_format($purchase->quote_amount) . '₫',
+                    'timestamp' => $purchase->quoted_at,
+                    'icon' => 'las la-dollar-sign',
+                    'color' => 'info'
+                ];
+            }
+
+            if ($purchase->outcome === 'won') {
+                $timeline[] = [
+                    'title' => 'Thắng thầu',
+                    'description' => "{$purchase->company->name} đã được chọn bởi khách hàng",
+                    'timestamp' => $purchase->updated_at,
+                    'icon' => 'las la-trophy',
+                    'color' => 'warning'
+                ];
+            } elseif ($purchase->outcome === 'lost') {
+                $timeline[] = [
+                    'title' => 'Thua thầu',
+                    'description' => "{$purchase->company->name} không được chọn",
+                    'timestamp' => $purchase->updated_at,
+                    'icon' => 'las la-times-circle',
+                    'color' => 'danger'
+                ];
+            }
+        }
+
+        // Status changes
+        if ($this->status === 'closed') {
+            $timeline[] = [
+                'title' => 'Lead đã đóng',
+                'description' => 'Lead đã được đóng và không còn nhận thêm contractor',
+                'timestamp' => $this->updated_at,
+                'icon' => 'las la-lock',
+                'color' => 'secondary'
+            ];
+        } elseif ($this->status === 'expired') {
+            $timeline[] = [
+                'title' => 'Lead hết hạn',
+                'description' => 'Lead đã hết hạn và không còn hiệu lực',
+                'timestamp' => $this->expires_at ?? $this->updated_at,
+                'icon' => 'las la-hourglass-end',
+                'color' => 'danger'
+            ];
+        }
+
+        // Sort by timestamp descending (newest first)
+        return collect($timeline)->sortByDesc('timestamp')->values()->all();
+    }
 }

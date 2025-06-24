@@ -198,7 +198,56 @@ class UserNotification extends Model
             'message' => $message,
             'icon' => '🔔',
             'color' => 'blue',
+            'action_url' => route('user.dashboard'),
             'priority' => 'normal'
+        ]);
+    }
+
+    public static function createLeadNotification($userId, $lead, $type, $title, $message, $actionUrl = null)
+    {
+        $icons = [
+            'new_lead' => '💼',
+            'smart_lead' => '🎯',
+            'lead_created' => '✅',
+            'lead_purchased' => '💰',
+            'lead_selected' => '🤝',
+            'lead_expired' => '⏰'
+        ];
+
+        $colors = [
+            'new_lead' => 'blue',
+            'smart_lead' => 'green', 
+            'lead_created' => 'purple',
+            'lead_purchased' => 'orange',
+            'lead_selected' => 'green',
+            'lead_expired' => 'red'
+        ];
+
+        // Determine user type
+        $user = \App\Models\User::find($userId);
+        $isCompany = $user && $user->companies()->exists();
+
+        return self::create([
+            'user_id' => $userId,
+            'user_type' => $isCompany ? 'company' : 'user',
+            'type' => 'lead',
+            'title' => $title,
+            'message' => $message,
+            'data' => [
+                'lead_id' => $lead->id,
+                'lead_type' => $type,
+                'lead_title' => $lead->title,
+                'lead_location' => $lead->location,
+                'lead_budget' => $lead->getBudgetRange(),
+                'lead_urgency' => $lead->urgency,
+                'category_name' => $lead->category->name ?? 'N/A'
+            ],
+            'icon' => $icons[$type] ?? '💼',
+            'color' => $colors[$type] ?? 'blue',
+            'action_url' => $actionUrl ?: route('user.dashboard'),
+            'priority' => $type === 'smart_lead' ? 'high' : 'normal',
+            'is_important' => in_array($type, ['smart_lead', 'lead_selected']),
+            'expires_at' => $type === 'smart_lead' ? now()->addHours(24) : null
         ]);
     }
 

@@ -16,16 +16,36 @@ use Illuminate\Support\Facades\Mail;
 
 class CustomerLeadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $pageTitle = 'Leads của tôi';
         
-        $leads = Lead::where('customer_id', Auth::id())
+        $query = Lead::where('customer_id', Auth::id())
             ->with(['category', 'purchases.company'])
-            ->latest()
-            ->paginate(15);
+            ->withCount(['purchases', 'visibilities']);
+        
+        // Apply filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+        
+        $leads = $query->latest()->paginate(15)->withQueryString();
+        $categories = Category::where('status', 1)->get();
 
-        return view('Template::user.customer.leads.index', compact('pageTitle', 'leads'));
+        return view('Template::user.customer.leads.index', compact('pageTitle', 'leads', 'categories'));
     }
 
     public function create()
@@ -239,7 +259,18 @@ class CustomerLeadController extends Controller
 
             foreach ($contractors as $contractor) {
                 if ($contractor->user) {
+                    // Send Laravel notification
                     $contractor->user->notify(new \App\Notifications\NewLeadNotification($lead));
+                    
+                    // Add to our UserNotification system
+                    \App\Models\UserNotification::createLeadNotification(
+                        $contractor->user->id,
+                        $lead,
+                        'new_lead',
+                        "Lead mới được chỉ định: {$lead->title}",
+                        "Bạn được chỉ định để thực hiện công việc tại {$lead->location}. Ngân sách: {$lead->getBudgetRange()}",
+                        route('user.leads.show', $lead->id)
+                    );
                 }
             }
             
@@ -287,8 +318,30 @@ class CustomerLeadController extends Controller
                     'expires_at' => now()->addHours(24) // 24h exclusive access
                 ]);
                 
-                // Send notification
+                // Send Laravel notification
                 $contractor->user->notify(new \App\Notifications\SmartLeadNotification($lead, $contractor->smart_score));
+                
+                // Add to our UserNotification system
+                \App\Models\UserNotification::createLeadNotification(
+                    $contractor->user->id,
+                    $lead,
+                    'smart_lead',
+                    "🎯 Lead ưu tiên: {$lead->title}",
+                    "Bạn được chọn trong top 3 thợ cho công việc tại {$lead->location}. Ngân sách: {$lead->getBudgetRange()}. Thời gian độc quyền: 24h",
+                    route('user.leads.show', $lead->id)
+                );
+            }
+            
+            // Also notify the customer about lead creation
+            if (auth()->check()) {
+                \App\Models\UserNotification::createLeadNotification(
+                    auth()->id(),
+                    $lead,
+                    'lead_created',
+                    "Lead đã được tạo: {$lead->title}",
+                    "Lead của bạn đã được tạo thành công và đang được gửi đến {$contractors->count()} thợ phù hợp. Bạn sẽ sớm nhận được phản hồi.",
+                    route('user.customer.leads.show', $lead->id)
+                );
             }
             
             \Log::info('Smart lead distribution completed:', [
@@ -317,7 +370,18 @@ class CustomerLeadController extends Controller
 
         foreach ($contractors as $contractor) {
             if ($contractor->user) {
+                // Send Laravel notification
                 $contractor->user->notify(new \App\Notifications\NewLeadNotification($lead));
+                
+                // Add to our UserNotification system
+                \App\Models\UserNotification::createLeadNotification(
+                    $contractor->user->id,
+                    $lead,
+                    'new_lead',
+                    "Lead mới: {$lead->title}",
+                    "Có lead mới phù hợp với dịch vụ của bạn tại {$lead->location}. Ngân sách: {$lead->getBudgetRange()}",
+                    route('user.leads.show', $lead->id)
+                );
             }
         }
     }

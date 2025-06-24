@@ -3260,8 +3260,17 @@ function loadCities() {
                     
                     cities.forEach((city, index) => {
                         if (index < 5) console.log(`City ${index + 1}:`, city);
+                        // Defensive programming to handle different data structures
+                        const cityCode = city.City_code || city.city_code || city.code || city.id || '';
+                        const cityName = city.City || city.city || city.name || 'Unknown City';
+                        
+                        if (!cityCode || !cityName) {
+                            console.warn('Invalid city data:', city);
+                            return;
+                        }
+                        
                         select.append(
-                            `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
+                            `<option value="${cityCode}" data-name="${cityName}">${cityName}</option>`
                         );
                     });
                     
@@ -3296,8 +3305,10 @@ function loadCities() {
                     select.empty().append('<option value="">Chọn thành phố</option>');
                     
                     fallbackCities.forEach(city => {
+                        const cityCode = city.City_code || city.city_code || city.code || city.id || '';
+                        const cityName = city.City || city.city || city.name || 'Unknown City';
                         select.append(
-                            `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
+                            `<option value="${cityCode}" data-name="${cityName}">${cityName}</option>`
                         );
                     });
                     
@@ -3333,8 +3344,17 @@ function loadDistricts(cityCode, districtSelect) {
                 
                 districts.forEach(district => {
                     console.log('Adding district:', district);
+                    // Defensive programming to handle different data structures
+                    const districtCode = district.District_code || district.district_code || district.code || district.id || '';
+                    const districtName = district.District || district.district || district.name || 'Unknown District';
+                    
+                    if (!districtCode || !districtName) {
+                        console.warn('Invalid district data:', district);
+                        return;
+                    }
+                    
                     districtSelect.append(
-                        `<option value="${district.District_code}" data-name="${district.District}">${district.District}</option>`
+                        `<option value="${districtCode}" data-name="${districtName}">${districtName}</option>`
                     );
                 });
                 
@@ -3370,8 +3390,17 @@ function loadWards(districtCode, wardSelect) {
                 
                 wards.forEach(ward => {
                     console.log('Adding ward:', ward);
+                    // Defensive programming to handle different data structures
+                    const wardCode = ward.Ward_code || ward.ward_code || ward.code || ward.id || '';
+                    const wardName = ward.Ward || ward.ward || ward.name || 'Unknown Ward';
+                    
+                    if (!wardCode || !wardName) {
+                        console.warn('Invalid ward data:', ward);
+                        return;
+                    }
+                    
                     wardSelect.append(
-                        `<option value="${ward.Ward_code}" data-name="${ward.Ward}">${ward.Ward}</option>`
+                        `<option value="${wardCode}" data-name="${wardName}">${wardName}</option>`
                     );
                 });
                 
@@ -5181,8 +5210,10 @@ window.populateTestCities = function() {
         select.empty().append('<option value="">Chọn thành phố</option>');
         
         testCities.forEach(city => {
+            const cityCode = city.City_code || city.city_code || city.code || city.id || '';
+            const cityName = city.City || city.city || city.name || 'Unknown City';
             select.append(
-                `<option value="${city.City_code}" data-name="${city.City}">${city.City}</option>`
+                `<option value="${cityCode}" data-name="${cityName}">${cityName}</option>`
             );
         });
         

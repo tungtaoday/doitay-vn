@@ -252,4 +252,29 @@ class UserNotificationController extends Controller
 
         return back()->withNotify($notify);
     }
+
+    /**
+     * Mark notification as read
+     */
+    public function markAsRead(Request $request)
+    {
+        $request->validate([
+            'notification_id' => 'required|exists:user_notifications,id'
+        ]);
+
+        try {
+            $notification = UserNotification::findOrFail($request->notification_id);
+            
+            if (!$notification->is_read) {
+                $notification->update([
+                    'is_read' => true,
+                    'read_at' => now()
+                ]);
+            }
+
+            return response()->json(['success' => true, 'message' => 'Notification marked as read']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to mark as read'], 500);
+        }
+    }
 } 

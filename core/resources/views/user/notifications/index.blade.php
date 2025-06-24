@@ -92,6 +92,10 @@
                             <i class="fas fa-calendar me-2"></i>
                             Cuộc hẹn
                         </button>
+                        <button class="nav-link" id="lead-tab" data-filter="lead">
+                            <i class="fas fa-briefcase me-2"></i>
+                            Công việc
+                        </button>
                         <button class="nav-link" id="campaign-tab" data-filter="campaign">
                             <i class="fas fa-bullhorn me-2"></i>
                             Khuyến mãi
@@ -120,6 +124,9 @@
                                                 @switch($notification->type)
                                                     @case('appointment')
                                                         <i class="fas fa-calendar-check"></i>
+                                                        @break
+                                                    @case('lead')
+                                                        <i class="fas fa-briefcase"></i>
                                                         @break
                                                     @case('campaign')
                                                         <i class="fas fa-bullhorn"></i>
@@ -157,6 +164,22 @@
 
                                             <div class="notification-message">
                                                 {{ $notification->message }}
+                                                
+                                                @if($notification->type === 'lead' && isset($notification->data['lead_budget']))
+                                                    <div class="notification-details mt-2">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-map-marker-alt me-1"></i>{{ $notification->data['lead_location'] ?? 'N/A' }}
+                                                            @if($notification->data['lead_budget'])
+                                                                &nbsp;&nbsp;
+                                                                <i class="fas fa-dollar-sign me-1"></i>{{ $notification->data['lead_budget'] }}
+                                                            @endif
+                                                            @if($notification->data['category_name'])
+                                                                &nbsp;&nbsp;
+                                                                <i class="fas fa-tag me-1"></i>{{ $notification->data['category_name'] }}
+                                                            @endif
+                                                        </small>
+                                                    </div>
+                                                @endif
                                             </div>
 
                                             <div class="notification-meta">
@@ -164,6 +187,9 @@
                                                     @switch($notification->type)
                                                         @case('appointment')
                                                             <i class="fas fa-calendar me-1"></i>Cuộc hẹn
+                                                            @break
+                                                        @case('lead')
+                                                            <i class="fas fa-briefcase me-1"></i>Công việc
                                                             @break
                                                         @case('campaign')
                                                             <i class="fas fa-bullhorn me-1"></i>Khuyến mãi
