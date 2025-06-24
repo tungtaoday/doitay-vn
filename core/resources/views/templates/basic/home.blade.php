@@ -3886,10 +3886,10 @@ function initQuickLeadForm() {
                         message += `📱 Tài khoản: ${loginInfo.username}\n`;
                         message += `📧 Email: ${loginInfo.email}\n`;
                         message += '🔑 Mật khẩu đã được gửi qua email/SMS\n\n';
-                        message += '🚀 Bạn đã được tự động đăng nhập và sẽ nhận được liên hệ từ thợ sớm!';
+                        message += '🚀 Đang chuyển đến trang lead...';
                         
                         // Show detailed notification for new user
-                        showNotification(message, 'success', 8000); // Show longer for important info
+                        showNotification(message, 'success', 3000); // Show shorter since redirecting
                         
                         // Also log for debugging
                         console.log('🎉 New user created:', {
@@ -3899,16 +3899,21 @@ function initQuickLeadForm() {
                             password_sent: loginInfo.password_sent
                         });
                         
-                        // Optional: Show a modal with login instructions
-                        showNewUserModal(loginInfo);
-                        
                     } else {
                         // Standard success message for existing users
-                    showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
+                        showNotification('🎉 Lead đã được tạo thành công! Đang chuyển đến trang lead...', 'success', 2000);
                     }
                     
-                    e.target.reset();
-                    goToStep(1);
+                    // Redirect to the created lead after short delay
+                    setTimeout(() => {
+                        if (result.redirect_url) {
+                            window.location.href = result.redirect_url;
+                        } else if (result.lead_id) {
+                            window.location.href = '/customer/leads/show/' + result.lead_id;
+                        } else {
+                            window.location.href = '/customer/leads';
+                        }
+                    }, 1500);
                 } else {
                     let errorMessage = result.message || 'Có lỗi xảy ra, vui lòng thử lại';
                     
@@ -4054,9 +4059,23 @@ function initQuickLeadForm() {
                 console.log('Guest response result:', result);
 
                 if (result.success) {
-                    showNotification('🎉 Lead đã được tạo thành công! Bạn sẽ nhận được liên hệ sớm.', 'success');
-                    e.target.reset();
-                    goToStep(1);
+                    // Show notification with redirect message
+                    if (result.user_created) {
+                        showNotification('🎉 Lead và tài khoản đã được tạo thành công! Đang chuyển đến trang lead...', 'success', 3000);
+                    } else {
+                        showNotification('🎉 Lead đã được tạo thành công! Đang chuyển đến trang lead...', 'success', 2000);
+                    }
+                    
+                    // Redirect to the created lead after short delay
+                    setTimeout(() => {
+                        if (result.redirect_url) {
+                            window.location.href = result.redirect_url;
+                        } else if (result.lead_id) {
+                            window.location.href = '/customer/leads/show/' + result.lead_id;
+                        } else {
+                            window.location.href = '/customer/leads';
+                        }
+                    }, 1500);
                 } else {
                     let errorMessage = result.message || 'Có lỗi xảy ra, vui lòng thử lại';
                     
@@ -5060,7 +5079,7 @@ function easeOutQuart(t) {
     return 1 - Math.pow(1 - t, 4);
 }
 
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', duration = 5000) {
     // Remove existing notifications
     document.querySelectorAll('.custom-notification').forEach(n => n.remove());
     
@@ -5081,12 +5100,12 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Auto remove after 5 seconds
+    // Auto remove after specified duration
     setTimeout(() => {
         if (notification.parentNode) {
             notification.remove();
         }
-    }, 5000);
+    }, duration);
 }
 
 // Add CSS for notification animation

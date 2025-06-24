@@ -16,6 +16,24 @@
                 </div>
                 <div class="col-lg-4 text-lg-end">
                     <div class="page-actions">
+                        <!-- Navigation Toggle -->
+                        <div class="service-nav-toggle mb-3">
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('user.wallet.index') }}" class="btn btn-light active">
+                                    <i class="las la-wallet me-1"></i>
+                                    Ví
+                                </a>
+                                <a href="{{ route('company.appointments.index') }}" class="btn btn-outline-light">
+                                    <i class="las la-briefcase me-1"></i>
+                                    Lịch hẹn công ty
+                                </a>
+                                <a href="{{ route('appointments.index') }}" class="btn btn-outline-light">
+                                    <i class="las la-calendar-check me-1"></i>
+                                    Lịch hẹn cá nhân
+                                </a>
+                            </div>
+                        </div>
+                        
                         <a href="{{ route('user.wallet.transactions') }}" class="btn btn-outline-light">
                             <i class="las la-history me-2"></i>
                             Lịch sử giao dịch
@@ -775,6 +793,41 @@
     font-size: 1.25rem;
 }
 
+/* === SERVICE NAVIGATION TOGGLE === */
+.service-nav-toggle .btn-group {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.service-nav-toggle .btn {
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.service-nav-toggle .btn:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.service-nav-toggle .btn:not(.active):hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.service-nav-toggle .btn.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.service-nav-toggle .btn i {
+    font-size: 0.9rem;
+}
+
 /* === ANIMATIONS === */
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -817,7 +870,11 @@
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
     .page-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.95rem;
     }
     
     .page-header {
@@ -825,9 +882,52 @@
         text-align: center;
     }
     
+    .service-nav-toggle {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .service-nav-toggle .btn-group {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .service-nav-toggle .btn {
+        flex: 1;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-content p {
+        font-size: 0.85rem;
+    }
+    
     .wallets-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
+    }
+    
+    .wallet-header {
+        padding: 1rem;
+    }
+    
+    .wallet-body {
+        padding: 1rem;
     }
     
     .wallet-balance {
@@ -840,28 +940,134 @@
         grid-template-columns: 1fr;
     }
     
+    .action-item {
+        padding: 1rem;
+    }
+    
     .section-header {
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
     }
+    
+    .company-info h4 {
+        font-size: 0.95rem;
+    }
+    
+    .company-info p {
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 480px) {
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.25rem;
         flex-direction: column;
         text-align: center;
-        gap: 0.5rem;
+        gap: 4px;
+        line-height: 1.3;
     }
     
-    .wallet-card {
-        margin: 0 -0.5rem;
-        border-radius: 12px;
+    .page-subtitle {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .page-header {
+        padding: 1.5rem 0;
     }
     
     .stat-card {
-        padding: 1.5rem;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .stat-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        border-radius: 6px;
+    }
+    
+    .stat-content h3 {
+        font-size: 1rem;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+    
+    .stat-content p {
+        font-size: 0.7rem;
+        line-height: 1.3;
+    }
+    
+    .service-nav-toggle .btn {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+        min-height: 36px;
+    }
+    
+    .wallet-card {
+        margin: 0 -8px 12px -8px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .wallet-header {
+        padding: 12px;
+    }
+    
+    .wallet-body {
+        padding: 0 12px 12px 12px;
+    }
+    
+    .company-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+    }
+    
+    .company-info h4 {
+        font-size: 0.85rem;
+        line-height: 1.3;
+        margin-bottom: 2px;
+    }
+    
+    .company-info p {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+    
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        line-height: 1.2;
+    }
+    
+    .action-item {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .action-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+    
+    .action-content h5 {
+        font-size: 0.85rem;
+        line-height: 1.3;
+        margin-bottom: 2px;
+    }
+    
+    .action-content p {
+        font-size: 0.7rem;
+        line-height: 1.2;
     }
 }
 
@@ -870,6 +1076,63 @@
 .wallet-card:nth-child(2) { animation-delay: 0.2s; }
 .wallet-card:nth-child(3) { animation-delay: 0.3s; }
 .wallet-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* === MOBILE APP COMPACT OVERRIDE === */
+@media (max-width: 480px) {
+    .wallet-card {
+        margin: 0 -8px 12px -8px !important;
+        border-radius: 8px !important;
+    }
+    
+    .wallet-header {
+        padding: 12px !important;
+    }
+    
+    .wallet-body {
+        padding: 0 12px 12px 12px !important;
+    }
+    
+    .company-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 6px !important;
+    }
+    
+    .company-info h4 {
+        font-size: 0.85rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .company-info p {
+        font-size: 0.7rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .action-item {
+        padding: 12px !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .action-icon {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.85rem !important;
+        border-radius: 6px !important;
+    }
+    
+    .action-content h5 {
+        font-size: 0.85rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .action-content p {
+        font-size: 0.7rem !important;
+        line-height: 1.2 !important;
+    }
+}
 </style>
 @endpush
 

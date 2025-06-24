@@ -796,7 +796,11 @@
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
     .page-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.95rem;
     }
     
     .page-header {
@@ -813,6 +817,15 @@
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
+        padding: 1rem;
+    }
+    
+    .appointment-body {
+        padding: 1rem;
+    }
+    
+    .appointment-footer {
+        padding: 1rem;
     }
     
     .appointment-datetime {
@@ -827,7 +840,21 @@
     }
     
     .stat-card {
-        padding: 1.5rem;
+        padding: 1.25rem;
+    }
+    
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-content p {
+        font-size: 0.85rem;
     }
     
     .nav-pills {
@@ -837,38 +864,162 @@
     .nav-pills .nav-link {
         margin-right: 0.25rem;
         margin-bottom: 0.5rem;
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .company-details h4 {
+        font-size: 0.95rem;
+    }
+    
+    .company-details p {
+        font-size: 0.8rem;
     }
 }
 
 @media (max-width: 480px) {
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.25rem;
         flex-direction: column;
         text-align: center;
-        gap: 0.5rem;
+        gap: 4px;
+        line-height: 1.3;
+    }
+    
+    .page-subtitle {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .page-header {
+        padding: 1.5rem 0;
+    }
+    
+    .stat-card {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .stat-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        border-radius: 6px;
+    }
+    
+    .stat-content h3 {
+        font-size: 1rem;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+    
+    .stat-content p {
+        font-size: 0.7rem;
+        line-height: 1.3;
     }
     
     .appointment-card {
-        margin: 0 -0.5rem;
-        border-radius: 12px;
+        margin: 0 -8px 12px -8px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .appointment-header {
+        padding: 12px;
+    }
+    
+    .appointment-body {
+        padding: 0 12px 12px 12px;
+    }
+    
+    .appointment-footer {
+        padding: 12px;
+        border-top: 1px solid #f0f0f0;
     }
     
     .company-info {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .company-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+    }
+    
+    .company-details h4 {
+        font-size: 0.85rem;
+        line-height: 1.3;
+        margin-bottom: 2px;
+    }
+    
+    .company-details p {
+        font-size: 0.7rem;
+        line-height: 1.2;
     }
     
     .appointment-actions {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
     }
     
     .appointment-actions .btn {
         flex: 1;
-        margin: 0 0.25rem;
+        min-width: 80px;
+        font-size: 0.7rem;
+        padding: 8px 12px;
+        border-radius: 6px;
+        line-height: 1.2;
+        min-height: 32px;
+    }
+    
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        line-height: 1.2;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 8px 12px;
+        font-size: 0.7rem;
+        border-radius: 6px;
+        margin-right: 4px;
+        margin-bottom: 8px;
+        line-height: 1.2;
+        min-height: 32px;
+    }
+    
+    .service-nav-toggle .btn {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        min-height: 36px;
+    }
+    
+    .appointment-datetime .datetime-item {
+        font-size: 0.7rem;
+        gap: 6px;
+    }
+    
+    .appointment-details .detail-item {
+        font-size: 0.7rem;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+    
+    .appointment-notes {
+        font-size: 0.7rem;
+        margin-top: 8px;
+    }
+    
+    .appointment-time small {
+        font-size: 0.65rem;
     }
 }
 

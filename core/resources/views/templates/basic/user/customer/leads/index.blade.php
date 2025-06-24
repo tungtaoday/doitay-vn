@@ -642,16 +642,38 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .page-header {
-        padding: 1.5rem 0;
+        padding: 2rem 0;
     }
     
     .page-title {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.95rem;
     }
     
     .leads-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-content p {
+        font-size: 0.85rem;
     }
     
     .service-nav-toggle {
@@ -665,6 +687,8 @@
     
     .service-nav-toggle .btn {
         flex: 1;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
     }
     
     .quick-switch-banner .alert {
@@ -680,10 +704,148 @@
     .lead-header {
         flex-direction: column;
         gap: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .lead-body {
+        padding: 1rem;
+    }
+    
+    .lead-footer {
+        padding: 1rem;
     }
     
     .lead-actions {
         justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .lead-actions .btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.25rem;
+        line-height: 1.3;
+    }
+    
+    .page-subtitle {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .page-header {
+        padding: 1.5rem 0;
+    }
+    
+    .stat-card {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .stat-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        border-radius: 6px;
+    }
+    
+    .stat-content h3 {
+        font-size: 1rem;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+    
+    .stat-content p {
+        font-size: 0.7rem;
+        line-height: 1.3;
+    }
+    
+    .service-nav-toggle .btn {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+        min-height: 36px;
+    }
+    
+    .lead-card {
+        margin: 0 -8px 12px -8px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .lead-header {
+        padding: 12px;
+    }
+    
+    .lead-body {
+        padding: 0 12px 12px 12px;
+    }
+    
+    .lead-footer {
+        padding: 12px;
+        border-top: 1px solid #f0f0f0;
+    }
+    
+    .lead-actions .btn {
+        flex: 1;
+        min-width: 80px;
+        font-size: 0.7rem;
+        padding: 8px 12px;
+        border-radius: 6px;
+        line-height: 1.2;
+        min-height: 32px;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 8px 12px;
+        font-size: 0.7rem;
+        border-radius: 6px;
+        margin-right: 4px;
+        margin-bottom: 8px;
+        line-height: 1.2;
+        min-height: 32px;
+    }
+    
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        line-height: 1.2;
+    }
+    
+    .lead-info h4 {
+        font-size: 0.85rem;
+        line-height: 1.3;
+        margin-bottom: 2px;
+    }
+    
+    .lead-info p {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+    
+    .lead-budget {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+    
+    .lead-location {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+    
+    .lead-meta {
+        font-size: 0.65rem;
     }
 }
 

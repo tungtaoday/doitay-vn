@@ -16,6 +16,24 @@
                 </div>
                 <div class="col-lg-4 text-lg-end">
                     <div class="page-actions">
+                        <!-- Navigation Toggle -->
+                        <div class="service-nav-toggle mb-3">
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('company.appointments.index') }}" class="btn btn-light active">
+                                    <i class="las la-briefcase me-1"></i>
+                                    Lịch hẹn công ty
+                                </a>
+                                <a href="{{ route('user.wallet.index') }}" class="btn btn-outline-light">
+                                    <i class="las la-wallet me-1"></i>
+                                    Ví
+                                </a>
+                                <a href="{{ route('appointments.index') }}" class="btn btn-outline-light">
+                                    <i class="las la-calendar-check me-1"></i>
+                                    Lịch hẹn cá nhân
+                                </a>
+                            </div>
+                        </div>
+                        
                         <button class="btn btn-outline-light" onclick="refreshAppointments()">
                             <i class="las la-sync me-2"></i>
                             Làm mới
@@ -530,6 +548,22 @@
     border-left-color: var(--gray-600);
 }
 
+.stat-card.wallet {
+    border-left-color: var(--primary);
+}
+
+.stat-card.wallet.sufficient {
+    border-left-color: var(--success);
+}
+
+.stat-card.wallet.insufficient {
+    border-left-color: var(--danger);
+}
+
+.stat-card.revenue {
+    border-left-color: #8b5cf6;
+}
+
 .stat-icon {
     width: 60px;
     height: 60px;
@@ -1022,12 +1056,33 @@
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
     .page-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.95rem;
     }
     
     .page-header {
         padding: 2rem 0;
         text-align: center;
+    }
+    
+    .service-nav-toggle {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .service-nav-toggle .btn-group {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .service-nav-toggle .btn {
+        flex: 1;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
     }
     
     .appointments-grid {
@@ -1039,6 +1094,15 @@
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
+        padding: 1rem;
+    }
+    
+    .appointment-body {
+        padding: 1rem;
+    }
+    
+    .appointment-footer {
+        padding: 1rem;
     }
     
     .appointment-datetime {
@@ -1055,10 +1119,30 @@
     .appointment-actions {
         width: 100%;
         justify-content: space-between;
+        gap: 0.5rem;
+    }
+    
+    .appointment-actions .btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
     }
     
     .stat-card {
-        padding: 1.5rem;
+        padding: 1.25rem;
+    }
+    
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-content p {
+        font-size: 0.85rem;
     }
     
     .nav-pills {
@@ -1068,35 +1152,175 @@
     .nav-pills .nav-link {
         margin-right: 0.25rem;
         margin-bottom: 0.5rem;
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .customer-details h4 {
+        font-size: 0.95rem;
+    }
+    
+    .customer-details p {
+        font-size: 0.8rem;
     }
 }
 
 @media (max-width: 480px) {
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.25rem;
         flex-direction: column;
         text-align: center;
-        gap: 0.5rem;
+        gap: 4px;
+        line-height: 1.3;
+    }
+    
+    .page-subtitle {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .page-header {
+        padding: 1.5rem 0;
+    }
+    
+    .stat-card {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .stat-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        border-radius: 6px;
+    }
+    
+    .stat-content h3 {
+        font-size: 1rem;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+    
+    .stat-content p {
+        font-size: 0.7rem;
+        line-height: 1.3;
+    }
+    
+    .service-nav-toggle .btn {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+        min-height: 36px;
     }
     
     .appointment-card {
-        margin: 0 -0.5rem;
-        border-radius: 12px;
+        margin: 0 -8px 12px -8px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .appointment-header {
+        padding: 12px;
+    }
+    
+    .appointment-body {
+        padding: 0 12px 12px 12px;
+    }
+    
+    .appointment-footer {
+        padding: 12px;
+        border-top: 1px solid #f0f0f0;
     }
     
     .customer-info {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .customer-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+    }
+    
+    .customer-details h4 {
+        font-size: 0.85rem;
+        line-height: 1.3;
+        margin-bottom: 2px;
+    }
+    
+    .customer-details p {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+    
+    .appointment-actions {
+        flex-wrap: wrap;
+        gap: 8px;
     }
     
     .appointment-actions .btn {
         flex: 1;
-        margin: 0 0.25rem;
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
+        min-width: 80px;
+        font-size: 0.7rem;
+        padding: 8px 12px;
+        border-radius: 6px;
+        line-height: 1.2;
+        min-height: 32px;
+    }
+    
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        line-height: 1.2;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 8px 12px;
+        font-size: 0.7rem;
+        border-radius: 6px;
+        margin-right: 4px;
+        margin-bottom: 8px;
+        line-height: 1.2;
+        min-height: 32px;
+    }
+    
+    .appointment-datetime .datetime-item {
+        font-size: 0.7rem;
+        gap: 6px;
+    }
+    
+    .appointment-details .detail-item {
+        font-size: 0.7rem;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+    
+    .appointment-notes {
+        font-size: 0.7rem;
+        margin-top: 8px;
+    }
+    
+    .appointment-time small {
+        font-size: 0.65rem;
+    }
+    
+    .wallet-status {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+    }
+    
+    .appointment-cost {
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+    }
+    
+    .cost-info {
+        font-size: 0.7rem;
     }
 }
 
@@ -1107,6 +1331,41 @@
 
 .appointment-card.hidden {
     display: none;
+}
+
+/* === SERVICE NAVIGATION TOGGLE === */
+.service-nav-toggle .btn-group {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.service-nav-toggle .btn {
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.service-nav-toggle .btn:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.service-nav-toggle .btn:not(.active):hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.service-nav-toggle .btn.active {
+    background: white;
+    color: var(--success);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.service-nav-toggle .btn i {
+    font-size: 0.9rem;
 }
 
 /* === APPOINTMENT COST & WALLET STATUS === */
