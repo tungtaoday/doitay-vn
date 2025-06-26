@@ -152,7 +152,7 @@
                         <div class="sidebar-card-body">
                             <div class="category-tag">
                                 <i class="las la-tag me-2"></i>
-                                <span>{{ $lead->category->name ?? 'N/A' }}</span>
+                                <span>{{ $lead->category->name ?? 'Không xác định' }}</span>
                             </div>
                             <div class="urgency-tag mt-2">
                                 @if($lead->urgency == 'high')
@@ -284,7 +284,7 @@
                                         
                                         @if($lead->needed_by)
                                         <div class="timeline-info">
-                                            <span class="label">Deadline:</span>
+                                            <span class="label">Hạn hoàn thành:</span>
                                             <span class="value text-danger">
                                                 {{ \Carbon\Carbon::parse($lead->needed_by)->format('d/m/Y') }}
                                             </span>

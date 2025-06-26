@@ -156,7 +156,7 @@ class UserNotification extends Model
             'data' => [
                 'appointment_id' => $appointment->id,
                 'appointment_type' => $type,
-                'company_name' => $appointment->company->company_name ?? 'N/A',
+                'company_name' => $appointment->company->company_name ?? 'Không xác định',
                 'appointment_date' => $appointment->appointment_date,
                 'appointment_time' => $appointment->appointment_time
             ],
@@ -240,7 +240,7 @@ class UserNotification extends Model
                 'lead_location' => $lead->location,
                 'lead_budget' => $lead->getBudgetRange(),
                 'lead_urgency' => $lead->urgency,
-                'category_name' => $lead->category->name ?? 'N/A'
+                'category_name' => $lead->category->name ?? 'Không xác định'
             ],
             'icon' => $icons[$type] ?? '💼',
             'color' => $colors[$type] ?? 'blue',

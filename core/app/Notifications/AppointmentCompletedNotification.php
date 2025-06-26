@@ -28,12 +28,12 @@ class AppointmentCompletedNotification extends Notification implements ShouldQue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Appointment Completed')
-            ->line('Your appointment has been completed.')
-            ->line('Appointment Date: ' . $this->appointment->appointment_date)
-            ->line('Recipient Name: ' . $this->appointment->recipient_name)
-            ->action(text: 'View Appointment', url: url(path: '/user/appointments/' . $this->appointment->id))
-            ->line('Thank you for using our application!');
+            ->subject('Lịch hẹn đã hoàn thành')
+            ->line('Lịch hẹn của bạn đã được hoàn thành.')
+            ->line('Ngày hẹn: ' . $this->appointment->appointment_date)
+            ->line('Tên khách hàng: ' . $this->appointment->recipient_name)
+            ->action(text: 'Xem lịch hẹn', url: url(path: '/user/appointments/' . $this->appointment->id))
+            ->line('Cảm ơn bạn đã sử dụng ứng dụng của chúng tôi!');
     }
 
     public function toArray($notifiable)
@@ -42,15 +42,15 @@ class AppointmentCompletedNotification extends Notification implements ShouldQue
             'user_id' => $this->appointment->user_id,
             'company_id' => $this->appointment->company_id,
             'appointment_id' => $this->appointment->id,
-            'title' => 'Appointment Completed',
-            'message' => 'Your appointment has been completed.',
+            'title' => 'Lịch hẹn đã hoàn thành',
+            'message' => 'Lịch hẹn của bạn đã được hoàn thành.',
             'type_id' => 'appointment_completed',
             'is_read' => false,
         ]);
 
         return [
             'appointment_id' => $this->appointment->id,
-            'message' => 'Your appointment has been completed.',
+            'message' => 'Lịch hẹn của bạn đã được hoàn thành.',
         ];
     }
 }

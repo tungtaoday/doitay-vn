@@ -29,27 +29,27 @@ class AppointmentConfirmedNotification extends Notification implements ShouldQue
     public function toMail($notifiable)
     {
         $message = $notifiable->id === $this->appointment->user_id
-            ? 'Your appointment has been confirmed by the company.'
-            : 'You have confirmed an appointment for a customer.';
+            ? 'Lịch hẹn của bạn đã được xác nhận bởi công ty.'
+            : 'Bạn đã xác nhận lịch hẹn cho khách hàng.';
 
         return (new MailMessage)
             ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))
-            ->subject('Appointment Confirmed')
+            ->subject('Lịch hẹn đã được xác nhận')
             ->line($message)
-            ->line('Appointment Date: ' . $this->appointment->appointment_date)
-            ->line('Recipient Name: ' . $this->appointment->recipient_name)
-            ->action(text: 'View Appointment', url: url(path: '/user/appointments/' . $this->appointment->id))
-            ->line('Thank you for using our application!');
+            ->line('Ngày hẹn: ' . $this->appointment->appointment_date)
+            ->line('Tên khách hàng: ' . $this->appointment->recipient_name)
+            ->action(text: 'Xem lịch hẹn', url: url(path: '/user/appointments/' . $this->appointment->id))
+            ->line('Cảm ơn bạn đã sử dụng ứng dụng của chúng tôi!');
     }
 
     public function toDatabase($notifiable)
     {
         $data = [
             'appointment_id' => $this->appointment->id,
-            'title' => 'Appointment Confirmed',
+            'title' => 'Lịch hẹn đã được xác nhận',
             'message' => $notifiable->id === $this->appointment->user_id
-                ? 'Your appointment has been confirmed by the company.'
-                : 'You have confirmed an appointment for a customer.',
+                ? 'Lịch hẹn của bạn đã được xác nhận bởi công ty.'
+                : 'Bạn đã xác nhận lịch hẹn cho khách hàng.',
         ];
 
         $notificationId = Str::uuid()->toString();
@@ -66,10 +66,10 @@ class AppointmentConfirmedNotification extends Notification implements ShouldQue
             'user_id' => $this->appointment->user_id,
             'company_id' => $this->appointment->company_id,
             'appointment_id' => $this->appointment->id,
-            'title' => 'Appointment Confirmed',
+            'title' => 'Lịch hẹn đã được xác nhận',
             'message' => $notifiable->id === $this->appointment->user_id
-                ? 'Your appointment has been confirmed by the company.'
-                : 'You have confirmed an appointment for a customer.',
+                ? 'Lịch hẹn của bạn đã được xác nhận bởi công ty.'
+                : 'Bạn đã xác nhận lịch hẹn cho khách hàng.',
             'type_id' => 'appointment_confirmed',
             'is_read' => false,
             'notifiable_id' => $notifiable->getKey(),

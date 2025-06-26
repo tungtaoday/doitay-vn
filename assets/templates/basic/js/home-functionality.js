@@ -500,32 +500,84 @@ class FormSubmissions {
                 submitBtn.disabled = true;
                 
                 const formData = new FormData(authForm);
-                const data = Object.fromEntries(formData);
+                
+                // Add location data from selects
+                const citySelect = authForm.querySelector('select[name="city_code"]');
+                const districtSelect = authForm.querySelector('select[name="district_code"]');
+                const wardSelect = authForm.querySelector('select[name="ward_code"]');
+                
+                // Add city name
+                if (citySelect && citySelect.value) {
+                    const cityName = citySelect.options[citySelect.selectedIndex].text;
+                    if (cityName && cityName !== 'Chọn thành phố') {
+                        formData.append('city', cityName);
+                    }
+                }
+                
+                // Add district name - required
+                if (districtSelect && districtSelect.value) {
+                    const districtName = districtSelect.options[districtSelect.selectedIndex].text;
+                    if (districtName && districtName !== 'Chọn quận/huyện') {
+                        formData.append('district', districtName);
+                    }
+                }
+                
+                // Add ward name
+                if (wardSelect && wardSelect.value) {
+                    const wardName = wardSelect.options[wardSelect.selectedIndex].text;
+                    if (wardName && wardName !== 'Chọn phường/xã') {
+                        formData.append('ward', wardName);
+                    }
+                } else {
+                    // Use district name as ward if no ward selected
+                    const districtName = formData.get('district');
+                    if (districtName) {
+                        formData.append('ward', districtName);
+                    } else {
+                        formData.append('ward', 'Phường không xác định');
+                    }
+                }
                 
                 try {
-                    // Simulate API call - replace with actual endpoint
-                    const response = await fetch('/user/leads/store', {
+                    const response = await fetch('/customer/leads/store', {
                         method: 'POST',
+                        body: formData,
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-                        },
-                        body: JSON.stringify(data)
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
                     });
                     
                     const result = await response.json();
                     
                     if (response.ok && result.success) {
-                        this.showSuccessMessage('Lead đã được tạo thành công! Các thợ sẽ liên hệ với bạn sớm.');
-                        authForm.reset();
-                        // Reset to step 1
-                        window.authFormNav?.goToStep(1);
+                        this.showSuccessMessage('🎉 Lead đã được tạo thành công! Đang chuyển đến trang lead...');
+                        
+                        // Redirect to the created lead after short delay
+                        setTimeout(() => {
+                            if (result.redirect_url) {
+                                window.location.href = result.redirect_url;
+                            } else if (result.lead_id) {
+                                window.location.href = '/customer/leads/show/' + result.lead_id;
+                            } else {
+                                window.location.href = '/customer/leads';
+                            }
+                        }, 1500);
                     } else {
-                        this.showErrorMessage(result.message || 'Có lỗi xảy ra, vui lòng thử lại');
+                        let errorMessage = result.message || 'Có lỗi xảy ra, vui lòng thử lại';
+                        
+                        // Handle validation errors
+                        if (result.errors) {
+                            const errorMessages = Object.values(result.errors).flat();
+                            errorMessage = errorMessages.join(', ');
+                        }
+                        
+                        this.showErrorMessage('❌ ' + errorMessage);
                     }
                 } catch (error) {
                     console.error('Form submission error:', error);
-                    this.showErrorMessage('Có lỗi kết nối, vui lòng thử lại');
+                    this.showErrorMessage('Có lỗi kết nối, vui lòng thử lại: ' + error.message);
                 } finally {
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;

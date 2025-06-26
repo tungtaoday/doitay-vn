@@ -17,7 +17,7 @@
             
             <div class="notification-list" id="notificationList">
                 <div class="notification-loading text-center py-3">
-                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                    <i class="fas fa-spinner fa-spin"></i> Đang tải...
                 </div>
             </div>
             
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 listContainer.innerHTML = `
                     <div class="notification-empty">
                         <i class="fas fa-bell-slash"></i>
-                        <div>No notifications yet</div>
+                        <div>Chưa có thông báo</div>
                     </div>
                 `;
                 return;
@@ -372,30 +372,58 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         handleClick(notificationId, actionUrl) {
-            // Mark as read
+            // Prevent default action if there's an action URL
+            event.preventDefault();
+            
+            // Mark as read first and wait for completion
             fetch(`{{ route("user.notifications.read", "") }}/${notificationId}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     'Content-Type': 'application/json'
                 }
-            }).then(() => {
-                // Update UI
-                const item = document.querySelector(`[data-id="${notificationId}"]`);
-                if (item) {
-                    item.classList.remove('unread');
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI immediately
+                    const item = document.querySelector(`[data-id="${notificationId}"]`);
+                    if (item) {
+                        item.classList.remove('unread');
+                    }
+                    
+                    // Update badge count
+                    const badge = document.getElementById('notificationBadge');
+                    const mobileBadge = document.getElementById('mobileNotificationBadge');
+                    const currentCount = parseInt(badge.textContent) || 0;
+                    if (currentCount > 0) {
+                        this.updateBadge(currentCount - 1);
+                    }
+                    
+                    // Navigate after successful mark as read
+                    if (actionUrl && actionUrl !== '') {
+                        // Close dropdown first
+                        const dropdown = document.querySelector('.notification-dropdown');
+                        if (dropdown) {
+                            dropdown.classList.remove('show');
+                        }
+                        
+                        // Small delay to ensure UI updates are visible
+                        setTimeout(() => {
+                            window.location.href = actionUrl;
+                        }, 100);
+                    }
+                } else {
+                    console.error('Failed to mark notification as read:', data.message);
                 }
-                
-                // Update badge count
-                const badge = document.getElementById('notificationBadge');
-                const currentCount = parseInt(badge.textContent) || 0;
-                if (currentCount > 0) {
-                    this.updateBadge(currentCount - 1);
-                }
-                
-                // Navigate if action URL exists
-                if (actionUrl) {
-                    window.location.href = actionUrl;
+            })
+            .catch(error => {
+                console.error('Error marking notification as read:', error);
+                // Still navigate if there's an action URL, even if mark as read failed
+                if (actionUrl && actionUrl !== '') {
+                    setTimeout(() => {
+                        window.location.href = actionUrl;
+                    }, 100);
                 }
             });
         },

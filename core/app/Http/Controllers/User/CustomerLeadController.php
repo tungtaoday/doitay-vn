@@ -287,14 +287,14 @@ class CustomerLeadController extends Controller
             $contractors = \App\Models\Company::where('category_id', $lead->category_id)
                 ->where('district', $lead->district)
                 ->where('status', 1) // APPROVED status
-                ->with(['user', 'ratings'])
+                ->with(['user', 'wallet']) // Remove 'ratings' since it doesn't exist
                 ->get()
                 ->map(function($company) {
-                    // Calculate rating score
-                    $avgRating = $company->ratings->avg('rating') ?? 0;
-                    $reviewCount = $company->ratings->count();
+                    // FIX: Use avg_rating from companies table instead of non-existent ratings table
+                    $avgRating = (float)$company->avg_rating; // Use existing column
+                    $reviewCount = 0; // Assume 0 since no ratings table exists
                     
-                    // Weighted score: rating + review count bonus
+                    // Weighted score: rating + review count bonus  
                     $company->smart_score = $avgRating + ($reviewCount * 0.1);
                     
                     return $company;
@@ -328,7 +328,7 @@ class CustomerLeadController extends Controller
                     'smart_lead',
                     "🎯 Lead ưu tiên: {$lead->title}",
                     "Bạn được chọn trong top 3 thợ cho công việc tại {$lead->location}. Ngân sách: {$lead->getBudgetRange()}. Thời gian độc quyền: 24h",
-                    route('user.leads.show', $lead->id)
+                    url("/user/leads/show/{$lead->id}")
                 );
             }
             
@@ -380,7 +380,7 @@ class CustomerLeadController extends Controller
                     'new_lead',
                     "Lead mới: {$lead->title}",
                     "Có lead mới phù hợp với dịch vụ của bạn tại {$lead->location}. Ngân sách: {$lead->getBudgetRange()}",
-                    route('user.leads.show', $lead->id)
+                    url("/user/leads/show/{$lead->id}")
                 );
             }
         }

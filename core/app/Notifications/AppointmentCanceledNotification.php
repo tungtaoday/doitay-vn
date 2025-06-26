@@ -32,20 +32,20 @@ class AppointmentCanceledNotification extends Notification implements ShouldQueu
     {
         return (new MailMessage)
             ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME')) // Lấy email từ .env
-            ->subject('Appointment Canceled')
-            ->line('Your appointment has been canceled.')
-            ->line('Appointment Date: ' . $this->appointment->appointment_date)
-            ->line('Recipient Name: ' . $this->appointment->recipient_name)
-            ->action(text: 'View Appointment', url: url(path: '/user/appointments/' . $this->appointment->id))
-            ->line(line: 'Thank you for using our application!');
+            ->subject('Lịch hẹn đã bị hủy')
+            ->line('Lịch hẹn của bạn đã bị hủy.')
+            ->line('Ngày hẹn: ' . $this->appointment->appointment_date)
+            ->line('Tên khách hàng: ' . $this->appointment->recipient_name)
+            ->action(text: 'Xem lịch hẹn', url: url(path: '/user/appointments/' . $this->appointment->id))
+            ->line(line: 'Cảm ơn bạn đã sử dụng ứng dụng của chúng tôi!');
     }
 
     public function toDatabase($notifiable)
     {
         $data = [
             'appointment_id' => $this->appointment->id,
-            'title' => 'Appointment Canceled',
-            'message' => 'Your appointment has been canceled.',
+            'title' => 'Lịch hẹn đã bị hủy',
+            'message' => 'Lịch hẹn của bạn đã bị hủy.',
         ];
 
         // Để DatabaseChannel tự lưu vào notifications và lấy bản ghi vừa tạo
@@ -62,8 +62,8 @@ class AppointmentCanceledNotification extends Notification implements ShouldQueu
             'user_id' => $this->appointment->user_id,
             'company_id' => $this->appointment->company_id,
             'appointment_id' => $this->appointment->id,
-            'title' => 'Appointment Canceled',
-            'message' => 'Your appointment has been canceled.',
+            'title' => 'Lịch hẹn đã bị hủy',
+            'message' => 'Lịch hẹn của bạn đã bị hủy.',
             'type_id' => 'appointment_canceled',
             'is_read' => false,
             'notifiable_id' => $notifiable->getKey(),

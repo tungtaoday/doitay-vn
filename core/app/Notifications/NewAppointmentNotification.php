@@ -78,8 +78,8 @@ class NewAppointmentNotification extends Notification implements ShouldQueue
         // Dữ liệu cơ bản cho bảng notifications
         $data = [
             'appointment_id' => $this->appointment->id,
-            'title' => 'New Appointment Created',
-            'message' => 'A new appointment has been created.',
+            'title' => 'Lịch hẹn mới đã được tạo',
+            'message' => 'Một lịch hẹn mới đã được tạo.',
         ];
 
         // Sinh UUID cho cột id trong notifications
@@ -99,8 +99,8 @@ class NewAppointmentNotification extends Notification implements ShouldQueue
             'user_id' => $this->appointment->user_id,
             'company_id' => $this->appointment->company_id,
             'appointment_id' => $this->appointment->id,
-            'title' => 'New Appointment Created',
-            'message' => 'A new appointment has been created.',
+            'title' => 'Lịch hẹn mới đã được tạo',
+            'message' => 'Một lịch hẹn mới đã được tạo.',
             'type_id' => 'new_appointment',
             'is_read' => false,
             'notifiable_id' => $notifiable->getKey(),

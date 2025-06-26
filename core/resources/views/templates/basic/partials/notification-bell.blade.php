@@ -186,11 +186,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load notifications
     function loadNotifications() {
-        fetch('{{ route("user.notifications.unread-count") }}')
+        fetch('{{ route("user.notifications.header.data") }}')
             .then(response => response.json())
             .then(data => {
-                updateNotificationBadge(data.count);
-                renderNotifications(data.notifications);
+                if (data.success) {
+                    updateNotificationBadge(data.unread_count);
+                    renderNotifications(data.notifications);
+                }
             })
             .catch(error => console.error('Error loading notifications:', error));
     }
@@ -219,7 +221,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         container.innerHTML = notifications.map(notification => `
-            <div class="notification-item unread" data-id="${notification.id}">
+            <div class="notification-item ${!notification.is_read ? 'unread' : ''}" 
+                 data-id="${notification.id}"
+                 onclick="handleNotificationClick(${notification.id}, '${notification.action_url || ''}')">
                 <div class="d-flex align-items-start">
                     <div class="notification-icon ${notification.type} me-3">
                         <i class="las ${getNotificationIcon(notification.type)}"></i>
@@ -229,13 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p class="mb-1 small text-muted">${notification.message}</p>
                         <small class="text-muted">${notification.time}</small>
                     </div>
-                    <div class="dropdown">
+                    <div class="dropdown" onclick="event.stopPropagation();">
                         <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown">
                             <i class="las la-ellipsis-v"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="${notification.action_url}">Xem chi tiết</a></li>
-                            <li><button class="dropdown-item text-danger" onclick="deleteNotification('${notification.id}')">Xóa</button></li>
+                            <li><a class="dropdown-item" href="${notification.action_url}" onclick="event.stopPropagation(); handleNotificationClick(${notification.id}, '${notification.action_url}')">Xem chi tiết</a></li>
+                            <li><button class="dropdown-item text-danger" onclick="event.stopPropagation(); deleteNotification('${notification.id}')">Xóa</button></li>
                         </ul>
                     </div>
                 </div>
@@ -251,6 +255,57 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         return icons[type] || 'la-bell';
     }
+    
+    // Handle notification click to mark as read before navigation
+    window.handleNotificationClick = function(notificationId, actionUrl) {
+        // Prevent default action if there's an action URL
+        event.preventDefault();
+        
+        // Mark as read first and wait for completion
+        fetch(`{{ route("user.notifications.read", "") }}/${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update UI immediately
+                const item = document.querySelector(`[data-id="${notificationId}"]`);
+                if (item) {
+                    item.classList.remove('unread');
+                }
+                
+                // Update badge count
+                const badge = document.getElementById('notificationCount');
+                const currentCount = parseInt(badge.textContent) || 0;
+                if (currentCount > 0) {
+                    updateNotificationBadge(currentCount - 1);
+                }
+                
+                // Navigate after successful mark as read
+                if (actionUrl && actionUrl !== '' && actionUrl !== 'null') {
+                    // Small delay to ensure UI updates are visible
+                    setTimeout(() => {
+                        window.location.href = actionUrl;
+                    }, 100);
+                }
+            } else {
+                console.error('Failed to mark notification as read:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error marking notification as read:', error);
+            // Still navigate if there's an action URL, even if mark as read failed
+            if (actionUrl && actionUrl !== '' && actionUrl !== 'null') {
+                setTimeout(() => {
+                    window.location.href = actionUrl;
+                }, 100);
+            }
+        });
+    };
     
     function startCountdown(endTime, leadId, leadTitle) {
         const modal = new bootstrap.Modal(document.getElementById('leadCountdownModal'));
@@ -286,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Mark all notifications as read
     document.getElementById('markAllRead').addEventListener('click', function() {
-        fetch('{{ route("user.notifications.mark-all-read") }}', {
+        fetch('{{ route("user.notifications.read.all") }}', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',

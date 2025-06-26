@@ -15,12 +15,22 @@ class NotificationController extends Controller
     }
 
     /**
+     * Helper method to determine user type consistently
+     */
+    private function getUserType($user)
+    {
+        // Use same logic as in UserNotification::createLeadNotification
+        $isCompany = $user && $user->companies()->exists();
+        return $isCompany ? 'company' : 'user';
+    }
+
+    /**
      * Get notifications for the authenticated user
      */
     public function index(Request $request)
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         $query = UserNotification::forUser($user->id, $userType)
             ->active()
@@ -65,7 +75,7 @@ class NotificationController extends Controller
     public function headerData()
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         $unreadCount = UserNotification::forUser($user->id, $userType)
             ->unread()
@@ -103,7 +113,7 @@ class NotificationController extends Controller
     public function markAsRead($id)
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         $notification = UserNotification::forUser($user->id, $userType)
             ->findOrFail($id);
@@ -122,7 +132,7 @@ class NotificationController extends Controller
     public function markAsUnread($id)
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         $notification = UserNotification::forUser($user->id, $userType)
             ->findOrFail($id);
@@ -141,7 +151,7 @@ class NotificationController extends Controller
     public function markAllAsRead()
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         UserNotification::forUser($user->id, $userType)
             ->unread()
@@ -162,7 +172,7 @@ class NotificationController extends Controller
     public function delete($id)
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         $notification = UserNotification::forUser($user->id, $userType)
             ->findOrFail($id);
@@ -181,7 +191,7 @@ class NotificationController extends Controller
     public function deleteAllRead()
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         $deletedCount = UserNotification::forUser($user->id, $userType)
             ->read()
@@ -199,7 +209,7 @@ class NotificationController extends Controller
     public function statistics()
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         $stats = [
             'total' => UserNotification::forUser($user->id, $userType)->active()->count(),
@@ -230,7 +240,7 @@ class NotificationController extends Controller
     public function click(Request $request, $id)
     {
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Company ? 'company' : 'user';
+        $userType = $this->getUserType($user);
         
         $notification = UserNotification::forUser($user->id, $userType)
             ->findOrFail($id);
