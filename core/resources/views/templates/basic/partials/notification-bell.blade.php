@@ -186,12 +186,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load notifications
     function loadNotifications() {
-        fetch('{{ route("user.notifications.header.data") }}')
-            .then(response => response.json())
+        fetch('{{ route("user.notifications.header-data") }}')
+            .then(response => {
+                if (response.status === 401) {
+                    // User not authenticated - redirect to login
+                    console.log('User not authenticated, redirecting to login');
+                    window.location.href = '{{ route("user.login") }}';
+                    return;
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.success) {
+                if (data && data.success) {
                     updateNotificationBadge(data.unread_count);
                     renderNotifications(data.notifications);
+                } else if (data && data.error === 'Not authenticated') {
+                    console.log('Authentication error, redirecting to login');
+                    window.location.href = '{{ route("user.login") }}';
                 }
             })
             .catch(error => console.error('Error loading notifications:', error));
@@ -262,16 +273,28 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         
         // Mark as read first and wait for completion
-        fetch(`{{ route("user.notifications.read", "") }}/${notificationId}`, {
+        fetch(`{{ route("user.notifications.read", "PLACEHOLDER") }}`.replace('PLACEHOLDER', notificationId), {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 401) {
+                console.log('Authentication error in mark as read, redirecting to login');
+                window.location.href = '{{ route("user.login") }}';
+                return;
+            }
+            if (response.status === 419) {
+                console.log('CSRF token mismatch, refreshing page');
+                window.location.reload();
+                return;
+            }
+            return response.json();
+        })
         .then(data => {
-            if (data.success) {
+            if (data && data.success) {
                 // Update UI immediately
                 const item = document.querySelector(`[data-id="${notificationId}"]`);
                 if (item) {
@@ -292,8 +315,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.href = actionUrl;
                     }, 100);
                 }
+            } else if (data && data.error === 'Not authenticated') {
+                console.log('Authentication error in mark as read, redirecting to login');
+                window.location.href = '{{ route("user.login") }}';
             } else {
-                console.error('Failed to mark notification as read:', data.message);
+                console.error('Failed to mark notification as read:', data ? data.message : 'Unknown error');
             }
         })
         .catch(error => {
@@ -344,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('{{ route("user.notifications.read.all") }}', {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         })
@@ -358,10 +384,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Delete notification function
     window.deleteNotification = function(notificationId) {
-        fetch(`{{ route("user.notifications.delete", "") }}/${notificationId}`, {
+        fetch(`{{ route("user.notifications.delete", "PLACEHOLDER") }}`.replace('PLACEHOLDER', notificationId), {
             method: 'DELETE',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         })

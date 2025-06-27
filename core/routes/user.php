@@ -122,6 +122,10 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('purchase/{id}', 'purchase')->name('purchase');
                 Route::get('my-purchases', 'myPurchases')->name('my-purchases');
                 Route::post('update-status/{id}', 'updateStatus')->name('update-status');
+                
+                // NEW ROUTES FOR CONTRACTOR SELF-REPORT FLOW
+                Route::post('report-selected/{purchaseId}', 'reportSelected')->name('report-selected');
+                Route::post('customer-confirm/{purchaseId}', 'customerConfirm')->name('customer-confirm');
             });
 
             // Wallet Management

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Notification API</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+    <h1>Test Notification API</h1>
+    
+    <div>
+        <h3>Step 1: Test Header Data API</h3>
+        <button onclick="testHeaderData()">Test /user/notifications/header-data</button>
+        <div id="headerResult"></div>
+    </div>
+    
+    <div>
+        <h3>Step 2: Test Mark as Read API</h3>
+        <input type="number" id="notificationId" placeholder="Enter notification ID">
+        <button onclick="testMarkAsRead()">Test Mark as Read</button>
+        <div id="markResult"></div>
+    </div>
+    
+    <div>
+        <h3>Step 3: Debug Info</h3>
+        <div id="debugInfo"></div>
+    </div>
+
+    <script>
+        // Test header data API
+        function testHeaderData() {
+            const resultDiv = document.getElementById('headerResult');
+            resultDiv.innerHTML = 'Loading...';
+            
+            fetch('/user/notifications/header-data')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Header data:', data);
+                    resultDiv.innerHTML = `
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    
+                    // Show available notification IDs for testing
+                    if (data.notifications && data.notifications.length > 0) {
+                        const ids = data.notifications.map(n => n.id).join(', ');
+                        document.getElementById('debugInfo').innerHTML = `
+                            <strong>Available notification IDs for testing:</strong> ${ids}
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+                });
+        }
+        
+        // Test mark as read API
+        function testMarkAsRead() {
+            const id = document.getElementById('notificationId').value;
+            if (!id) {
+                alert('Please enter a notification ID');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('markResult');
+            resultDiv.innerHTML = 'Loading...';
+            
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            
+            fetch(`/user/notifications/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Mark as read response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Mark as read data:', data);
+                resultDiv.innerHTML = `
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+            });
+        }
+        
+        // Auto-test header data on load
+        window.onload = function() {
+            document.getElementById('debugInfo').innerHTML = `
+                <strong>Debug Info:</strong><br>
+                - CSRF Token: ${document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'NOT FOUND'}<br>
+                - Current URL: ${window.location.href}<br>
+                - User Agent: ${navigator.userAgent}
+            `;
+            
+            // Automatically test header data
+            testHeaderData();
+        };
+    </script>
+</body>
+</html> 

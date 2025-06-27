@@ -291,12 +291,13 @@
                                         </div>
                                         @endif
                                         
-                                        <div class="price-info">
-                                            <span class="label">Giá Lead:</span>
-                                            <span class="value text-success">
-                                                {{ number_format($lead->lead_price ?? 50000) }}₫
+                                        <div class="interest-info">
+                                            <span class="label">Thợ quan tâm:</span>
+                                            <span class="value text-primary">
+                                                <i class="las la-users me-1"></i>{{ $lead->purchases->count() }} thợ
                                             </span>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -336,13 +337,60 @@
                                     </div>
                                 </div>
                                 
+                                <!-- NEW: Contractor Self-Report Status and Actions -->
+                                @if($purchase->customer_confirmed)
+                                    <div class="contractor-status mb-2">
+                                        <span class="badge bg-success mb-2">✅ Đã xác nhận chọn</span>
+                                        <small class="d-block text-muted">
+                                            Xác nhận lúc: {{ $purchase->confirmed_at->format('d/m/Y H:i') }}
+                                        </small>
+                                        @if($purchase->confirmation_notes)
+                                            <small class="d-block text-muted mt-1">
+                                                <i class="las la-comment"></i> {{ $purchase->confirmation_notes }}
+                                            </small>
+                                        @endif
+                                    </div>
+                                @elseif($purchase->contractor_reported)
+                                    <div class="contractor-status mb-2">
+                                        <div class="alert alert-warning p-2 mb-2">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="las la-exclamation-triangle me-2"></i>
+                                                <strong>Thợ này báo bạn đã chọn họ!</strong>
+                                            </div>
+                                            <small class="d-block mb-2">
+                                                Báo cáo lúc: {{ $purchase->reported_at->format('d/m/Y H:i') }}
+                                            </small>
+                                            @if($purchase->report_notes)
+                                                <div class="report-notes mb-2">
+                                                    <small><strong>Ghi chú:</strong> {{ $purchase->report_notes }}</small>
+                                                </div>
+                                            @endif
+                                            
+                                            <!-- Customer Confirmation Buttons -->
+                                            <div class="confirmation-actions">
+                                                <p class="mb-2"><strong>Bạn có thực sự đã chọn thợ này?</strong></p>
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-success btn-sm" 
+                                                            data-bs-toggle="modal" data-bs-target="#confirmModal{{ $purchase->id }}">
+                                                        ✅ Đúng, tôi đã chọn
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                                            data-bs-toggle="modal" data-bs-target="#rejectModal{{ $purchase->id }}">
+                                                        ❌ Chưa chọn
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div class="contractor-actions">
                                     <a href="{{ route('company.details', [$purchase->company->id, slug($purchase->company->name)]) }}" 
                                        class="btn btn-outline-primary btn-sm" target="_blank">
                                         <i class="las la-eye me-1"></i>Xem profile
                                     </a>
                                     
-                                    @if($lead->status == 'active')
+                                    @if($lead->status == 'active' && !$purchase->contractor_reported)
                                     <form action="{{ route('user.customer.leads.select-contractor', $lead->id) }}" 
                                           method="POST" class="d-inline">
                                         @csrf
@@ -355,6 +403,96 @@
                                     @endif
                                 </div>
                             </div>
+                            
+                            <!-- Customer Confirmation Modal -->
+                            @if($purchase->contractor_reported && !$purchase->customer_confirmed)
+                            <div class="modal fade" id="confirmModal{{ $purchase->id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-success text-white">
+                                            <h5 class="modal-title">
+                                                <i class="las la-check-circle me-2"></i>Xác nhận chọn thợ
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form action="{{ route('user.leads.customer-confirm', $purchase->id) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="confirm" value="1">
+                                            <div class="modal-body">
+                                                <div class="alert alert-success">
+                                                    <i class="las la-info-circle me-2"></i>
+                                                    <strong>Xác nhận chọn thợ:</strong> {{ $purchase->company->name }}
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label">Thông tin báo cáo của thợ:</label>
+                                                    <div class="bg-light p-3 rounded">
+                                                        <p class="mb-1"><strong>Thời gian báo cáo:</strong> {{ $purchase->reported_at->format('d/m/Y H:i') }}</p>
+                                                        @if($purchase->report_notes)
+                                                            <p class="mb-0"><strong>Ghi chú:</strong> {{ $purchase->report_notes }}</p>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label">Ghi chú xác nhận (tùy chọn)</label>
+                                                    <textarea name="notes" class="form-control" rows="3" 
+                                                              placeholder="Ví dụ: Đã thống nhất giá 2,500,000₫ và thời gian hoàn thành..."></textarea>
+                                                    <small class="text-muted">Ghi chú này sẽ được gửi đến thợ cùng với thông báo xác nhận.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                <button type="submit" class="btn btn-success">
+                                                    <i class="las la-check me-1"></i>Xác nhận chọn thợ này
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer Rejection Modal -->
+                            <div class="modal fade" id="rejectModal{{ $purchase->id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-warning text-dark">
+                                            <h5 class="modal-title">
+                                                <i class="las la-times-circle me-2"></i>Từ chối xác nhận
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form action="{{ route('user.leads.customer-confirm', $purchase->id) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="confirm" value="0">
+                                            <div class="modal-body">
+                                                <div class="alert alert-warning">
+                                                    <i class="las la-exclamation-triangle me-2"></i>
+                                                    <strong>Từ chối xác nhận chọn thợ:</strong> {{ $purchase->company->name }}
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <p>Bạn đang từ chối xác nhận việc đã chọn thợ này. Thợ sẽ được thông báo và có thể tiếp tục liên hệ với bạn.</p>
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label">Lý do từ chối (tùy chọn)</label>
+                                                    <textarea name="notes" class="form-control" rows="3" 
+                                                              placeholder="Ví dụ: Tôi chưa chọn thợ này, vẫn đang cân nhắc..."></textarea>
+                                                    <small class="text-muted">Lý do này sẽ được gửi đến thợ để họ hiểu rõ tình hình.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                <button type="submit" class="btn btn-warning">
+                                                    <i class="las la-times me-1"></i>Xác nhận từ chối
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                             @endforeach
                         </div>
                     </div>

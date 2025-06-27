@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Lead 42 - Email Fix Verification</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 12px 25px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #218838; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #cce7ff; border: 1px solid #99d3ff; color: #004085; }
+        .step { margin: 10px 0; padding: 10px; background: #f8f9fa; border-left: 3px solid #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Lead Creation - Email Fix Verification</h1>
+        
+        <div class="info">
+            <h3>🎯 Mục đích test:</h3>
+            <ul>
+                <li>Kiểm tra email notifications đã hoạt động sau khi fix CustomerLeadController</li>
+                <li>Xác minh rằng contractors nhận được email NEW_LEAD_NOTIFICATION</li>
+                <li>Test với Company ID 58 (Tung Nguyen Hoang) có email tungannhien0910@gmail.com</li>
+            </ul>
+        </div>
+        
+        <form id="leadForm">
+            <div class="form-group">
+                <label>🔧 Tiêu đề Lead Test:</label>
+                <input type="text" name="title" value="EMAIL FIX TEST - " required>
+                <small>Timestamp sẽ được thêm tự động</small>
+            </div>
+            
+            <div class="form-group">
+                <label>📝 Mô tả:</label>
+                <textarea name="description" rows="3">Test lead để xác minh email notifications hoạt động sau khi fix CustomerLeadController. Contractor sẽ nhận email qua template NEW_LEAD_NOTIFICATION.</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>🏷️ Category (cố định cho Company 58):</label>
+                <select name="category_id" disabled>
+                    <option value="4" selected>Sửa chữa điện (4) - Matching với Company 58</option>
+                </select>
+                <input type="hidden" name="category_id" value="4">
+            </div>
+            
+            <div class="form-group">
+                <label>📍 Quận/Huyện (cố định cho Company 58):</label>
+                <select name="district" disabled>
+                    <option value="Huyện Hoài Đức" selected>Huyện Hoài Đức - Matching với Company 58</option>
+                </select>
+                <input type="hidden" name="district" value="Huyện Hoài Đức">
+            </div>
+            
+            <div class="form-group">
+                <label>🏘️ Xã/Phường:</label>
+                <input type="text" name="ward" value="Xã Test Email Fix">
+            </div>
+            
+            <div class="form-group">
+                <label>🏠 Địa chỉ chi tiết:</label>
+                <input type="text" name="address" value="123 Test Street - Email Fix Verification">
+            </div>
+            
+            <div class="form-group">
+                <label>💰 Ngân sách tối thiểu:</label>
+                <input type="number" name="budget_min" value="150000">
+            </div>
+            
+            <div class="form-group">
+                <label>💰 Ngân sách tối đa:</label>
+                <input type="number" name="budget_max" value="350000">
+            </div>
+            
+            <div class="form-group">
+                <label>⚡ Mức độ khẩn cấp:</label>
+                <select name="urgency">
+                    <option value="medium" selected>Trung bình</option>
+                    <option value="low">Thấp</option>
+                    <option value="high">Cao</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>📅 Ngày cần hoàn thành:</label>
+                <input type="date" name="needed_by" value="2025-07-10">
+            </div>
+            
+            <button type="submit">🚀 Tạo Lead Test & Kiểm tra Email</button>
+        </form>
+        
+        <div id="result" style="display: none;"></div>
+        
+        <div class="step">
+            <h3>📋 Các bước kiểm tra sau khi tạo lead:</h3>
+            <ol>
+                <li><strong>Kiểm tra email tungannhien0910@gmail.com</strong> - Company 58 sẽ nhận email</li>
+                <li><strong>Subject:</strong> "🎯 Lead ưu tiên dành cho bạn - [Tên lead]"</li>
+                <li><strong>From:</strong> nguyentung0910@gmail.com</li>
+                <li><strong>Template:</strong> NEW_LEAD_NOTIFICATION</li>
+                <li><strong>Database check:</strong> notification_logs table sẽ có record mới</li>
+            </ol>
+        </div>
+        
+        <div class="step">
+            <h3>🔍 Debug commands nếu cần:</h3>
+            <code>
+                php debug_latest_lead.php<br>
+                php check_email_templates.php<br>
+                SELECT * FROM notification_logs ORDER BY created_at DESC LIMIT 5;
+            </code>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('leadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const result = document.getElementById('result');
+            
+            // Add timestamp to title
+            const timestamp = new Date().toLocaleTimeString();
+            formData.set('title', formData.get('title') + timestamp);
+            
+            try {
+                result.style.display = 'block';
+                result.className = 'result info';
+                result.innerHTML = '🔄 Đang tạo lead test...';
+                
+                // Submit to CustomerLeadController via the existing form endpoint
+                const response = await fetch('/customer/leads', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': getCsrfToken(),
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData))
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <h3>✅ Lead Test Tạo Thành Công!</h3>
+                        <p><strong>Lead ID:</strong> ${data.lead_id}</p>
+                        <p><strong>Tiêu đề:</strong> ${formData.get('title')}</p>
+                        
+                        <h4>📧 Email Notification Status:</h4>
+                        <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                            <p><strong>Recipient:</strong> tungannhien0910@gmail.com (Company 58 - Tung Nguyen Hoang)</p>
+                            <p><strong>Template:</strong> NEW_LEAD_NOTIFICATION</p>
+                            <p><strong>Expected subject:</strong> 🎯 Lead ưu tiên dành cho bạn - ${formData.get('title')}</p>
+                        </div>
+                        
+                        <h4>✅ Verification Steps:</h4>
+                        <ol>
+                            <li>Check email inbox: tungannhien0910@gmail.com</li>
+                            <li>Check spam/promotions folder if not in inbox</li>
+                            <li>Email should arrive within 1-2 minutes</li>
+                            <li>If no email, run: php debug_latest_lead.php</li>
+                        </ol>
+                        
+                        <p><strong>Lead URL:</strong> <a href="/customer/leads/show/${data.lead_id}" target="_blank">View Lead Details</a></p>
+                    `;
+                    
+                    // Auto-refresh page after 30 seconds to check again
+                    setTimeout(() => {
+                        result.innerHTML += `
+                            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                                <p>💡 <strong>Next:</strong> Create another lead to test again or check notification logs.</p>
+                            </div>
+                        `;
+                    }, 30000);
+                    
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `
+                        <h3>❌ Lỗi Tạo Lead!</h3>
+                        <p><strong>Message:</strong> ${data.message || 'Unknown error'}</p>
+                        ${data.errors ? '<p><strong>Errors:</strong> ' + JSON.stringify(data.errors) + '</p>' : ''}
+                    `;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>${error.message}</p>
+                    <p>Có thể cần login hoặc CSRF token issue.</p>
+                `;
+            }
+        });
+        
+        function getCsrfToken() {
+            const token = document.querySelector('meta[name="csrf-token"]');
+            if (token) return token.getAttribute('content');
+            
+            // Try to get from cookie
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'XSRF-TOKEN') {
+                    return decodeURIComponent(value);
+                }
+            }
+            
+            return 'no-token';
+        }
+    </script>
+</body>
+</html> 

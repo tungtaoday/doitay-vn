@@ -205,11 +205,44 @@ class CustomerLeadController extends Controller
 
             \Log::info('Lead created successfully:', ['lead_id' => $lead->id]);
 
+            // Send confirmation email to customer
+            $contractorsCount = 0;
+            
             // Notify matching contractors
             if (!empty($validated['selected_contractors'])) {
+                $contractorsCount = count($validated['selected_contractors']);
                 $this->notifySelectedContractors($lead, $validated['selected_contractors']);
             } else {
-                $this->notifyMatchingContractors($lead);
+                $contractorsCount = $this->notifyMatchingContractors($lead);
+            }
+            
+            // Send confirmation email to customer
+            if (auth()->check()) {
+                try {
+                    notify(auth()->user(), 'LEAD_CREATED_CONFIRMATION', [
+                        'customer_name' => auth()->user()->firstname . ' ' . auth()->user()->lastname,
+                        'lead_title' => $lead->title,
+                        'lead_location' => $lead->location,
+                        'lead_budget' => $lead->getBudgetRange(),
+                        'lead_urgency' => ucfirst($lead->urgency),
+                        'contractors_count' => $contractorsCount,
+                        'lead_id' => $lead->id,
+                        'lead_url' => route('user.customer.leads.show', $lead->id),
+                        'current_time' => now()->format('d/m/Y H:i:s'),
+                        'site_name' => gs('site_name'),
+                        'support_phone' => '1900 1234'
+                    ]);
+                    
+                    \Log::info('Customer confirmation email sent:', [
+                        'lead_id' => $lead->id,
+                        'customer_email' => auth()->user()->email
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send customer confirmation email:', [
+                        'lead_id' => $lead->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
 
             return response()->json([
@@ -261,6 +294,21 @@ class CustomerLeadController extends Controller
                 if ($contractor->user) {
                     // Send Laravel notification
                     $contractor->user->notify(new \App\Notifications\NewLeadNotification($lead));
+                    
+                    // Send email via template system
+                    notify($contractor->user, 'NEW_LEAD_NOTIFICATION', [
+                        'contractor_name' => $contractor->user->firstname . ' ' . $contractor->user->lastname,
+                        'lead_title' => $lead->title,
+                        'lead_location' => $lead->location,
+                        'lead_budget' => $lead->getBudgetRange(),
+                        'lead_category' => $lead->category->name ?? 'Dịch vụ',
+                        'lead_urgency' => ucfirst($lead->urgency),
+                        'priority_score' => '5.0',
+                        'lead_price' => number_format($lead->lead_price),
+                        'lead_url' => route('user.leads.show', $lead->id),
+                        'expires_at' => '24 giờ',
+                        'current_time' => now()->format('d/m/Y H:i:s')
+                    ]);
                     
                     // Add to our UserNotification system
                     \App\Models\UserNotification::createLeadNotification(
@@ -321,15 +369,67 @@ class CustomerLeadController extends Controller
                 // Send Laravel notification
                 $contractor->user->notify(new \App\Notifications\SmartLeadNotification($lead, $contractor->smart_score));
                 
-                // Add to our UserNotification system
-                \App\Models\UserNotification::createLeadNotification(
-                    $contractor->user->id,
-                    $lead,
-                    'smart_lead',
-                    "🎯 Lead ưu tiên: {$lead->title}",
-                    "Bạn được chọn trong top 3 thợ cho công việc tại {$lead->location}. Ngân sách: {$lead->getBudgetRange()}. Thời gian độc quyền: 24h",
-                    url("/user/leads/show/{$lead->id}")
-                );
+                // Add detailed logging for email notifications
+                \Log::info('Attempting to send email notification:', [
+                    'lead_id' => $lead->id,
+                    'contractor_id' => $contractor->id,
+                    'contractor_name' => $contractor->name,
+                    'contractor_email' => $contractor->user->email,
+                    'template' => 'NEW_LEAD_NOTIFICATION'
+                ]);
+                
+                try {
+                    // Send email via template system
+                    notify($contractor->user, 'NEW_LEAD_NOTIFICATION', [
+                        'contractor_name' => $contractor->user->firstname . ' ' . $contractor->user->lastname,
+                        'lead_title' => $lead->title,
+                        'lead_location' => $lead->location,
+                        'lead_budget' => $lead->getBudgetRange(),
+                        'lead_category' => $lead->category->name ?? 'Dịch vụ',
+                        'lead_urgency' => ucfirst($lead->urgency),
+                        'priority_score' => number_format($contractor->smart_score, 1),
+                        'lead_price' => number_format($lead->lead_price),
+                        'lead_url' => route('user.leads.show', $lead->id),
+                        'expires_at' => '24 giờ',
+                        'current_time' => now()->format('d/m/Y H:i:s')
+                    ]);
+                    
+                    \Log::info('Email notification sent successfully:', [
+                        'lead_id' => $lead->id,
+                        'contractor_email' => $contractor->user->email
+                    ]);
+                    
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send email notification:', [
+                        'lead_id' => $lead->id,
+                        'contractor_email' => $contractor->user->email,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+                
+                try {
+                    // Add to our UserNotification system
+                    \App\Models\UserNotification::createLeadNotification(
+                        $contractor->user->id,
+                        $lead,
+                        'smart_lead',
+                        "🎯 Lead ưu tiên: {$lead->title}",
+                        "Bạn được chọn trong top 3 thợ cho công việc tại {$lead->location}. Ngân sách: {$lead->getBudgetRange()}. Thời gian độc quyền: 24h",
+                        url("/user/leads/show/{$lead->id}")
+                    );
+                    
+                    \Log::info('UserNotification created successfully:', [
+                        'lead_id' => $lead->id,
+                        'user_id' => $contractor->user->id
+                    ]);
+                    
+                } catch (\Exception $e) {
+                    \Log::error('Failed to create UserNotification:', [
+                        'lead_id' => $lead->id,
+                        'user_id' => $contractor->user->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
             
             // Also notify the customer about lead creation
@@ -350,11 +450,14 @@ class CustomerLeadController extends Controller
                 'contractors' => $contractors->pluck('name', 'id')->toArray()
             ]);
             
+            return $contractors->count();
+            
         } catch (\Exception $e) {
             \Log::error('Failed to distribute lead smartly:', ['error' => $e->getMessage()]);
             
             // Fallback to old method if smart distribution fails
             $this->fallbackNotifyContractors($lead);
+            return 0;
         }
     }
     
@@ -372,6 +475,21 @@ class CustomerLeadController extends Controller
             if ($contractor->user) {
                 // Send Laravel notification
                 $contractor->user->notify(new \App\Notifications\NewLeadNotification($lead));
+                
+                // Send email via template system
+                notify($contractor->user, 'NEW_LEAD_NOTIFICATION', [
+                    'contractor_name' => $contractor->user->firstname . ' ' . $contractor->user->lastname,
+                    'lead_title' => $lead->title,
+                    'lead_location' => $lead->location,
+                    'lead_budget' => $lead->getBudgetRange(),
+                    'lead_category' => $lead->category->name ?? 'Dịch vụ',
+                    'lead_urgency' => ucfirst($lead->urgency),
+                    'priority_score' => '4.0',
+                    'lead_price' => number_format($lead->lead_price),
+                    'lead_url' => route('user.leads.show', $lead->id),
+                    'expires_at' => '24 giờ',
+                    'current_time' => now()->format('d/m/Y H:i:s')
+                ]);
                 
                 // Add to our UserNotification system
                 \App\Models\UserNotification::createLeadNotification(

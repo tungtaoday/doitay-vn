@@ -75,6 +75,17 @@ class NotificationController extends Controller
     public function headerData()
     {
         $user = Auth::user();
+        
+        // Check if user is authenticated
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Not authenticated',
+                'unread_count' => 0,
+                'notifications' => []
+            ], 401);
+        }
+        
         $userType = $this->getUserType($user);
         
         $unreadCount = UserNotification::forUser($user->id, $userType)
@@ -113,6 +124,15 @@ class NotificationController extends Controller
     public function markAsRead($id)
     {
         $user = Auth::user();
+        
+        // Check if user is authenticated
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Not authenticated'
+            ], 401);
+        }
+        
         $userType = $this->getUserType($user);
         
         $notification = UserNotification::forUser($user->id, $userType)

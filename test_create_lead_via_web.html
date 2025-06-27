@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Lead Creation - Email Fix</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input, textarea, select { width: 300px; padding: 8px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; }
+        .result { margin-top: 20px; padding: 15px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Lead Creation After Email Fix</h1>
+    
+    <p><strong>Mục đích:</strong> Test xem email notifications đã hoạt động sau khi fix CustomerLeadController</p>
+    
+    <form id="leadForm">
+        <div class="form-group">
+            <label>Customer ID (existing user):</label>
+            <input type="number" name="customer_id" value="127" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Tiêu đề:</label>
+            <input type="text" name="title" value="Test Email Fix - " required>
+        </div>
+        
+        <div class="form-group">
+            <label>Mô tả:</label>
+            <textarea name="description">Test lead để kiểm tra email notification sau khi fix code</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Category ID:</label>
+            <select name="category_id">
+                <option value="4">Sửa chữa điện (4)</option>
+                <option value="1">Sửa chữa nước (1)</option>
+                <option value="2">Sửa chữa máy tính (2)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Quận/Huyện:</label>
+            <select name="district">
+                <option value="Huyện Hoài Đức">Huyện Hoài Đức</option>
+                <option value="Quận 1">Quận 1</option>
+                <option value="Quận 2">Quận 2</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Xã/Phường:</label>
+            <input type="text" name="ward" value="Xã Test Ward">
+        </div>
+        
+        <div class="form-group">
+            <label>Địa chỉ chi tiết:</label>
+            <input type="text" name="address" value="123 Test Street">
+        </div>
+        
+        <div class="form-group">
+            <label>Ngân sách tối thiểu:</label>
+            <input type="number" name="budget_min" value="100000">
+        </div>
+        
+        <div class="form-group">
+            <label>Ngân sách tối đa:</label>
+            <input type="number" name="budget_max" value="300000">
+        </div>
+        
+        <div class="form-group">
+            <label>Mức độ khẩn cấp:</label>
+            <select name="urgency">
+                <option value="low">Thấp</option>
+                <option value="medium" selected>Trung bình</option>
+                <option value="high">Cao</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Ngày cần hoàn thành:</label>
+            <input type="date" name="needed_by" value="2025-07-05">
+        </div>
+        
+        <button type="submit">🚀 Tạo Lead Test</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;"></div>
+    
+    <script>
+        document.getElementById('leadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const result = document.getElementById('result');
+            
+            // Add timestamp to title
+            formData.set('title', formData.get('title') + new Date().toLocaleTimeString());
+            
+            try {
+                result.style.display = 'block';
+                result.innerHTML = '🔄 Đang tạo lead...';
+                
+                const response = await fetch('/test-create-smart-lead', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'no-token',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData))
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.innerHTML = `
+                        <h3>✅ Thành công!</h3>
+                        <p><strong>Lead ID:</strong> ${data.lead_id}</p>
+                        <p><strong>Tiêu đề:</strong> ${data.lead_title}</p>
+                        <p><strong>Message:</strong> ${data.message}</p>
+                        
+                        <h4>📧 Kiểm tra email:</h4>
+                        <ul>
+                            <li>Check email inbox của contractors matching với category và district</li>
+                            <li>Email template: NEW_LEAD_NOTIFICATION</li>
+                            <li>From: nguyentung0910@gmail.com</li>
+                            <li>Subject: 🎯 Lead ưu tiên dành cho bạn - ${data.lead_title}</li>
+                        </ul>
+                        
+                        <h4>🔍 Debug steps:</h4>
+                        <ol>
+                            <li>Check Laravel logs: core/storage/logs/laravel.log</li>
+                            <li>Check notification_logs table in database</li>
+                            <li>Check lead_visibilities table for new records</li>
+                            <li>Check notifications table for Laravel notifications</li>
+                        </ol>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <h3>❌ Lỗi!</h3>
+                        <p>${data.error || data.message}</p>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>${error.message}</p>
+                    <p>Có thể route chưa được tạo hoặc server chưa chạy.</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 

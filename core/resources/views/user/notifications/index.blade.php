@@ -908,10 +908,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Functions
     function markAsRead(id) {
-        fetch(`{{ route('user.notifications.read', '') }}/${id}`, {
+        fetch(`{{ route('user.notifications.read', 'PLACEHOLDER') }}`.replace('PLACEHOLDER', id), {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json()).then(data => {
@@ -940,10 +940,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function markAsReadAndRedirect(id, url) {
-        fetch(`{{ route('user.notifications.read', '') }}/${id}`, {
+        fetch(`{{ route('user.notifications.read', 'PLACEHOLDER') }}`.replace('PLACEHOLDER', id), {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json()).then(data => {
@@ -967,10 +967,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function markAsUnread(id) {
-        fetch(`{{ route('user.notifications.unread', '') }}/${id}`, {
+        fetch(`{{ route('user.notifications.unread', 'PLACEHOLDER') }}`.replace('PLACEHOLDER', id), {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json()).then(data => {
@@ -1002,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('{{ route('user.notifications.read.all') }}', {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json()).then(data => {
@@ -1023,10 +1023,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function deleteNotification(id) {
-        fetch(`{{ route('user.notifications.delete', '') }}/${id}`, {
+        fetch(`{{ route('user.notifications.delete', 'PLACEHOLDER') }}`.replace('PLACEHOLDER', id), {
             method: 'DELETE',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json()).then(data => {
@@ -1052,7 +1052,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('{{ route('user.notifications.delete.all.read') }}', {
             method: 'DELETE',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json()).then(data => {

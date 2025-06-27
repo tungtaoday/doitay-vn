@@ -28,11 +28,13 @@ class Lead extends Model
         'status',
         'max_contractors',
         'purchased_count',
+        'selected_company_id',
         'customer_info',
         'requirements',
         'attachments',
         'is_premium',
-        'expires_at'
+        'expires_at',
+        'completed_at'
     ];
 
     protected $casts = [
@@ -42,6 +44,7 @@ class Lead extends Model
         'attachments' => 'array',
         'needed_by' => 'datetime',
         'expires_at' => 'datetime',
+        'completed_at' => 'datetime',
         'budget_min' => 'decimal:2',
         'budget_max' => 'decimal:2',
         'lead_price' => 'decimal:2',
@@ -72,6 +75,29 @@ class Lead extends Model
     public function visibilities()
     {
         return $this->hasMany(LeadVisibility::class);
+    }
+
+    public function selectedCompany()
+    {
+        return $this->belongsTo(Company::class, 'selected_company_id');
+    }
+
+    // NEW RELATIONSHIPS FOR CONTRACTOR SELF-REPORT FLOW
+    public function reportedPurchases()
+    {
+        return $this->hasMany(LeadPurchase::class)->where('contractor_reported', true);
+    }
+
+    public function confirmedPurchases()
+    {
+        return $this->hasMany(LeadPurchase::class)->where('customer_confirmed', true);
+    }
+
+    public function pendingConfirmationPurchases()
+    {
+        return $this->hasMany(LeadPurchase::class)
+            ->where('contractor_reported', true)
+            ->where('customer_confirmed', false);
     }
 
     // Scopes
@@ -293,5 +319,64 @@ class Lead extends Model
 
         // Sort by timestamp descending (newest first)
         return collect($timeline)->sortByDesc('timestamp')->values()->all();
+    }
+
+    // NEW METHODS FOR CONTRACTOR SELF-REPORT FLOW
+    
+    /**
+     * Complete lead with selected contractor
+     */
+    public function completeWithContractor($companyId, $notes = null)
+    {
+        $this->update([
+            'status' => 'completed',
+            'selected_company_id' => $companyId,
+            'completed_at' => now()
+        ]);
+
+        // Mark other contractors as lost
+        $this->purchases()
+            ->where('company_id', '!=', $companyId)
+            ->update(['outcome' => 'lost']);
+    }
+
+    /**
+     * Get contractors who reported being selected
+     */
+    public function getReportedContractors()
+    {
+        return $this->reportedPurchases()->with('company')->get();
+    }
+
+    /**
+     * Check if lead has any pending confirmations
+     */
+    public function hasPendingConfirmations()
+    {
+        return $this->pendingConfirmationPurchases()->exists();
+    }
+
+    /**
+     * Check if lead is completed
+     */
+    public function isCompleted()
+    {
+        return $this->status === 'completed' && $this->selected_company_id;
+    }
+
+    /**
+     * Get new status badge for contractor self-report flow
+     */
+    public function getNewStatusBadge()
+    {
+        if ($this->isCompleted()) {
+            return '<span class="badge badge--success">✅ Hoàn thành</span>';
+        } elseif ($this->hasPendingConfirmations()) {
+            return '<span class="badge badge--warning">⏳ Chờ xác nhận</span>';
+        } elseif ($this->purchases()->exists()) {
+            return '<span class="badge badge--info">👥 Có thợ quan tâm</span>';
+        } else {
+            return '<span class="badge badge--primary">🆕 Đang mở</span>';
+        }
     }
 }

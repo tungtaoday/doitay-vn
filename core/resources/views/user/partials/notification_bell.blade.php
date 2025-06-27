@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             
             // Mark as read first and wait for completion
-            fetch(`{{ route("user.notifications.read", "") }}/${notificationId}`, {
+            fetch(`{{ route("user.notifications.read", "PLACEHOLDER") }}`.replace('PLACEHOLDER', notificationId), {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

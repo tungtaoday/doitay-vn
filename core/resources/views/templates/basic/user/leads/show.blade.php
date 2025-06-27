@@ -111,14 +111,55 @@
                         <h6><i class="las la-user me-2"></i>Thông tin khách hàng</h6>
                         <div class="row">
                             <div class="col-md-6">
-                                <strong>Tên:</strong> {{ $lead->customer->name ?? 'Chưa cập nhật' }}<br>
+                                <strong>Tên:</strong> {{ ($lead->customer->firstname ?? '') . ' ' . ($lead->customer->lastname ?? '') }}<br>
                                 <strong>Email:</strong> {{ $lead->customer->email ?? 'Chưa cập nhật' }}
                             </div>
                             <div class="col-md-6">
-                                <strong>Điện thoại:</strong> {{ $lead->customer->phone ?? 'Chưa cập nhật' }}
+                                <strong>Điện thoại:</strong> {{ $lead->customer->mobile ?? 'Chưa cập nhật' }}
                             </div>
                         </div>
                     </div>
+
+                    <!-- NEW: Contractor Self-Report Section -->
+                    @if($userPurchase->customer_confirmed)
+                        <div class="alert alert-success mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="las la-check-circle me-2 text-success" style="font-size: 1.5rem;"></i>
+                                <div>
+                                    <h6 class="mb-1">✅ Khách hàng đã xác nhận chọn bạn!</h6>
+                                    <small class="text-muted">Xác nhận lúc: {{ $userPurchase->confirmed_at->format('d/m/Y H:i') }}</small>
+                                    @if($userPurchase->confirmation_notes)
+                                        <p class="mb-0 mt-1"><strong>Ghi chú:</strong> {{ $userPurchase->confirmation_notes }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($userPurchase->contractor_reported)
+                        <div class="alert alert-warning mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="las la-clock me-2 text-warning" style="font-size: 1.5rem;"></i>
+                                <div>
+                                    <h6 class="mb-1">⏳ Đang chờ khách hàng xác nhận</h6>
+                                    <small class="text-muted">Báo cáo lúc: {{ $userPurchase->reported_at->format('d/m/Y H:i') }}</small>
+                                    @if($userPurchase->report_notes)
+                                        <p class="mb-0 mt-1"><strong>Ghi chú:</strong> {{ $userPurchase->report_notes }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($lead->status == 'active')
+                        <div class="contractor-report-section mb-3">
+                            <div class="d-flex align-items-center justify-content-between p-3 border rounded bg-light">
+                                <div>
+                                    <h6 class="mb-1">💼 Đã thương lượng xong với khách hàng?</h6>
+                                    <small class="text-muted">Nếu khách hàng đã chọn bạn, hãy báo cáo để được xác nhận</small>
+                                </div>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#reportSelectedModal">
+                                    <i class="las la-handshake me-1"></i>Khách đã chọn tôi
+                                </button>
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Purchase Status -->
                     <div class="mb-3">
@@ -249,5 +290,53 @@
         </div>
     </div>
 </div>
+
+<!-- Report Selected Modal for Lead Detail Page -->
+@if($hasPurchased && $userPurchase && !$userPurchase->contractor_reported && $lead->status == 'active')
+<div class="modal fade" id="reportSelectedModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="las la-handshake me-2"></i>Báo cáo được khách hàng chọn
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('user.leads.report-selected', $userPurchase->id) }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="las la-info-circle me-2"></i>
+                        <strong>Lưu ý:</strong> Chỉ báo cáo khi khách hàng thực sự đã chọn bạn. 
+                        Khách hàng sẽ nhận được thông báo để xác nhận.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Thông tin công việc:</label>
+                        <div class="bg-light p-3 rounded">
+                            <h6>{{ $lead->title }}</h6>
+                            <p class="mb-1"><i class="las la-map-marker me-1"></i>{{ $lead->district }}</p>
+                            <p class="mb-0"><i class="las la-dollar-sign me-1"></i>{{ number_format($lead->budget_min) }}₫ - {{ number_format($lead->budget_max) }}₫</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú về việc được chọn (tùy chọn)</label>
+                        <textarea name="notes" class="form-control" rows="3" 
+                                  placeholder="Ví dụ: Khách hàng đã đồng ý với báo giá 2,500,000₫ và hẹn làm việc vào thứ 2..."></textarea>
+                        <small class="text-muted">Ghi chú này sẽ được gửi đến khách hàng để xác nhận.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="las la-paper-plane me-1"></i>Gửi yêu cầu xác nhận
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 
 @endsection 

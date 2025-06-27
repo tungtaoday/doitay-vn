@@ -9,8 +9,6 @@ class LeadVisibility extends Model
 {
     use HasFactory;
 
-    protected $table = 'lead_visibility';
-
     protected $fillable = [
         'lead_id',
         'company_id',

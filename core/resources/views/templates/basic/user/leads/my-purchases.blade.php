@@ -106,8 +106,8 @@
                             </td>
                             <td>
                                 <div>
-                                    <strong>{{ $purchase->lead->customer->name ?? 'N/A' }}</strong><br>
-                                    <small class="text-muted">{{ $purchase->lead->customer->phone ?? 'N/A' }}</small>
+                                    <strong>{{ ($purchase->lead->customer->firstname ?? '') . ' ' . ($purchase->lead->customer->lastname ?? '') ?: 'N/A' }}</strong><br>
+                                    <small class="text-muted">{{ $purchase->lead->customer->mobile ?? 'N/A' }}</small>
                                 </div>
                             </td>
                             <td>
@@ -116,19 +116,28 @@
                                 </span>
                             </td>
                             <td>
-                                @if($purchase->status == 'contacted')
-                                    <span class="badge bg-info">Đã liên hệ</span>
+                                @if($purchase->customer_confirmed)
+                                    <span class="badge bg-success">✅ Đã xác nhận</span>
+                                    <br><small class="text-muted">{{ $purchase->confirmed_at->format('d/m/Y H:i') }}</small>
+                                @elseif($purchase->contractor_reported)
+                                    <span class="badge bg-warning">⏳ Chờ xác nhận</span>
+                                    <br><small class="text-muted">Đã báo: {{ $purchase->reported_at->format('d/m/Y H:i') }}</small>
+                                @elseif($purchase->status == 'contacted')
+                                    <span class="badge bg-info">📞 Đã liên hệ</span>
+                                    @if($purchase->contacted_at)
+                                        <br><small class="text-muted">{{ $purchase->contacted_at->format('d/m/Y H:i') }}</small>
+                                    @endif
                                 @elseif($purchase->status == 'quoted')
-                                    <span class="badge bg-warning">Đã báo giá</span>
+                                    <span class="badge bg-warning">💵 Đã báo giá</span>
                                     @if($purchase->quote_amount)
                                         <br><small>{{ number_format($purchase->quote_amount) }}₫</small>
                                     @endif
                                 @elseif($purchase->status == 'won')
-                                    <span class="badge bg-success">Thành công</span>
+                                    <span class="badge bg-success">🏆 Thành công (Cũ)</span>
                                 @elseif($purchase->status == 'lost')
-                                    <span class="badge bg-danger">Không thành công</span>
+                                    <span class="badge bg-danger">❌ Không thành công</span>
                                 @else
-                                    <span class="badge bg-secondary">Mới mua</span>
+                                    <span class="badge bg-secondary">🆕 Mới mua</span>
                                 @endif
                             </td>
                             <td>
@@ -136,15 +145,31 @@
                                 <small class="text-muted">{{ $purchase->created_at->diffForHumans() }}</small>
                             </td>
                             <td>
-                                <div class="btn-group" role="group">
+                                <div class="btn-group-vertical" role="group">
                                     <a href="{{ route('user.leads.show', $purchase->lead->id) }}" 
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="las la-eye me-1"></i>Xem
+                                       class="btn btn-sm btn-outline-primary mb-1">
+                                        <i class="las la-eye me-1"></i>Xem chi tiết
                                     </a>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" 
-                                            data-bs-toggle="modal" data-bs-target="#updateModal{{ $purchase->id }}">
-                                        <i class="las la-edit me-1"></i>Cập nhật
-                                    </button>
+                                    
+                                    @if(!$purchase->customer_confirmed && !$purchase->contractor_reported && $purchase->lead->status == 'active')
+                                        <button type="button" class="btn btn-sm btn-success mb-1" 
+                                                data-bs-toggle="modal" data-bs-target="#reportModal{{ $purchase->id }}">
+                                            <i class="las la-handshake me-1"></i>Khách đã chọn tôi
+                                        </button>
+                                    @endif
+                                    
+                                    @if($purchase->contractor_reported && !$purchase->customer_confirmed)
+                                        <span class="btn btn-sm btn-warning mb-1 disabled">
+                                            <i class="las la-clock me-1"></i>Chờ khách xác nhận
+                                        </span>
+                                    @endif
+                                    
+                                    @if(!$purchase->customer_confirmed)
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                                data-bs-toggle="modal" data-bs-target="#updateModal{{ $purchase->id }}">
+                                            <i class="las la-edit me-1"></i>Cập nhật
+                                        </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -191,6 +216,52 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                                             <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NEW: Report Selected Modal -->
+                        <div class="modal fade" id="reportModal{{ $purchase->id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-success text-white">
+                                        <h5 class="modal-title">
+                                            <i class="las la-handshake me-2"></i>Báo cáo được khách hàng chọn
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form action="{{ route('user.leads.report-selected', $purchase->id) }}" method="POST">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="alert alert-info">
+                                                <i class="las la-info-circle me-2"></i>
+                                                <strong>Lưu ý:</strong> Chỉ báo cáo khi khách hàng thực sự đã chọn bạn. 
+                                                Khách hàng sẽ nhận được thông báo để xác nhận.
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">Thông tin công việc:</label>
+                                                <div class="bg-light p-3 rounded">
+                                                    <h6>{{ $purchase->lead->title }}</h6>
+                                                    <p class="mb-1"><i class="las la-map-marker me-1"></i>{{ $purchase->lead->location }}</p>
+                                                    <p class="mb-0"><i class="las la-dollar-sign me-1"></i>{{ $purchase->lead->getBudgetRange() }}</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">Ghi chú (tùy chọn)</label>
+                                                <textarea name="notes" class="form-control" rows="3" 
+                                                          placeholder="Ví dụ: Khách hàng đã đồng ý với báo giá 2,500,000₫ và hẹn làm việc vào thứ 2..."></textarea>
+                                                <small class="text-muted">Ghi chú này sẽ được gửi đến khách hàng để xác nhận.</small>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="las la-paper-plane me-1"></i>Gửi yêu cầu xác nhận
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
