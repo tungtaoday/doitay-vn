@@ -53,12 +53,52 @@
                                 </div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-icon bg-warning">
-                                    <i class="las la-clock"></i>
-                                </div>
+                                @if($lead->needed_by)
+                                    @php
+                                        $now = now();
+                                        $neededBy = \Carbon\Carbon::parse($lead->needed_by);
+                                        $diffInDays = $now->diffInDays($neededBy, false);
+                                        $diffInHours = $now->diffInHours($neededBy, false);
+                                        
+                                        // Determine icon color based on urgency
+                                        if ($diffInDays < 0) {
+                                            $iconColor = 'bg-danger'; // Overdue
+                                        } elseif ($diffInDays <= 1) {
+                                            $iconColor = 'bg-warning'; // 1 day or less
+                                        } elseif ($diffInDays <= 3) {
+                                            $iconColor = 'bg-info'; // 2-3 days
+                                        } else {
+                                            $iconColor = 'bg-success'; // More than 3 days
+                                        }
+                                    @endphp
+                                    <div class="stat-icon {{ $iconColor }}">
+                                        <i class="las la-clock"></i>
+                                    </div>
+                                @else
+                                    <div class="stat-icon bg-secondary">
+                                        <i class="las la-infinity"></i>
+                                    </div>
+                                @endif
+                                
                                 <div class="stat-content">
-                                    <h4>{{ $lead->created_at->diffInDays(now()) }}</h4>
-                                    <p>Ngày đã tạo</p>
+                                    @if($lead->needed_by)
+                                        @if($diffInDays > 0)
+                                            <h4>{{ intval($diffInDays) }}</h4>
+                                            <p>Ngày còn lại</p>
+                                        @elseif($diffInHours > 0)
+                                            <h4>{{ intval($diffInHours) }}</h4>
+                                            <p>Giờ còn lại</p>
+                                        @elseif($diffInHours == 0)
+                                            <h4 class="text-warning">0</h4>
+                                            <p>Sắp hết hạn</p>
+                                        @else
+                                            <h4 class="text-danger">Quá hạn</h4>
+                                            <p>{{ intval(abs($diffInDays)) }} ngày</p>
+                                        @endif
+                                    @else
+                                        <h4>∞</h4>
+                                        <p>Không giới hạn</p>
+                                    @endif
                                 </div>
                             </div>
                             <div class="stat-item">
