@@ -6,7 +6,7 @@
                 <i class="las la-building"></i>
             </div>
             <div class="stat-card__content">
-                <h6 class="stat-card__title">Số lượng công ty</h6>
+                <h6 class="stat-card__title">Số lượng người thợ</h6>
                 <h2 class="stat-card__value">{{ auth()->user()->companies()->count() }}</h2>
             </div>
         </div>  
@@ -64,7 +64,7 @@
     <div class="col-lg-12">
         <div class="custom--card">
             <div class="card-header">
-                <h5 class="card-title">Thống kê công ty</h5>
+                <h5 class="card-title">Thống kê người thợ</h5>
                 <a href="{{ route('user.company.statistics') }}" class="btn btn--base btn-sm">
                     <i class="las la-chart-bar"></i> Xem toàn bộ thống kê
                 </a>

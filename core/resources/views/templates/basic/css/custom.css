@@ -110,7 +110,7 @@
     }
 
     .profile-bg {
-        height: 200px;
+        display: none !important;
     }
 
     .profile-header {

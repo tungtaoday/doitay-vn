@@ -18,7 +18,7 @@
                         <i class="las la-users"></i> Xem thợ chuyên nghiệp
                     </a>
                     <a href="{{ route('user.company.create') }}" class="btn btn-outline-primary">
-                        <i class="las la-plus"></i> Tạo công ty
+                        <i class="las la-plus"></i> Tạo hồ sơ thợ
                     </a>
                 </div>
             </div>

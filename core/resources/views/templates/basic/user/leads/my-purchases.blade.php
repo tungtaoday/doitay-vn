@@ -11,19 +11,28 @@
                         <i class="las la-shopping-bag"></i>
                     </div>
                     <div>
-                        <h1 class="h3 mb-1">Leads đã mua</h1>
-                        <p class="page-subtitle mb-0">Quản lý các leads bạn đã mua</p>
+                        <h1 class="h3 mb-1">Nhu cầu đã mua</h1>
+                        <p class="page-subtitle mb-0">Quản lý các nhu cầu bạn đã mua</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 text-md-end">
                 <div class="service-nav">
-                    <a href="{{ route('user.leads.index') }}" class="btn btn-light btn-sm me-2">
-                        <i class="las la-list me-1"></i>Tất cả Leads
-                    </a>
-                    <a href="{{ route('user.leads.dashboard') }}" class="btn btn-outline-light btn-sm">
-                        <i class="las la-chart-bar me-1"></i>Dashboard
-                    </a>
+                    <!-- Navigation Toggle -->
+                    <div class="service-nav-toggle mb-3">
+                        <div class="btn-group" role="group">
+                            <a href="{{ route('user.leads.index') }}" class="btn btn-outline-light">
+                                <i class="las la-list me-1"></i>
+                                <span class="d-none d-md-inline">Tất cả Nhu cầu</span>
+                                <span class="d-md-none">Tất cả</span>
+                            </a>
+                            <a href="{{ route('user.leads.my-purchases') }}" class="btn btn-light active">
+                                <i class="las la-shopping-bag me-1"></i>
+                                <span class="d-none d-md-inline">Đã mua</span>
+                                <span class="d-md-none">Đã mua</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,7 +48,7 @@
                 <div class="card-body">
                     <i class="las la-shopping-cart text-primary fs-1"></i>
                     <h4>{{ $purchases->total() }}</h4>
-                    <small class="text-muted">Tổng leads đã mua</small>
+                    <small class="text-muted">Tổng nhu cầu đã mua</small>
                 </div>
             </div>
         </div>
@@ -75,14 +84,14 @@
     <!-- Purchases List -->
     <div class="card">
         <div class="card-header">
-            <h5><i class="las la-list me-2"></i>Danh sách leads đã mua</h5>
+            <h5><i class="las la-list me-2"></i>Danh sách nhu cầu đã mua</h5>
         </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Lead</th>
+                            <th>Nhu cầu</th>
                             <th>Khách hàng</th>
                             <th>Ngân sách</th>
                             <th>Trạng thái</th>
@@ -285,10 +294,10 @@
     <div class="card">
         <div class="card-body text-center py-5">
             <i class="las la-shopping-bag text-muted" style="font-size: 4rem;"></i>
-            <h4 class="mt-3">Chưa có leads nào</h4>
-            <p class="text-muted">Bạn chưa mua leads nào. Hãy tìm kiếm và mua leads phù hợp.</p>
+            <h4 class="mt-3">Chưa có nhu cầu nào</h4>
+            <p class="text-muted">Bạn chưa mua nhu cầu nào. Hãy tìm kiếm và mua nhu cầu phù hợp.</p>
             <a href="{{ route('user.leads.index') }}" class="btn btn-primary">
-                <i class="las la-search me-2"></i>Tìm leads
+                <i class="las la-search me-2"></i>Tìm nhu cầu
             </a>
         </div>
     </div>
@@ -327,6 +336,237 @@
 .modal-header {
     background: #f8f9fa;
     border-bottom: 1px solid #dee2e6;
+}
+
+/* === SERVICE NAVIGATION TOGGLE === */
+.service-nav-toggle .btn-group {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.service-nav-toggle .btn {
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.service-nav-toggle .btn:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.service-nav-toggle .btn:not(.active):hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.service-nav-toggle .btn.active {
+    background: white;
+    color: #667eea;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.service-nav-toggle .btn i {
+    font-size: 0.9rem;
+}
+
+/* === CONSISTENT TEXT SIZING === */
+.card-header h5 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.card-header h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.card-body h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-body h5 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.card-body h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.card-body p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.card-body small {
+    font-size: 0.8rem;
+}
+
+.table {
+    font-size: 0.9rem;
+}
+
+.table th {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.table td {
+    font-size: 0.85rem;
+}
+
+.table h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.table small {
+    font-size: 0.75rem;
+}
+
+.badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.form-control {
+    font-size: 0.9rem;
+}
+
+.btn {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.btn-sm {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+}
+
+.modal-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 991px) {
+    /* Hide profile background on mobile */
+    .profile-bg {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .service-nav-toggle {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .service-nav-toggle .btn-group {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .service-nav-toggle .btn {
+        flex: 1;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .card-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .card-body h4 {
+        font-size: 1rem;
+    }
+    
+    .table {
+        font-size: 0.8rem;
+    }
+    
+    .table th {
+        font-size: 0.75rem;
+    }
+    
+    .table td {
+        font-size: 0.75rem;
+    }
+    
+    .table h6 {
+        font-size: 0.8rem;
+    }
+    
+    .table small {
+        font-size: 0.7rem;
+    }
+    
+    .btn-group-vertical .btn {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .service-nav-toggle .btn {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+        min-height: 36px;
+    }
+    
+    .card-header h5 {
+        font-size: 0.85rem;
+    }
+    
+    .card-body h4 {
+        font-size: 0.95rem;
+    }
+    
+    .table {
+        font-size: 0.75rem;
+    }
+    
+    .table th {
+        font-size: 0.7rem;
+    }
+    
+    .table td {
+        font-size: 0.7rem;
+    }
+    
+    .table h6 {
+        font-size: 0.75rem;
+    }
+    
+    .table small {
+        font-size: 0.65rem;
+    }
+    
+    .btn-group-vertical .btn {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.5rem;
+    }
+    
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .modal-title {
+        font-size: 0.9rem;
+    }
 }
 </style>
 @endpush 

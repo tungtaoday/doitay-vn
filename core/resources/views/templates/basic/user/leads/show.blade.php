@@ -11,19 +11,28 @@
                         <i class="las la-briefcase"></i>
                     </div>
                     <div>
-                        <h1 class="h3 mb-1">Chi tiết Lead #{{ $lead->id }}</h1>
+                        <h1 class="h3 mb-1">Chi tiết Nhu cầu #{{ $lead->id }}</h1>
                         <p class="page-subtitle mb-0">{{ $lead->title }}</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 text-md-end">
                 <div class="service-nav">
-                    <a href="{{ route('user.leads.index') }}" class="btn btn-light btn-sm me-2">
-                        <i class="las la-list me-1"></i>Tất cả Leads
-                    </a>
-                    <a href="{{ route('user.leads.my-purchases') }}" class="btn btn-outline-light btn-sm">
-                        <i class="las la-shopping-bag me-1"></i>Đã mua
-                    </a>
+                    <!-- Navigation Toggle -->
+                    <div class="service-nav-toggle mb-3">
+                        <div class="btn-group" role="group">
+                            <a href="{{ route('user.leads.index') }}" class="btn btn-outline-light">
+                                <i class="las la-list me-1"></i>
+                                <span class="d-none d-md-inline">Tất cả Nhu cầu</span>
+                                <span class="d-md-none">Tất cả</span>
+                            </a>
+                            <a href="{{ route('user.leads.my-purchases') }}" class="btn btn-light active">
+                                <i class="las la-shopping-bag me-1"></i>
+                                <span class="d-none d-md-inline">Đã mua</span>
+                                <span class="d-md-none">Đã mua</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -34,7 +43,7 @@
     <div class="row">
         <!-- Main Content -->
         <div class="col-lg-8">
-            <!-- Lead Details Card -->
+            <!-- Nhu cầu Details Card -->
             <div class="card mb-4">
                 <div class="card-header">
                     <h5><i class="las la-file-alt me-2"></i>Thông tin chi tiết</h5>
@@ -198,12 +207,12 @@
             @if(!$hasPurchased && $lead->status == 'active')
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0"><i class="las la-shopping-cart me-2"></i>Mua Lead này</h6>
+                    <h6 class="mb-0"><i class="las la-shopping-cart me-2"></i>Mua Nhu cầu này</h6>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-3">
                         <h4 class="text-primary">{{ number_format($lead->lead_price ?? 50000) }}₫</h4>
-                        <small class="text-muted">Giá mua lead</small>
+                        <small class="text-muted">Giá mua nhu cầu</small>
                     </div>
                     
                     @if(Auth::user()->companies->count() > 0)
@@ -211,7 +220,7 @@
                             @csrf
                             @if(Auth::user()->companies->count() > 1)
                                 <div class="mb-3">
-                                    <label class="form-label">Chọn công ty:</label>
+                                    <label class="form-label">Chọn người thợ:</label>
                                     <select name="company_id" class="form-select" required>
                                         @foreach(Auth::user()->companies as $company)
                                             <option value="{{ $company->id }}">{{ $company->name }}</option>
@@ -227,10 +236,10 @@
                         </form>
                     @else
                         <div class="alert alert-warning">
-                            <small>Bạn cần tạo hồ sơ công ty trước khi mua lead</small>
+                            <small>Bạn cần tạo hồ sơ người thợ trước khi mua nhu cầu</small>
                         </div>
                         <a href="{{ route('user.company.create') }}" class="btn btn-outline-primary w-100">
-                            <i class="las la-plus me-2"></i>Tạo công ty
+                            <i class="las la-plus me-2"></i>Tạo hồ sơ thợ
                         </a>
                     @endif
                 </div>
@@ -238,17 +247,17 @@
             @elseif($hasPurchased)
             <div class="alert alert-success">
                 <i class="las la-check-circle me-2"></i>
-                <strong>Đã mua lead này</strong><br>
+                <strong>Đã mua nhu cầu này</strong><br>
                 <small>Mua lúc: {{ $userPurchase->created_at->format('d/m/Y H:i') }}</small>
             </div>
             @else
             <div class="alert alert-secondary">
                 <i class="las la-info-circle me-2"></i>
-                Lead này không còn khả dụng
+                Nhu cầu này không còn khả dụng
             </div>
             @endif
 
-            <!-- Lead Stats -->
+            <!-- Nhu cầu Stats -->
             <div class="card mb-4">
                 <div class="card-header">
                     <h6><i class="las la-chart-bar me-2"></i>Thống kê</h6>
@@ -275,10 +284,10 @@
                 </div>
             </div>
 
-            <!-- Related Leads -->
+            <!-- Related Nhu cầu -->
             <div class="card">
                 <div class="card-header">
-                    <h6><i class="las la-list me-2"></i>Leads tương tự</h6>
+                    <h6><i class="las la-list me-2"></i>Nhu cầu tương tự</h6>
                 </div>
                 <div class="card-body">
                     <div class="related-leads">
@@ -291,7 +300,7 @@
     </div>
 </div>
 
-<!-- Report Selected Modal for Lead Detail Page -->
+<!-- Report Selected Modal for Nhu cầu Detail Page -->
 @if($hasPurchased && $userPurchase && !$userPurchase->contractor_reported && $lead->status == 'active')
 <div class="modal fade" id="reportSelectedModal" tabindex="-1">
     <div class="modal-dialog">
@@ -339,4 +348,217 @@
 </div>
 @endif
 
-@endsection 
+@endsection
+
+@push('style')
+<style>
+/* === SERVICE NAVIGATION TOGGLE === */
+.service-nav-toggle .btn-group {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.service-nav-toggle .btn {
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.service-nav-toggle .btn:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.service-nav-toggle .btn:not(.active):hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.service-nav-toggle .btn.active {
+    background: white;
+    color: #059669;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.service-nav-toggle .btn i {
+    font-size: 0.9rem;
+}
+
+/* === CONSISTENT TEXT SIZING === */
+.card-header h5 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.card-header h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.card-body h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-body h5 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.card-body h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.card-body p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.card-body small {
+    font-size: 0.8rem;
+}
+
+.stat-item {
+    font-size: 0.9rem;
+}
+
+.stat-item strong {
+    font-weight: 600;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+}
+
+.alert h6 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.alert p {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.alert small {
+    font-size: 0.8rem;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.form-control {
+    font-size: 0.9rem;
+}
+
+.btn {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.btn-sm {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .service-nav-toggle {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .service-nav-toggle .btn-group {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .service-nav-toggle .btn {
+        flex: 1;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .card-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .card-body h4 {
+        font-size: 1rem;
+    }
+    
+    .card-body h5 {
+        font-size: 0.9rem;
+    }
+    
+    .card-body h6 {
+        font-size: 0.85rem;
+    }
+    
+    .card-body p {
+        font-size: 0.85rem;
+    }
+    
+    .stat-item {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .service-nav-toggle .btn {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+        min-height: 36px;
+    }
+    
+    .card-header h5 {
+        font-size: 0.85rem;
+    }
+    
+    .card-body h4 {
+        font-size: 0.95rem;
+    }
+    
+    .card-body h5 {
+        font-size: 0.85rem;
+    }
+    
+    .card-body h6 {
+        font-size: 0.8rem;
+    }
+    
+    .card-body p {
+        font-size: 0.8rem;
+    }
+    
+    .stat-item {
+        font-size: 0.8rem;
+    }
+    
+    .alert h6 {
+        font-size: 0.85rem;
+    }
+    
+    .alert p {
+        font-size: 0.8rem;
+    }
+    
+    .btn {
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.7rem;
+    }
+}
+</style>
+@endpush 

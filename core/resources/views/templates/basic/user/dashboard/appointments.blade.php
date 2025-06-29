@@ -92,7 +92,7 @@
                             <thead>
                                 <tr>
                                     <th>Khách hàng</th>
-                                    <th>Công ty</th>
+                                    <th>Người thợ</th>
                                     <th>Ngày hẹn</th>
                                     <th>Trạng thái</th>
                                     <th>Thao tác</th>
@@ -208,7 +208,7 @@
                         <i class="las la-wallet me-2"></i>Nạp tiền ví
                     </a>
                     <a href="{{ route('user.company.index') }}" class="btn btn-outline-info">
-                        <i class="las la-building me-2"></i>Quản lý công ty
+                        <i class="las la-building me-2"></i>Quản lý người thợ
                     </a>
                 </div>
             </div>

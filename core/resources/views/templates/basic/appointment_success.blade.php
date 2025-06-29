@@ -24,7 +24,7 @@
                         <h5 class="mb-3">Thông tin lịch hẹn</h5>
                         <div class="row text-start">
                             <div class="col-md-6 mb-3">
-                                <strong>Công ty:</strong><br>
+                                <strong>Người thợ:</strong><br>
                                 <span class="text-muted">{{ $appointment->company->name }}</span>
                             </div>
                             <div class="col-md-6 mb-3">

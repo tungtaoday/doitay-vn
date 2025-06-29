@@ -8,11 +8,11 @@
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <div class="mb-2 mb-md-0">
                     <h2 class="mb-1">{{ $pageTitle }}</h2>
-                    <p class="text-muted mb-0">🎯 Leads được chọn riêng cho bạn dựa trên rating và khu vực</p>
+                    <p class="text-muted mb-0">🎯 Nhu cầu được chọn riêng cho bạn dựa trên rating và khu vực</p>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('user.leads.my-purchases') }}" class="btn btn-outline-primary">
-                        <i class="las la-shopping-bag me-1"></i> Leads đã mua
+                        <i class="las la-shopping-bag me-1"></i> Nhu cầu đã mua
                     </a>
                     <button class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
                         <i class="las la-filter"></i> Bộ lọc
@@ -31,7 +31,7 @@
                         <i class="las la-star text-warning" style="font-size: 2rem;"></i>
                     </div>
                     <h4 class="mb-1 text-primary">{{ $stats['exclusive_leads'] }}</h4>
-                    <p class="text-muted mb-0">Leads độc quyền</p>
+                    <p class="text-muted mb-0">Nhu cầu độc quyền</p>
                     <small class="text-success">Chỉ dành cho bạn</small>
                 </div>
             </div>

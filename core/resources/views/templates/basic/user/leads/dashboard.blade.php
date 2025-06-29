@@ -7,12 +7,12 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h2 class="mb-1">Dashboard Leads</h2>
-                    <p class="text-muted mb-0">Quản lý leads và theo dõi hiệu suất kinh doanh</p>
+                            <h2 class="mb-1">Dashboard Nhu cầu</h2>
+        <p class="text-muted mb-0">Quản lý nhu cầu và theo dõi hiệu suất kinh doanh</p>
                 </div>
                 <div>
                     <a href="{{ route('user.leads.index') }}" class="btn btn--base">
-                        <i class="las la-search"></i> Tìm Leads Mới
+                        <i class="las la-search"></i> Tìm Nhu cầu Mới
                     </a>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h3 class="mb-1">{{ $stats['total_purchased'] }}</h3>
-                            <p class="text-muted mb-0">Leads đã mua</p>
+                            <p class="text-muted mb-0">Nhu cầu đã mua</p>
                         </div>
                     </div>
                 </div>

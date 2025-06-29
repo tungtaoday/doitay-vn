@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="info-item mb-3">
-                        <h6 class="text-muted mb-1">@lang('Công ty')</h6>
+                        <h6 class="text-muted mb-1">@lang('Người thợ')</h6>
                         <p class="mb-0">{{ $appointment->company ? $appointment->company->name : 'N/A' }}</p>
                     </div>
                     <div class="info-item mb-3">
@@ -86,7 +86,7 @@
                                 <span class="timeline-date">{{ $appointment->updated_at->format('d/m/Y H:i') }}</span>
                             @endif
                         </div>
-                        <p>@lang('Lịch hẹn đã được xác nhận bởi') {{ $isCompany ? 'bạn' : 'công ty' }}</p>
+                        <p>@lang('Lịch hẹn đã được xác nhận bởi') {{ $isCompany ? 'bạn' : 'người thợ' }}</p>
                     </div>
                 </div>
                 <div class="timeline-item {{ $appointment->status === 'completed' ? 'active' : '' }}">
@@ -114,7 +114,7 @@
                                 <span class="timeline-date">{{ $appointment->updated_at->format('d/m/Y H:i') }}</span>
                             @endif
                         </div>
-                        <p>@lang('Lịch hẹn đã bị hủy bởi') {{ $isCompany ? 'bạn' : 'công ty' }}</p>
+                        <p>@lang('Lịch hẹn đã bị hủy bởi') {{ $isCompany ? 'bạn' : 'người thợ' }}</p>
                     </div>
                 </div>
             </div>

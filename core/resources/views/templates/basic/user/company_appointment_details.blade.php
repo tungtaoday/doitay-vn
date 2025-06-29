@@ -140,7 +140,7 @@
                                         <i class="las la-building"></i>
                                     </div>
                                     <div class="timeline-content">
-                                        <h5>Công ty phụ trách</h5>
+                                        <h5>Người thợ phụ trách</h5>
                                         <p>{{ $appointment->company->name ?? 'N/A' }}</p>
                                     </div>
                                 </div>

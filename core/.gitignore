@@ -13,3 +13,40 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+
+# Production cleanup - Add these lines
+*.sql
+*.csv
+*.md
+*.py
+binlog_*
+*recovery*
+*_data*
+*decoded*
+debug_*
+test_*
+check_*
+fix_*
+extract_*
+import_*
+insert_*
+sample_*
+create_*
+EMAIL_FLOW_*
+MANUAL_TEST_*
+AVATAR_SYSTEM.md
+get()
+latest()
+user_id)
+with('company')
+
+# Temporary files
+temp/
+*.tmp
+*.log
+
+# Development only
+webpack.mix.js
+package*.json
+.editorconfig
+.styleci.yml

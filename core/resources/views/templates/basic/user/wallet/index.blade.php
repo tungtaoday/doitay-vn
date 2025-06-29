@@ -11,7 +11,7 @@
                             <i class="las la-wallet me-3"></i>
                             Quản lý ví
                         </h1>
-                        <p class="page-subtitle">Quản lý tài chính và giao dịch của các công ty</p>
+                        <p class="page-subtitle">Quản lý tài chính và giao dịch của các người thợ</p>
                     </div>
                 </div>
                 <div class="col-lg-4 text-lg-end">
@@ -25,7 +25,7 @@
                                 </a>
                                 <a href="{{ route('company.appointments.index') }}" class="btn btn-outline-light">
                                     <i class="las la-briefcase me-1"></i>
-                                    Lịch hẹn công ty
+                                    Lịch hẹn người thợ
                                 </a>
                                 <a href="{{ route('appointments.index') }}" class="btn btn-outline-light">
                                     <i class="las la-calendar-check me-1"></i>
@@ -106,7 +106,7 @@
                         <i class="las la-wallet"></i>
                     </div>
                     <h3>Chưa có ví nào</h3>
-                    <p>Bạn cần tạo ví cho các công ty để có thể xác nhận lịch hẹn và truy cập thông tin khách hàng.</p>
+                    <p>Bạn cần tạo ví cho các người thợ để có thể xác nhận lịch hẹn và truy cập thông tin khách hàng.</p>
                     @if(auth()->user()->companies->count() > 0)
                         <div class="empty-actions">
                             <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#createWalletModal">
@@ -118,7 +118,7 @@
                         <div class="empty-actions">
                             <a href="{{ route('user.company.create') }}" class="btn btn-primary btn-lg">
                                 <i class="las la-building me-2"></i>
-                                Tạo công ty trước
+                                Tạo hồ sơ thợ trước
                             </a>
                         </div>
                     @endif
@@ -245,8 +245,8 @@
                             <i class="las la-building"></i>
                         </div>
                         <div class="action-content">
-                            <h5>Quản lý công ty</h5>
-                            <p>Cập nhật thông tin công ty</p>
+                                            <h5>Quản lý người thợ</h5>
+                <p>Cập nhật thông tin người thợ</p>
                         </div>
                     </a>
                 </div>
@@ -271,15 +271,15 @@
                             <i class="las la-info-circle"></i>
                         </div>
                         <div class="info-content">
-                            <h6>Tạo ví cho công ty</h6>
-                            <p>Chọn công ty để tạo ví. Mỗi công ty chỉ có thể có một ví duy nhất.</p>
+                                                <h6>Tạo ví cho người thợ</h6>
+                    <p>Chọn người thợ để tạo ví. Mỗi người thợ chỉ có thể có một ví duy nhất.</p>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="company_id" class="form-label">Chọn công ty</label>
+                        <label for="company_id" class="form-label">Chọn người thợ</label>
                         <select name="company_id" id="company_id" class="form-select" required>
-                            <option value="">-- Chọn công ty --</option>
+                            <option value="">-- Chọn người thợ --</option>
                             @foreach(auth()->user()->companies->whereNotIn('id', $wallets->pluck('company_id')) as $company)
                                 <option value="{{ $company->id }}">{{ $company->name }}</option>
                             @endforeach
@@ -1152,7 +1152,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const companySelect = document.getElementById('company_id');
             if (!companySelect.value) {
                 e.preventDefault();
-                alert('Vui lòng chọn công ty để tạo ví');
+                alert('Vui lòng chọn người thợ để tạo ví');
                 companySelect.focus();
             }
         });

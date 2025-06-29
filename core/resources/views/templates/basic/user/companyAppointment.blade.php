@@ -21,7 +21,7 @@
                             <div class="btn-group" role="group">
                                 <a href="{{ route('company.appointments.index') }}" class="btn btn-light active">
                                     <i class="las la-briefcase me-1"></i>
-                                    Lịch hẹn công ty
+                                    Lịch hẹn người thợ
                                 </a>
                                 <a href="{{ route('user.wallet.index') }}" class="btn btn-outline-light">
                                     <i class="las la-wallet me-1"></i>
@@ -54,8 +54,8 @@
                             <i class="las la-exclamation-triangle"></i>
                         </div>
                         <div class="alert-content">
-                            <h5>Cần tạo ví cho công ty</h5>
-                            <p>Bạn có {{ count($stats['companies_without_wallet']) }} công ty chưa có ví. Cần tạo ví để xác nhận lịch hẹn.</p>
+                                                <h5>Cần tạo ví cho người thợ</h5>
+                    <p>Bạn có {{ count($stats['companies_without_wallet']) }} người thợ chưa có ví. Cần tạo ví để xác nhận lịch hẹn.</p>
                             <div class="alert-actions">
                                 <a href="{{ route('user.wallet.index') }}" class="btn btn-warning">
                                     <i class="las la-wallet me-2"></i>
@@ -172,11 +172,11 @@
                         <i class="las la-calendar-times"></i>
                     </div>
                     <h3>Chưa có lịch hẹn nào</h3>
-                    <p>Công ty của bạn chưa nhận được lịch hẹn nào từ khách hàng.</p>
+                    <p>Bạn chưa nhận được lịch hẹn nào từ khách hàng.</p>
                     <div class="empty-actions">
                         <a href="{{ route('user.company.index') }}" class="btn btn-primary btn-lg">
                             <i class="las la-cog me-2"></i>
-                            Cập nhật hồ sơ công ty
+                            Cập nhật hồ sơ người thợ
                         </a>
                     </div>
                 </div>
