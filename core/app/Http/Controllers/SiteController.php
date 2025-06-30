@@ -36,7 +36,7 @@ class SiteController extends Controller
     {
         $pageTitle = 'Home';
         $sections = Page::where('tempname', activeTemplate())->where('slug', '/')->first();
-        $seoContents = $sections->seo_content;
+        $seoContents = $sections ? $sections->seo_content : null;
         $seoImage = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
         return view('Template::home', compact('pageTitle', 'sections', 'seoContents', 'seoImage'));
     }
@@ -45,7 +45,7 @@ class SiteController extends Controller
     {
         $pageTitle = "About Us";
         $sections = Page::where('tempname', activeTemplate())->where('slug', 'about-us')->first();
-        $seoContents = $sections->seo_content;
+        $seoContents = $sections ? $sections->seo_content : null;
         $seoImage = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
         // $pageTitle = "About Us";
         
@@ -72,7 +72,7 @@ class SiteController extends Controller
         $page = Page::where('tempname', activeTemplate())->where('slug', $slug)->firstOrFail();
         $pageTitle = $page->name;
         $sections = $page->secs;
-        $seoContents = $page->seo_content;
+        $seoContents = $page ? $page->seo_content : null;
         $seoImage = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
         return view('Template::pages', compact('pageTitle', 'sections', 'seoContents', 'seoImage'));
     }
@@ -82,7 +82,7 @@ class SiteController extends Controller
         $pageTitle = "Contact Us";
         $user = auth()->user();
         $sections = Page::where('tempname', activeTemplate())->where('slug', 'contact')->first();
-        $seoContents = $sections->seo_content;
+        $seoContents = $sections ? $sections->seo_content : null;
         $seoImage = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
         return view('Template::contact', compact('pageTitle', 'user', 'sections', 'seoContents', 'seoImage'));
     }
@@ -138,7 +138,7 @@ class SiteController extends Controller
     {
         $policy = Frontend::where('slug', $slug)->where('data_keys', 'policy_pages.element')->firstOrFail();
         $pageTitle = $policy->data_values->title;
-        $seoContents = $policy->seo_content;
+        $seoContents = $policy ? $policy->seo_content : null;
         $seoImage = @$seoContents->image ? frontendImage('policy_pages', $seoContents->image, getFileSize('seo'), true) : null;
         return view('Template::policy', compact('policy', 'pageTitle', 'seoContents', 'seoImage'));
     }
@@ -157,7 +157,7 @@ class SiteController extends Controller
         $blogs       = Frontend::where('data_keys', 'blog.element')->latest()->paginate(getPaginate(21));
         $latest      = Frontend::latest()->where('data_keys', 'blog.element')->limit(10)->get();
         $sections    = Page::where('tempname', activeTemplate())->where('slug', 'blog')->first();
-        $seoContents = $sections->seo_content;
+        $seoContents = $sections ? $sections->seo_content : null;
         $seoImage    = @$seoContents->image ? frontendImage('blog', $seoContents->image, getFileSize('seo'), true) : null;
         return view('Template::blog', compact('pageTitle', 'blogs', 'latest', 'sections', 'seoContents', 'seoImage'));
     }
@@ -167,7 +167,7 @@ class SiteController extends Controller
         $pageTitle   = 'Blog Details';
         $blog        = Frontend::where('slug', $slug)->where('id', $id)->where('data_keys', 'blog.element')->firstOrFail();
         $latestBlogs = Frontend::latest()->where('data_keys', 'blog.element')->where('slug', '!=', $slug)->limit(10)->get();
-        $seoContents = $blog->seo_content;
+        $seoContents = $blog ? $blog->seo_content : null;
         $seoImage    = @$seoContents->image ? frontendImage('blog', $seoContents->image, getFileSize('seo'), true) : null;
         return view('Template::blog_details', compact('blog', 'pageTitle', 'seoContents', 'seoImage', 'latestBlogs'));
     }

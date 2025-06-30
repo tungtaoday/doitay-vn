@@ -1,0 +1,105 @@
+-- Create complete general_settings table and insert data for production
+
+-- Drop existing table if exists
+DROP TABLE IF EXISTS general_settings;
+
+-- Create general_settings table with all necessary columns
+CREATE TABLE `general_settings` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `site_name` varchar(40) DEFAULT NULL,
+  `cur_text` varchar(40) DEFAULT NULL COMMENT 'currency text',
+  `cur_sym` varchar(40) DEFAULT NULL COMMENT 'currency symbol',
+  `email_from` varchar(40) DEFAULT NULL,
+  `email_template` text DEFAULT NULL,
+  `sms_body` varchar(255) DEFAULT NULL,
+  `sms_from` varchar(255) DEFAULT NULL,
+  `base_color` varchar(255) DEFAULT NULL,
+  `secondary_color` varchar(255) DEFAULT NULL,
+  `kv` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'KYC verification',
+  `ev` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'email verification',
+  `en` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'email notification',
+  `sv` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'SMS verification',
+  `sn` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'SMS notification',
+  `pn` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'push notification',
+  `force_ssl` tinyint(1) NOT NULL DEFAULT 0,
+  `maintenance_mode` tinyint(1) NOT NULL DEFAULT 0,
+  `secure_password` tinyint(1) NOT NULL DEFAULT 0,
+  `agree` tinyint(1) NOT NULL DEFAULT 0,
+  `multi_language` tinyint(1) NOT NULL DEFAULT 1,
+  `registration` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'registration system',
+  `active_template` varchar(40) DEFAULT NULL,
+  `socialite_credentials` text DEFAULT NULL,
+  `mail_config` text DEFAULT NULL COMMENT 'email configuration',
+  `sms_config` text DEFAULT NULL,
+  `global_shortcodes` text DEFAULT NULL,
+  `system_info` text DEFAULT NULL,
+  `paginate_number` int(11) NOT NULL DEFAULT 20,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insert complete data
+INSERT INTO `general_settings` (
+    `id`, 
+    `site_name`, 
+    `cur_text`, 
+    `cur_sym`, 
+    `email_from`, 
+    `base_color`, 
+    `secondary_color`, 
+    `kv`, 
+    `ev`, 
+    `en`, 
+    `sv`, 
+    `sn`, 
+    `pn`, 
+    `force_ssl`, 
+    `maintenance_mode`, 
+    `secure_password`, 
+    `agree`, 
+    `multi_language`, 
+    `registration`, 
+    `active_template`, 
+    `socialite_credentials`, 
+    `mail_config`, 
+    `sms_config`, 
+    `system_info`, 
+    `global_shortcodes`, 
+    `paginate_number`, 
+    `created_at`, 
+    `updated_at`
+) VALUES (
+    1, 
+    'Doitay.vn', 
+    'VND', 
+    '₫', 
+    'nguyentung0910@gmail.com', 
+    '102f4b', 
+    '#48bbe2', 
+    0, 
+    0, 
+    1, 
+    0, 
+    0, 
+    1, 
+    0, 
+    0, 
+    0, 
+    0, 
+    1, 
+    1, 
+    'basic', 
+    '{\"google\": {\"status\": 1, \"client_id\": \"REDACTED_GOOGLE_CLIENT_ID_2\", \"client_secret\": \"REDACTED_GOOGLE_CLIENT_SECRET_2\"}, \"facebook\": {\"status\": 1, \"client_id\": \"------\", \"client_secret\": \"------\"}, \"linkedin\": {\"status\": 1, \"client_id\": \"-----\", \"client_secret\": \"-----\"}}', 
+    '{\"name\":\"smtp\",\"host\":\"smtp.gmail.com\",\"port\":\"587\",\"enc\":\"tls\",\"username\":\"nguyentung0910@gmail.com\",\"password\":\"pxzy kngm wquo hiur\"}', 
+    NULL, 
+    NULL, 
+    '{\"site_name\": \"Site Name\", \"current_date\": \"Current Date\", \"current_time\": \"Current Time\", \"site_currency\": \"Site Currency\", \"support_email\": \"Support Email\", \"currency_symbol\": \"Currency Symbol\"}', 
+    20, 
+    '2025-06-07 05:02:25', 
+    '2025-06-24 19:42:23'
+);
+
+-- Verify the data was inserted correctly
+SELECT 'Verification - general_settings data:' as info;
+SELECT id, site_name, active_template, cur_text, cur_sym, email_from FROM general_settings; 

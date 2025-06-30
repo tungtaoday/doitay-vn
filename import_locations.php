@@ -4,9 +4,9 @@ ini_set('display_errors', 1);
 
 // Database configuration
 $host = 'localhost';
-$dbname = 't_review_db';
-$username = 'root';
-$password = 'Vuivui@123';
+$dbname = 't_review_production';
+$username = 'treview_user';
+$password = 'StrongPassword123!';
 
 try {
     // Connect to database with UTF-8 charset
@@ -146,12 +146,12 @@ try {
     }
     
 } catch (PDOException $e) {
-    if (isset($pdo)) {
+    if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
     echo "❌ Lỗi database: " . $e->getMessage() . "\n";
 } catch (Exception $e) {
-    if (isset($pdo)) {
+    if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
     echo "❌ Lỗi: " . $e->getMessage() . "\n";
