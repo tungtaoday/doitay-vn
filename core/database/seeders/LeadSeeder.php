@@ -4,181 +4,181 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Lead;
-use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Category;
+use Carbon\Carbon;
 
 class LeadSeeder extends Seeder
 {
+    private $jobTitles = [
+        'Thợ Điện' => [
+            'Sửa chữa hệ thống điện trong nhà',
+            'Lắp đặt quạt trần phòng khách',
+            'Thay thế ổ cắm điện bị hỏng',
+            'Sửa chữa đèn LED không sáng',
+            'Lắp đặt hệ thống điện cho nhà mới',
+            'Sửa chữa máy nước nóng',
+            'Thay dây điện cũ trong nhà',
+            'Lắp đặt chuông cửa có hình',
+            'Sửa chữa tủ điện bị chập',
+            'Lắp đặt camera an ninh'
+        ],
+        'Thợ Nước' => [
+            'Thông tắc cống thoát nước',
+            'Sửa chữa vòi nước bị rỉ',
+            'Lắp đặt bồn nước inox mới',
+            'Sửa chữa máy bơm nước',
+            'Thay ống nước bị vỡ',
+            'Lắp đặt vòi sen phòng tắm',
+            'Sửa chữa bồn cầu bị tắc',
+            'Thông tắc đường ống thoát nước',
+            'Lắp đặt hệ thống lọc nước',
+            'Sửa chữa van khóa nước'
+        ],
+        'Thợ Xây Dựng' => [
+            'Xây tường ngăn phòng',
+            'Sửa chữa tường bị nứt',
+            'Đổ sàn bê tông',
+            'Xây dựng nhà vệ sinh',
+            'Cải tạo phòng bếp',
+            'Xây hàng rào xung quanh nhà',
+            'Sửa chữa mái nhà bị dột',
+            'Làm cầu thang bê tông',
+            'Xây dựng phòng trọ',
+            'Sửa chữa nền nhà'
+        ],
+        'Thợ Sơn' => [
+            'Sơn lại toàn bộ ngôi nhà',
+            'Sơn phòng ngủ màu pastel',
+            'Sơn chống thấm tường ngoài',
+            'Sơn cửa sổ và cửa ra vào',
+            'Sơn tường phòng khách',
+            'Sơn lại ban công',
+            'Sơn chống nấm mốc',
+            'Sơn trang trí phòng trẻ em',
+            'Sơn hàng rào sắt',
+            'Sơn lại trần nhà'
+        ],
+        'Thợ Mộc' => [
+            'Đóng tủ bếp gỗ công nghiệp',
+            'Sửa chữa cửa gỗ bị cong',
+            'Làm kệ sách phòng làm việc',
+            'Đóng giường ngủ gỗ tự nhiên',
+            'Sửa chữa bàn ghế gỗ',
+            'Làm tủ quần áo âm tường',
+            'Đóng bàn học cho trẻ em',
+            'Sửa chữa cửa sổ gỗ',
+            'Làm kệ tivi phòng khách',
+            'Đóng cửa gỗ phòng ngủ'
+        ]
+    ];
+    
+    private $descriptions = [
+        'Cần thợ có kinh nghiệm, làm việc nhanh gọn',
+        'Yêu cầu thợ chuyên nghiệp, báo giá trước khi làm',
+        'Cần hoàn thành trong tuần này, có thể làm cuối tuần',
+        'Nhà ở tầng 3, không có thang máy',
+        'Cần tư vấn và báo giá chi tiết trước',
+        'Ưu tiên thợ gần nhà, có bảo hành',
+        'Cần làm gấp, có thể trả thêm phí khẩn cấp',
+        'Yêu cầu thợ có kinh nghiệm tối thiểu 3 năm',
+        'Cần thợ làm việc sạch sẽ, gọn gàng',
+        'Có thể làm buổi tối hoặc cuối tuần'
+    ];
+    
     /**
      * Run the database seeder.
      */
     public function run(): void
     {
+        echo "📋 Tạo 500 leads và giao dịch...\n";
+        
+        // Lấy danh sách users (khách hàng và thợ)
+        $customers = User::whereDoesntHave('companies')->get();
+        $contractors = User::whereHas('companies')->get();
         $categories = Category::all();
-        $users = User::take(10)->get();
-
-        $sampleLeads = [
-            [
-                'title' => 'Sửa chữa điện nước tại quận 1',
-                'description' => 'Cần thợ điện nước có kinh nghiệm để sửa chữa hệ thống điện và nước trong nhà. Công việc bao gồm thay thế ổ cắm, sửa vòi nước bị rò rỉ.',
-                'location' => 'Quận 1, TP.HCM',
-                'district' => 'Quận 1',
-                'ward' => 'Phường Bến Nghé',
-                'budget_min' => 500000,
-                'budget_max' => 1000000,
-                'urgency' => 'high',
-                'customer_info' => [
-                    'name' => 'Nguyễn Văn A',
-                    'phone' => '0901234567',
-                    'email' => 'nguyenvana@email.com'
-                ],
-                'requirements' => [
-                    'Có kinh nghiệm tối thiểu 2 năm',
-                    'Có đầy đủ dụng cụ',
-                    'Làm việc ngoài giờ được'
-                ]
-            ],
-            [
-                'title' => 'Thi công nội thất căn hộ 80m2',
-                'description' => 'Cần đội thi công nội thất cho căn hộ 80m2, bao gồm phòng khách, phòng ngủ, bếp và toilet. Yêu cầu hoàn thiện trong 30 ngày.',
-                'location' => 'Quận 7, TP.HCM',
-                'district' => 'Quận 7',
-                'ward' => 'Phường Tân Phú',
-                'budget_min' => 50000000,
-                'budget_max' => 80000000,
-                'urgency' => 'medium',
-                'customer_info' => [
-                    'name' => 'Trần Thị B',
-                    'phone' => '0912345678',
-                    'email' => 'tranthib@email.com'
-                ],
-                'requirements' => [
-                    'Có portfolio dự án tương tự',
-                    'Bảo hành tối thiểu 12 tháng',
-                    'Có đội ngũ thi công ổn định'
-                ]
-            ],
-            [
-                'title' => 'Sơn nhà 3 tầng',
-                'description' => 'Cần thợ sơn để sơn lại toàn bộ nhà 3 tầng, diện tích khoảng 200m2. Yêu cầu sơn chất lượng cao, màu sắc theo yêu cầu.',
-                'location' => 'Quận Bình Thạnh, TP.HCM',
-                'district' => 'Quận Bình Thạnh',
-                'ward' => 'Phường 1',
-                'budget_min' => 15000000,
-                'budget_max' => 25000000,
-                'urgency' => 'low',
-                'customer_info' => [
-                    'name' => 'Lê Văn C',
-                    'phone' => '0923456789',
-                    'email' => 'levanc@email.com'
-                ],
-                'requirements' => [
-                    'Sử dụng sơn chính hãng',
-                    'Hoàn thành trong 15 ngày',
-                    'Dọn dẹp sạch sẽ sau khi hoàn thành'
-                ]
-            ],
-            [
-                'title' => 'Lắp đặt hệ thống camera an ninh',
-                'description' => 'Cần lắp đặt hệ thống camera an ninh cho cửa hàng, bao gồm 8 camera IP, đầu ghi hình và hệ thống giám sát từ xa.',
-                'location' => 'Quận 3, TP.HCM',
-                'district' => 'Quận 3',
-                'ward' => 'Phường 1',
-                'budget_min' => 20000000,
-                'budget_max' => 35000000,
-                'urgency' => 'high',
-                'customer_info' => [
-                    'name' => 'Phạm Thị D',
-                    'phone' => '0934567890',
-                    'email' => 'phamthid@email.com'
-                ],
-                'requirements' => [
-                    'Có chứng chỉ lắp đặt camera',
-                    'Bảo hành 24 tháng',
-                    'Hỗ trợ kỹ thuật 24/7'
-                ]
-            ],
-            [
-                'title' => 'Sửa chữa máy lạnh tại văn phòng',
-                'description' => 'Cần thợ sửa máy lạnh có kinh nghiệm để bảo trì và sửa chữa 10 máy lạnh tại văn phòng. Một số máy cần thay gas, vệ sinh.',
-                'location' => 'Quận 1, TP.HCM',
-                'district' => 'Quận 1',
-                'ward' => 'Phường Đa Kao',
-                'budget_min' => 3000000,
-                'budget_max' => 5000000,
-                'urgency' => 'medium',
-                'customer_info' => [
-                    'name' => 'Hoàng Văn E',
-                    'phone' => '0945678901',
-                    'email' => 'hoangvane@email.com'
-                ],
-                'requirements' => [
-                    'Có kinh nghiệm sửa máy lạnh văn phòng',
-                    'Làm việc ngoài giờ hành chính',
-                    'Có đầy đủ thiết bị chuyên dụng'
-                ]
-            ]
-        ];
-
-        foreach ($sampleLeads as $leadData) {
+        
+        $leadStatuses = ['pending', 'accepted', 'completed', 'cancelled'];
+        $leadTypes = ['urgent', 'normal', 'scheduled'];
+        
+        for ($i = 1; $i <= 500; $i++) {
+            $customer = $customers->random();
             $category = $categories->random();
-            $customer = $users->random();
-
-            Lead::create([
-                'customer_id' => $customer->id,
+            $contractor = $contractors->where('companies.0.category_id', $category->id)->first() ?? $contractors->random();
+            
+            // Thời gian tạo lead (từ 1 năm trước đến 1 ngày trước)
+            $createdAt = Carbon::now()->subDays(rand(1, 365));
+            
+            // Chọn job title phù hợp với category
+            $categoryJobs = $this->jobTitles[$category->name] ?? ['Dịch vụ sửa chữa tổng hợp'];
+            $title = $categoryJobs[array_rand($categoryJobs)];
+            
+            $description = $this->descriptions[array_rand($this->descriptions)];
+            $budget = rand(200, 2000) * 1000; // 200k - 2M VND
+            $status = $leadStatuses[array_rand($leadStatuses)];
+            $type = $leadTypes[array_rand($leadTypes)];
+            
+            // Tạo lead
+            $leadId = DB::table('leads')->insertGetId([
+                'user_id' => $customer->id,
                 'category_id' => $category->id,
-                'title' => $leadData['title'],
-                'description' => $leadData['description'],
-                'location' => $leadData['location'],
-                'district' => $leadData['district'],
-                'ward' => $leadData['ward'],
-                'budget_min' => $leadData['budget_min'],
-                'budget_max' => $leadData['budget_max'],
-                'lead_price' => rand(10000, 50000), // Random price between 10k-50k
-                'urgency' => $leadData['urgency'],
-                'status' => 'active',
-                'max_contractors' => rand(3, 7),
-                'customer_info' => $leadData['customer_info'],
-                'requirements' => $leadData['requirements'],
-                'expires_at' => now()->addDays(rand(7, 30))
+                'title' => $title,
+                'description' => $description,
+                'budget' => $budget,
+                'location' => $customer->address,
+                'district' => $customer->district,
+                'city' => $customer->city,
+                'urgency' => $type,
+                'status' => $status,
+                'phone' => $customer->mobile,
+                'email' => $customer->email,
+                'created_at' => $createdAt,
+                'updated_at' => $createdAt,
             ]);
+            
+            // Tạo lead visibility cho các thợ phù hợp (3-8 thợ mỗi lead)
+            $suitableContractors = $contractors->where('companies.0.category_id', $category->id)->take(rand(3, 8));
+            foreach ($suitableContractors as $contractor) {
+                DB::table('lead_visibilities')->insert([
+                    'lead_id' => $leadId,
+                    'contractor_id' => $contractor->id,
+                    'is_visible' => 1,
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ]);
+            }
+            
+            // Nếu lead đã được accept/complete, tạo lead purchase
+            if (in_array($status, ['accepted', 'completed'])) {
+                $purchasePrice = rand(50, 200) * 1000; // 50k - 200k VND
+                $purchasedAt = $createdAt->copy()->addMinutes(rand(30, 1440)); // 30 phút - 1 ngày sau
+                
+                DB::table('lead_purchases')->insert([
+                    'lead_id' => $leadId,
+                    'contractor_id' => $contractor->id,
+                    'customer_id' => $customer->id,
+                    'amount' => $purchasePrice,
+                    'price_paid' => $purchasePrice,
+                    'status' => 'completed',
+                    'purchased_at' => $purchasedAt,
+                    'created_at' => $purchasedAt,
+                    'updated_at' => $purchasedAt,
+                ]);
+                
+                // Update lead status
+                DB::table('leads')->where('id', $leadId)->update([
+                    'contractor_id' => $contractor->id,
+                    'status' => $status,
+                    'updated_at' => $purchasedAt,
+                ]);
+            }
+            
+            if ($i % 50 == 0) {
+                echo "   Đã tạo {$i}/500 leads...\n";
+            }
         }
-
-        // Create some additional random leads
-        for ($i = 0; $i < 15; $i++) {
-            $category = $categories->random();
-            $customer = $users->random();
-
-            $districts = ['Quận 1', 'Quận 3', 'Quận 7', 'Quận Bình Thạnh', 'Quận Tân Bình', 'Quận Phú Nhuận'];
-            $urgencies = ['low', 'medium', 'high'];
-
-            Lead::create([
-                'customer_id' => $customer->id,
-                'category_id' => $category->id,
-                'title' => 'Dự án ' . $category->name . ' #' . ($i + 1),
-                'description' => 'Mô tả chi tiết cho dự án ' . $category->name . '. Cần tìm thợ có kinh nghiệm và uy tín để thực hiện công việc này.',
-                'location' => $districts[array_rand($districts)] . ', TP.HCM',
-                'district' => $districts[array_rand($districts)],
-                'ward' => 'Phường ' . rand(1, 15),
-                'budget_min' => rand(1000000, 10000000),
-                'budget_max' => rand(10000000, 50000000),
-                'lead_price' => rand(10000, 50000),
-                'urgency' => $urgencies[array_rand($urgencies)],
-                'status' => 'active',
-                'max_contractors' => rand(3, 7),
-                'customer_info' => [
-                    'name' => 'Khách hàng ' . ($i + 1),
-                    'phone' => '090' . rand(1000000, 9999999),
-                    'email' => 'customer' . ($i + 1) . '@email.com'
-                ],
-                'requirements' => [
-                    'Có kinh nghiệm trong lĩnh vực',
-                    'Báo giá chi tiết',
-                    'Hoàn thành đúng tiến độ'
-                ],
-                'expires_at' => now()->addDays(rand(7, 30))
-            ]);
-        }
+        
+        echo "✅ Đã tạo 500 leads và giao dịch\n";
     }
 }
