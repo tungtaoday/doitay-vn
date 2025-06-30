@@ -155,7 +155,7 @@ class ContractorSeeder extends Seeder
     private function generateUniqueEmail($firstName, $lastName)
     {
         $baseEmail = strtolower($this->removeAccents($lastName . '.' . $firstName));
-        $email = $baseEmail . '.tho@doitay.local';
+        $email = $baseEmail . '.tho@doitay.local'; // Thợ dùng .tho
         
         $counter = 1;
         while (in_array($email, $this->emails)) {
