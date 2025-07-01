@@ -170,7 +170,6 @@ class LeadSeeder extends Seeder
                 DB::table('lead_purchases')->insert([
                     'lead_id' => $leadId,
                     'company_id' => $contractor->company_id,
-                    'contractor_id' => $contractor->id,
                     'user_id' => $customer->id,
                     'price_paid' => $purchasePrice,
                     'status' => 'completed',
