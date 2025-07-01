@@ -160,12 +160,20 @@ class LeadSeeder extends Seeder
             
             // Nếu lead đã được accept/complete, tạo lead purchase
             if (in_array($status, ['accepted', 'completed'])) {
+                // Validation: đảm bảo contractor tồn tại
+                $contractorExists = User::where('id', $contractor->id)->exists();
+                if (!$contractorExists) {
+                    echo "⚠️  Warning: Contractor ID {$contractor->id} không tồn tại, skip lead {$i}\n";
+                    continue;
+                }
+                
                 $purchasePrice = rand(50, 200) * 1000; // 50k - 200k VND
                 $purchasedAt = $createdAt->copy()->addMinutes(rand(30, 1440)); // 30 phút - 1 ngày sau
                 
                 DB::table('lead_purchases')->insert([
                     'lead_id' => $leadId,
                     'company_id' => $contractor->company_id,
+                    'contractor_id' => $contractor->id,
                     'user_id' => $customer->id,
                     'price_paid' => $purchasePrice,
                     'status' => 'completed',
