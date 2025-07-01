@@ -134,14 +134,12 @@ class LeadSeeder extends Seeder
                 'category_id' => $category->id,
                 'title' => $title,
                 'description' => $description,
-                'budget' => $budget,
+                'budget_min' => $budget,
+                'budget_max' => $budget * 1.2,
                 'location' => $customer->address,
                 'district' => $customer->district,
-                'city' => $customer->city,
                 'urgency' => $type,
                 'status' => $status,
-                'phone' => $customer->mobile,
-                'email' => $customer->email,
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt,
             ]);
@@ -151,8 +149,7 @@ class LeadSeeder extends Seeder
             foreach ($suitableContractors as $contractor) {
                 DB::table('lead_visibilities')->insert([
                     'lead_id' => $leadId,
-                    'contractor_id' => $contractor->id,
-                    'is_visible' => 1,
+                    'company_id' => $contractor->company_id,
                     'created_at' => $createdAt,
                     'updated_at' => $createdAt,
                 ]);
