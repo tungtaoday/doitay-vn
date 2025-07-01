@@ -3,14 +3,14 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Category;
 use App\Models\Rating;
 use App\Constants\Status;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class ContractorSeeder extends Seeder
@@ -125,7 +125,7 @@ class ContractorSeeder extends Seeder
                 'weekend_start' => $workingHours['weekend_start'],
                 'weekend_end' => $workingHours['weekend_end'],
                 'available_247' => rand(1, 100) <= 15 ? 1 : 0, // 15% làm 24/7
-                'status' => 'approved',
+                'status' => Status::APPROVED,
                 'featured' => rand(1, 100) <= 20 ? 1 : 0, // 20% featured
                 'rating' => number_format(rand(35, 50) / 10, 1), // 3.5-5.0
                 'created_at' => $joinedAt,
