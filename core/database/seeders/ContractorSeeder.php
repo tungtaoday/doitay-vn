@@ -41,6 +41,7 @@ class ContractorSeeder extends Seeder
     
     private $phoneNumbers = [];
     private $emails = [];
+    private $userCompanyMapping = []; // Track user-company relationships
     
     public function run()
     {
@@ -106,8 +107,8 @@ class ContractorSeeder extends Seeder
                 'updated_at' => $joinedAt,
             ]);
             
-            // Tạo company profile
-            DB::table('companies')->insert([
+            // Tạo company profile với tracking
+            $companyId = DB::table('companies')->insertGetId([
                 'user_id' => $user->id,
                 'name' => $fullName,
                 'category_id' => $category->id,
@@ -131,6 +132,20 @@ class ContractorSeeder extends Seeder
                 'updated_at' => $joinedAt,
             ]);
             
+            // Track mapping để validation
+            $this->userCompanyMapping[$user->id] = [
+                'company_id' => $companyId,
+                'user_email' => $user->email,
+                'company_email' => $email,
+                'category' => $category->name,
+                'loop_index' => $i
+            ];
+            
+            // Validation real-time
+            if ($user->email !== $email) {
+                throw new \Exception("Email mismatch: User({$user->email}) != Company({$email}) at index {$i}");
+            }
+            
             // Ghi vào file
             fwrite($accountsFile, sprintf("%-5d %-25s %-30s %-15s %-20s %-15s\n", 
                 $user->id, $fullName, $email, $phone, $category->name, $district));
@@ -146,10 +161,30 @@ class ContractorSeeder extends Seeder
         fwrite($accountsFile, "- Email: nguyen.anh.tho.dien@doitay.local\n");
         fwrite($accountsFile, "- Password: 123456\n\n");
         
+        // Export User-Company Mapping cho validation
+        fwrite($accountsFile, "=== USER-COMPANY MAPPING ===\n");
+        fwrite($accountsFile, sprintf("%-8s %-12s %-25s %-25s %-15s\n", 
+            'UserID', 'CompanyID', 'User Email', 'Company Email', 'Category'));
+        fwrite($accountsFile, str_repeat('-', 90) . "\n");
+        
+        foreach ($this->userCompanyMapping as $userId => $mapping) {
+            fwrite($accountsFile, sprintf("%-8d %-12d %-25s %-25s %-15s\n", 
+                $userId, 
+                $mapping['company_id'], 
+                $mapping['user_email'], 
+                $mapping['company_email'], 
+                $mapping['category']
+            ));
+        }
+        
         fclose($accountsFile);
+        
+        // Final validation
+        $this->validateUserCompanyMapping();
         
         echo "✅ Đã tạo 100 thợ chuyên nghiệp\n";
         echo "📄 File tài khoản: user_accounts.txt\n";
+        echo "🔗 User-Company mapping: " . count($this->userCompanyMapping) . " relationships\n";
     }
     
     private function generateUniqueEmail($firstName, $lastName)
@@ -270,5 +305,42 @@ class ContractorSeeder extends Seeder
         
         $this->emails[] = $email;
         return $email;
+    }
+    
+    private function validateUserCompanyMapping()
+    {
+        echo "🔍 Validating User-Company mapping...\n";
+        
+        // Check database consistency
+        $userCount = DB::table('users')->whereIn('id', array_keys($this->userCompanyMapping))->count();
+        $companyCount = DB::table('companies')->whereIn('user_id', array_keys($this->userCompanyMapping))->count();
+        
+        if ($userCount !== count($this->userCompanyMapping)) {
+            throw new \Exception("User count mismatch: Expected " . count($this->userCompanyMapping) . ", got {$userCount}");
+        }
+        
+        if ($companyCount !== count($this->userCompanyMapping)) {
+            throw new \Exception("Company count mismatch: Expected " . count($this->userCompanyMapping) . ", got {$companyCount}");
+        }
+        
+        // Check email consistency
+        foreach ($this->userCompanyMapping as $userId => $mapping) {
+            $user = DB::table('users')->where('id', $userId)->first();
+            $company = DB::table('companies')->where('user_id', $userId)->first();
+            
+            if (!$user) {
+                throw new \Exception("User {$userId} not found in database");
+            }
+            
+            if (!$company) {
+                throw new \Exception("Company for user {$userId} not found in database");
+            }
+            
+            if ($user->email !== $company->email) {
+                throw new \Exception("Email mismatch for user {$userId}: User({$user->email}) != Company({$company->email})");
+            }
+        }
+        
+        echo "✅ User-Company mapping validation passed!\n";
     }
 } 
