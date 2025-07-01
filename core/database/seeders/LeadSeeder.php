@@ -134,12 +134,14 @@ class LeadSeeder extends Seeder
                 'category_id' => $category->id,
                 'title' => $title,
                 'description' => $description,
-                'budget_min' => $budget,
-                'budget_max' => $budget * 1.2,
+                'budget' => $budget,
                 'location' => $customer->address,
                 'district' => $customer->district,
+                'city' => $customer->city,
                 'urgency' => $type,
                 'status' => $status,
+                'phone' => $customer->mobile,
+                'email' => $customer->email,
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt,
             ]);
@@ -174,6 +176,7 @@ class LeadSeeder extends Seeder
                 
                 // Update lead status
                 DB::table('leads')->where('id', $leadId)->update([
+                    'contractor_id' => $contractor->company_id,
                     'status' => $status,
                     'updated_at' => $purchasedAt,
                 ]);
