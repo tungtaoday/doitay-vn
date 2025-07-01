@@ -67,10 +67,12 @@ class ReviewSeeder extends Seeder
         foreach ($completedPurchases as $purchase) {
             // 70% có review
             if (rand(1, 100) <= 70) {
-                $customer = $customers->find($purchase->customer_id);
-                $contractor = $contractors->find($purchase->contractor_id);
+                $customer = $customers->find($purchase->user_id);
                 
-                if ($customer && $contractor) {
+                // Lấy company từ purchase
+                $company = DB::table('companies')->find($purchase->company_id);
+                
+                if ($customer && $company) {
                     // Thời gian review (1-30 ngày sau khi hoàn thành)
                     $reviewedAt = Carbon::parse($purchase->created_at)->addDays(rand(1, 30));
                     
@@ -92,12 +94,10 @@ class ReviewSeeder extends Seeder
                     
                     // Tạo review
                     DB::table('reviews')->insert([
-                        'customer_id' => $customer->id,
-                        'contractor_id' => $contractor->id,
-                        'lead_id' => $purchase->lead_id,
+                        'user_id' => $customer->id,
+                        'company_id' => $company->id,
                         'rating' => $rating,
-                        'comment' => $comment,
-                        'status' => 'approved',
+                        'review' => $comment,
                         'created_at' => $reviewedAt,
                         'updated_at' => $reviewedAt,
                     ]);
@@ -131,11 +131,10 @@ class ReviewSeeder extends Seeder
             }
             
             DB::table('reviews')->insert([
-                'customer_id' => $customer->id,
-                'contractor_id' => $contractor->id,
+                'user_id' => $customer->id,
+                'company_id' => $contractor->companies->first()->id ?? 1,
                 'rating' => $rating,
-                'comment' => $comment,
-                'status' => rand(1, 100) <= 95 ? 'approved' : 'pending', // 95% approved
+                'review' => $comment,
                 'created_at' => $reviewedAt,
                 'updated_at' => $reviewedAt,
             ]);
@@ -151,14 +150,13 @@ class ReviewSeeder extends Seeder
         echo "   Đang cập nhật rating trung bình...\n";
         
         $contractorRatings = DB::table('reviews')
-            ->select('contractor_id', DB::raw('AVG(rating) as avg_rating'), DB::raw('COUNT(*) as review_count'))
-            ->where('status', 'approved')
-            ->groupBy('contractor_id')
+            ->select('company_id', DB::raw('AVG(rating) as avg_rating'), DB::raw('COUNT(*) as review_count'))
+            ->groupBy('company_id')
             ->get();
         
         foreach ($contractorRatings as $contractorRating) {
             DB::table('companies')
-                ->where('user_id', $contractorRating->contractor_id)
+                ->where('id', $contractorRating->company_id)
                 ->update([
                     'rating' => round($contractorRating->avg_rating, 1),
                     'review_count' => $contractorRating->review_count,
