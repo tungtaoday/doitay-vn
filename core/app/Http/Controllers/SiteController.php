@@ -254,8 +254,8 @@ class SiteController extends Controller
     {
         $pageTitle      = keyToTitle(last(request()->segments())) . ' Companies';
         $categoryId = $id;
-        $companies      = Company::approved()->where('category_id', $id)->withAvg('reviews', 'rating')
-            ->withCount('reviews')->with('category')->latest()->paginate(getPaginate());
+        $companies      = Company::approved()->where('category_id', $id)->withAvg('ratings', 'avg_rating')
+            ->withCount('ratings')->with('category')->latest()->paginate(getPaginate());
         $categories     = Category::where('status', Status::ENABLE)->where('id', $id)->with('company')->whereHas('company')->get();
         return view('Template::company.index', compact('pageTitle', 'companies', 'categories', 'categoryId'));
     }
@@ -271,7 +271,7 @@ class SiteController extends Controller
             ->orWhereJsonContains('tags', $request->search)
             ->orWhereHas('category', function ($q) use ($request) {
                 $q->where('name', $request->search);
-            })->latest()->withAvg('reviews', 'rating')->withCount('reviews')->paginate(getPaginate());
+            })->latest()->withAvg('ratings', 'avg_rating')->withCount('ratings')->paginate(getPaginate());
 
         return view('Template::company.index', compact('pageTitle', 'categories', 'companies'));
     }
