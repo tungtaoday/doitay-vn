@@ -96,8 +96,17 @@ class LeadSeeder extends Seeder
         
         // Lấy danh sách users (khách hàng và thợ)
         $customers = User::whereDoesntHave('companies')->get();
-        $contractors = User::whereHas('companies')->get();
+        $contractors = DB::table('users')
+            ->join('companies', 'users.id', '=', 'companies.user_id')
+            ->select('users.*', 'companies.category_id', 'companies.id as company_id')
+            ->get();
         $categories = Category::all();
+        
+        echo "👥 Có {$customers->count()} khách hàng và {$contractors->count()} thợ\n";
+        
+        if ($customers->count() == 0 || $contractors->count() == 0) {
+            throw new \Exception("Cần chạy ContractorSeeder và CustomerSeeder trước!");
+        }
         
         $leadStatuses = ['pending', 'accepted', 'completed', 'cancelled'];
         $leadTypes = ['urgent', 'normal', 'scheduled'];
@@ -105,7 +114,7 @@ class LeadSeeder extends Seeder
         for ($i = 1; $i <= 500; $i++) {
             $customer = $customers->random();
             $category = $categories->random();
-            $contractor = $contractors->where('companies.0.category_id', $category->id)->first() ?? $contractors->random();
+            $contractor = $contractors->where('category_id', $category->id)->first() ?? $contractors->random();
             
             // Thời gian tạo lead (từ 1 năm trước đến 1 ngày trước)
             $createdAt = Carbon::now()->subDays(rand(1, 365));
@@ -121,7 +130,7 @@ class LeadSeeder extends Seeder
             
             // Tạo lead
             $leadId = DB::table('leads')->insertGetId([
-                'user_id' => $customer->id,
+                'customer_id' => $customer->id,
                 'category_id' => $category->id,
                 'title' => $title,
                 'description' => $description,
@@ -138,7 +147,7 @@ class LeadSeeder extends Seeder
             ]);
             
             // Tạo lead visibility cho các thợ phù hợp (3-8 thợ mỗi lead)
-            $suitableContractors = $contractors->where('companies.0.category_id', $category->id)->take(rand(3, 8));
+            $suitableContractors = $contractors->where('category_id', $category->id)->take(rand(3, 8));
             foreach ($suitableContractors as $contractor) {
                 DB::table('lead_visibilities')->insert([
                     'lead_id' => $leadId,
