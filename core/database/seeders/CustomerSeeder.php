@@ -56,8 +56,8 @@ class CustomerSeeder extends Seeder
             $lastName = $this->lastNames[array_rand($this->lastNames)];
             $fullName = $lastName . ' ' . $firstName;
             
-            // Tạo email và phone unique
-            $email = $this->generateUniqueEmail($firstName, $lastName);
+            // Tạo email và phone unique - Thêm ID để đảm bảo unique
+            $email = $this->generateUniqueEmailWithId($firstName, $lastName, $i);
             $phone = $this->generateUniquePhone();
             
             $district = $this->districts[array_rand($this->districts)];
@@ -103,11 +103,27 @@ class CustomerSeeder extends Seeder
     private function generateUniqueEmail($firstName, $lastName)
     {
         $baseEmail = strtolower($this->removeAccents($lastName . '.' . $firstName));
-        $email = $baseEmail . '@gmail.com';
+        $email = $baseEmail . '@gmail.com'; // Khách hàng dùng Gmail
         
         $counter = 1;
         while (in_array($email, $this->emails)) {
             $email = $baseEmail . $counter . '@gmail.com';
+            $counter++;
+        }
+        
+        $this->emails[] = $email;
+        return $email;
+    }
+    
+    private function generateUniqueEmailWithId($firstName, $lastName, $id)
+    {
+        $baseEmail = strtolower($this->removeAccents($lastName . '.' . $firstName));
+        $email = $baseEmail . $id . '@gmail.com'; // Thêm ID để đảm bảo unique
+        
+        // Backup logic nếu vẫn trùng
+        $counter = 1;
+        while (in_array($email, $this->emails)) {
+            $email = $baseEmail . $id . $counter . '@gmail.com';
             $counter++;
         }
         

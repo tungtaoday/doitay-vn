@@ -65,8 +65,8 @@ class ContractorSeeder extends Seeder
             $lastName = $this->lastNames[array_rand($this->lastNames)];
             $fullName = $lastName . ' ' . $firstName;
             
-            // Tạo email và phone unique
-            $email = $this->generateUniqueEmail($firstName, $lastName);
+            // Tạo email và phone unique - Thêm ID để đảm bảo unique
+            $email = $this->generateUniqueEmailWithId($firstName, $lastName, $i);
             $phone = $this->generateUniquePhone();
             
             $category = $categories->random();
@@ -155,7 +155,7 @@ class ContractorSeeder extends Seeder
     private function generateUniqueEmail($firstName, $lastName)
     {
         $baseEmail = strtolower($this->removeAccents($lastName . '.' . $firstName));
-        $email = $baseEmail . '.tho@doitay.local'; // Thợ dùng .tho
+        $email = $baseEmail . '.tho@doitay.local'; // Thợ dùng domain riêng
         
         $counter = 1;
         while (in_array($email, $this->emails)) {
@@ -254,5 +254,21 @@ class ContractorSeeder extends Seeder
         $categoryServices = $services[$categoryName] ?? ['Dịch vụ chuyên nghiệp', 'Sửa chữa tổng hợp'];
         
         return array_slice($categoryServices, 0, rand(3, 5));
+    }
+    
+    private function generateUniqueEmailWithId($firstName, $lastName, $id)
+    {
+        $baseEmail = strtolower($this->removeAccents($lastName . '.' . $firstName));
+        $email = $baseEmail . $id . '.tho@doitay.local'; // Thêm ID để đảm bảo unique
+        
+        // Backup logic nếu vẫn trùng
+        $counter = 1;
+        while (in_array($email, $this->emails)) {
+            $email = $baseEmail . $id . $counter . '.tho@doitay.local';
+            $counter++;
+        }
+        
+        $this->emails[] = $email;
+        return $email;
     }
 } 
