@@ -158,8 +158,7 @@ class ReviewSeeder extends Seeder
             DB::table('companies')
                 ->where('id', $contractorRating->company_id)
                 ->update([
-                    'rating' => round($contractorRating->avg_rating, 1),
-                    'review_count' => $contractorRating->review_count,
+                    'avg_rating' => round($contractorRating->avg_rating, 1),
                 ]);
         }
         
