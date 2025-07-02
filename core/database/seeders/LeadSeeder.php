@@ -114,7 +114,20 @@ class LeadSeeder extends Seeder
         for ($i = 1; $i <= 500; $i++) {
             $customer = $customers->random();
             $category = $categories->random();
-            $contractor = $contractors->where('category_id', $category->id)->first() ?? $contractors->random();
+            
+            // Fix: Better contractor selection with explicit filtering
+            $suitableContractors = $contractors->where('category_id', $category->id);
+            $contractor = $suitableContractors->first();
+            
+            if (!$contractor) {
+                $contractor = $contractors->random();
+            }
+            
+            // Debug: Validate contractor object
+            if (!$contractor || !isset($contractor->company_id)) {
+                echo "⚠️  Warning: Invalid contractor at lead {$i}, skipping...\n";
+                continue;
+            }
             
             // Thời gian tạo lead (từ 1 năm trước đến 1 ngày trước)
             $createdAt = Carbon::now()->subDays(rand(1, 365));
@@ -136,8 +149,8 @@ class LeadSeeder extends Seeder
                 'description' => $description,
                 'budget_min' => $budget,
                 'budget_max' => $budget * 1.2,
-                'location' => $customer->address,
-                'district' => $customer->district,
+                'location' => $customer->address ?? 'Hà Nội',
+                'district' => $customer->district ?? 'Quận 1',
                 'urgency' => $type,
                 'status' => $status,
                 'created_at' => $createdAt,
