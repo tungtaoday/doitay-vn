@@ -173,14 +173,12 @@ class LeadSeeder extends Seeder
                     'user_id' => $customer->id,
                     'price_paid' => $purchasePrice,
                     'status' => 'completed',
-                    'purchased_at' => $purchasedAt,
                     'created_at' => $purchasedAt,
                     'updated_at' => $purchasedAt,
                 ]);
                 
                 // Update lead status
                 DB::table('leads')->where('id', $leadId)->update([
-                    'contractor_id' => $contractor->company_id,
                     'status' => $status,
                     'updated_at' => $purchasedAt,
                 ]);
