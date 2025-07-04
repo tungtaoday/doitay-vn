@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Company;
 use Carbon\Carbon;
 
 class ReviewSeeder extends Seeder
@@ -50,118 +51,135 @@ class ReviewSeeder extends Seeder
     
     public function run()
     {
-        echo "⭐ Tạo 800 reviews và ratings...\n";
+        echo "⭐ Tạo 800 ratings cho contractors...\n";
         
-        // Lấy danh sách users
+        // Lấy danh sách users và companies
         $customers = User::whereDoesntHave('companies')->get();
-        $contractors = User::whereHas('companies')->get();
+        $companies = Company::approved()->get();
+        
+        if ($customers->isEmpty()) {
+            echo "❌ Không có customers để tạo ratings!\n";
+            return;
+        }
+        
+        if ($companies->isEmpty()) {
+            echo "❌ Không có companies được approved để tạo ratings!\n";
+            return;
+        }
         
         // Lấy danh sách completed lead purchases
         $completedPurchases = DB::table('lead_purchases')
             ->where('status', 'completed')
             ->get();
         
-        $reviewCount = 0;
+        $ratingCount = 0;
         
-        // Tạo reviews cho các giao dịch đã hoàn thành
+        // Tạo ratings cho các giao dịch đã hoàn thành
         foreach ($completedPurchases as $purchase) {
-            // 70% có review
+            // 70% có rating
             if (rand(1, 100) <= 70) {
                 $customer = $customers->find($purchase->user_id);
-                
-                // Lấy company từ purchase
-                $company = DB::table('companies')->find($purchase->company_id);
+                $company = $companies->find($purchase->company_id);
                 
                 if ($customer && $company) {
-                    // Thời gian review (1-30 ngày sau khi hoàn thành)
-                    $reviewedAt = Carbon::parse($purchase->created_at)->addDays(rand(1, 30));
+                    // Kiểm tra xem đã có rating chưa
+                    $existingRating = DB::table('ratings')
+                        ->where('user_id', $customer->id)
+                        ->where('company_id', $company->id)
+                        ->first();
                     
-                    // Phân bố rating: 60% tốt (4-5*), 30% trung bình (3*), 10% kém (1-2*)
-                    $ratingDistribution = rand(1, 100);
-                    if ($ratingDistribution <= 60) {
-                        // Rating tốt (4-5 sao)
-                        $rating = rand(40, 50) / 10; // 4.0-5.0
-                        $comment = $this->positiveReviews[array_rand($this->positiveReviews)];
-                    } elseif ($ratingDistribution <= 90) {
-                        // Rating trung bình (3 sao)
-                        $rating = rand(25, 35) / 10; // 2.5-3.5
-                        $comment = $this->neutralReviews[array_rand($this->neutralReviews)];
-                    } else {
-                        // Rating kém (1-2 sao)
-                        $rating = rand(10, 25) / 10; // 1.0-2.5
-                        $comment = $this->negativeReviews[array_rand($this->negativeReviews)];
+                    if (!$existingRating) {
+                        // Thời gian rating (1-30 ngày sau khi hoàn thành)
+                        $ratedAt = Carbon::parse($purchase->created_at)->addDays(rand(1, 30));
+                        
+                        // Phân bố rating: 60% tốt (4-5*), 30% trung bình (3*), 10% kém (1-2*)
+                        $ratingDistribution = rand(1, 100);
+                        if ($ratingDistribution <= 60) {
+                            // Rating tốt (4-5 sao)
+                            $avgRating = rand(40, 50) / 10; // 4.0-5.0
+                            $comment = $this->positiveReviews[array_rand($this->positiveReviews)];
+                        } elseif ($ratingDistribution <= 90) {
+                            // Rating trung bình (3 sao)
+                            $avgRating = rand(25, 35) / 10; // 2.5-3.5
+                            $comment = $this->neutralReviews[array_rand($this->neutralReviews)];
+                        } else {
+                            // Rating kém (1-2 sao)
+                            $avgRating = rand(10, 25) / 10; // 1.0-2.5
+                            $comment = $this->negativeReviews[array_rand($this->negativeReviews)];
+                        }
+                        
+                        // Tạo rating vào bảng ratings
+                        DB::table('ratings')->insert([
+                            'user_id' => $customer->id,
+                            'company_id' => $company->id,
+                            'avg_rating' => $avgRating,
+                            'suggest' => $comment,
+                            'status' => 1, // approved
+                            'created_at' => $ratedAt,
+                            'updated_at' => $ratedAt,
+                        ]);
+                        
+                        $ratingCount++;
                     }
-                    
-                    // Tạo review
-                    DB::table('reviews')->insert([
-                        'user_id' => $customer->id,
-                        'company_id' => $company->id,
-                        'rating' => $rating,
-                        'review' => $comment,
-                        'created_at' => $reviewedAt,
-                        'updated_at' => $reviewedAt,
-                    ]);
-                    
-                    $reviewCount++;
                 }
             }
         }
         
-        // Tạo thêm random reviews để đạt 800 reviews
-        $additionalReviews = 800 - $reviewCount;
+        echo "   Đã tạo {$ratingCount} ratings từ lead purchases\n";
         
-        for ($i = 0; $i < $additionalReviews; $i++) {
+        // Tạo thêm random ratings để đạt 800 ratings
+        $additionalRatings = 800 - $ratingCount;
+        
+        for ($i = 0; $i < $additionalRatings; $i++) {
             $customer = $customers->random();
-            $contractor = $contractors->random();
+            $company = $companies->random();
             
-            // Thời gian review (từ 1 năm trước đến 1 tuần trước)
-            $reviewedAt = Carbon::now()->subDays(rand(7, 365));
+            // Kiểm tra xem đã có rating chưa
+            $existingRating = DB::table('ratings')
+                ->where('user_id', $customer->id)
+                ->where('company_id', $company->id)
+                ->first();
             
-            // Phân bố rating tương tự
-            $ratingDistribution = rand(1, 100);
-            if ($ratingDistribution <= 60) {
-                $rating = rand(40, 50) / 10;
-                $comment = $this->positiveReviews[array_rand($this->positiveReviews)];
-            } elseif ($ratingDistribution <= 90) {
-                $rating = rand(25, 35) / 10;
-                $comment = $this->neutralReviews[array_rand($this->neutralReviews)];
-            } else {
-                $rating = rand(10, 25) / 10;
-                $comment = $this->negativeReviews[array_rand($this->negativeReviews)];
-            }
-            
-            DB::table('reviews')->insert([
-                'user_id' => $customer->id,
-                'company_id' => $contractor->companies->first()->id ?? 1,
-                'rating' => $rating,
-                'review' => $comment,
-                'created_at' => $reviewedAt,
-                'updated_at' => $reviewedAt,
-            ]);
-            
-            $reviewCount++;
-            
-            if ($reviewCount % 100 == 0) {
-                echo "   Đã tạo {$reviewCount}/800 reviews...\n";
-            }
-        }
-        
-        // Cập nhật rating trung bình cho các contractor
-        echo "   Đang cập nhật rating trung bình...\n";
-        
-        $contractorRatings = DB::table('reviews')
-            ->select('company_id', DB::raw('AVG(rating) as avg_rating'), DB::raw('COUNT(*) as review_count'))
-            ->groupBy('company_id')
-            ->get();
-        
-        foreach ($contractorRatings as $contractorRating) {
-            DB::table('companies')
-                ->where('id', $contractorRating->company_id)
-                ->update([
-                    'avg_rating' => round($contractorRating->avg_rating, 1),
+            if (!$existingRating) {
+                // Thời gian rating (từ 1 năm trước đến 1 tuần trước)
+                $ratedAt = Carbon::now()->subDays(rand(7, 365));
+                
+                // Phân bố rating tương tự
+                $ratingDistribution = rand(1, 100);
+                if ($ratingDistribution <= 60) {
+                    $avgRating = rand(40, 50) / 10;
+                    $comment = $this->positiveReviews[array_rand($this->positiveReviews)];
+                } elseif ($ratingDistribution <= 90) {
+                    $avgRating = rand(25, 35) / 10;
+                    $comment = $this->neutralReviews[array_rand($this->neutralReviews)];
+                } else {
+                    $avgRating = rand(10, 25) / 10;
+                    $comment = $this->negativeReviews[array_rand($this->negativeReviews)];
+                }
+                
+                DB::table('ratings')->insert([
+                    'user_id' => $customer->id,
+                    'company_id' => $company->id,
+                    'avg_rating' => $avgRating,
+                    'suggest' => $comment,
+                    'status' => 1, // approved
+                    'created_at' => $ratedAt,
+                    'updated_at' => $ratedAt,
                 ]);
+                
+                $ratingCount++;
+                
+                if ($ratingCount % 100 == 0) {
+                    echo "   Đã tạo {$ratingCount}/800 ratings...\n";
+                }
+            } else {
+                // Nếu đã tồn tại, thử với customer khác
+                $i--;
+                if ($i < -100) break; // Tránh vòng lặp vô hạn
+            }
         }
         
-        echo "✅ Đã tạo {$reviewCount} reviews và cập nhật ratings\n";
+        echo "✅ Đã tạo tổng cộng {$ratingCount} ratings vào bảng 'ratings'\n";
+        echo "   Dữ liệu này sẽ hiển thị trên trang /company/all\n";
     }
 } 
