@@ -30,5 +30,17 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'google' => [
+        'client_id' => 'REDACTED_GOOGLE_CLIENT_ID',
+        'client_secret' => 'REDACTED_GOOGLE_CLIENT_SECRET',
+        'redirect' => env('APP_URL') . '/social-login/callback/google',
+    ],
+    'google' => [
+        'client_id' => 'REDACTED_GOOGLE_CLIENT_ID',
+        'client_secret' => 'REDACTED_GOOGLE_CLIENT_SECRET',
+        'redirect' => env('APP_URL') . '/social-login/callback/google',
+    ],
+
+
 
 ];
