@@ -93,7 +93,9 @@
                             </div>
                             <div class="contact-item">
                                 <i class="las la-envelope"></i>
-                                <span>{{ gs('email_from') ?? 'support@doitay.vn' }}</span>
+                                <!-- <span>{{ gs('email_from') ?? 'admin@doitay.vn' }}</span> -->
+                                <span>{{'admin@doitay.vn' }}</span>
+
                             </div>
                         </div>
 

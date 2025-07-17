@@ -10,7 +10,7 @@
                             <i class="las la-rocket"></i>
                             <span>Miễn Phí 100%</span>
                         </div>
-                        <h3 class="form-title">Tạo Lead & Tìm Thợ Ngay</h3>
+                        <h3 class="form-title">Tạo Nhu cầu & Tìm Thợ Ngay</h3>
                         <p class="form-subtitle">Chỉ mất 2 phút • Nhận báo giá từ nhiều thợ chuyên nghiệp</p>
                     </div>
 
@@ -21,7 +21,7 @@
                             <div class="tab-buttons">
                                 <button class="tab-btn active" data-tab="guest">
                                     <i class="las la-user-clock"></i>
-                                    Tạo Lead Nhanh
+                                    Tạo Nhu cầu Nhanh
                                 </button>
                                 <button class="tab-btn" data-tab="login">
                                     <i class="las la-sign-in-alt"></i>

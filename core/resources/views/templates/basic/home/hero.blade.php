@@ -2,7 +2,7 @@
     $bannerContent = getContent('banner.content', true);
     $mobileBannerContent = getContent('mobile_banner.content', true);
     $desktopImage = frontendImage('banner', @$bannerContent->data_values->image, '1920x840');
-    $mobileImage = frontendImage('mobile_banner', @$mobileBannerContent->data_values->image, '768x500');
+    $mobileImage = frontendImage('mobile_banner', @$mobileBannerContent->data_values->image, '600x800');
     
     // If no mobile image, use desktop image
     if (strpos($mobileImage, 'placeholder-image') !== false) {

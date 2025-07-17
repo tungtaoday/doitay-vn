@@ -2,7 +2,7 @@
     $bannerContent = getContent('banner.content', true);
     $mobileBannerContent = getContent('mobile_banner.content', true);
     $desktopImage = frontendImage('banner', @$bannerContent->data_values->image, '1920x840');
-    $mobileImage = frontendImage('mobile_banner', @$mobileBannerContent->data_values->image, '768x500');
+    $mobileImage = frontendImage('mobile_banner', @$mobileBannerContent->data_values->image, '600x800');
     // Debug info
     echo "<!-- Debug Info: -->";
     echo "<!-- Mobile Image Value: " . @$mobileBannerContent->data_values->image . " -->";
@@ -76,13 +76,23 @@
         padding-bottom: 0 !important;
     }
 
-    /* Mobile styles */
+    /* Mobile styles - Giảm height banner xuống */
     @media (max-width: 767px) {
         .hero.bg_img {
-            min-height: 400px;
-            padding-top: 80px;
+            min-height: 300px; /* Giảm xuống 300px để compact hơn */
+            padding-top: 40px; /* Giảm padding top để tiết kiệm không gian */
+            padding-bottom: 20px; /* Giảm padding bottom */
             background-size: cover !important;
-            background-position: center !important;
+            background-position: center center !important;
+        }
+        
+        /* Điều chỉnh container cho mobile */
+        .hero.bg_img .container {
+            height: auto; /* Thay đổi từ % sang auto để linh hoạt hơn */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 260px; /* Đảm bảo content có đủ không gian */
         }
     }
 
@@ -94,9 +104,9 @@
             display: block !important;
             color: #ffffff !important;
             font-family: inherit !important;
-            font-size: 32px !important; /* Tăng từ 24px lên 32px */
-            line-height: 1.4 !important;
-            margin-bottom: 10px !important; /* Tăng margin để tạo khoảng cách giữa các dòng */
+            font-size: 26px !important; /* Giảm thêm font size để phù hợp với banner thấp hơn */
+            line-height: 1.2 !important; /* Giảm line-height để text gọn hơn */
+            margin-bottom: 6px !important; /* Giảm margin để tiết kiệm không gian */
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
             font-weight: 600 !important;
         }
@@ -105,7 +115,7 @@
         .banner .changing-text {
             all: unset;
             color: rgb(12, 150, 209) !important;
-            font-size: 32px !important; /* Tăng từ 24px lên 32px */
+            font-size: 26px !important; /* Giảm thêm font size */
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
             font-weight: 600 !important;
         }
@@ -116,7 +126,16 @@
             text-align: left !important;
             padding-left: 15px !important;
             max-width: 100% !important;
-            margin-top: 20px !important;
+            margin-top: 0 !important;
+        }
+        
+        /* Điều chỉnh search form cho mobile */
+        .hero__search-form {
+            margin-top: 20px !important; /* Giảm margin top của form */
+        }
+        
+        .row.mt-lg-5.mt-4 {
+            margin-top: 15px !important; /* Giảm margin top của row chứa form */
         }
     }
 </style>
@@ -140,10 +159,13 @@
                     console.log('Switching to mobile image');
                     if (mobileImage && mobileImage !== '') {
                         heroSection.style.setProperty('background-image', `url('${mobileImage}')`, 'important');
+                        // Điều chỉnh background-position cho mobile để hiển thị tốt hơn với tỷ lệ dọc
+                        heroSection.style.setProperty('background-position', 'center center', 'important');
                     }
                 } else {
                     console.log('Switching to desktop image');
                     heroSection.style.setProperty('background-image', desktopImage, 'important');
+                    heroSection.style.setProperty('background-position', 'center center', 'important');
                 }
             }
 

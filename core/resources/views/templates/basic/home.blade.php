@@ -13,7 +13,7 @@
                 <span>Quy Trình Làm Việc</span>
             </div> -->
             <h2 class="section-title-how">Cách Chúng Tôi Hoạt Động</h2>
-            <p class="section-subtitle-how">Quy trình đơn giản 3 bước để tìm được thợ chuyên nghiệp phù hợp</p>
+            <p class="section-subtitle-how">Quy trình đơn giản để tìm được thợ chuyên nghiệp phù hợp</p>
             <div class="title-decoration">
                 <div class="decoration-line"></div>
                 <div class="decoration-circle"></div>
@@ -35,7 +35,7 @@
                         <div class="step-connector step-connector-1"></div>
                     </div>
                     <div class="step-content">
-                        <h4 class="step-title-modern">Tạo Nhu cầu</h4>
+                        <h4 class="step-title-modern">Tìm Thợ bằng cách tạo Nhu cầu</h4>
                         <p class="step-description-modern">Mô tả công việc cần làm, ngân sách và thời gian. Hệ thống tự động thông báo cho các thợ phù hợp trong khu vực.</p>
                         <div class="step-features">
                             <span class="feature-tag">✓ Miễn phí 100%</span>
@@ -57,8 +57,8 @@
                         <div class="step-connector step-connector-2"></div>
                     </div>
                     <div class="step-content">
-                        <h4 class="step-title-modern">Nhận Báo Giá</h4>
-                        <p class="step-description-modern">Các thợ quan tâm sẽ mua lead và liên hệ báo giá trực tiếp. Bạn so sánh giá và chọn thợ phù hợp nhất với nhu cầu.</p>
+                        <h4 class="step-title-modern">Tìm Thợ theo Danh sách</h4>
+                        <p class="step-description-modern">Tìm thợ theo danh sách lĩnh vực, khu vực mà bạn quan tâm. Chúng tôi cung cấp đánh giá uy tính từng thợ dựa trên lịch sự của họ trước đây</p>
                         <div class="step-features">
                             <span class="feature-tag">✓ Nhiều lựa chọn</span>
                             <span class="feature-tag featured-tag">✓ Thợ verified</span>
@@ -78,11 +78,11 @@
                         </div>
                     </div>
                     <div class="step-content">
-                        <h4 class="step-title-modern">Hoàn Thành</h4>
-                        <p class="step-description-modern">Thợ thực hiện công việc chuyên nghiệp, bạn thanh toán và đánh giá. Tích điểm loyalty cho những lần tiếp theo.</p>
+                        <h4 class="step-title-modern">Kết Nối và Hoàn Thành Công Việc</h4>
+                        <p class="step-description-modern">Liên hệ trực tiếp với thợ, thống nhất chi tiết công việc và theo dõi tiến độ. Có quyền đánh giá đánh giá Thợ sau khi hoàn thành.</p>
                         <div class="step-features">
-                            <span class="feature-tag">✓ Đảm bảo chất lượng</span>
-                            <span class="feature-tag">✓ Tích điểm</span>
+                            <span class="feature-tag">✓ Giao dịch an toàn</span>
+                            <span class="feature-tag">✓ Hỗ trợ 24/7</span>
                         </div>
                     </div>
                 </div>
@@ -94,6 +94,7 @@
 @include('templates.basic.home.lead_form')
 
 @include('templates.basic.home.contractor_search')
+
 
 <style>
 /* Global Font Family */
