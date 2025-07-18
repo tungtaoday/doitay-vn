@@ -72,6 +72,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         using: function () {
             Route::namespace('App\Http\Controllers')->group(function () {
+                // API Routes
+                Route::middleware('api')
+                    ->prefix('api')
+                    ->group(base_path('routes/api.php'));
+
                 Route::middleware(['web'])
                     ->namespace('Admin')
                     ->prefix('admin')

@@ -57,7 +57,8 @@
                                          alt="{{ $appointment->company->name ?? 'Company' }}">
                                 </div>
                                 <div class="company-info">
-                                    <h4>{{ $appointment->company->name ?? 'N/A' }}</h4>
+                                    <h4 class="company-name">{{ $appointment->company->name ?? 'N/A' }}</h4>
+                                    <div class="company-category" data-category-id="{{ $appointment->company->category_id ?? '' }}" style="display: none;"></div>
                                     <div class="company-details">
                                         @if($appointment->company->address)
                                             <div class="detail-item">
@@ -886,8 +887,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Review appointment function
     window.reviewAppointment = function(appointmentId) {
-        // Implement review functionality
-        alert('Chức năng đánh giá sẽ được triển khai sớm!');
+        // Redirect to appointments page with review modal
+        window.location.href = '/appointments#review-' + appointmentId;
     };
     
     // Share appointment function
@@ -922,4 +923,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
-</code_block_to_apply_changes_from>

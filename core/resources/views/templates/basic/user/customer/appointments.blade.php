@@ -221,7 +221,7 @@
 
 <!-- Review Modal -->
 <div class="modal fade" id="reviewModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
@@ -238,26 +238,14 @@
                         <small class="text-muted" id="appointmentDate"></small>
                     </div>
                     
-                    <div class="rating-section mb-3">
-                        <label class="form-label">Đánh giá tổng thể</label>
-                        <div class="star-rating">
-                            <input type="radio" name="rating" value="5" id="star5">
-                            <label for="star5" class="star">★</label>
-                            <input type="radio" name="rating" value="4" id="star4">
-                            <label for="star4" class="star">★</label>
-                            <input type="radio" name="rating" value="3" id="star3">
-                            <label for="star3" class="star">★</label>
-                            <input type="radio" name="rating" value="2" id="star2">
-                            <label for="star2" class="star">★</label>
-                            <input type="radio" name="rating" value="1" id="star1">
-                            <label for="star1" class="star">★</label>
-                        </div>
+                    <div id="featuresRating" class="features-rating mb-3">
+                        <!-- Features will be loaded dynamically -->
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label">Nhận xét của bạn</label>
                         <textarea name="comment" class="form-control" rows="4" 
-                                  placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+                                  placeholder="Chia sẻ trải nghiệm của bạn..." required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -318,12 +306,156 @@
 </style>
 
 <script>
-function showReviewModal(appointmentId) {
-    // You would fetch appointment details here
-    document.getElementById('reviewForm').action = `/user/appointments/${appointmentId}/review`;
+function openReviewModal(appointmentId, companyName) {
+    // Set form action and company info
+    document.getElementById('reviewForm').action = `/appointments/${appointmentId}/review`;
+    document.getElementById('companyName').textContent = companyName;
+    
+    // Load features for this company's category
+    fetch(`/appointments/${appointmentId}/company-category`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.category_id) {
+                return fetch(`/api/categories/${data.category_id}/features`);
+            } else {
+                throw new Error('No category found');
+            }
+        })
+        .then(response => response.json())
+        .then(features => {
+            loadFeaturesRating(features);
+        })
+        .catch(error => {
+            console.error('Error loading features:', error);
+            // Fallback to simple rating
+            loadSimpleRating();
+        });
     
     const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
     modal.show();
+    
+    // Handle form submission with AJAX
+    const form = document.getElementById('reviewForm');
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                modal.hide();
+                alert(data.message);
+                location.reload(); // Refresh to update UI
+            } else {
+                alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra, vui lòng thử lại');
+        });
+    };
+}
+
+function loadFeaturesRating(features) {
+    const container = document.getElementById('featuresRating');
+    
+    if (features && features.length > 0) {
+        const featuresHtml = features.map(feature => `
+            <div class="feature-rating mb-3">
+                <label class="form-label">${feature.name}</label>
+                <div class="star-rating" data-feature-id="${feature.id}">
+                    <input type="radio" name="rating[${feature.id}]" value="5" id="cust-feature${feature.id}-star5">
+                    <label for="cust-feature${feature.id}-star5" class="star">★</label>
+                    <input type="radio" name="rating[${feature.id}]" value="4" id="cust-feature${feature.id}-star4">
+                    <label for="cust-feature${feature.id}-star4" class="star">★</label>
+                    <input type="radio" name="rating[${feature.id}]" value="3" id="cust-feature${feature.id}-star3">
+                    <label for="cust-feature${feature.id}-star3" class="star">★</label>
+                    <input type="radio" name="rating[${feature.id}]" value="2" id="cust-feature${feature.id}-star2">
+                    <label for="cust-feature${feature.id}-star2" class="star">★</label>
+                    <input type="radio" name="rating[${feature.id}]" value="1" id="cust-feature${feature.id}-star1">
+                    <label for="cust-feature${feature.id}-star1" class="star">★</label>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = featuresHtml;
+        addFeatureRatingStyles();
+    } else {
+        loadSimpleRating();
+    }
+}
+
+function loadSimpleRating() {
+    const container = document.getElementById('featuresRating');
+    container.innerHTML = `
+        <div class="rating-section mb-3">
+            <label class="form-label">Đánh giá tổng thể</label>
+            <div class="star-rating">
+                <input type="radio" name="rating[general]" value="5" id="cust-star5">
+                <label for="cust-star5" class="star">★</label>
+                <input type="radio" name="rating[general]" value="4" id="cust-star4">
+                <label for="cust-star4" class="star">★</label>
+                <input type="radio" name="rating[general]" value="3" id="cust-star3">
+                <label for="cust-star3" class="star">★</label>
+                <input type="radio" name="rating[general]" value="2" id="cust-star2">
+                <label for="cust-star2" class="star">★</label>
+                <input type="radio" name="rating[general]" value="1" id="cust-star1">
+                <label for="cust-star1" class="star">★</label>
+            </div>
+        </div>
+    `;
+    addFeatureRatingStyles();
+}
+
+function addFeatureRatingStyles() {
+    if (!document.getElementById('featureRatingStyles')) {
+        const style = document.createElement('style');
+        style.id = 'featureRatingStyles';
+        style.textContent = `
+            .star-rating {
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: center;
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+            .star-rating input {
+                display: none;
+            }
+            .star-rating label {
+                font-size: 1.5rem;
+                color: #ddd;
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+            .star-rating input:checked ~ label,
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #ffc107;
+            }
+            .feature-rating {
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 15px;
+                background-color: #f8f9fa;
+            }
+            .feature-rating .form-label {
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #495057;
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
 function cancelAppointment(appointmentId) {

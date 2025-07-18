@@ -87,31 +87,39 @@ class AppointmentController extends Controller
                 'status' => 'pending',
             ]);
 
-            // Send email to customer using auto flow
+            // Send email to customer using auto flow with proper shortcodes
             notify($user, 'NEW_APPOINTMENT', [
-                'customer_name' => $appointment->recipient_name,
-                'customer_phone' => $appointment->recipient_phone,
-                'customer_address' => $appointment->recipient_address,
-                'appointment_date' => $appointment->appointment_date,
+                'user_name' => $user->fullname ?: ($user->firstname . ' ' . $user->lastname) ?: $user->username ?: $user->name,
+                'user_email' => $user->email,
+                'appointment_id' => $appointment->id,
+                'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
                 'appointment_time' => $appointment->appointment_time,
-                'notes' => $appointment->notes ?? 'N/A',
-                'company_name' => $appointment->company->name ?? 'Unknown Company'
+                'company_name' => $appointment->company->name ?? 'Service Provider',
+                'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+                'appointment_address' => $appointment->recipient_address,
+                'site_url' => url('/'),
+                'current_year' => date('Y'),
+                'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
             ]);
 
             // Send in-app notification to customer
             NotificationService::sendAppointmentNotification($user, $appointment, 'appointment_created');
 
-            // Send email to company owner using auto flow
+            // Send email to company owner using auto flow with proper shortcodes
             $companyOwner = $appointment->company->user;
             if ($companyOwner) {
                 notify($companyOwner, 'NEW_APPOINTMENT', [
-                    'customer_name' => $appointment->recipient_name,
-                    'customer_phone' => $appointment->recipient_phone,
-                    'customer_address' => $appointment->recipient_address,
-                    'appointment_date' => $appointment->appointment_date,
+                    'user_name' => $companyOwner->fullname ?: ($companyOwner->firstname . ' ' . $companyOwner->lastname) ?: $companyOwner->username ?: $companyOwner->name,
+                    'user_email' => $companyOwner->email,
+                    'appointment_id' => $appointment->id,
+                    'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
                     'appointment_time' => $appointment->appointment_time,
-                    'notes' => $appointment->notes ?? 'N/A',
-                    'company_name' => $appointment->company->name ?? 'Unknown Company'
+                    'company_name' => $appointment->company->name ?? 'Service Provider',
+                    'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+                    'appointment_address' => $appointment->recipient_address,
+                    'site_url' => url('/'),
+                    'current_year' => date('Y'),
+                    'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
                 ]);
                 
                 // Send in-app notification to company owner
@@ -191,31 +199,39 @@ class AppointmentController extends Controller
         $appointment->status = 'canceled';
         $appointment->save();
 
-        // Send email to customer using auto flow
+        // Send email to customer using auto flow with proper shortcodes
         notify($user, 'APPOINTMENT_CANCELED', [
-            'customer_name' => $appointment->recipient_name,
-            'customer_phone' => $appointment->recipient_phone,
-            'customer_address' => $appointment->recipient_address,
-            'appointment_date' => $appointment->appointment_date,
+            'user_name' => $user->fullname ?: ($user->firstname . ' ' . $user->lastname) ?: $user->username ?: $user->name,
+            'user_email' => $user->email,
+            'appointment_id' => $appointment->id,
+            'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
             'appointment_time' => $appointment->appointment_time,
-            'notes' => $appointment->notes ?? 'N/A',
-            'company_name' => $appointment->company->name ?? 'Unknown Company'
+            'company_name' => $appointment->company->name ?? 'Service Provider',
+            'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+            'appointment_address' => $appointment->recipient_address,
+            'site_url' => url('/'),
+            'current_year' => date('Y'),
+            'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
         ]);
 
         // Send in-app notification to customer
         NotificationService::sendAppointmentNotification($user, $appointment, 'appointment_cancelled');
 
-        // Send email to company owner using auto flow
+        // Send email to company owner using auto flow with proper shortcodes
         $companyOwner = $appointment->company->user;
         if ($companyOwner) {
             notify($companyOwner, 'APPOINTMENT_CANCELED', [
-                'customer_name' => $appointment->recipient_name,
-                'customer_phone' => $appointment->recipient_phone,
-                'customer_address' => $appointment->recipient_address,
-                'appointment_date' => $appointment->appointment_date,
+                'user_name' => $companyOwner->fullname ?: ($companyOwner->firstname . ' ' . $companyOwner->lastname) ?: $companyOwner->username ?: $companyOwner->name,
+                'user_email' => $companyOwner->email,
+                'appointment_id' => $appointment->id,
+                'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
                 'appointment_time' => $appointment->appointment_time,
-                'notes' => $appointment->notes ?? 'N/A',
-                'company_name' => $appointment->company->name ?? 'Unknown Company'
+                'company_name' => $appointment->company->name ?? 'Service Provider',
+                'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+                'appointment_address' => $appointment->recipient_address,
+                'site_url' => url('/'),
+                'current_year' => date('Y'),
+                'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
             ]);
         }
 
@@ -245,6 +261,107 @@ class AppointmentController extends Controller
         $pageTitle = 'Đặt lịch thành công';
         
         return view(activeTemplate() . 'appointment_success', compact('appointment', 'pageTitle'));
+    }
+
+    // Đánh giá appointment sau khi hoàn thành
+    public function submitReview(Request $request, $appointmentId)
+    {
+        $request->validate([
+            'rating' => 'required|array', // Yêu cầu phải có mảng rating
+            'rating.*' => 'required|integer|min:1|max:5', // Mỗi rating phải là số hợp lệ
+            'comment' => 'required|string|max:1000'
+        ]);
+
+        $appointment = Appointment::with('company')->findOrFail($appointmentId);
+        $user = Auth::user();
+
+        // Kiểm tra quyền đánh giá
+        if ($appointment->user_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Không có quyền đánh giá lịch hẹn này.'], 403);
+        }
+
+        // Kiểm tra trạng thái lịch hẹn
+        if ($appointment->status !== 'completed') {
+            return response()->json(['success' => false, 'message' => 'Chỉ có thể đánh giá lịch hẹn đã hoàn thành.'], 400);
+        }
+
+        // Kiểm tra đã đánh giá chưa
+        $existingRating = \App\Models\Rating::where('user_id', $user->id)
+            ->where('company_id', $appointment->company_id)
+            ->where('appointment_id', $appointment->id)
+            ->first();
+
+        if ($existingRating) {
+            return response()->json(['success' => false, 'message' => 'Bạn đã đánh giá lịch hẹn này rồi.'], 400);
+        }
+
+        // Tạo đánh giá mới
+        $rating = \App\Models\Rating::create([
+            'user_id' => $user->id,
+            'company_id' => $appointment->company_id,
+            'appointment_id' => $appointment->id,
+            'suggest' => $request->comment,
+            'status' => 1
+        ]);
+
+        // Xóa các rating_detail cũ liên quan đến rating này (nếu có)
+        \App\Models\RatingDetail::where('rating_id', $rating->id)->delete();
+
+        // Lưu thông tin từng feature vào rating_details
+        foreach ($request->rating as $featureId => $score) {
+            \App\Models\RatingDetail::create([
+                'rating_id' => $rating->id,
+                'feature_id' => $featureId,
+                'rating' => (float)$score,
+            ]);
+        }
+
+        // Tính lại avg_rating cho bản ghi ratings
+        $avgRating = \App\Models\RatingDetail::where('rating_id', $rating->id)->avg('rating');
+
+        // Cập nhật avg_rating vào bảng ratings
+        $rating->avg_rating = round($avgRating, 2);
+        $rating->save();
+
+        // Tính lại avg_rating của công ty từ bảng rating_details
+        $averageRating = \App\Models\RatingDetail::join('ratings', 'rating_details.rating_id', '=', 'ratings.id')
+            ->where('ratings.company_id', $appointment->company_id)
+            ->avg('rating_details.rating');
+
+        // Cập nhật avg_rating vào bảng company
+        $company = $appointment->company;
+        $company->avg_rating = $averageRating ? round($averageRating, 2) : 0;
+        $company->save();
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'Cảm ơn bạn đã đánh giá! Đánh giá của bạn sẽ giúp cải thiện chất lượng dịch vụ.'
+        ]);
+    }
+
+    // Lấy category_id của company từ appointment
+    public function getAppointmentCompanyCategory($appointmentId)
+    {
+        try {
+            $appointment = Appointment::with('company')->findOrFail($appointmentId);
+            $user = Auth::user();
+
+            // Kiểm tra quyền xem
+            if ($appointment->user_id !== $user->id) {
+                return response()->json(['success' => false, 'message' => 'Không có quyền truy cập.'], 403);
+            }
+
+            return response()->json([
+                'success' => true,
+                'category_id' => $appointment->company->category_id ?? null,
+                'company_name' => $appointment->company->name ?? 'N/A'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy thông tin appointment.'
+            ], 404);
+        }
     }
 
     // Các phương thức không cần cho User: confirm, complete

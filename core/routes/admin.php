@@ -265,6 +265,15 @@ Route::middleware('admin')->group(function () {
         Route::post('notification/push/setting', 'pushSettingUpdate');
     });
 
+    // Appointment Management (Admin Tracking)
+    Route::name('appointments.')->controller('AppointmentController')->prefix('appointments')->group(function(){
+        Route::get('/', 'index')->name('index');
+        Route::get('analytics', 'analytics')->name('analytics');
+        Route::get('company-performance', 'companyPerformance')->name('company.performance');
+        Route::get('wallet-analytics', 'walletAnalytics')->name('wallet.analytics');
+        Route::get('show/{id}', 'show')->name('show');
+    });
+
     // Email Flow Management
     Route::name('email.flow.')->controller('EmailFlowController')->prefix('email-flow')->group(function(){
         // Auto Flow (Appointment Notifications)

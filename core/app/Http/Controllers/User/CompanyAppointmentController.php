@@ -109,30 +109,38 @@ class CompanyAppointmentController extends Controller
             // Increment hires count
             $this->statisticsService->incrementHires($company);
 
-            // Send notifications using auto flow
+            // Send notifications using auto flow with proper shortcodes
             $customer = User::find($appointment->user_id);
             if ($customer) {
                 notify($customer, 'APPOINTMENT_CONFIRMED', [
-                    'customer_name' => $appointment->recipient_name,
-                    'customer_phone' => $appointment->recipient_phone,
-                    'customer_address' => $appointment->recipient_address,
-                    'appointment_date' => $appointment->appointment_date,
+                    'user_name' => $customer->fullname ?: ($customer->firstname . ' ' . $customer->lastname) ?: $customer->username ?: $customer->name,
+                    'user_email' => $customer->email,
+                    'appointment_id' => $appointment->id,
+                    'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
                     'appointment_time' => $appointment->appointment_time,
-                    'notes' => $appointment->notes ?? 'N/A',
-                    'company_name' => $appointment->company->name ?? 'Unknown Company'
+                    'company_name' => $appointment->company->name ?? 'Service Provider',
+                    'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+                    'appointment_address' => $appointment->recipient_address,
+                    'site_url' => url('/'),
+                    'current_year' => date('Y'),
+                    'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
                 ]);
                 
                 // Send in-app notification to customer
                 NotificationService::sendAppointmentNotification($customer, $appointment, 'appointment_confirmed');
             }
             notify($user, 'APPOINTMENT_CONFIRMED', [
-                'customer_name' => $appointment->recipient_name,
-                'customer_phone' => $appointment->recipient_phone,
-                'customer_address' => $appointment->recipient_address,
-                'appointment_date' => $appointment->appointment_date,
+                'user_name' => $user->fullname ?: ($user->firstname . ' ' . $user->lastname) ?: $user->username ?: $user->name,
+                'user_email' => $user->email,
+                'appointment_id' => $appointment->id,
+                'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
                 'appointment_time' => $appointment->appointment_time,
-                'notes' => $appointment->notes ?? 'N/A',
-                'company_name' => $appointment->company->name ?? 'Unknown Company'
+                'company_name' => $appointment->company->name ?? 'Service Provider',
+                'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+                'appointment_address' => $appointment->recipient_address,
+                'site_url' => url('/'),
+                'current_year' => date('Y'),
+                'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
             ]);
             
             // Send in-app notification to company owner
@@ -161,30 +169,38 @@ class CompanyAppointmentController extends Controller
         $appointment->status = 'canceled';
         $appointment->save();
 
-        // Send notifications using auto flow
+        // Send notifications using auto flow with proper shortcodes
         $customer = User::find($appointment->user_id);
         if ($customer) {
             notify($customer, 'APPOINTMENT_CANCELED', [
-                'customer_name' => $appointment->recipient_name,
-                'customer_phone' => $appointment->recipient_phone,
-                'customer_address' => $appointment->recipient_address,
-                'appointment_date' => $appointment->appointment_date,
+                'user_name' => $customer->fullname ?: ($customer->firstname . ' ' . $customer->lastname) ?: $customer->username ?: $customer->name,
+                'user_email' => $customer->email,
+                'appointment_id' => $appointment->id,
+                'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
                 'appointment_time' => $appointment->appointment_time,
-                'notes' => $appointment->notes ?? 'N/A',
-                'company_name' => $appointment->company->name ?? 'Unknown Company'
+                'company_name' => $appointment->company->name ?? 'Service Provider',
+                'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+                'appointment_address' => $appointment->recipient_address,
+                'site_url' => url('/'),
+                'current_year' => date('Y'),
+                'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
             ]);
             
             // Send in-app notification to customer
             NotificationService::sendAppointmentNotification($customer, $appointment, 'appointment_cancelled');
         }
         notify($user, 'APPOINTMENT_CANCELED', [
-            'customer_name' => $appointment->recipient_name,
-            'customer_phone' => $appointment->recipient_phone,
-            'customer_address' => $appointment->recipient_address,
-            'appointment_date' => $appointment->appointment_date,
+            'user_name' => $user->fullname ?: ($user->firstname . ' ' . $user->lastname) ?: $user->username ?: $user->name,
+            'user_email' => $user->email,
+            'appointment_id' => $appointment->id,
+            'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
             'appointment_time' => $appointment->appointment_time,
-            'notes' => $appointment->notes ?? 'N/A',
-            'company_name' => $appointment->company->name ?? 'Unknown Company'
+            'company_name' => $appointment->company->name ?? 'Service Provider',
+            'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+            'appointment_address' => $appointment->recipient_address,
+            'site_url' => url('/'),
+            'current_year' => date('Y'),
+            'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
         ]);
         
         // Send in-app notification to company owner
@@ -209,30 +225,38 @@ class CompanyAppointmentController extends Controller
         $appointment->status = 'completed';
         $appointment->save();
 
-        // Send notifications using auto flow
+        // Send notifications using auto flow with proper shortcodes
         $customer = User::find($appointment->user_id);
         if ($customer) {
             notify($customer, 'APPOINTMENT_COMPLETED', [
-                'customer_name' => $appointment->recipient_name,
-                'customer_phone' => $appointment->recipient_phone,
-                'customer_address' => $appointment->recipient_address,
-                'appointment_date' => $appointment->appointment_date,
+                'user_name' => $customer->fullname ?: ($customer->firstname . ' ' . $customer->lastname) ?: $customer->username ?: $customer->name,
+                'user_email' => $customer->email,
+                'appointment_id' => $appointment->id,
+                'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
                 'appointment_time' => $appointment->appointment_time,
-                'notes' => $appointment->notes ?? 'N/A',
-                'company_name' => $appointment->company->name ?? 'Unknown Company'
+                'company_name' => $appointment->company->name ?? 'Service Provider',
+                'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+                'appointment_address' => $appointment->recipient_address,
+                'site_url' => url('/'),
+                'current_year' => date('Y'),
+                'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
             ]);
             
             // Send in-app notification to customer
             NotificationService::sendAppointmentNotification($customer, $appointment, 'appointment_completed');
         }
         notify($user, 'APPOINTMENT_COMPLETED', [
-            'customer_name' => $appointment->recipient_name,
-            'customer_phone' => $appointment->recipient_phone,
-            'customer_address' => $appointment->recipient_address,
-            'appointment_date' => $appointment->appointment_date,
+            'user_name' => $user->fullname ?: ($user->firstname . ' ' . $user->lastname) ?: $user->username ?: $user->name,
+            'user_email' => $user->email,
+            'appointment_id' => $appointment->id,
+            'appointment_date' => date('d/m/Y', strtotime($appointment->appointment_date)),
             'appointment_time' => $appointment->appointment_time,
-            'notes' => $appointment->notes ?? 'N/A',
-            'company_name' => $appointment->company->name ?? 'Unknown Company'
+            'company_name' => $appointment->company->name ?? 'Service Provider',
+            'company_phone' => $appointment->company->mobile ?? $appointment->company->phone ?? 'Sẽ cập nhật sau',
+            'appointment_address' => $appointment->recipient_address,
+            'site_url' => url('/'),
+            'current_year' => date('Y'),
+            'notes' => $appointment->notes ?? 'Không có ghi chú đặc biệt'
         ]);
         
         // Send in-app notification to company owner

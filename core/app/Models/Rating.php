@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Rating extends Model
 {
     protected $fillable = [
-        'company_id', 'user_id', 'suggest', 'status','avg_rating',
+        'company_id', 'user_id', 'appointment_id', 'suggest', 'status','avg_rating',
     ];
 
     // Mối quan hệ một rating có nhiều rating_details
@@ -26,6 +26,12 @@ class Rating extends Model
     public function user()
     {
     return $this->belongsTo(User::class);
+    }
+
+    // Mối quan hệ với appointment
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class);
     }
 
     public function reactions()

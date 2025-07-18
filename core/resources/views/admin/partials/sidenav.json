@@ -140,6 +140,51 @@
             }
         ]
     },
+    "appointment_management": {
+        "keyword": [
+            "appointment",
+            "appointments",
+            "appointment management",
+            "contractor appointment",
+            "appointment booking",
+            "appointment analytics",
+            "appointment tracking",
+            "appointment revenue",
+            "50k fee",
+            "appointment confirmation",
+            "contractor performance",
+            "wallet analytics"
+        ],
+        "title": "Appointment Management",
+        "icon": "las la-calendar-check",
+        "menu_active": "admin.appointments*",
+        "submenu": [
+            {
+                "keyword": ["all appointments", "appointment list", "appointment overview", "appointment dashboard"],
+                "title": "All Appointments",
+                "route_name": "admin.appointments.index",
+                "menu_active": "admin.appointments.index"
+            },
+            {
+                "keyword": ["appointment analytics", "appointment statistics", "appointment reports", "appointment revenue"],
+                "title": "Analytics",
+                "route_name": "admin.appointments.analytics",
+                "menu_active": "admin.appointments.analytics"
+            },
+            {
+                "keyword": ["contractor performance", "company performance", "appointment companies"],
+                "title": "Contractor Performance",
+                "route_name": "admin.appointments.company.performance",
+                "menu_active": "admin.appointments.company.performance"
+            },
+            {
+                "keyword": ["wallet analytics", "wallet management", "50k fee tracking", "payment tracking"],
+                "title": "Wallet Analytics",
+                "route_name": "admin.appointments.wallet.analytics",
+                "menu_active": "admin.appointments.wallet.analytics"
+            }
+        ]
+    },
     "manage_users": {
         "title": "Manage Users",
         "icon": "las la-users",

@@ -222,6 +222,15 @@
             <div class="quick-actions-card">
                 <h3>Hành động nhanh</h3>
                 <div class="actions-grid">
+                    <a href="{{ route('user.deposit.index') }}" class="action-item">
+                        <div class="action-icon">
+                            <i class="las la-plus-circle"></i>
+                        </div>
+                        <div class="action-content">
+                            <h5>Nạp tiền vào ví</h5>
+                            <p>Nạp tiền để mua leads và sử dụng dịch vụ</p>
+                        </div>
+                    </a>
                     <a href="{{ route('company.appointments.index') }}" class="action-item">
                         <div class="action-icon">
                             <i class="las la-calendar-check"></i>
@@ -245,8 +254,8 @@
                             <i class="las la-building"></i>
                         </div>
                         <div class="action-content">
-                                            <h5>Quản lý người thợ</h5>
-                <p>Cập nhật thông tin người thợ</p>
+                            <h5>Quản lý người thợ</h5>
+                            <p>Cập nhật thông tin người thợ</p>
                         </div>
                     </a>
                 </div>

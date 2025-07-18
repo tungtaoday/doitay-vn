@@ -143,6 +143,11 @@ class Company extends Model
         return $this->hasMany(LeadVisibility::class);
     }
 
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
     // Methods
     public function hasActiveWallet()
     {

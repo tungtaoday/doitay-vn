@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\CompanyWalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,28 +14,12 @@ use App\Http\Controllers\Api\CompanyWalletController;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
-    // ... existing routes ...
-
-    // Company Wallet Routes
-    Route::apiResource('company-wallets', CompanyWalletController::class);
-    Route::post('company-wallets/{company_wallet}/add-funds', [CompanyWalletController::class, 'addFunds']);
-    Route::post('company-wallets/{company_wallet}/deduct-funds', [CompanyWalletController::class, 'deductFunds']);
-    Route::get('company-wallets/{company_wallet}/balance', [CompanyWalletController::class, 'getBalance']);
-});
-
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_middleware'),
-    'verified'
-])->group(function () {
-    // ... existing routes ...
-});
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 // Lead Matching API
 Route::post('/find-matching-contractors', 'App\Http\Controllers\API\LeadMatchingController@findMatchingContractors');
+
+// Categories and Features API (public routes)
 Route::get('/categories/{categoryId}/features', 'App\Http\Controllers\API\LeadMatchingController@getCategoryFeatures'); 

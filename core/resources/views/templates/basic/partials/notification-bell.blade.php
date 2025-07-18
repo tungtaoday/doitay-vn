@@ -186,7 +186,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load notifications
     function loadNotifications() {
-        fetch('{{ route("user.notifications.header-data") }}')
+        fetch('/user/notifications/header-data', {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        })
             .then(response => {
                 if (response.status === 401) {
                     // User not authenticated - redirect to login
@@ -194,6 +200,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '{{ route("user.login") }}';
                     return;
                 }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 return response.json();
             })
             .then(data => {

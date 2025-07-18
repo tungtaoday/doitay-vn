@@ -76,23 +76,24 @@
         padding-bottom: 0 !important;
     }
 
-    /* Mobile styles - Giảm height banner xuống */
+    /* Mobile styles - Giảm height và tối ưu hiển thị ảnh */
     @media (max-width: 767px) {
         .hero.bg_img {
-            min-height: 300px; /* Giảm xuống 300px để compact hơn */
-            padding-top: 40px; /* Giảm padding top để tiết kiệm không gian */
-            padding-bottom: 20px; /* Giảm padding bottom */
+            min-height: 220px; /* Giảm xuống 220px để thấp hơn nữa */
+            padding-top: 20px; /* Giảm mạnh padding top */
+            padding-bottom: 15px; /* Giảm padding bottom */
             background-size: cover !important;
-            background-position: center center !important;
+            background-position: center top !important; /* Hiển thị phần trên của ảnh */
         }
         
         /* Điều chỉnh container cho mobile */
         .hero.bg_img .container {
-            height: auto; /* Thay đổi từ % sang auto để linh hoạt hơn */
+            height: auto;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            min-height: 260px; /* Đảm bảo content có đủ không gian */
+            justify-content: flex-start; /* Đẩy content lên trên */
+            min-height: 180px; /* Giảm min-height của container */
+            padding-top: 10px;
         }
     }
 
@@ -104,10 +105,10 @@
             display: block !important;
             color: #ffffff !important;
             font-family: inherit !important;
-            font-size: 26px !important; /* Giảm thêm font size để phù hợp với banner thấp hơn */
-            line-height: 1.2 !important; /* Giảm line-height để text gọn hơn */
-            margin-bottom: 6px !important; /* Giảm margin để tiết kiệm không gian */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+            font-size: 24px !important; /* Giảm xuống 24px để phù hợp với banner thấp */
+            line-height: 1.1 !important; /* Giảm line-height để text gọn nhất */
+            margin-bottom: 4px !important; /* Giảm margin tối đa */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7) !important; /* Tăng độ đậm shadow */
             font-weight: 600 !important;
         }
 
@@ -115,8 +116,8 @@
         .banner .changing-text {
             all: unset;
             color: rgb(12, 150, 209) !important;
-            font-size: 26px !important; /* Giảm thêm font size */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+            font-size: 24px !important; /* Giảm xuống 24px */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7) !important; /* Tăng độ đậm shadow */
             font-weight: 600 !important;
         }
 
@@ -127,15 +128,38 @@
             padding-left: 15px !important;
             max-width: 100% !important;
             margin-top: 0 !important;
+            margin-bottom: 0 !important;
         }
         
         /* Điều chỉnh search form cho mobile */
         .hero__search-form {
-            margin-top: 20px !important; /* Giảm margin top của form */
+            margin-top: 15px !important; /* Giảm margin top của form */
         }
         
         .row.mt-lg-5.mt-4 {
-            margin-top: 15px !important; /* Giảm margin top của row chứa form */
+            margin-top: 10px !important; /* Giảm margin top của row chứa form */
+        }
+        
+        /* Ẩn dòng trống đầu tiên trên mobile */
+        .banner h1:first-child {
+            display: none !important;
+        }
+    }
+    
+    /* Điều chỉnh cho màn hình rất nhỏ */
+    @media (max-width: 480px) {
+        .hero.bg_img {
+            min-height: 200px; /* Còn thấp hơn nữa cho màn hình nhỏ */
+            background-position: center 20% !important; /* Hiển thị phần quan trọng của ảnh */
+        }
+        
+        .banner h1 {
+            font-size: 22px !important; /* Nhỏ hơn nữa cho màn hình rất nhỏ */
+        }
+        
+        .banner .changing-text-wrapper,
+        .banner .changing-text {
+            font-size: 22px !important;
         }
     }
 </style>
@@ -159,8 +183,12 @@
                     console.log('Switching to mobile image');
                     if (mobileImage && mobileImage !== '') {
                         heroSection.style.setProperty('background-image', `url('${mobileImage}')`, 'important');
-                        // Điều chỉnh background-position cho mobile để hiển thị tốt hơn với tỷ lệ dọc
-                        heroSection.style.setProperty('background-position', 'center center', 'important');
+                        // Tối ưu background-position cho mobile để hiển thị tốt hơn
+                        if (window.innerWidth <= 480) {
+                            heroSection.style.setProperty('background-position', 'center 20%', 'important');
+                        } else {
+                            heroSection.style.setProperty('background-position', 'center top', 'important');
+                        }
                     }
                 } else {
                     console.log('Switching to desktop image');

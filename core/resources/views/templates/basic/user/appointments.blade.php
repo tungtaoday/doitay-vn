@@ -1164,8 +1164,278 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Review appointment function
     window.reviewAppointment = function(appointmentId) {
-        // Implement review functionality
-        alert('Chức năng đánh giá sẽ được triển khai sớm!');
+        // Get appointment company category first
+        fetch(`/appointments/${appointmentId}/company-category`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.category_id) {
+                    return fetch(`/api/categories/${data.category_id}/features`);
+                } else {
+                    throw new Error('No category found');
+                }
+            })
+            .then(response => response.json())
+            .then(features => {
+                showReviewModalWithFeatures(appointmentId, features);
+            })
+            .catch(error => {
+                console.error('Error loading features:', error);
+                // Fallback to simple review modal
+                showSimpleReviewModal(appointmentId);
+            });
+    };
+    
+    function showReviewModalWithFeatures(appointmentId, features) {
+        let featuresHtml = '';
+        if (features && features.length > 0) {
+            featuresHtml = features.map(feature => `
+                <div class="feature-rating mb-3">
+                    <label class="form-label">${feature.name}</label>
+                    <div class="star-rating" data-feature-id="${feature.id}">
+                        <input type="radio" name="rating[${feature.id}]" value="5" id="feature${feature.id}-star5">
+                        <label for="feature${feature.id}-star5" class="star">★</label>
+                        <input type="radio" name="rating[${feature.id}]" value="4" id="feature${feature.id}-star4">
+                        <label for="feature${feature.id}-star4" class="star">★</label>
+                        <input type="radio" name="rating[${feature.id}]" value="3" id="feature${feature.id}-star3">
+                        <label for="feature${feature.id}-star3" class="star">★</label>
+                        <input type="radio" name="rating[${feature.id}]" value="2" id="feature${feature.id}-star2">
+                        <label for="feature${feature.id}-star2" class="star">★</label>
+                        <input type="radio" name="rating[${feature.id}]" value="1" id="feature${feature.id}-star1">
+                        <label for="feature${feature.id}-star1" class="star">★</label>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            // Fallback if no features
+            featuresHtml = `
+                <div class="rating-section mb-3">
+                    <label class="form-label">Đánh giá tổng thể</label>
+                    <div class="star-rating">
+                        <input type="radio" name="rating[general]" value="5" id="star5">
+                        <label for="star5" class="star">★</label>
+                        <input type="radio" name="rating[general]" value="4" id="star4">
+                        <label for="star4" class="star">★</label>
+                        <input type="radio" name="rating[general]" value="3" id="star3">
+                        <label for="star3" class="star">★</label>
+                        <input type="radio" name="rating[general]" value="2" id="star2">
+                        <label for="star2" class="star">★</label>
+                        <input type="radio" name="rating[general]" value="1" id="star1">
+                        <label for="star1" class="star">★</label>
+                    </div>
+                </div>
+            `;
+        }
+        
+        const modal = `
+            <div class="modal fade" id="reviewModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="las la-star text-warning me-2"></i>
+                                Đánh giá dịch vụ
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form id="reviewForm" method="POST" action="/appointments/${appointmentId}/review">
+                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                            <div class="modal-body">
+                                <div class="features-rating">
+                                    ${featuresHtml}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Nhận xét của bạn</label>
+                                    <textarea name="comment" class="form-control" rows="4" 
+                                              placeholder="Chia sẻ trải nghiệm của bạn..." required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="las la-paper-plane me-1"></i>
+                                    Gửi đánh giá
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Remove existing modal if any
+        const existingModal = document.getElementById('reviewModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modal);
+        
+        // Show modal
+        const bootstrapModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        bootstrapModal.show();
+        
+        // Handle form submission
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bootstrapModal.hide();
+                    alert(data.message);
+                    location.reload(); // Refresh to update UI
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra, vui lòng thử lại');
+            });
+        });
+        
+        // Add star rating CSS and functionality
+        const style = document.createElement('style');
+        style.textContent = `
+            .star-rating {
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: center;
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+            .star-rating input {
+                display: none;
+            }
+            .star-rating label {
+                font-size: 1.5rem;
+                color: #ddd;
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+            .star-rating input:checked ~ label,
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #ffc107;
+            }
+            .feature-rating {
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 15px;
+                background-color: #f8f9fa;
+            }
+            .feature-rating .form-label {
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #495057;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    function showSimpleReviewModal(appointmentId) {
+        // Fallback simple review modal
+        const modal = `
+            <div class="modal fade" id="reviewModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="las la-star text-warning me-2"></i>
+                                Đánh giá dịch vụ
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form id="reviewForm" method="POST" action="/appointments/${appointmentId}/review">
+                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                            <div class="modal-body">
+                                <div class="rating-section mb-3">
+                                    <label class="form-label">Đánh giá tổng thể</label>
+                                    <div class="star-rating">
+                                        <input type="radio" name="rating[general]" value="5" id="star5">
+                                        <label for="star5" class="star">★</label>
+                                        <input type="radio" name="rating[general]" value="4" id="star4">
+                                        <label for="star4" class="star">★</label>
+                                        <input type="radio" name="rating[general]" value="3" id="star3">
+                                        <label for="star3" class="star">★</label>
+                                        <input type="radio" name="rating[general]" value="2" id="star2">
+                                        <label for="star2" class="star">★</label>
+                                        <input type="radio" name="rating[general]" value="1" id="star1">
+                                        <label for="star1" class="star">★</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Nhận xét của bạn</label>
+                                    <textarea name="comment" class="form-control" rows="4" 
+                                              placeholder="Chia sẻ trải nghiệm của bạn..." required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="las la-paper-plane me-1"></i>
+                                    Gửi đánh giá
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Remove existing modal if any
+        const existingModal = document.getElementById('reviewModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modal);
+        
+        // Show modal and handle submission
+        const bootstrapModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        bootstrapModal.show();
+        
+        // Handle form submission
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bootstrapModal.hide();
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra, vui lòng thử lại');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra, vui lòng thử lại');
+            });
+        });
     };
     
     // Add stagger animation to cards

@@ -137,6 +137,18 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('create', 'createWallet')->name('create');
             });
 
+            // Deposit Management
+            Route::controller('DepositController')->prefix('deposit')->name('deposit.')->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('create/{walletId}', 'create')->name('create');
+                Route::post('store', 'store')->name('store');
+                Route::get('show/{id}', 'show')->name('show');
+                Route::post('cancel/{id}', 'cancel')->name('cancel');
+                Route::post('upload-proof/{id}', 'uploadProof')->name('upload-proof');
+                Route::get('history', 'history')->name('history');
+                Route::get('payment-method/{id}', 'getPaymentMethodDetails')->name('payment-method-details');
+            });
+
             // Review-update
             Route::controller('UserController')->prefix('review')->name('review.')->group(function () {
                 Route::post('update', 'updateReview')->name('update');
@@ -178,6 +190,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments/{appointmentId}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
     Route::get('/appointments/{appointmentId}', [AppointmentController::class, 'show'])->name('appointments.show');
+    Route::get('/appointments/{appointmentId}/company-category', [AppointmentController::class, 'getAppointmentCompanyCategory'])->name('appointments.company.category');
+    Route::post('/appointments/{appointmentId}/review', [AppointmentController::class, 'submitReview'])->name('appointments.review');
     Route::post('/appointments/verify-email', [AppointmentController::class, 'verifyEmail'])->name('appointments.verifyEmail');
     Route::post('/appointments/check-email', [AppointmentController::class, 'checkEmail'])->name('appointments.checkEmail');
 });

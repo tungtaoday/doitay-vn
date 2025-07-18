@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Notification API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; white-space: pre-wrap; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        button { padding: 10px 15px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔔 Debug Notification Bell</h1>
+
+    <div class="test-section">
+        <h3>Test 1: Check Authentication Status</h3>
+        <button onclick="checkAuth()">Check Auth</button>
+        <div id="auth-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Test Notification API</h3>
+        <button onclick="testNotificationAPI()">Test API</button>
+        <div id="api-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Test with CSRF Token</h3>
+        <button onclick="testWithCSRF()">Test with CSRF</button>
+        <div id="csrf-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: Manual Bell HTML</h3>
+        <button onclick="renderBell()">Render Test Bell</button>
+        <div id="bell-container"></div>
+    </div>
+
+    <script>
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'result ' + (isError ? 'error' : 'success');
+        }
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/user/dashboard');
+                log('auth-result', `Auth Check: ${response.status}\nURL: ${response.url}\nRedirected: ${response.redirected}`);
+            } catch (error) {
+                log('auth-result', `Auth Error: ${error.message}`, true);
+            }
+        }
+
+        async function testNotificationAPI() {
+            try {
+                console.log('Testing notification API...');
+                const response = await fetch('/user/notifications/header-data', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                const text = await response.text();
+                console.log('Response text:', text);
+                
+                if (response.ok) {
+                    try {
+                        const data = JSON.parse(text);
+                        log('api-result', `✅ Success!\nStatus: ${response.status}\nData: ${JSON.stringify(data, null, 2)}`);
+                    } catch (e) {
+                        log('api-result', `⚠️ Non-JSON Response:\nStatus: ${response.status}\nContent: ${text}`, true);
+                    }
+                } else {
+                    log('api-result', `❌ HTTP Error: ${response.status}\nContent: ${text}`, true);
+                }
+            } catch (error) {
+                log('api-result', `❌ Network Error: ${error.message}`, true);
+            }
+        }
+
+        async function testWithCSRF() {
+            try {
+                // Get CSRF token from meta tag
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                
+                const response = await fetch('/user/notifications/header-data', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': token || 'no-token'
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                const text = await response.text();
+                
+                if (response.ok) {
+                    const data = JSON.parse(text);
+                    log('csrf-result', `✅ Success with CSRF!\nToken: ${token ? 'Found' : 'Missing'}\nData: ${JSON.stringify(data, null, 2)}`);
+                } else {
+                    log('csrf-result', `❌ Error: ${response.status}\nContent: ${text}`, true);
+                }
+            } catch (error) {
+                log('csrf-result', `❌ Error: ${error.message}`, true);
+            }
+        }
+
+        function renderBell() {
+            const bellHTML = `
+                <div style="position: relative; display: inline-block; margin: 20px;">
+                    <i class="fas fa-bell" style="font-size: 24px; color: #007bff; cursor: pointer;"></i>
+                    <span id="test-badge" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;">3</span>
+                </div>
+                <div>
+                    <p>This is how the bell should look with notifications</p>
+                    <button onclick="updateTestBadge()">Update Badge</button>
+                </div>
+            `;
+            document.getElementById('bell-container').innerHTML = bellHTML;
+        }
+
+        function updateTestBadge() {
+            const badge = document.getElementById('test-badge');
+            const count = Math.floor(Math.random() * 10);
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        // Auto-run tests when page loads
+        window.onload = function() {
+            console.log('=== Notification Debug Page Loaded ===');
+            checkAuth();
+        };
+    </script>
+</body>
+</html> 
