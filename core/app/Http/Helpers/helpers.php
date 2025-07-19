@@ -419,6 +419,19 @@ function gs($key = null)
     return $general;
 }
 
+function analytics($key = null)
+{
+    $analytics = Cache::get('AnalyticsSetting');
+    if (!$analytics) {
+        $analytics = \App\Models\AnalyticsSetting::getSettings();
+        Cache::put('AnalyticsSetting', $analytics);
+    }
+    if ($key) {
+        return @$analytics->$key;
+    }
+    return $analytics;
+}
+
 function isImage($string)
 {
     $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');

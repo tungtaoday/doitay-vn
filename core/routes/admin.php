@@ -223,6 +223,10 @@ Route::middleware('admin')->group(function () {
         Route::get('maintenance-mode','maintenanceMode')->name('maintenance.mode');
         Route::post('maintenance-mode','maintenanceModeSubmit');
 
+        // Analytics Settings
+        Route::get('analytics-settings', 'analytics')->name('setting.analytics');
+        Route::post('analytics-settings', 'analyticsUpdate');
+
     });
 
 

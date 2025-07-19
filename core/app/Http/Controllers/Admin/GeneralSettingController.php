@@ -273,4 +273,62 @@ class GeneralSettingController extends Controller
         $notify[] = ['success', ucfirst($key) . ' credential updated successfully'];
         return back()->withNotify($notify);
     }
+
+    public function analytics()
+    {
+        $pageTitle = 'Analytics Settings';
+        return view('admin.setting.analytics', compact('pageTitle'));
+    }
+
+    public function analyticsUpdate(Request $request)
+    {
+        $request->validate([
+            'google_analytics_id' => 'nullable|string|max:50',
+            'facebook_pixel_id' => 'nullable|string|max:50',
+            'analytics_enabled' => 'boolean',
+            'track_appointments' => 'boolean',
+            'track_appointment_status' => 'boolean',
+            'track_company_views' => 'boolean',
+            'track_company_contacts' => 'boolean',
+            'track_user_registration' => 'boolean',
+            'track_user_login' => 'boolean',
+            'track_search' => 'boolean',
+            'track_scroll_depth' => 'boolean',
+            'enhanced_ecommerce' => 'boolean',
+            'custom_dimensions' => 'boolean',
+            'analytics_debug' => 'boolean',
+            'gdpr_compliance' => 'boolean'
+        ]);
+
+        $analytics = \App\Models\AnalyticsSetting::getSettings();
+        
+        // Update Google Analytics settings
+        $analytics->google_analytics_id = $request->google_analytics_id;
+        $analytics->facebook_pixel_id = $request->facebook_pixel_id;
+        $analytics->analytics_enabled = $request->analytics_enabled ? 1 : 0;
+        
+        // Update tracking settings
+        $analytics->track_appointments = $request->track_appointments ? 1 : 0;
+        $analytics->track_appointment_status = $request->track_appointment_status ? 1 : 0;
+        $analytics->track_company_views = $request->track_company_views ? 1 : 0;
+        $analytics->track_company_contacts = $request->track_company_contacts ? 1 : 0;
+        $analytics->track_user_registration = $request->track_user_registration ? 1 : 0;
+        $analytics->track_user_login = $request->track_user_login ? 1 : 0;
+        $analytics->track_search = $request->track_search ? 1 : 0;
+        $analytics->track_scroll_depth = $request->track_scroll_depth ? 1 : 0;
+        
+        // Update advanced settings
+        $analytics->enhanced_ecommerce = $request->enhanced_ecommerce ? 1 : 0;
+        $analytics->custom_dimensions = $request->custom_dimensions ? 1 : 0;
+        $analytics->analytics_debug = $request->analytics_debug ? 1 : 0;
+        $analytics->gdpr_compliance = $request->gdpr_compliance ? 1 : 0;
+        
+        $analytics->save();
+
+        // Clear cache
+        \Cache::forget('AnalyticsSetting');
+
+        $notify[] = ['success', 'Analytics settings updated successfully'];
+        return back()->withNotify($notify);
+    }
 }

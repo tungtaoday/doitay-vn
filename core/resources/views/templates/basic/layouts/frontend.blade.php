@@ -32,6 +32,9 @@
 
 @php echo loadExtension('google-analytics') @endphp
 
+<!-- Google Analytics Enhanced Tracking -->
+@include('partials.google-analytics-tracking')
+
 <body>
     @stack('fbComment')
 
@@ -90,6 +93,11 @@
     @endif
 
     @stack('script')
+
+    <!-- Include Tracking Scripts -->
+    @include('templates.basic.partials.appointment-tracking')
+    @include('templates.basic.partials.company-lead-tracking')
+    @include('templates.basic.partials.user-tracking')
 
     <script>
         (function($) {
