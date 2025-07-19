@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Notification for Current User</title>
+    <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; white-space: pre-wrap; border-radius: 3px; }
+        .error { background: #ffebee; border-left: 4px solid #f44336; }
+        .success { background: #e8f5e8; border-left: 4px solid #4caf50; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 3px; }
+        button:hover { background: #0056b3; }
+        .user-info { background: #e3f2fd; padding: 10px; border-radius: 3px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔔 Create Notification for Current User</h1>
+    
+    <div class="section">
+        <h3>Step 1: Check Current User</h3>
+        <button onclick="getCurrentUser()">Get Current User Info</button>
+        <div id="userResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h3>Step 2: Create Test Notification</h3>
+        <p>This will create a notification directly in the database using SQL.</p>
+        <button onclick="createTestNotification()">Create Test Notification</button>
+        <div id="createResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h3>Step 3: Test Notification Bell</h3>
+        <button onclick="testNotificationBell()">Reload Notifications</button>
+        <div id="testResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h3>Step 4: Manual SQL Commands</h3>
+        <p>If JavaScript fails, run these SQL commands manually in phpMyAdmin:</p>
+        <div id="sqlCommands" class="result" style="background: #fff3e0;">
+            Loading SQL commands...
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = null;
+        let currentUserType = 'user';
+        
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            element.className = 'result ' + (isError ? 'error' : 'success');
+        }
+        
+        function getCurrentUser() {
+            log('userResult', 'Getting current user info...', false);
+            
+            // Try to get user info from a user endpoint
+            fetch('/user/data', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Not authenticated or endpoint not found');
+                }
+            })
+            .then(data => {
+                if (data.user) {
+                    currentUserId = data.user.id;
+                    currentUserType = data.user.companies && data.user.companies.length > 0 ? 'company' : 'user';
+                    
+                    log('userResult', 
+                        `Current User Found!\n` +
+                        `ID: ${data.user.id}\n` +
+                        `Name: ${data.user.name || data.user.username}\n` +
+                        `Email: ${data.user.email}\n` +
+                        `Type: ${currentUserType}\n` +
+                        `Companies: ${data.user.companies ? data.user.companies.length : 0}`, 
+                        false
+                    );
+                    
+                    updateSQLCommands();
+                } else {
+                    throw new Error('User data not found in response');
+                }
+            })
+            .catch(error => {
+                // Fallback: try to get user ID from notification API response
+                fetch('/user/notifications/header-data', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        log('userResult', 
+                            `User is authenticated (ID unknown)\n` +
+                            `Current notifications: ${data.unread_count} unread\n` +
+                            `We'll create a test notification for the current user.`, 
+                            false
+                        );
+                        currentUserId = 'current'; // Placeholder
+                        updateSQLCommands();
+                    } else {
+                        throw new Error('User not authenticated');
+                    }
+                })
+                .catch(err => {
+                    log('userResult', `Error: ${err.message}\nPlease make sure you're logged in!`, true);
+                });
+            });
+        }
+        
+        function createTestNotification() {
+            log('createResult', 'Creating test notification via API...', false);
+            
+            // Create notification by calling a custom endpoint
+            fetch('/create-test-notification', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    type: 'appointment',
+                    title: 'TEST: Appointment 117 Notification',
+                    message: 'This is a test notification for appointment 117. You should see this in your notification bell!',
+                    data: {
+                        appointment_id: 117,
+                        test: true,
+                        created_by: 'debug_script'
+                    }
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`HTTP ${response.status}: Custom endpoint not available`);
+                }
+            })
+            .then(data => {
+                log('createResult', `✅ Test notification created!\nNotification ID: ${data.id || 'Unknown'}`, false);
+                
+                // Auto-test the bell
+                setTimeout(testNotificationBell, 1000);
+            })
+            .catch(error => {
+                log('createResult', 
+                    `❌ API creation failed: ${error.message}\n\n` +
+                    `Please use the Manual SQL Commands below instead.`, 
+                    true
+                );
+            });
+        }
+        
+        function testNotificationBell() {
+            log('testResult', 'Testing notification bell...', false);
+            
+            fetch('/user/notifications/header-data', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    log('testResult', 
+                        `✅ Notification Bell Test Results:\n` +
+                        `Unread Count: ${data.unread_count}\n` +
+                        `Total Notifications: ${data.notifications.length}\n\n` +
+                        `Recent Notifications:\n` +
+                        data.notifications.map((notif, index) => 
+                            `${index + 1}. ${notif.title}\n   ${notif.message}\n   Status: ${notif.is_read ? 'Read' : 'UNREAD'}\n`
+                        ).join('\n'),
+                        false
+                    );
+                } else {
+                    log('testResult', `❌ Bell test failed: ${data.error || 'Unknown error'}`, true);
+                }
+            })
+            .catch(error => {
+                log('testResult', `❌ Bell test error: ${error.message}`, true);
+            });
+        }
+        
+        function updateSQLCommands() {
+            const sqlElement = document.getElementById('sqlCommands');
+            
+            if (currentUserId && currentUserId !== 'current') {
+                sqlElement.innerHTML = `
+<strong>Manual SQL Commands for User ID ${currentUserId}:</strong>
+
+1. Create test notification:
+INSERT INTO user_notifications 
+(user_id, user_type, type, title, message, data, icon, color, priority, is_important, created_at, updated_at) 
+VALUES 
+(${currentUserId}, '${currentUserType}', 'appointment', 'TEST: Appointment 117', 'This is a test notification for appointment 117. You should see this in your notification bell!', '{"appointment_id":117,"test":true}', '📅', 'blue', 'high', 1, NOW(), NOW());
+
+2. Check unread count:
+SELECT COUNT(*) as unread_count FROM user_notifications WHERE user_id = ${currentUserId} AND is_read = 0;
+
+3. View all notifications for this user:
+SELECT id, title, message, is_read, created_at FROM user_notifications WHERE user_id = ${currentUserId} ORDER BY created_at DESC LIMIT 5;
+                `;
+            } else {
+                sqlElement.innerHTML = `
+<strong>Generic SQL Commands (replace USER_ID with actual ID):</strong>
+
+1. Find your user ID:
+SELECT id, name, username, email FROM users WHERE email = 'your-email@example.com';
+
+2. Create test notification:
+INSERT INTO user_notifications 
+(user_id, user_type, type, title, message, data, icon, color, priority, is_important, created_at, updated_at) 
+VALUES 
+(USER_ID, 'user', 'appointment', 'TEST: Appointment 117', 'Test notification for appointment 117', '{"appointment_id":117,"test":true}', '📅', 'blue', 'high', 1, NOW(), NOW());
+                `;
+            }
+        }
+        
+        // Auto-run on page load
+        window.addEventListener('load', function() {
+            getCurrentUser();
+            updateSQLCommands();
+        });
+    </script>
+</body>
+</html> 

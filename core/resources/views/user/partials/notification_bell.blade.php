@@ -307,17 +307,39 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         loadNotifications() {
-            fetch('{{ route("user.notifications.header.data") }}')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.updateBadge(data.unread_count);
-                        this.renderNotifications(data.notifications);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading notifications:', error);
-                });
+            // Add debug logging
+            console.log('🔔 Loading notifications...');
+            
+            fetch('/user/notifications/header-data', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                credentials: 'same-origin' // Include cookies for authentication
+            })
+            .then(response => {
+                console.log('🔔 Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('🔔 Response data:', data);
+                if (data.success) {
+                    this.updateBadge(data.unread_count);
+                    this.renderNotifications(data.notifications);
+                } else {
+                    console.error('🔔 API returned error:', data.error || data.message);
+                    this.showError('Failed to load notifications: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('🔔 Error loading notifications:', error);
+                this.showError('Network error loading notifications: ' + error.message);
+            });
         },
 
         updateBadge(count) {
@@ -376,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             
             // Mark as read first and wait for completion
-            fetch(`{{ route("user.notifications.read", "PLACEHOLDER") }}`.replace('PLACEHOLDER', notificationId), {
+            fetch(`/user/notifications/${notificationId}/read`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -429,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         markAllAsRead() {
-            fetch('{{ route("user.notifications.read.all") }}', {
+            fetch('/user/notifications/read-all', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -459,6 +481,19 @@ document.addEventListener('DOMContentLoaded', function() {
             setInterval(() => {
                 this.loadNotifications();
             }, 30000);
+        },
+
+        showError(message) {
+            const listContainer = document.getElementById('notificationList');
+            listContainer.innerHTML = `
+                <div class="notification-empty">
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                    <div class="text-danger">${message}</div>
+                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="notificationBell.loadNotifications()">
+                        Retry
+                    </button>
+                </div>
+            `;
         }
     };
 

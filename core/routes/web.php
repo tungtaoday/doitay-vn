@@ -522,5 +522,37 @@ Route::get('/email-preview/{template?}', function($template = 'NEW_APPOINTMENT')
     return $wrapperTemplate;
 });
 
+// Test notification route
+Route::get('/test-notifications', function() {
+    return response()->json([
+        'success' => true,
+        'unread_count' => 3,
+        'notifications' => [
+            [
+                'id' => 1,
+                'title' => 'Test Notification 1',
+                'message' => 'This is a test notification',
+                'icon' => 'las la-bell',
+                'color' => 'blue',
+                'is_read' => false,
+                'is_important' => false,
+                'time_ago' => '5 minutes ago',
+                'action_url' => null
+            ],
+            [
+                'id' => 2,
+                'title' => 'Test Notification 2', 
+                'message' => 'Another test notification',
+                'icon' => 'las la-info',
+                'color' => 'green',
+                'is_read' => false,
+                'is_important' => true,
+                'time_ago' => '10 minutes ago',
+                'action_url' => null
+            ]
+        ]
+    ]);
+});
+
 
 

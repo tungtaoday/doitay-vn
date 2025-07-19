@@ -32,7 +32,8 @@ class NotificationController extends Controller
         $user = Auth::user();
         $userType = $this->getUserType($user);
         
-        $query = UserNotification::forUser($user->id, $userType)
+        // FIX: Query by user_id only, ignore user_type to catch all notifications
+        $query = UserNotification::where('user_id', $user->id)
             ->active()
             ->orderBy('is_important', 'desc')
             ->orderBy('created_at', 'desc');
@@ -74,48 +75,92 @@ class NotificationController extends Controller
      */
     public function headerData()
     {
-        $user = Auth::user();
-        
-        // Check if user is authenticated
-        if (!$user) {
+        try {
+            $user = Auth::user();
+            
+            // Check if user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Not authenticated',
+                    'unread_count' => 0,
+                    'notifications' => []
+                ], 401);
+            }
+            
+            $userType = $this->getUserType($user);
+            
+            // Test if UserNotification model exists and database is accessible
+            if (!class_exists('App\Models\UserNotification')) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'UserNotification model not found',
+                    'unread_count' => 0,
+                    'notifications' => []
+                ], 500);
+            }
+            
+            try {
+                // FIX: Query by user_id only, ignore user_type to catch all notifications
+                $unreadCount = UserNotification::where('user_id', $user->id)
+                    ->unread()
+                    ->active()
+                    ->count();
+            } catch (\Exception $e) {
+                // If UserNotification table doesn't exist, return empty data
+                return response()->json([
+                    'success' => true,
+                    'unread_count' => 0,
+                    'notifications' => [],
+                    'debug' => 'Database error: ' . $e->getMessage()
+                ]);
+            }
+
+            try {
+                // FIX: Query by user_id only, ignore user_type to catch all notifications
+                $recentNotifications = UserNotification::where('user_id', $user->id)
+                    ->active()
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
+                    ->get();
+            } catch (\Exception $e) {
+                $recentNotifications = collect(); // Empty collection
+            }
+
+            return response()->json([
+                'success' => true,
+                'unread_count' => $unreadCount,
+                'notifications' => $recentNotifications->map(function($notification) {
+                    return [
+                        'id' => $notification->id,
+                        'title' => $notification->title,
+                        'message' => $notification->message,
+                        'icon' => $notification->icon,
+                        'color' => $notification->color,
+                        'is_read' => $notification->is_read,
+                        'is_important' => $notification->is_important,
+                        'time_ago' => $notification->time_ago ?? $notification->created_at->diffForHumans(),
+                        'action_url' => $notification->action_url
+                    ];
+                })
+            ]);
+            
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Notification headerData error: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Return safe response
             return response()->json([
                 'success' => false,
-                'error' => 'Not authenticated',
+                'error' => 'Internal server error',
                 'unread_count' => 0,
-                'notifications' => []
-            ], 401);
+                'notifications' => [],
+                'debug' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
         }
-        
-        $userType = $this->getUserType($user);
-        
-        $unreadCount = UserNotification::forUser($user->id, $userType)
-            ->unread()
-            ->active()
-            ->count();
-
-        $recentNotifications = UserNotification::forUser($user->id, $userType)
-            ->active()
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'unread_count' => $unreadCount,
-            'notifications' => $recentNotifications->map(function($notification) {
-                return [
-                    'id' => $notification->id,
-                    'title' => $notification->title,
-                    'message' => $notification->message,
-                    'icon' => $notification->icon,
-                    'color' => $notification->color,
-                    'is_read' => $notification->is_read,
-                    'is_important' => $notification->is_important,
-                    'time_ago' => $notification->time_ago,
-                    'action_url' => $notification->action_url
-                ];
-            })
-        ]);
     }
 
     /**
@@ -135,7 +180,7 @@ class NotificationController extends Controller
         
         $userType = $this->getUserType($user);
         
-        $notification = UserNotification::forUser($user->id, $userType)
+        $notification = UserNotification::where('user_id', $user->id)
             ->findOrFail($id);
             
         $notification->markAsRead();
@@ -154,7 +199,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         $userType = $this->getUserType($user);
         
-        $notification = UserNotification::forUser($user->id, $userType)
+        $notification = UserNotification::where('user_id', $user->id)
             ->findOrFail($id);
             
         $notification->markAsUnread();
@@ -173,7 +218,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         $userType = $this->getUserType($user);
         
-        UserNotification::forUser($user->id, $userType)
+        UserNotification::where('user_id', $user->id)
             ->unread()
             ->update([
                 'is_read' => true,
@@ -194,7 +239,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         $userType = $this->getUserType($user);
         
-        $notification = UserNotification::forUser($user->id, $userType)
+        $notification = UserNotification::where('user_id', $user->id)
             ->findOrFail($id);
             
         $notification->delete();
@@ -213,7 +258,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         $userType = $this->getUserType($user);
         
-        $deletedCount = UserNotification::forUser($user->id, $userType)
+        $deletedCount = UserNotification::where('user_id', $user->id)
             ->read()
             ->delete();
 
@@ -232,15 +277,15 @@ class NotificationController extends Controller
         $userType = $this->getUserType($user);
         
         $stats = [
-            'total' => UserNotification::forUser($user->id, $userType)->active()->count(),
-            'unread' => UserNotification::forUser($user->id, $userType)->unread()->active()->count(),
-            'important' => UserNotification::forUser($user->id, $userType)->important()->active()->count(),
-            'today' => UserNotification::forUser($user->id, $userType)->whereDate('created_at', today())->count(),
-            'this_week' => UserNotification::forUser($user->id, $userType)->where('created_at', '>=', now()->startOfWeek())->count(),
+            'total' => UserNotification::where('user_id', $user->id)->active()->count(),
+            'unread' => UserNotification::where('user_id', $user->id)->unread()->active()->count(),
+            'important' => UserNotification::where('user_id', $user->id)->important()->active()->count(),
+            'today' => UserNotification::where('user_id', $user->id)->whereDate('created_at', today())->count(),
+            'this_week' => UserNotification::where('user_id', $user->id)->where('created_at', '>=', now()->startOfWeek())->count(),
         ];
 
         // By type statistics
-        $typeStats = UserNotification::forUser($user->id, $userType)
+        $typeStats = UserNotification::where('user_id', $user->id)
             ->active()
             ->selectRaw('type, count(*) as count')
             ->groupBy('type')
@@ -262,7 +307,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         $userType = $this->getUserType($user);
         
-        $notification = UserNotification::forUser($user->id, $userType)
+        $notification = UserNotification::where('user_id', $user->id)
             ->findOrFail($id);
             
         // Mark as read if not already read
