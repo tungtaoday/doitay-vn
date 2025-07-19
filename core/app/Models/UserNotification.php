@@ -130,14 +130,14 @@ class UserNotification extends Model
         ];
 
         // Determine the correct action URL based on user type
-        $isCompany = $user instanceof \App\Models\Company;
+        // Check if user has companies (is a company owner/contractor)
+        $isCompany = $user instanceof \App\Models\Company || ($user instanceof \App\Models\User && $user->companies()->exists());
         $actionUrl = null;
         
         try {
             if ($isCompany) {
-                // For company/service provider - redirect to appointments list
-                // They can view all appointments and decide which one to check
-                $actionUrl = route('company.appointments.index');
+                // For company/service provider - direct to specific appointment details
+                $actionUrl = route('company.appointments.show', $appointment->id);
             } else {
                 // For regular user - direct to specific appointment details
                 $actionUrl = route('appointments.show', $appointment->id);

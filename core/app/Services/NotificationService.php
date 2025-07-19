@@ -26,11 +26,21 @@ class NotificationService
         // Create notification for the user
         UserNotification::createAppointmentNotification($user, $type, $appointment, $message);
 
-        // If it's a company appointment, also notify the company
-        if ($type === 'appointment_created' && $appointment->company) {
+        // Always notify the company for all appointment events
+        if ($appointment->company && $appointment->company->user) {
             $userName = $user->fullname ? $user->fullname : $user->username;
-            $companyMessage = "New appointment request from {$userName} for {$appointment->appointment_date} at {$appointment->appointment_time}.";
-            UserNotification::createAppointmentNotification($appointment->company, 'appointment_created', $appointment, $companyMessage);
+            
+            $companyMessages = [
+                'appointment_created' => "New appointment request from {$userName} for {$appointment->appointment_date} at {$appointment->appointment_time}.",
+                'appointment_confirmed' => "You have confirmed the appointment with {$userName} for {$appointment->appointment_date} at {$appointment->appointment_time}.",
+                'appointment_completed' => "Appointment with {$userName} has been marked as completed. Service provided on {$appointment->appointment_date}.",
+                'appointment_cancelled' => "Appointment with {$userName} for {$appointment->appointment_date} has been cancelled.",
+                'appointment_reminder' => "Reminder: You have an appointment with {$userName} scheduled for {$appointment->appointment_date} at {$appointment->appointment_time}."
+            ];
+            
+            $companyMessage = isset($companyMessages[$type]) ? $companyMessages[$type] : "Appointment status updated for {$userName}.";
+            // FIX: Pass company->user instead of company object
+            UserNotification::createAppointmentNotification($appointment->company->user, $type, $appointment, $companyMessage);
         }
     }
 
