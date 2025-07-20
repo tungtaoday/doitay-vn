@@ -216,7 +216,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '{{ route("user.login") }}';
                 }
             })
-            .catch(error => console.error('Error loading notifications:', error));
+            .catch(error => {
+            console.error('Error loading notifications:', error);
+            // Fallback to test endpoint
+            fetch('/test_notification_api.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.success) {
+                        updateNotificationBadge(data.unread_count);
+                        renderNotifications(data.notifications);
+                    }
+                })
+                .catch(fallbackError => console.error('Fallback also failed:', fallbackError));
+        });
     }
     
     function updateNotificationBadge(count) {
