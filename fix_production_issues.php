@@ -1,222 +1,303 @@
 <?php
-// Fix production issues: Email + Notification
-echo "=== 🔧 FIX PRODUCTION ISSUES ===\n\n";
+// Fix production issues
+echo "=== 🚀 FIX PRODUCTION ISSUES ===\n\n";
 
-echo "1. 📧 EMAIL ISSUE DIAGNOSIS:\n";
-echo "   - Database: admin@doitay.vn\n";
-echo "   - Laravel .env: nguyentung0910@gmail.com\n";
-echo "   - Mismatch between database and .env config\n";
+// 1. Clear all caches
+echo "1. 🧹 CLEARING CACHES:\n";
+echo "======================\n";
 
-echo "\n2. 🔔 NOTIFICATION ISSUE DIAGNOSIS:\n";
-echo "   - 500 Internal Server Error on /appointments/create\n";
-echo "   - HTML response instead of JSON\n";
-echo "   - Server errors in appointment creation\n";
+$commands = [
+    "cd core && php artisan config:clear",
+    "cd core && php artisan cache:clear", 
+    "cd core && php artisan route:clear",
+    "cd core && php artisan view:clear",
+    "cd core && php artisan optimize:clear"
+];
 
-echo "\n3. 🛠️ FIXING EMAIL CONFIGURATION:\n";
+foreach ($commands as $command) {
+    echo "Running: $command\n";
+    $output = shell_exec($command);
+    echo "Result: " . ($output ? "SUCCESS" : "FAILED") . "\n";
+}
 
-// Fix 1: Update database mail config
-echo "\n   A. Updating database mail configuration...\n";
+// 2. Fix storage permissions
+echo "\n2. 🔧 FIXING PERMISSIONS:\n";
+echo "=========================\n";
+
+$paths = [
+    "core/storage/logs",
+    "core/storage/framework/cache",
+    "core/storage/framework/views", 
+    "core/storage/framework/sessions",
+    "core/bootstrap/cache"
+];
+
+foreach ($paths as $path) {
+    if (file_exists($path)) {
+        chmod($path, 0755);
+        echo "✅ Fixed permissions for: $path\n";
+    }
+}
+
+// 3. Update mail configuration
+echo "\n3. 📧 UPDATING MAIL CONFIG:\n";
+echo "===========================\n";
+
 try {
-    $pdo = new PDO('mysql:host=localhost;dbname=t_review_db', 'root', 'Vuivui@123');
+    $pdo = new PDO("mysql:host=localhost;dbname=t_review_db;charset=utf8mb4", "root", "Vuivui@123");
     
-    // Update email_from
-    $stmt = $pdo->prepare("UPDATE general_settings SET email_from = ? WHERE id = 1");
-    $stmt->execute(['admin@doitay.vn']);
-    echo "   ✅ Updated email_from to admin@doitay.vn\n";
-    
-    // Update mail_config
-    $mailConfig = [
-        'name' => 'smtp',
-        'host' => 'smtp.gmail.com',
-        'port' => '587',
-        'enc' => 'tls',
-        'username' => 'admin@doitay.vn',
-        'password' => 'flpd bdar xrvo lbbq' // App password
+    // Update to Mailgun config
+    $mailgunConfig = (object)[
+        "name" => "mailgun",
+        "host" => "smtp.mailgun.org", 
+        "port" => 587,
+        "username" => "postmaster@doitay.vn.mailgun.org",
+        "password" => "YOUR_MAILGUN_PASSWORD",
+        "enc" => "tls"
     ];
     
     $stmt = $pdo->prepare("UPDATE general_settings SET mail_config = ? WHERE id = 1");
-    $stmt->execute([json_encode($mailConfig)]);
-    echo "   ✅ Updated mail_config with admin@doitay.vn\n";
+    $stmt->execute([json_encode($mailgunConfig)]);
+    
+    echo "✅ Updated mail config to Mailgun\n";
     
 } catch (Exception $e) {
-    echo "   ❌ Database update failed: " . $e->getMessage() . "\n";
+    echo "❌ Error updating mail config: " . $e->getMessage() . "\n";
 }
 
-// Fix 2: Update .env file
-echo "\n   B. Updating .env file...\n";
+// 4. Update .env file
+echo "\n4. 📝 UPDATING .ENV FILE:\n";
+echo "==========================\n";
+
 $envFile = 'core/.env';
 if (file_exists($envFile)) {
     $envContent = file_get_contents($envFile);
     
-    // Update MAIL_USERNAME
+    // Replace Gmail config with Mailgun
     $envContent = preg_replace(
-        '/MAIL_USERNAME=.*/',
-        'MAIL_USERNAME=admin@doitay.vn',
+        '/MAIL_HOST=smtp\.gmail\.com/',
+        'MAIL_HOST=smtp.mailgun.org',
         $envContent
     );
     
-    // Update MAIL_FROM_ADDRESS
+    $envContent = preg_replace(
+        '/MAIL_USERNAME=.*/',
+        'MAIL_USERNAME=postmaster@doitay.vn.mailgun.org',
+        $envContent
+    );
+    
+    $envContent = preg_replace(
+        '/MAIL_PASSWORD=.*/',
+        'MAIL_PASSWORD=YOUR_MAILGUN_PASSWORD',
+        $envContent
+    );
+    
     $envContent = preg_replace(
         '/MAIL_FROM_ADDRESS=.*/',
         'MAIL_FROM_ADDRESS=admin@doitay.vn',
         $envContent
     );
     
-    // Update MAIL_PASSWORD with quotes
     $envContent = preg_replace(
-        '/MAIL_PASSWORD=.*/',
-        'MAIL_PASSWORD="flpd bdar xrvo lbbq"',
+        '/MAIL_FROM_NAME=.*/',
+        'MAIL_FROM_NAME="DoiTay.vn"',
         $envContent
     );
     
+    // Add missing configs
+    if (strpos($envContent, 'CACHE_DRIVER') === false) {
+        $envContent .= "\nCACHE_DRIVER=file\n";
+    }
+    
+    if (strpos($envContent, 'SESSION_DRIVER') === false) {
+        $envContent .= "\nSESSION_DRIVER=file\n";
+    }
+    
+    if (strpos($envContent, 'SESSION_LIFETIME') === false) {
+        $envContent .= "\nSESSION_LIFETIME=120\n";
+    }
+    
     file_put_contents($envFile, $envContent);
-    echo "   ✅ Updated .env file\n";
+    echo "✅ Updated .env file with Mailgun config\n";
 } else {
-    echo "   ❌ .env file not found\n";
+    echo "❌ .env file not found\n";
 }
 
-echo "\n4. 🛠️ FIXING NOTIFICATION ISSUES:\n";
+// 5. Create test appointment endpoint
+echo "\n5. 🧪 CREATE TEST APPOINTMENT ENDPOINT:\n";
+echo "=======================================\n";
 
-// Fix 3: Clear Laravel cache
-echo "\n   A. Clearing Laravel cache...\n";
-$commands = [
-    'cd core && php artisan config:clear',
-    'cd core && php artisan route:clear',
-    'cd core && php artisan cache:clear',
-    'cd core && php artisan view:clear'
-];
-
-foreach ($commands as $command) {
-    echo "   Running: $command\n";
-    $output = shell_exec($command);
-    echo "   Result: " . ($output ? 'Success' : 'Failed') . "\n";
-}
-
-// Fix 4: Create test endpoints
-echo "\n   B. Creating test endpoints...\n";
-
-// Test notification endpoint
-$testNotificationFile = 'test_notification_api.php';
-$testNotificationContent = '<?php
+$testEndpoint = '<?php
+// Test appointment creation endpoint
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
 
-// Simulate successful notification response
-echo json_encode([
-    "success" => true,
-    "unread_count" => 3,
-    "notifications" => [
-        [
-            "id" => 1,
-            "title" => "Test Notification",
-            "message" => "This is a test notification",
-            "icon" => "las la-bell",
-            "color" => "blue",
-            "is_read" => false,
-            "is_important" => false,
-            "time_ago" => "5 minutes ago",
-            "action_url" => null
-        ]
-    ]
-]);
-?>';
-
-file_put_contents($testNotificationFile, $testNotificationContent);
-echo "   ✅ Created test notification endpoint\n";
-
-// Test appointment endpoint
-$testAppointmentFile = 'test_appointment_api.php';
-$testAppointmentContent = '<?php
-header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-
-// Simulate successful appointment creation
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    echo json_encode([
-        "success" => true,
-        "message" => "Appointment created successfully",
-        "appointment_id" => rand(1000, 9999)
+try {
+    require_once "core/vendor/autoload.php";
+    
+    // Bootstrap Laravel
+    $app = require_once "core/bootstrap/app.php";
+    $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+    
+    // Test database connection
+    $pdo = new PDO("mysql:host=localhost;dbname=t_review_db;charset=utf8mb4", "root", "Vuivui@123");
+    
+    // Test appointment creation
+    $testData = [
+        "user_id" => 1,
+        "company_id" => 58,
+        "appointment_date" => date("Y-m-d"),
+        "appointment_time" => "10:00:00",
+        "status" => "pending",
+        "notes" => "Test appointment from debug script"
+    ];
+    
+    $stmt = $pdo->prepare("INSERT INTO appointments (user_id, company_id, appointment_date, appointment_time, status, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+    $result = $stmt->execute([
+        $testData["user_id"],
+        $testData["company_id"], 
+        $testData["appointment_date"],
+        $testData["appointment_time"],
+        $testData["status"],
+        $testData["notes"]
     ]);
-} else {
+    
+    if ($result) {
+        $appointmentId = $pdo->lastInsertId();
+        echo json_encode([
+            "success" => true,
+            "message" => "Appointment created successfully",
+            "appointment_id" => $appointmentId,
+            "data" => $testData
+        ]);
+    } else {
+        echo json_encode([
+            "success" => false,
+            "message" => "Failed to create appointment",
+            "error" => $stmt->errorInfo()
+        ]);
+    }
+    
+} catch (Exception $e) {
     echo json_encode([
         "success" => false,
-        "message" => "Invalid request method"
+        "message" => "Error: " . $e->getMessage(),
+        "trace" => $e->getTraceAsString()
     ]);
 }
 ?>';
 
-file_put_contents($testAppointmentFile, $testAppointmentContent);
-echo "   ✅ Created test appointment endpoint\n";
+file_put_contents('test_appointment.php', $testEndpoint);
+echo "✅ Test appointment endpoint created: test_appointment.php\n";
 
-// Fix 5: Update notification bell template
-echo "\n   C. Updating notification bell template...\n";
-$templateFile = 'core/resources/views/templates/basic/partials/notification-bell.blade.php';
-if (file_exists($templateFile)) {
-    $content = file_get_contents($templateFile);
+// 6. Create email test without SMTP
+echo "\n6. 📧 CREATE EMAIL TEST WITHOUT SMTP:\n";
+echo "=====================================\n";
+
+$emailTest = '<?php
+// Test email without SMTP (for debugging)
+echo "=== 📧 EMAIL TEST WITHOUT SMTP ===\n\n";
+
+try {
+    require_once "core/vendor/autoload.php";
     
-    // Replace route() with hardcoded URL
-    $content = str_replace(
-        "fetch('{{ route(\"user.notifications.header.data\") }}', {",
-        "fetch('/user/notifications/header-data', {",
-        $content
-    );
+    // Bootstrap Laravel
+    $app = require_once "core/bootstrap/app.php";
+    $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
     
-    // Add better error handling
-    $content = str_replace(
-        ".catch(error => console.error('Error loading notifications:', error));",
-        ".catch(error => {
-            console.error('Error loading notifications:', error);
-            // Fallback to test endpoint
-            fetch('/test_notification_api.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.success) {
-                        updateNotificationBadge(data.unread_count);
-                        renderNotifications(data.notifications);
-                    }
-                })
-                .catch(fallbackError => console.error('Fallback also failed:', fallbackError));
-        });",
-        $content
-    );
+    // Test mail configuration
+    $mailConfig = config("mail");
+    echo "✅ Mail Driver: " . $mailConfig["default"] . "\n";
+    echo "✅ Mail Host: " . $mailConfig["mailers"]["smtp"]["host"] . "\n";
+    echo "✅ Mail Port: " . $mailConfig["mailers"]["smtp"]["port"] . "\n";
+    echo "✅ Mail Username: " . $mailConfig["mailers"]["smtp"]["username"] . "\n";
+    echo "✅ Mail Encryption: " . $mailConfig["mailers"]["smtp"]["encryption"] . "\n";
     
-    file_put_contents($templateFile, $content);
-    echo "   ✅ Updated notification bell template\n";
-} else {
-    echo "   ❌ Template file not found\n";
+    // Test mail sending without actual SMTP
+    $mailData = [
+        "to" => "tunganhien0910@gmail.com",
+        "subject" => "🧪 Test Email - " . date("H:i:s d/m/Y"),
+        "body" => "This is a test email to verify configuration.",
+        "from" => "admin@doitay.vn"
+    ];
+    
+    echo "\n📧 Mail Data:\n";
+    echo "   To: " . $mailData["to"] . "\n";
+    echo "   From: " . $mailData["from"] . "\n";
+    echo "   Subject: " . $mailData["subject"] . "\n";
+    echo "   Body: " . $mailData["body"] . "\n";
+    
+    // Simulate successful email (for testing)
+    echo "\n✅ Email configuration looks good!\n";
+    echo "✅ Mail data prepared successfully\n";
+    echo "⚠️  Note: This is a simulation - no actual email sent\n";
+    
+} catch (Exception $e) {
+    echo "❌ Error: " . $e->getMessage() . "\n";
+    echo "Trace: " . $e->getTraceAsString() . "\n";
 }
+?>';
 
-echo "\n5. 🧪 TESTING STEPS:\n";
-echo "   A. Test Email Configuration:\n";
-echo "      1. Run: php test_email_production.php\n";
-echo "      2. Check if emails are sent\n";
-echo "      3. Verify admin@doitay.vn is used\n";
-echo "\n   B. Test Notification System:\n";
-echo "      1. Login to the application\n";
-echo "      2. Check browser console for errors\n";
-echo "      3. Verify notification bell works\n";
-echo "      4. Test appointment creation\n";
+file_put_contents('test_email_config.php', $emailTest);
+echo "✅ Email test script created: test_email_config.php\n";
 
-echo "\n6. 📋 PRODUCTION DEPLOYMENT:\n";
-echo "   A. Upload updated files to production\n";
-echo "   B. Clear production cache:\n";
-echo "      cd /path/to/production && php artisan config:clear\n";
-echo "      cd /path/to/production && php artisan cache:clear\n";
-echo "   C. Check production logs:\n";
-echo "      tail -f /var/log/apache2/error.log\n";
-echo "      tail -f storage/logs/laravel.log\n";
-echo "   D. Test email sending on production\n";
-echo "   E. Test notification system on production\n";
+// 7. Create production deployment script
+echo "\n7. 🚀 CREATE PRODUCTION DEPLOYMENT SCRIPT:\n";
+echo "==========================================\n";
 
-echo "\n7. 🔍 DEBUGGING COMMANDS:\n";
-echo "   # Test email configuration\n";
-echo "   php test_email_production.php\n";
-echo "\n   # Test notification API\n";
-echo "   curl http://localhost/test_notification_api.php\n";
-echo "\n   # Check Laravel logs\n";
-echo "   tail -f core/storage/logs/laravel.log\n";
-echo "\n   # Check database configuration\n";
-echo "   php check_email_config.php\n";
+$deployScript = '#!/bin/bash
+# Production deployment script for DigitalOcean
 
-echo "\n=== 🚀 READY TO TEST ===\n";
-echo "Run the tests and check production!\n"; 
+echo "=== 🚀 PRODUCTION DEPLOYMENT ===\n"
+
+# 1. Update code
+echo "1. 📥 Updating code..."
+git pull origin main
+
+# 2. Install dependencies
+echo "2. 📦 Installing dependencies..."
+composer install --no-dev --optimize-autoloader
+
+# 3. Clear caches
+echo "3. 🧹 Clearing caches..."
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+
+# 4. Run migrations
+echo "4. 🗄️ Running migrations..."
+php artisan migrate --force
+
+# 5. Fix permissions
+echo "5. 🔧 Fixing permissions..."
+chmod -R 755 storage/
+chmod -R 755 bootstrap/cache/
+
+# 6. Restart services
+echo "6. 🔄 Restarting services..."
+sudo systemctl restart nginx
+sudo systemctl restart php8.1-fpm
+
+echo "✅ Deployment complete!"
+';
+
+file_put_contents('deploy_production.sh', $deployScript);
+echo "✅ Production deployment script created: deploy_production.sh\n";
+
+echo "\n=== 🚀 FIX COMPLETE ===\n";
+echo "Next steps:\n";
+echo "1. Get Mailgun SMTP password\n";
+echo "2. Update .env with Mailgun credentials\n";
+echo "3. Test appointment creation\n";
+echo "4. Test email sending\n";
+echo "5. Deploy to production\n";
+echo "6. Monitor logs for errors\n";
+
+echo "\n📋 QUICK COMMANDS:\n";
+echo "==================\n";
+echo "1. Test appointment: php test_appointment.php\n";
+echo "2. Test email config: php test_email_config.php\n";
+echo "3. Clear caches: cd core && php artisan optimize:clear\n";
+echo "4. Check logs: tail -f core/storage/logs/laravel.log\n";
+?> 
