@@ -66,6 +66,7 @@ class Email extends NotifyProcess implements Notifiable{
 			'smtp'=>'sendSmtpMail',
 			'sendgrid'=>'sendSendGridMail',
 			'mailjet'=>'sendMailjetMail',
+			'elasticemail'=>'sendElasticEmailMail',
 		];
 		return $methods[$name];
 	}
@@ -157,6 +158,33 @@ class Email extends NotifyProcess implements Notifiable{
 			$this->receiverName = $this->user->fullname;
 		}
 		$this->toAddress = $this->email;
+	}
+
+	protected function sendElasticEmailMail(){
+		$mail = new PHPMailer(true);
+		$config = gs('mail_config');
+        //Server settings for ElasticEmail
+        $mail->isSMTP();
+        $mail->Host       = $config->host ?? 'smtp.elasticemail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $config->username;
+        $mail->Password   = $config->password;
+        if ($config->enc == 'ssl') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        }else{
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        }
+        $mail->Port       = $config->port ?? 2525;
+        $mail->CharSet = 'UTF-8';
+        //Recipients
+        $mail->setFrom($this->getEmailFrom()['email'], $this->getEmailFrom()['name']);
+        $mail->addAddress($this->email, $this->receiverName);
+        $mail->addReplyTo($this->getEmailFrom()['email'], $this->getEmailFrom()['name']);
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $this->subject;
+        $mail->Body    = $this->finalMessage;
+        $mail->send();
 	}
 
     private function getEmailFrom(){
