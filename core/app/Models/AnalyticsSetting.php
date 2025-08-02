@@ -127,3 +127,4 @@ class AnalyticsSetting extends Model
         return $this->gdpr_compliance;
     }
 } 
+ 

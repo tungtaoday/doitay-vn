@@ -178,3 +178,4 @@ echo "      - Verify database connectivity\n";
 
 echo "\n=== 🚀 READY TO TEST ===\n";
 echo "Run the application and test notifications now!\n"; 
+ 

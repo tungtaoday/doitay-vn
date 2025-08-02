@@ -303,3 +303,4 @@ echo "2. Update .env with API credentials\n";
 echo "3. Test email sending\n";
 echo "4. Deploy to production\n";
 ?> 
+ 

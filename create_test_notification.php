@@ -48,3 +48,4 @@ echo "2. Check the notification bell - you should see the test notification\n";
 echo "3. Open browser console to see debug logs\n";
 echo "4. Test the API: /user/notifications/header-data\n";
 ?> 
+ 

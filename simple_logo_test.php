@@ -33,3 +33,4 @@ echo "✅ Templates updated with Vietnamese content\n";
 echo "✅ Professional wrapper will apply logo\n";
 echo "✅ Responsive design included\n";
 echo "✅ Shortcodes will be replaced automatically\n"; 
+ 

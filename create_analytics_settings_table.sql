@@ -63,3 +63,4 @@ INSERT INTO `analytics_settings` (
 -- Verify the table was created
 SELECT 'Analytics Settings Table Created Successfully!' as message;
 SELECT * FROM analytics_settings; 
+ 

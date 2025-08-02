@@ -112,3 +112,4 @@ echo "1. Update .env file with correct values\n";
 echo "2. Clear Laravel cache: php artisan config:clear\n";
 echo "3. Test email sending\n";
 echo "4. Check logs if issues persist\n"; 
+ 

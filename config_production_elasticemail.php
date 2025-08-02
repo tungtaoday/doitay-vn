@@ -372,3 +372,4 @@ echo "2. Test email: php test_production_elasticemail.php\n";
 echo "3. Clear cache: bash clear_production_cache.sh\n";
 echo "4. Check logs: tail -f core/storage/logs/laravel.log\n";
 ?> 
+ 

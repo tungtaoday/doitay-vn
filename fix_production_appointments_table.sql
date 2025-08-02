@@ -73,3 +73,4 @@ SELECT * FROM appointments WHERE notes LIKE '%Test appointment after table fix%'
 DELETE FROM appointments WHERE notes LIKE '%Test appointment after table fix%';
 
 SELECT 'Test data cleaned up' as info; 
+ 

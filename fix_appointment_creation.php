@@ -280,3 +280,4 @@ echo "- appointment_time (required)\n";
 echo "- status (optional, default: pending)\n";
 echo "- notes (optional)\n";
 ?> 
+ 

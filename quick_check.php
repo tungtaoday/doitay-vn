@@ -38,3 +38,4 @@ if ($result) {
 
 echo "\nNow try the notification bell!\n";
 ?> 
+ 

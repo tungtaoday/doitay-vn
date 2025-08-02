@@ -110,3 +110,4 @@ echo "\n5. Kiểm tra route company.appointments.show:\n";
 echo "   - Expected URL pattern: /company/appointments/{id}\n";
 echo "   - Test URL: $testActionUrl\n";
 echo "   - Suggestion: Truy cập URL này để test xem có hoạt động không\n"; 
+ 

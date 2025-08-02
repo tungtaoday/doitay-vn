@@ -100,3 +100,4 @@ echo "2. Kiểm tra notification bell trên giao diện\n";
 echo "3. Mở Developer Tools > Console để xem debug log\n";
 echo "4. Kiểm tra API: /user/notifications/header-data\n";
 ?> 
+ 

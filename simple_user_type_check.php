@@ -50,3 +50,4 @@ if ($companyCount > 0 && $unreadUser > 0 && $unreadCompany == 0) {
 } else {
     echo "ℹ️  Need more investigation\n";
 } 
+ 

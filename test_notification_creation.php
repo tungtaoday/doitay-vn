@@ -101,3 +101,4 @@ try {
     echo "❌ ERROR: " . $e->getMessage() . "\n";
     echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
 } 
+ 

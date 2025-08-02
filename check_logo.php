@@ -64,3 +64,4 @@ echo "1. Tạo appointment mới\n";
 echo "2. Hủy appointment\n";
 echo "3. Kiểm tra email được gửi\n";
 echo "4. Email sẽ có logo Doitay.vn và styling đẹp\n"; 
+ 

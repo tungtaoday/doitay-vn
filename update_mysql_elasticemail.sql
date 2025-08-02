@@ -31,3 +31,4 @@ SELECT
     JSON_EXTRACT(mail_config, '$.enc') as encryption
 FROM general_settings 
 WHERE id = 1; 
+ 

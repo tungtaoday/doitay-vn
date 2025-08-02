@@ -156,3 +156,4 @@ echo "      {{ is_array($variable) ? json_encode($variable) : '[]' }}\n";
 
 echo "\n=== 🚀 READY TO TEST ===\n";
 echo "Run the fixes and test the website!\n"; 
+ 

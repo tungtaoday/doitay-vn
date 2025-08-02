@@ -81,3 +81,4 @@ if ($result) {
 } else {
     echo "❌ Failed to create test notification\n";
 } 
+ 

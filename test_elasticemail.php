@@ -234,3 +234,4 @@ echo "2. Update .env file with ElasticEmail config\n";
 echo "3. Deploy to production\n";
 echo "4. Monitor email delivery\n";
 ?> 
+ 

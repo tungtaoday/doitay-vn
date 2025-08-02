@@ -24,3 +24,5 @@ echo -e "\n5. 📋 Appointment Related Logs:"
 grep -i "appointment" storage/logs/laravel.log | tail -10
 
 echo -e "\n=== 🚀 LOG CHECK COMPLETE ==="
+
+ 

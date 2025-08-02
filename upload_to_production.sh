@@ -20,3 +20,4 @@ echo "2. Navigate: cd $SERVER_PATH"
 echo "3. Run tests: php production_test.php"
 echo "4. Check logs: bash check_production_logs.sh"
 echo "5. Clear cache: bash clear_production_cache.sh" 
+ 

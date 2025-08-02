@@ -301,3 +301,4 @@ echo "2. Test email config: php test_email_config.php\n";
 echo "3. Clear caches: cd core && php artisan optimize:clear\n";
 echo "4. Check logs: tail -f core/storage/logs/laravel.log\n";
 ?> 
+ 

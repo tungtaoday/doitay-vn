@@ -250,3 +250,4 @@ echo "3. Test appointment creation\n";
 echo "4. Check email delivery\n";
 echo "5. Monitor notification logs\n";
 ?> 
+ 

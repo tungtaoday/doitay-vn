@@ -13,3 +13,4 @@ WHERE id = 1;
 
 -- Verify the update
 SELECT mail_config, email_from FROM general_settings WHERE id = 1; 
+ 

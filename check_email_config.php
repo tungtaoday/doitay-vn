@@ -175,3 +175,4 @@ try {
 } catch (Exception $e) {
     echo "❌ Database connection error: " . $e->getMessage() . "\n";
 } 
+ 

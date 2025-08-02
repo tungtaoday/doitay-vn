@@ -208,3 +208,4 @@ echo "3. Update .env file\n";
 echo "4. Test email sending\n";
 echo "5. Deploy to production\n";
 ?> 
+ 
