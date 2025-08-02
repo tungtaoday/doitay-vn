@@ -59,7 +59,7 @@
                             <button type="button" class="btn btn-sm btn-outline--primary editBtn"
                                 data-id="{{ $feature->id }}"
                                 data-category-id="{{ $feature->category_id }}"
-                                data-category-name="{{ $feature->category->name }}"
+                                data-category-name="{{ $feature->category?->name ?? 'N/A' }}"
                                 data-name="{{ $feature->name }}"
                                 data-description="{{ $feature->description }}"
                                 data-modal_title="@lang('Edit Feature')"

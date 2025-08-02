@@ -125,9 +125,40 @@
 - `message` là **longtext** (không phải text)
 - Tất cả timestamp fields đều **nullable**
 
-## CÁC BẢNG TỒN TẠI VÀ ĐỒNG NHẤT
+## CÁC BẢNG CÓ KHÁC BIỆT VỀ COLUMNS
 
-**TẤT CẢ CÁC BẢNG KHÁC** (49 bảng) đều tồn tại trên production và có cấu trúc đồng nhất với local.
+### 7. `notification_templates` - THIẾU 14 COLUMNS TRÊN PRODUCTION
+- **Production có**: 11 columns (cấu trúc cũ)
+- **Localhost có**: 25 columns (cấu trúc mới với nhiều tính năng)
+- **Columns thiếu trên production**:
+  ```sql
+  - flow_type enum('auto','marketing','system') DEFAULT 'system'
+  - flow_description text NULL
+  - priority enum('low','normal','high') DEFAULT 'normal'
+  - is_scheduled tinyint(1) DEFAULT 0
+  - scheduled_at timestamp NULL
+  - recipient_criteria json NULL
+  - sent_count int DEFAULT 0
+  - last_sent_at timestamp NULL
+  - push_title varchar(255) NULL
+  - push_body text NULL
+  - shortcodes text NULL
+  - email_sent_from_name varchar(40) NULL
+  - email_sent_from_address varchar(40) NULL
+  - sms_sent_from varchar(40) NULL
+  ```
+
+### 8. `lead_visibilities` - KHÁC BIỆT CẤU TRÚC
+- **Production có**: 7 columns với `contractor_id`, `is_visible`
+- **Localhost có**: 10 columns với `company_id`, `priority_score`, etc.
+- **Cần sửa**:
+  - Đổi `contractor_id` → `company_id`
+  - Xóa `is_visible`
+  - Thêm: `priority_score`, `notified_at`, `expires_at`, `is_purchased`
+
+## CÁC BẢNG ĐỒNG NHẤT
+
+**47 BẢNG KHÁC** đều có cấu trúc giống nhau giữa local và production.
 
 ## GIẢI PHÁP ĐÃ CẬP NHẬT
 
