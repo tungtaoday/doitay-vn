@@ -24,11 +24,22 @@
                         <li class="{{ menuActive('blog') }}">
                             <a href="{{ route('blog') }}">@lang('Blog')</a>
                         </li>
-                        @foreach ($pages as $k => $data)
+                        @auth
+                            @if(auth()->user()->companies->count() > 0)
+                                <li class="{{ menuActive('company.appointments.*') }}">
+                                    <a href="{{ route('company.appointments.index') }}">@lang('Quản lý lịch hẹn')</a>
+                                </li>
+                            @else
+                                <li class="{{ menuActive('appointments.*') }}">
+                                    <a href="{{ route('appointments.index') }}">@lang('Lịch hẹn của tôi')</a>
+                                </li>
+                            @endif
+                        @endauth
+                        <!-- @foreach ($pages as $k => $data)
                             <li class="{{ menuActive('pages', null, $data->slug) }}">
                                 <a href="{{ route('pages', $data->slug) }}">{{ __($data->name) }}</a>
                             </li>
-                        @endforeach
+                        @endforeach -->
                         @guest
                             <li class="{{ menuActive('contact') }}">
                                 <a href="{{ route('contact') }}">@lang('Liên hệ')</a>
@@ -156,14 +167,31 @@
                         @lang('Blog')
                     </a>
                 </li>
-                @foreach ($pages as $k => $data)
+                @auth
+                    @if(auth()->user()->companies->count() > 0)
+                        <li class="{{ menuActive('company.appointments.*') }}">
+                            <a href="{{ route('company.appointments.index') }}">
+                                <i class="las la-calendar-check"></i>
+                                @lang('Quản lý lịch hẹn')
+                            </a>
+                        </li>
+                    @else
+                        <li class="{{ menuActive('appointments.*') }}">
+                            <a href="{{ route('appointments.index') }}">
+                                <i class="las la-calendar-alt"></i>
+                                @lang('Lịch hẹn của tôi')
+                            </a>
+                        </li>
+                    @endif
+                @endauth
+                <!-- @foreach ($pages as $k => $data)
                     <li class="{{ menuActive('pages', null, $data->slug) }}">
                         <a href="{{ route('pages', $data->slug) }}">
                             <i class="las la-file-alt"></i>
                             {{ __($data->name) }}
                         </a>
                     </li>
-                @endforeach
+                @endforeach -->
                 @guest
                     <li class="{{ menuActive('contact') }}">
                         <a href="{{ route('contact') }}">

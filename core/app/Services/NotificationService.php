@@ -14,14 +14,14 @@ class NotificationService
     public static function sendAppointmentNotification($user, $appointment, $type)
     {
         $messages = [
-            'appointment_created' => "Your appointment has been created and is waiting for confirmation from {$appointment->company->company_name}.",
-            'appointment_confirmed' => "Great news! Your appointment with {$appointment->company->company_name} has been confirmed for {$appointment->appointment_date} at {$appointment->appointment_time}.",
-            'appointment_completed' => "Your service with {$appointment->company->company_name} has been completed. Please consider leaving a review!",
-            'appointment_cancelled' => "Unfortunately, your appointment with {$appointment->company->company_name} has been cancelled. Please contact them for more information.",
-            'appointment_reminder' => "Reminder: You have an appointment with {$appointment->company->company_name} scheduled for {$appointment->appointment_date} at {$appointment->appointment_time}."
+            'appointment_created' => "Lịch hẹn của bạn đã được tạo và đang chờ xác nhận từ {$appointment->company->company_name}.",
+            'appointment_confirmed' => "Tin tuyệt vời! Lịch hẹn của bạn với {$appointment->company->company_name} đã được xác nhận vào ngày {$appointment->appointment_date} lúc {$appointment->appointment_time}.",
+            'appointment_completed' => "Dịch vụ của bạn với {$appointment->company->company_name} đã hoàn thành. Vui lòng xem xét để lại đánh giá!",
+            'appointment_cancelled' => "Rất tiếc, lịch hẹn của bạn với {$appointment->company->company_name} đã bị hủy. Vui lòng liên hệ với họ để biết thêm thông tin.",
+            'appointment_reminder' => "Nhắc nhở: Bạn có lịch hẹn với {$appointment->company->company_name} được lên lịch vào ngày {$appointment->appointment_date} lúc {$appointment->appointment_time}."
         ];
 
-        $message = isset($messages[$type]) ? $messages[$type] : "Your appointment status has been updated.";
+        $message = isset($messages[$type]) ? $messages[$type] : "Trạng thái lịch hẹn của bạn đã được cập nhật.";
 
         // Create notification for the user
         UserNotification::createAppointmentNotification($user, $type, $appointment, $message);
@@ -31,14 +31,14 @@ class NotificationService
             $userName = $user->fullname ? $user->fullname : $user->username;
             
             $companyMessages = [
-                'appointment_created' => "New appointment request from {$userName} for {$appointment->appointment_date} at {$appointment->appointment_time}.",
-                'appointment_confirmed' => "You have confirmed the appointment with {$userName} for {$appointment->appointment_date} at {$appointment->appointment_time}.",
-                'appointment_completed' => "Appointment with {$userName} has been marked as completed. Service provided on {$appointment->appointment_date}.",
-                'appointment_cancelled' => "Appointment with {$userName} for {$appointment->appointment_date} has been cancelled.",
-                'appointment_reminder' => "Reminder: You have an appointment with {$userName} scheduled for {$appointment->appointment_date} at {$appointment->appointment_time}."
+                'appointment_created' => "Yêu cầu lịch hẹn mới từ {$userName} vào ngày {$appointment->appointment_date} lúc {$appointment->appointment_time}.",
+                'appointment_confirmed' => "Bạn đã xác nhận lịch hẹn với {$userName} vào ngày {$appointment->appointment_date} lúc {$appointment->appointment_time}.",
+                'appointment_completed' => "Lịch hẹn với {$userName} đã được đánh dấu là hoàn thành. Dịch vụ được cung cấp vào ngày {$appointment->appointment_date}.",
+                'appointment_cancelled' => "Lịch hẹn với {$userName} vào ngày {$appointment->appointment_date} đã bị hủy.",
+                'appointment_reminder' => "Nhắc nhở: Bạn có lịch hẹn với {$userName} được lên lịch vào ngày {$appointment->appointment_date} lúc {$appointment->appointment_time}."
             ];
             
-            $companyMessage = isset($companyMessages[$type]) ? $companyMessages[$type] : "Appointment status updated for {$userName}.";
+            $companyMessage = isset($companyMessages[$type]) ? $companyMessages[$type] : "Trạng thái lịch hẹn đã được cập nhật cho {$userName}.";
             // FIX: Pass company->user instead of company object
             UserNotification::createAppointmentNotification($appointment->company->user, $type, $appointment, $companyMessage);
         }
@@ -50,12 +50,12 @@ class NotificationService
     public static function sendCampaignNotification($user, $campaign, $customMessage = null)
     {
         $messages = [
-            'WELCOME_CAMPAIGN' => "Welcome to our platform! Discover amazing services and get 10% off your first booking.",
-            'MONTHLY_NEWSLETTER' => "Check out what's new this month! New features, success stories, and special offers await you.",
-            'COMPANY_PROMOTION' => "Boost your business with our Premium features! Get 40% off for the first 3 months."
+            'WELCOME_CAMPAIGN' => "Chào mừng bạn đến với nền tảng của chúng tôi! Khám phá các dịch vụ tuyệt vời và được giảm 10% cho lần đặt dịch vụ đầu tiên.",
+            'MONTHLY_NEWSLETTER' => "Khám phá những gì mới trong tháng này! Các tính năng mới, câu chuyện thành công và ưu đãi đặc biệt đang chờ bạn.",
+            'COMPANY_PROMOTION' => "Phát triển doanh nghiệp của bạn với các tính năng Premium! Được giảm 40% cho 3 tháng đầu tiên."
         ];
 
-                 $message = $customMessage ? $customMessage : (isset($messages[$campaign->act]) ? $messages[$campaign->act] : "We have exciting news and offers for you!");
+                 $message = $customMessage ? $customMessage : (isset($messages[$campaign->act]) ? $messages[$campaign->act] : "Chúng tôi có tin tức thú vị và ưu đãi dành cho bạn!");
 
         UserNotification::createCampaignNotification($user, $campaign, $message);
     }
@@ -167,7 +167,7 @@ class NotificationService
     {
         $defaultOptions = [
             'type' => 'system',
-            'title' => 'Notification',
+            'title' => 'Thông báo',
             'message' => '',
             'icon' => '🔔',
             'color' => 'blue',
