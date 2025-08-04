@@ -96,34 +96,6 @@
         "route_name": "admin.advertisement.index",
         "menu_active": "admin.advertisement.index"
     },
-    "frontend_management": {
-        "keyword": [
-            "frontend",
-            "frontend management", 
-            "content management",
-            "page sections",
-            "website content",
-            "page builder",
-            "template management"
-        ],
-        "title": "Frontend Management",
-        "icon": "las la-desktop",
-        "menu_active": "admin.frontend*",
-        "submenu": [
-            {
-                "keyword": ["content management", "frontend sections", "page content"],
-                "title": "Content Management",
-                "route_name": "admin.frontend.index",
-                "menu_active": "admin.frontend.index"
-            },
-            {
-                "keyword": ["page sections", "section management", "frontend sections"],
-                "title": "Page Sections", 
-                "route_name": "admin.frontend.sections",
-                "menu_active": "admin.frontend.sections*"
-            }
-        ]
-    },
     "lead_management": {
         "keyword": [
             "lead",
@@ -361,6 +333,7 @@
             "admin.language.key",
             "admin.seo",
             "admin.frontend.templates",
+            "admin.frontend.manage.*",
             "admin.maintenance.mode",
             "admin.setting.cookie",
             "admin.setting.custom.css",
@@ -374,6 +347,8 @@
             "admin.setting.notification.push",
             "admin.setting.notification.templates",
             "admin.setting.notification.template.edit",
+            "admin.frontend.index",
+            "admin.frontend.sections*",
             "admin.gateway*",
             "admin.withdraw.method*",
             "admin.setting.app.purchase"
