@@ -303,8 +303,8 @@ $(document).ready(function() {
                     <div class="col-md-6 mb-3">
                         <h6 class="mb-3">Mã QR thanh toán</h6>
                         <div class="qr-code-container">
-                            ${setting.qr_code_path ? 
-                                `<img src="${setting.qr_code_path}" alt="QR Code" class="qr-code-image">` :
+                            ${setting.qr_code_url ? 
+                                `<img src="${setting.qr_code_url}" alt="QR Code" class="qr-code-image">` :
                                 `<div class="qr-placeholder">
                                     <i class="las la-qrcode fs-1 text-muted"></i>
                                     <p class="text-muted mt-2">QR Code sẽ sớm được cập nhật</p>

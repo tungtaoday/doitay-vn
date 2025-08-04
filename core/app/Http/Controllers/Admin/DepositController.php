@@ -144,8 +144,19 @@ class DepositController extends Controller
 
             // Handle QR code upload
             if ($request->hasFile('qr_code_image')) {
-                $qrPath = $request->file('qr_code_image')->store('deposit_qr', 'public');
-                $data['qr_code_image'] = basename($qrPath);
+                $file = $request->file('qr_code_image');
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                
+                // Save to core/public/assets/images/qr_codes/ (works for both localhost and production)
+                $qrPath = public_path('assets/images/qr_codes');
+                
+                // Create directory if it doesn't exist
+                if (!file_exists($qrPath)) {
+                    mkdir($qrPath, 0777, true);
+                }
+                
+                $file->move($qrPath, $filename);
+                $data['qr_code_image'] = $filename;
             }
 
             DepositSetting::create($data);
@@ -169,7 +180,6 @@ class DepositController extends Controller
     public function updateSetting(Request $request, $id)
     {
         $request->validate([
-            'payment_method' => 'required|string|max:50',
             'name' => 'required|string|max:255',
             'is_active' => 'boolean',
             'sort_order' => 'integer|min:0',
@@ -197,11 +207,25 @@ class DepositController extends Controller
             if ($request->hasFile('qr_code_image')) {
                 // Delete old QR code
                 if ($setting->qr_code_image) {
-                    Storage::disk('public')->delete('deposit_qr/' . $setting->qr_code_image);
+                    $oldPath = public_path('assets/images/qr_codes/' . $setting->qr_code_image);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
                 }
 
-                $qrPath = $request->file('qr_code_image')->store('deposit_qr', 'public');
-                $data['qr_code_image'] = basename($qrPath);
+                $file = $request->file('qr_code_image');
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                
+                // Use the same pattern as other images - save to htdocs/assets/images/qr_codes/
+                $qrPath = str_replace('\\', '/', 'C:/xampp/htdocs/assets/images/qr_codes');
+                
+                // Create directory if it doesn't exist
+                if (!file_exists($qrPath)) {
+                    mkdir($qrPath, 0777, true);
+                }
+                
+                $file->move($qrPath, $filename);
+                $data['qr_code_image'] = $filename;
             }
 
             $setting->update($data);
@@ -220,7 +244,10 @@ class DepositController extends Controller
         try {
             // Delete QR code file
             if ($setting->qr_code_image) {
-                Storage::disk('public')->delete('deposit_qr/' . $setting->qr_code_image);
+                $qrPath = public_path('assets/images/qr_codes/' . $setting->qr_code_image);
+                if (file_exists($qrPath)) {
+                    unlink($qrPath);
+                }
             }
 
             $setting->delete();

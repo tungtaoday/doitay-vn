@@ -71,10 +71,14 @@ class DepositSetting extends Model
     public function getQrCodeUrl()
     {
         if ($this->qr_code_image) {
-            return asset('storage/deposit_qr/' . $this->qr_code_image);
+            // Use production-compatible path: core/public/assets/images/qr_codes/
+            // This works for both localhost and production without any path changes
+            return asset('assets/images/qr_codes/' . $this->qr_code_image);
         }
         return null;
     }
+
+
 
     public function getInstructionsWithPlaceholders($userId, $amount = null)
     {

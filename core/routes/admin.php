@@ -349,4 +349,21 @@ Route::middleware('admin')->group(function () {
             Route::post('manage-seo/{id}',action: [PageBuilderController::class,'manageSeoStore']);
         });
     });
+
+    // == Deposit Management ==
+    Route::controller('DepositController')->name('deposits.')->prefix('deposits')->group(function () {
+        // Request Management
+        Route::get('requests', 'requests')->name('requests');
+        Route::get('requests/{id}', 'showRequest')->name('show');
+        Route::post('requests/{id}/process', 'processRequest')->name('process');
+        
+        // Settings Management  
+        Route::get('settings', 'settings')->name('settings');
+        Route::get('settings/create', 'createSetting')->name('settings.create');
+        Route::post('settings/store', 'storeSetting')->name('settings.store');
+        Route::get('settings/{id}/edit', 'editSetting')->name('settings.edit');
+        Route::post('settings/{id}/update', 'updateSetting')->name('settings.update');
+        Route::delete('settings/{id}', 'destroySetting')->name('settings.destroy');
+        Route::post('settings/{id}/toggle', 'toggleSetting')->name('settings.toggle');
+    });
 });
