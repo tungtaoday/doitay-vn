@@ -51,12 +51,12 @@
                                                 <img id="logoPreview" src="{{ getImage('', '150x150') }}" alt="Company Logo">
                                                 <div class="upload-overlay">
                                                     <i class="fas fa-camera fa-2x"></i>
-                                                    <p class="mt-2">Tải Logo</p>
+                                                    <p class="mt-2">Tải Ảnh đại diện</p>
                                                 </div>
                                             </div>
                                             <input type="file" id="companyLogo" name="image" accept="image/*" hidden>
                                             <button type="button" class="btn btn-outline-primary btn-sm mt-3" onclick="document.getElementById('companyLogo').click()">
-                                                <i class="fas fa-upload"></i> Chọn Logo
+                                                <i class="fas fa-upload"></i> Chọn Ảnh đại diện
                                             </button>
                                         </div>
                                     </div>
@@ -90,7 +90,7 @@
                             </div>
                                             
                                             <div class="col-md-6 mb-3">
-                                                <label class="fw-semibold mb-2">Website</label>
+                                                <label class="fw-semibold mb-2">Facebook</label>
                                                 <input type="url" name="url" class="form-control form-control-lg" 
                                                        placeholder="https://www.company.com" value="{{ old('url') }}">
                                             </div>

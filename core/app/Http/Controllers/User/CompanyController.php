@@ -112,8 +112,8 @@ class CompanyController extends Controller
                 $image = $request->file('image');
                 $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
                 
-                // Ensure directory exists - use root assets folder
-                $uploadPath = base_path('../assets/images/company');
+                // Ensure directory exists - use correct path
+                $uploadPath = public_path('assets/images/company');
                 if (!file_exists($uploadPath)) {
                     mkdir($uploadPath, 0755, true);
                 }
@@ -188,8 +188,8 @@ class CompanyController extends Controller
                             $projectImage = $request->file("projects.{$index}.image");
                             $projectImageName = time() . '_project_' . $index . '.' . $projectImage->getClientOriginalExtension();
                             
-                            // Ensure directory exists - use root assets folder
-                            $portfolioPath = base_path('../assets/images/portfolio');
+                            // Ensure directory exists - use correct path
+                            $portfolioPath = public_path('assets/images/portfolio');
                             if (!file_exists($portfolioPath)) {
                                 mkdir($portfolioPath, 0755, true);
                             }
@@ -303,8 +303,8 @@ class CompanyController extends Controller
                 $image = $request->file('image');
                 $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
                 
-                // Ensure directory exists - use root assets folder
-                $uploadPath = base_path('../assets/images/company');
+                // Ensure directory exists - use correct path
+                $uploadPath = public_path('assets/images/company');
                 if (!file_exists($uploadPath)) {
                     mkdir($uploadPath, 0755, true);
                 }
@@ -364,8 +364,8 @@ class CompanyController extends Controller
                             $projectImage = $request->file("projects.{$index}.image");
                             $projectImageName = time() . '_project_' . $index . '.' . $projectImage->getClientOriginalExtension();
                             
-                            // Ensure directory exists - use root assets folder
-                            $portfolioPath = base_path('../assets/images/portfolio');
+                            // Ensure directory exists - use correct path
+                            $portfolioPath = public_path('assets/images/portfolio');
                             if (!file_exists($portfolioPath)) {
                                 mkdir($portfolioPath, 0755, true);
                             }
