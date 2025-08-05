@@ -40,6 +40,12 @@ class DepositController extends Controller
             ->findOrFail($walletId);
 
         $depositSettings = DepositSetting::getActivePaymentMethods();
+        
+        // Add QR code URLs to each setting for frontend
+        $depositSettings = $depositSettings->map(function($setting) {
+            $setting->qr_code_url = $setting->getQrCodeUrl();
+            return $setting;
+        });
 
         return view(activeTemplate() . 'user.deposit.create', compact('pageTitle', 'wallet', 'depositSettings'));
     }

@@ -71,13 +71,44 @@ class DepositSetting extends Model
     public function getQrCodeUrl()
     {
         if ($this->qr_code_image) {
-            // Use production-compatible path: core/public/assets/images/qr_codes/
-            // This works for both localhost and production without any path changes
-            return asset('assets/images/qr_codes/' . $this->qr_code_image);
+            // Simple localhost detection: check if .env.local exists (marker for localhost)
+            $isLocalhost = file_exists(base_path('.env.local'));
+            
+            if ($isLocalhost) {
+                // For localhost XAMPP: copy QR files to htdocs/assets/images/qr_codes/
+                $this->ensureQrAccessibleOnLocalhost();
+                return 'http://localhost/assets/images/qr_codes/' . $this->qr_code_image;
+            } else {
+                // For production: use asset() helper
+                return asset('assets/images/qr_codes/' . $this->qr_code_image);
+            }
         }
         return null;
     }
 
+    /**
+     * Ensure QR code is accessible from localhost by copying to htdocs
+     */
+    private function ensureQrAccessibleOnLocalhost()
+    {
+        if (!$this->qr_code_image) return;
+        
+        $sourceFile = public_path('assets/images/qr_codes/' . $this->qr_code_image);
+        $targetDir = 'C:/xampp/htdocs/assets/images/qr_codes/';
+        $targetFile = $targetDir . $this->qr_code_image;
+        
+        // Create target directory if it doesn't exist
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+        
+        // Copy file if source exists and target doesn't exist or is older
+        if (file_exists($sourceFile)) {
+            if (!file_exists($targetFile) || filemtime($sourceFile) > filemtime($targetFile)) {
+                copy($sourceFile, $targetFile);
+            }
+        }
+    }
 
 
     public function getInstructionsWithPlaceholders($userId, $amount = null)
