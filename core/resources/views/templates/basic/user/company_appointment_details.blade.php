@@ -1053,6 +1053,26 @@
 .detail-card:nth-child(3) { animation-delay: 0.3s; }
 .detail-card:nth-child(4) { animation-delay: 0.4s; }
 .detail-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* === FIX BTN-OUTLINE-SUCCESS === */
+.btn.btn-outline-success {
+    color: var(--success) !important;
+    border-color: var(--success) !important;
+    background-color: transparent !important;
+}
+
+.btn.btn-outline-success:hover,
+.btn.btn-outline-success:focus {
+    background-color: var(--success) !important;
+    color: white !important;
+    border-color: var(--success) !important;
+}
+
+.btn.btn-outline-success:active {
+    background-color: var(--success) !important;
+    color: white !important;
+    border-color: var(--success) !important;
+}
 </style>
 @endpush
 

@@ -357,6 +357,40 @@
         margin-bottom: 2rem;
     }
 }
+
+/* === FIX BTN-OUTLINE-SUCCESS === */
+.btn.btn-outline-success {
+    color: #10b981 !important;
+    border-color: #10b981 !important;
+    background-color: transparent !important;
+}
+
+.btn.btn-outline-success:hover,
+.btn.btn-outline-success:focus {
+    background-color: #10b981 !important;
+    color: white !important;
+    border-color: #10b981 !important;
+}
+
+.btn.btn-outline-success:active {
+    background-color: #10b981 !important;
+    color: white !important;
+    border-color: #10b981 !important;
+}
+
+/* Fix for small size variants */
+.btn.btn-outline-success.btn-sm {
+    color: #10b981 !important;
+    border-color: #10b981 !important;
+    background-color: transparent !important;
+}
+
+.btn.btn-outline-success.btn-sm:hover,
+.btn.btn-outline-success.btn-sm:focus {
+    background-color: #10b981 !important;
+    color: white !important;
+    border-color: #10b981 !important;
+}
 </style>
 @endpush
 
