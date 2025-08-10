@@ -66,10 +66,15 @@
                                                 <span>{{ $appointment->company->address }}</span>
                                             </div>
                                         @endif
-                                        @if($appointment->company->phone)
+                                        @if($appointment->company->phone && $appointment->status === 'confirmed')
                                             <div class="detail-item">
                                                 <i class="las la-phone"></i>
                                                 <a href="tel:{{ $appointment->company->phone }}">{{ $appointment->company->phone }}</a>
+                                            </div>
+                                        @elseif($appointment->company->phone && $appointment->status !== 'confirmed')
+                                            <div class="detail-item">
+                                                <i class="las la-phone"></i>
+                                                <span class="text-muted">Số điện thoại sẽ hiển thị sau khi thợ xác nhận</span>
                                             </div>
                                         @endif
                                         @if($appointment->company->email)
@@ -81,7 +86,7 @@
                                     </div>
                                 </div>
                                 <div class="company-actions">
-                                    @if($appointment->company->phone)
+                                    @if($appointment->company->phone && $appointment->status === 'confirmed')
                                         <a href="tel:{{ $appointment->company->phone }}" class="btn btn-primary">
                                             <i class="las la-phone"></i>
                                             Gọi ngay

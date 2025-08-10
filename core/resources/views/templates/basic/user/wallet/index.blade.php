@@ -616,16 +616,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #000000 !important; /* Chuyển tất cả text trong stat-item sang màu đen */
 }
 
 .stat-label {
-    color: var(--gray-600);
+    color: #000000 !important; /* Màu đen cho stat-label */
     font-size: 0.9rem;
 }
 
 .stat-value {
-    color: var(--gray-900);
+    color: #000000 !important; /* Màu đen cho stat-value */
     font-weight: 600;
+}
+
+/* Additional selectors để đảm bảo override */
+.wallet-stats .stat-item,
+.wallet-stats .stat-item *,
+.wallet-stats .stat-label,
+.wallet-stats .stat-value {
+    color: #000000 !important;
 }
 
 .wallet-recent {
