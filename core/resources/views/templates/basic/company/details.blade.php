@@ -289,8 +289,42 @@
                                                             $reviewRating = $rating->rating ?? $rating->avg_rating ?? 0;
                                                             echo avgRating($reviewRating); 
                                                         @endphp
+                                                        <div class="rating-score">{{ number_format($reviewRating, 1) }}</div>
                                                     </div>
                                                 </div>
+                                                
+                                                <!-- Feature Ratings -->
+                                                @php
+                                                    $ratingDetails = \App\Models\RatingDetail::where('rating_id', $rating->id)->with('feature')->get();
+                                                @endphp
+                                                @if($ratingDetails->count() > 0)
+                                                    <div class="feature-ratings">
+                                                        <h5 class="feature-ratings-title">
+                                                            <i class="las la-chart-bar"></i>
+                                                            Chi tiết đánh giá
+                                                        </h5>
+                                                        <div class="features-grid">
+                                                            @foreach($ratingDetails as $detail)
+                                                                <div class="feature-item">
+                                                                    <div class="feature-info">
+                                                                        <span class="feature-name">{{ $detail->feature->name }}</span>
+                                                                        <div class="feature-stars">
+                                                                            @for($i = 1; $i <= 5; $i++)
+                                                                                @if($i <= $detail->rating)
+                                                                                    <i class="las la-star text-warning"></i>
+                                                                                @else
+                                                                                    <i class="las la-star text-muted"></i>
+                                                                                @endif
+                                                                            @endfor
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="feature-score">{{ number_format($detail->rating, 0) }}/5</div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                
                                                 <div class="review-content">
                                                     <p>{{ $rating->suggest ?? 'Dịch vụ tốt, tôi rất hài lòng và sẽ giới thiệu cho bạn bè.' }}</p>
                                                 </div>
@@ -1198,29 +1232,51 @@
 /* === REVIEWS SECTION === */
 .review-summary {
     margin-bottom: 32px;
+    animation: fadeInUp 0.8s ease-out;
 }
 
 .rating-overview {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: var(--white);
-    border-radius: 16px;
-    padding: 32px;
+    border-radius: 20px;
+    padding: 40px;
     display: flex;
-    gap: 32px;
+    gap: 40px;
     align-items: center;
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.rating-overview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stars" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="30" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23stars)"/></svg>');
+    opacity: 0.3;
 }
 
 .overall-rating {
     flex-shrink: 0;
     text-align: center;
+    position: relative;
+    z-index: 2;
 }
 
 .rating-number {
-    font-size: 3.5rem;
-    font-weight: 800;
+    font-size: 4rem;
+    font-weight: 900;
     display: block;
     line-height: 1;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(45deg, #fff, #f0f8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 2s infinite;
 }
 
 .rating-stars {
@@ -1250,23 +1306,153 @@
 
 .progress-bar {
     flex: 1;
-    height: 8px;
+    height: 12px;
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
+    position: relative;
 }
 
 .progress-fill {
     height: 100%;
-    background: var(--accent-orange);
-    border-radius: 4px;
-    transition: width 0.6s ease;
+    background: linear-gradient(90deg, #ffd700, #ffed4e);
+    border-radius: 6px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2s infinite;
 }
 
 .percentage {
     min-width: 40px;
     text-align: right;
     font-weight: 500;
+}
+
+/* === FEATURE RATINGS === */
+.feature-ratings {
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.feature-ratings-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.feature-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e1e8ff;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    transform: translateX(4px);
+}
+
+.feature-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.feature-name {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.feature-stars {
+    display: flex;
+    gap: 2px;
+}
+
+.feature-stars i {
+    font-size: 0.8rem;
+}
+
+.feature-score {
+    font-weight: 700;
+    color: #667eea;
+    font-size: 1.1rem;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* === RATING SCORE === */
+.rating-score {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #667eea;
+    margin-top: 8px;
+    text-align: center;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
 }
 
 /* === REVIEWS LIST === */
@@ -1279,14 +1465,33 @@
 .review-item {
     background: var(--white);
     border: 1px solid var(--gray-200);
-    border-radius: 12px;
-    padding: 24px;
-    transition: var(--transition-normal);
+    border-radius: 16px;
+    padding: 28px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.review-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #667eea, #764ba2);
+    transform: scaleY(0);
+    transition: transform 0.4s ease;
 }
 
 .review-item:hover {
-    border-color: var(--primary-light);
-    box-shadow: var(--shadow-sm);
+    border-color: #667eea;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+.review-item:hover::before {
+    transform: scaleY(1);
 }
 
 .review-header {
