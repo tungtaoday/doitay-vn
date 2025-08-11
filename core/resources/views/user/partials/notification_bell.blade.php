@@ -8,10 +8,10 @@
         
         <div class="dropdown-menu notification-dropdown" aria-labelledby="notificationToggle">
             <div class="notification-header">
-                <h6>Notifications</h6>
+                <h6>Thông Báo</h6>
                 <div class="notification-actions">
-                    <button class="btn btn-sm btn-link" id="markAllReadBtn">Mark all read</button>
-                    <a href="{{ route('user.notifications.index') }}" class="btn btn-sm btn-link">View all</a>
+                    <button class="btn btn-sm btn-link" id="markAllReadBtn">Đánh dấu tất cả đã đọc</button>
+                    <a href="{{ route('user.notifications.index') }}" class="btn btn-sm btn-link">Xem tất cả</a>
                 </div>
             </div>
             
@@ -23,7 +23,7 @@
             
             <div class="notification-footer">
                 <a href="{{ route('user.notifications.index') }}" class="btn btn-primary btn-sm w-100">
-                    View All Notifications
+                    Xem tất cả thông báo
                 </a>
             </div>
         </div>

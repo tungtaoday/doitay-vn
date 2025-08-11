@@ -292,7 +292,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="review-content">
-                                                    <p>{{ $rating->comment ?? 'Dịch vụ tốt, tôi rất hài lòng và sẽ giới thiệu cho bạn bè.' }}</p>
+                                                    <p>{{ $rating->suggest ?? 'Dịch vụ tốt, tôi rất hài lòng và sẽ giới thiệu cho bạn bè.' }}</p>
                                                 </div>
                                             </div>
                                         @endforeach
