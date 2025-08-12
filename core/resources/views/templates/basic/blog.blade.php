@@ -1,12 +1,26 @@
 @extends($activeTemplate . 'layouts.frontend')
 @section('content')
+    <!-- Debug Info -->
+    <!-- @if(config('app.debug'))
+        <div class="container mt-3">
+            <div class="alert alert-info">
+                <strong>Debug Info:</strong><br>
+                Blogs Count: {{ $blogs->count() }}<br>
+                Latest Count: {{ $latest->count() }}<br>
+                Active Template: {{ activeTemplate() }}<br>
+                Sections: {{ $sections ? 'Found' : 'Not Found' }}
+            </div>
+        </div>
+    @endif -->
+
     <section class="pt-100 pb-100 contact-section overflow-hidden">
         <div class="shape-one"></div>
         <div class="shape-two"></div>
         <div class="shape-three"></div>
         <div class="container">
             <div class="row gy-4 justify-content-center">
-                @foreach ($blogs as $blog)
+                @if($blogs->count() > 0)
+                    @foreach ($blogs as $blog)
                     <div class="col-lg-4 col-md-6">
                         <div class="blog-post rounded-3">
                             <div class="blog-post__thumb rounded-2">
@@ -34,11 +48,27 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                    @endforeach
 
-                @if ($blogs->hasPages())
-                    <div class="mt-5">
-                        {{ paginateLinks($blogs) }}
+                    @if ($blogs->hasPages())
+                        <div class="mt-5">
+                            {{ paginateLinks($blogs) }}
+                        </div>
+                    @endif
+                @else
+                    <div class="col-12">
+                        <div class="text-center">
+                            <div class="empty-state">
+                                <i class="las la-newspaper" style="font-size: 4rem; color: #ccc;"></i>
+                                <h3>Chưa có bài viết blog nào</h3>
+                                <p>Hãy tạo bài viết blog đầu tiên trong admin panel</p>
+                                <div class="mt-3">
+                                    <a href="{{ route('admin.frontend.elements') }}" class="btn btn-primary">
+                                        <i class="las la-plus"></i> Tạo bài viết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 @endif
             </div>

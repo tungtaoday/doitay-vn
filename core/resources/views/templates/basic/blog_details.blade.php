@@ -1,6 +1,24 @@
 @extends($activeTemplate . 'layouts.frontend')
 
 @section('content')
+    <!-- Debug Info -->
+    @if(isset($debug))
+        <div class="container mt-3">
+            <div class="alert alert-danger">
+                <strong>Blog Not Found!</strong><br>
+                Slug: {{ $debug['slug'] }}<br>
+                ID: {{ $debug['id'] }}<br>
+                @if($debug['existing_blog'])
+                    Found record with ID {{ $debug['id'] }}:<br>
+                    - Slug: {{ $debug['existing_blog']['slug'] }}<br>
+                    - Data Keys: {{ $debug['existing_blog']['data_keys'] }}
+                @else
+                    No record with ID {{ $debug['id'] }} found
+                @endif
+            </div>
+        </div>
+    @endif
+
     <section class="pt-100 pb-100 contact-section overflow-hidden">
         <div class="shape-one"></div>
         <div class="shape-two"></div>
@@ -9,15 +27,17 @@
             <div class="row gy-5 gy-lg-0">
                 <div class="col-lg-8">
                     <div class="blog-post">
-                        <img src="{{ frontendImage('blog', @$blog->data_values->image, '830x460') }}" alt="viserfly" class="img-fluid w-100" />
+                        @if(@$blog->data_values->image)
+                            <img src="{{ frontendImage('blog', @$blog->data_values->image, '830x460') }}" alt="Blog Image" class="img-fluid w-100" />
+                        @endif
                         <div class="blog-post__body">
                             <h4 class="mt-4 fw-md">
-                                {{ __(@$blog->data_values->title) }}
+                                {{ __(@$blog->data_values->title ?? 'No Title') }}
                             </h4>
                             <span class="fs--14px my-2"><i class="la la-calendar-alt me-1"></i>
                                 {{ showDateTime($blog->created_at, 'Y-M-d') }}</span>
                             <p class="mt-3">
-                                @php echo @$blog->data_values->description @endphp
+                                @php echo @$blog->data_values->description ?? 'No description available' @endphp
                             </p>
                             <div class="fb-comments" data-href="{{ url()->current() }}" data-numposts="5"></div>
                             <div class="mt-4 mb-2">
@@ -75,13 +95,18 @@
                                                     <a href="{{ route('blog.details', [$latestBlog->slug, $latestBlog->id]) }}" class="item--link"></a>
                                                     <div class="company-review__top">
                                                         <div class="thumb">
-                                                            <img src="{{ frontendImage('blog', 'thumb_' . @$latestBlog->data_values->image, '415x230') }}"
-                                                                alt="@lang('Image')">
-                                                            <img />
+                                                            @if(@$latestBlog->data_values->image)
+                                                                <img src="{{ frontendImage('blog', 'thumb_' . @$latestBlog->data_values->image, '415x230') }}"
+                                                                    alt="@lang('Image')">
+                                                            @else
+                                                                <div class="no-image-placeholder" style="width: 100%; height: 100%; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                                                    <i class="las la-image" style="font-size: 2rem; color: #ccc;"></i>
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                         <div class="content">
                                                             <h5 class="fs--14px mt-1">
-                                                                {{ __(strLimit($latestBlog->data_values->title, 70)) }}
+                                                                {{ __(strLimit(@$latestBlog->data_values->title ?? 'No Title', 70)) }}
                                                             </h5>
                                                             <span class="date text--base fs--14px mt-2">
                                                                 {{ showDateTime($latestBlog->created_at, 'd-M-Y') }}

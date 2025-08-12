@@ -154,22 +154,92 @@ class SiteController extends Controller
     public function blogs()
     {
         $pageTitle   = 'Blogs';
-        $blogs       = Frontend::where('data_keys', 'blog.element')->latest()->paginate(getPaginate(21));
-        $latest      = Frontend::latest()->where('data_keys', 'blog.element')->limit(10)->get();
-        $sections    = Page::where('tempname', activeTemplate())->where('slug', 'blog')->first();
+        
+        // Debug: Log để kiểm tra
+        \Log::info('Blogs method called');
+        
+        // Lấy tất cả blog elements
+        $blogs = Frontend::where('data_keys', 'blog.element')->latest()->paginate(getPaginate(21));
+        
+        // Debug: Log số lượng blogs
+        \Log::info('Found ' . $blogs->count() . ' blogs');
+        
+        $latest = Frontend::latest()->where('data_keys', 'blog.element')->limit(10)->get();
+        $sections = Page::where('tempname', activeTemplate())->where('slug', 'blog')->first();
         $seoContents = $sections ? $sections->seo_content : null;
-        $seoImage    = @$seoContents->image ? frontendImage('blog', $seoContents->image, getFileSize('seo'), true) : null;
-        return view('Template::blog', compact('pageTitle', 'blogs', 'latest', 'sections', 'seoContents', 'seoImage'));
+        $seoImage = @$seoContents->image ? frontendImage('blog', $seoContents->image, getFileSize('seo'), true) : null;
+        
+        // Debug: Log data
+        \Log::info('Blogs data:', [
+            'count' => $blogs->count(),
+            'latest_count' => $latest->count(),
+            'sections' => $sections ? 'found' : 'not found',
+            'active_template' => activeTemplate()
+        ]);
+        
+        return view(activeTemplate() . 'blog', compact('pageTitle', 'blogs', 'latest', 'sections', 'seoContents', 'seoImage'));
     }
 
     public function blogDetails($slug, $id)
     {
         $pageTitle   = 'Blog Details';
-        $blog        = Frontend::where('slug', $slug)->where('id', $id)->where('data_keys', 'blog.element')->firstOrFail();
+        
+        // Debug: Log parameters
+        \Log::info('BlogDetails called with:', [
+            'slug' => $slug,
+            'id' => $id
+        ]);
+        
+        // Try to find blog
+        $blog = Frontend::where('slug', $slug)->where('id', $id)->where('data_keys', 'blog.element')->first();
+        
+        if (!$blog) {
+            \Log::error('Blog not found:', [
+                'slug' => $slug,
+                'id' => $id,
+                'data_keys' => 'blog.element'
+            ]);
+            
+            // Check what exists
+            $existingBlog = Frontend::where('id', $id)->first();
+            if ($existingBlog) {
+                \Log::info('Found blog with different data_keys:', [
+                    'id' => $id,
+                    'data_keys' => $existingBlog->data_keys,
+                    'slug' => $existingBlog->slug
+                ]);
+            }
+            
+            // Return debug view instead of abort
+            return view(activeTemplate() . 'blog_details', [
+                'blog' => null,
+                'pageTitle' => 'Blog Not Found',
+                'seoContents' => null,
+                'seoImage' => null,
+                'latestBlogs' => collect(),
+                'debug' => [
+                    'slug' => $slug,
+                    'id' => $id,
+                    'existing_blog' => $existingBlog ? [
+                        'id' => $existingBlog->id,
+                        'slug' => $existingBlog->slug,
+                        'data_keys' => $existingBlog->data_keys
+                    ] : null
+                ]
+            ]);
+        }
+        
+        \Log::info('Blog found:', [
+            'id' => $blog->id,
+            'slug' => $blog->slug,
+            'title' => $blog->data_values->title ?? 'No title'
+        ]);
+        
         $latestBlogs = Frontend::latest()->where('data_keys', 'blog.element')->where('slug', '!=', $slug)->limit(10)->get();
         $seoContents = $blog ? $blog->seo_content : null;
         $seoImage    = @$seoContents->image ? frontendImage('blog', $seoContents->image, getFileSize('seo'), true) : null;
-        return view('Template::blog_details', compact('blog', 'pageTitle', 'seoContents', 'seoImage', 'latestBlogs'));
+        
+        return view(activeTemplate() . 'blog_details', compact('blog', 'pageTitle', 'seoContents', 'seoImage', 'latestBlogs'));
     }
 
     public function cookieAccept()
