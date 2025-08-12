@@ -25,8 +25,14 @@
                         <div class="blog-post rounded-3">
                             <div class="blog-post__thumb rounded-2">
                                 <a href="{{ route('blog.details', [$blog->slug, $blog->id]) }}" class="d-block w-100 h-100">
-                                    <img src="{{ frontendImage('blog', 'thumb_' . @$blog->data_values->image, '415x230') }}"
-                                        alt="@lang(' Blog')" class="rounded-2">
+                                    @if(@$blog->data_values->image)
+                                        <img src="{{ frontendImage('blog', 'thumb_' . @$blog->data_values->image, '415x230') }}"
+                                            alt="@lang('Blog')" class="rounded-2">
+                                    @else
+                                        <div class="no-image-placeholder" style="width: 100%; height: 100%; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                            <i class="las la-image" style="font-size: 2rem; color: #ccc;"></i>
+                                        </div>
+                                    @endif
                                 </a>
                                 <span class="blog-post__date"><i class="far fa-calendar-alt me-1"></i>
                                     {{ showDateTime($blog->created_at, 'd-M-Y') }}</span>
@@ -34,11 +40,11 @@
                             <div class="blog-post__content">
                                 <h5 class="blog-post__title">
                                     <a href="{{ route('blog.details', [$blog->slug, $blog->id]) }}">
-                                        {{ __(strLimit($blog->data_values->title, 80)) }}</a>
+                                        {{ __(strLimit(@$blog->data_values->title ?? 'No Title', 80)) }}</a>
                                 </h5>
                                 <p class="mt-2">
                                     @php
-                                        echo __(strLimit(strip_tags($blog->data_values->description), 130));
+                                        echo __(strLimit(strip_tags(@$blog->data_values->description ?? 'No description'), 130));
                                     @endphp
                                 </p>
                                 <a href="{{ route('blog.details', [$blog->slug, $blog->id]) }}" class="blog-post__btn mt-3">
