@@ -26,19 +26,20 @@
         <div class="container">
             <div class="row gy-5 gy-lg-0">
                 <div class="col-lg-8">
-                    <div class="blog-post">
-                        @if(@$blog->data_values->image)
-                            <img src="{{ frontendImage('blog', @$blog->data_values->image, '830x460') }}" alt="Blog Image" class="img-fluid w-100" />
-                        @endif
-                        <div class="blog-post__body">
-                            <h4 class="mt-4 fw-md">
-                                {{ __(@$blog->data_values->title ?? 'No Title') }}
-                            </h4>
-                            <span class="fs--14px my-2"><i class="la la-calendar-alt me-1"></i>
-                                {{ showDateTime($blog->created_at, 'Y-M-d') }}</span>
-                            <p class="mt-3">
-                                @php echo @$blog->data_values->description ?? 'No description available' @endphp
-                            </p>
+                    @if($blog)
+                        <div class="blog-post">
+                            @if(@$blog->data_values->image)
+                                <img src="{{ frontendImage('blog', @$blog->data_values->image, '830x460') }}" alt="Blog Image" class="img-fluid w-100" />
+                            @endif
+                            <div class="blog-post__body">
+                                <h4 class="mt-4 fw-md">
+                                    {{ __(@$blog->data_values->title ?? 'No Title') }}
+                                </h4>
+                                <span class="fs--14px my-2"><i class="la la-calendar-alt me-1"></i>
+                                    {{ showDateTime($blog->created_at, 'Y-M-d') }}</span>
+                                <p class="mt-3">
+                                    @php echo @$blog->data_values->description ?? 'No description available' @endphp
+                                </p>
                             <div class="fb-comments" data-href="{{ url()->current() }}" data-numposts="5"></div>
                             <div class="mt-4 mb-2">
                                 <div class="row g-4">
@@ -77,6 +78,12 @@
                             </div>
                         </div>
                     </div>
+                    @else
+                        <div class="alert alert-warning">
+                            <h4>Blog không tìm thấy</h4>
+                            <p>Blog với slug "{{ $debug['slug'] ?? 'N/A' }}" và ID "{{ $debug['id'] ?? 'N/A' }}" không tồn tại.</p>
+                        </div>
+                    @endif
                 </div>
                 <div class="col-lg-4">
                     <aside id="sidebar">
@@ -89,33 +96,41 @@
                                         </h4>
                                     </div>
                                     <ul class="list list--column widget-category">
-                                        @foreach ($latestBlogs as $latestBlog)
-                                            <li class="latest-blog-item">
-                                                <div class="has--link">
-                                                    <a href="{{ route('blog.details', [$latestBlog->slug, $latestBlog->id]) }}" class="item--link"></a>
-                                                    <div class="company-review__top">
-                                                        <div class="thumb">
-                                                            @if(@$latestBlog->data_values->image)
-                                                                <img src="{{ frontendImage('blog', 'thumb_' . @$latestBlog->data_values->image, '415x230') }}"
-                                                                    alt="@lang('Image')">
-                                                            @else
-                                                                <div class="no-image-placeholder" style="width: 100%; height: 100%; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-                                                                    <i class="las la-image" style="font-size: 2rem; color: #ccc;"></i>
-                                                                </div>
-                                                            @endif
-                                                        </div>
-                                                        <div class="content">
-                                                            <h5 class="fs--14px mt-1">
-                                                                {{ __(strLimit(@$latestBlog->data_values->title ?? 'No Title', 70)) }}
-                                                            </h5>
-                                                            <span class="date text--base fs--14px mt-2">
-                                                                {{ showDateTime($latestBlog->created_at, 'd-M-Y') }}
-                                                            </span>
+                                        @if($latestBlogs->count() > 0)
+                                            @foreach ($latestBlogs as $latestBlog)
+                                                <li class="latest-blog-item">
+                                                    <div class="has--link">
+                                                        <a href="{{ route('blog.details', [$latestBlog->slug, $latestBlog->id]) }}" class="item--link"></a>
+                                                        <div class="company-review__top">
+                                                            <div class="thumb">
+                                                                @if(@$latestBlog->data_values->image)
+                                                                    <img src="{{ frontendImage('blog', 'thumb_' . @$latestBlog->data_values->image, '415x230') }}"
+                                                                        alt="@lang('Image')">
+                                                                @else
+                                                                    <div class="no-image-placeholder" style="width: 100%; height: 100%; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                                                        <i class="las la-image" style="font-size: 2rem; color: #ccc;"></i>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="content">
+                                                                <h5 class="fs--14px mt-1">
+                                                                    {{ __(strLimit(@$latestBlog->data_values->title ?? 'No Title', 70)) }}
+                                                                </h5>
+                                                                <span class="date text--base fs--14px mt-2">
+                                                                    {{ showDateTime($latestBlog->created_at, 'd-M-Y') }}
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                </li>
+                                            @endforeach
+                                        @else
+                                            <li class="latest-blog-item">
+                                                <div class="text-center p-3">
+                                                    <p class="text-muted">Không có bài viết nào khác</p>
                                                 </div>
                                             </li>
-                                        @endforeach
+                                        @endif
                                     </ul>
                                 </div>
                             </li>
