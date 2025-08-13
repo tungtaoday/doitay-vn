@@ -129,16 +129,18 @@ class FrontendController extends Controller
             if ($request->id) {
                 $content = Frontend::findOrFail($request->id);
             } else {
+                // Tìm record hiện tại
                 $content = Frontend::where('data_keys', $key . '.' . $request->type);
                 if ($type != 'data') {
                     $content = $content->where('tempname', activeTemplateName());
                 }
                 $content = $content->first();
 
-                if (!$content || $request->type == 'element') {
+                // Chỉ tạo mới nếu thực sự cần thiết
+                if (!$content) {
                     $content = new Frontend();
                     $content->data_keys = $key . '.' . $request->type;
-                    $content->save();
+                    // Không save ngay, để tránh tạo record với ID = 0
                 }
             }
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Homepage - Priority cao nhất -->
+    <url>
+        <loc>{{ route('home') }}</loc>
+        <lastmod>{{ now()->format('Y-m-d') }}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    
+    <!-- Blog page -->
+    <url>
+        <loc>{{ route('blog') }}</loc>
+        <lastmod>{{ now()->format('Y-m-d') }}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- About page -->
+    <url>
+        <loc>{{ route('about') }}</loc>
+        <lastmod>{{ now()->format('Y-m-d') }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- Contact page -->
+    <url>
+        <loc>{{ route('contact') }}</loc>
+        <lastmod>{{ now()->format('Y-m-d') }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    
+    <!-- Companies search -->
+    <url>
+        <loc>{{ route('companies.search') }}</loc>
+        <lastmod>{{ now()->format('Y-m-d') }}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Become contractor -->
+    <url>
+        <loc>{{ route('become.contractor') }}</loc>
+        <lastmod>{{ now()->format('Y-m-d') }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+</urlset> 

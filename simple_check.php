@@ -1,5 +1,4 @@
 <?php
-// Kết nối database
 $host = 'localhost';
 $dbname = 't_review_db';
 $username = 'root';
@@ -11,7 +10,6 @@ try {
     
     echo "=== CẤU TRÚC BẢNG FRONTENDS ===\n";
     
-    // Kiểm tra cấu trúc bảng
     $stmt = $pdo->query("DESCRIBE frontends");
     $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -21,7 +19,6 @@ try {
     
     echo "\n=== DỮ LIỆU HIỆN TẠI ===\n";
     
-    // Kiểm tra dữ liệu hiện tại
     $stmt = $pdo->query("SELECT * FROM frontends WHERE data_keys = 'blog.element' ORDER BY id");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -31,7 +28,6 @@ try {
     
     echo "\n=== KIỂM TRA AUTO_INCREMENT ===\n";
     
-    // Kiểm tra AUTO_INCREMENT
     $stmt = $pdo->query("SHOW TABLE STATUS LIKE 'frontends'");
     $tableStatus = $stmt->fetch(PDO::FETCH_ASSOC);
     

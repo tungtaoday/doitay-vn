@@ -2,6 +2,10 @@
 @php
     $regContent = getContent('register.content', true);
 @endphp
+
+@push('meta')
+@include('partials.auth_seo')
+@endpush
 @section('content')
     @if (gs('registration'))
         <section class="account-section">

@@ -10,6 +10,7 @@
 
 @push('meta')
 <meta name="csrf-token" content="{{ csrf_token() }}">
+@include('partials.auth_seo')
 @endpush
 
 @section('content')

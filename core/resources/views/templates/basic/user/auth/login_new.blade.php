@@ -4,6 +4,10 @@
 <link rel="stylesheet" href="{{ asset('assets/templates/basic/css/auth-system.css') }}">
 @endpush
 
+@push('meta')
+@include('partials.auth_seo')
+@endpush
+
 @section('content')
 <section class="auth-section">
     <div class="container">

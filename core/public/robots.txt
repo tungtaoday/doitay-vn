@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Chặn Google index các trang auth
+Disallow: /user/login
+Disallow: /user/login-v2
+Disallow: /user/register
+Disallow: /user/register-v2
+Disallow: /user/password/*
+Disallow: /user/authorization
+Disallow: /admin/*
+Disallow: /user/*
+
+# Cho phép index homepage và các trang chính
+Allow: /
+Allow: /blog
+Allow: /companies
+Allow: /about
+Allow: /contact
+
+# Sitemap
+Sitemap: {{ route('home') }}/sitemap.xml 
