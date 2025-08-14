@@ -29,7 +29,7 @@
                 </div>
 
                 <!-- Company Form -->
-                <div class="profile-form-container">
+                <div class="profile-form-container edit-form-buttons">
                     <form action="{{ route('user.company.update', $company->id) }}" method="post"
                         enctype="multipart/form-data" class="modern-form disableSubmission">
                         @csrf
@@ -309,7 +309,7 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        <button type="button" class="btn btn--base btn-sm mt-2 add-service"><i class="la la-plus"></i> @lang('Thêm dịch vụ')</button>
+                                        <button type="button" class="btn btn--base btn-sm mt-2 add-service" style="display: inline-block !important; background-color: #28a745 !important; color: #fff !important; border: 1px solid #28a745 !important; padding: 8px 16px !important; border-radius: 4px !important; cursor: pointer !important;"><i class="la la-plus"></i> @lang('Thêm dịch vụ')</button>
                                     </div>
                                     
                                     <!-- Business Hours Section -->
@@ -819,6 +819,39 @@
             align-items: center;
         }
         
+        /* Ensure buttons are visible and clickable */
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+        
+        .btn--danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: #fff;
+        }
+        
+        .btn--danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        
         .business-hours-container {
             background: #f8f9fa;
             padding: 20px;
@@ -841,12 +874,35 @@
         }
         
         .add-service {
-            background-color: #28a745;
-            color: #fff;
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid #007bff !important;
+            padding: 8px 16px !important;
+            border-radius: 4px !important;
+            font-size: 14px !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            display: inline-block !important;
+            text-decoration: none !important;
+            margin-top: 8px !important;
+            margin-bottom: 8px !important;
         }
         
         .add-service:hover {
-            background-color: #218838;
+            background-color: #0056b3 !important;
+            border-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .btn--base {
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+        }
+        
+        .btn--base:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
         }
         .certificate-entry .row, .project-entry .row {
             align-items: center;
@@ -962,7 +1018,12 @@
             // Services Management
             let serviceIndex = $('.service-entry').length;
             
+            console.log('Service index initialized:', serviceIndex);
+            console.log('Add service button found:', $('.add-service').length);
+            
             $('.add-service').on('click', function() {
+                console.log('Add service button clicked!');
+                console.log('Current service index:', serviceIndex);
                 serviceIndex++;
                 const newService = `
                     <div class="service-entry mb-3">
