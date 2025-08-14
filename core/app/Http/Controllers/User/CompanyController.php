@@ -191,6 +191,10 @@ class CompanyController extends Controller
             // Store tags if provided
             if ($request->has('tags') && is_array($request->tags)) {
                 $company->tags = array_filter($request->tags);
+            } elseif ($request->has('tags_input') && !empty($request->tags_input)) {
+                // Handle tags_input from form (comma-separated string)
+                $tags = array_map('trim', explode(',', $request->tags_input));
+                $company->tags = array_filter($tags);
             }
             
             $company->save();
@@ -376,8 +380,14 @@ class CompanyController extends Controller
             }
             
             // Handle tags - only if column exists
-            if (Schema::hasColumn('companies', 'tags') && $request->has('tags') && is_array($request->tags)) {
-                $company->tags = $request->tags;
+            if (Schema::hasColumn('companies', 'tags')) {
+                if ($request->has('tags') && is_array($request->tags)) {
+                    $company->tags = $request->tags;
+                } elseif ($request->has('tags_input') && !empty($request->tags_input)) {
+                    // Handle tags_input from form (comma-separated string)
+                    $tags = array_map('trim', explode(',', $request->tags_input));
+                    $company->tags = array_filter($tags);
+                }
             }
             
             // Handle services - only if column exists

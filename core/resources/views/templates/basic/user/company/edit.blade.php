@@ -221,6 +221,164 @@
                                         </div>
                                         <button type="button" class="btn btn--base btn-sm mt-2 add-certificate"><i class="la la-plus"></i> @lang('Thêm chứng chỉ')</button>
                                     </div>
+                                    
+                                    <!-- Experience Field -->
+                                    <div class="col-lg-6 form-group">
+                                        <label class="modern-label">
+                                            <i class="las la-clock"></i>
+                                            @lang('Kinh nghiệm làm việc')
+                                        </label>
+                                        <div class="select-wrapper">
+                                            <select name="experience" class="modern-select" required>
+                                                <option value="">@lang('Chọn kinh nghiệm')</option>
+                                                <option value="0" @selected($company->experience == 0)>0-1 năm</option>
+                                                <option value="2" @selected($company->experience == 2)>2-3 năm</option>
+                                                <option value="5" @selected($company->experience == 5)>5-7 năm</option>
+                                                <option value="8" @selected($company->experience == 8)>8-10 năm</option>
+                                                <option value="10" @selected($company->experience == 10)>Trên 10 năm</option>
+                                            </select>
+                                            <div class="select-arrow">
+                                                <i class="las la-chevron-down"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Tags Field -->
+                                    <div class="col-lg-6 form-group">
+                                        <label class="modern-label">
+                                            <i class="las la-tags"></i>
+                                            @lang('Từ khóa dịch vụ')
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <input type="text" name="tags_input" class="modern-input"
+                                                value="{{ is_array($company->tags) ? implode(', ', $company->tags) : ($company->tags ?? '') }}"
+                                                placeholder="@lang('VD: sửa chữa, thi công, bảo trì')">
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        <small class="form-text text-muted">@lang('Phân cách bằng dấu phẩy')</small>
+                                    </div>
+                                    
+                                    <!-- Services Section -->
+                                    <div class="col-lg-12 form-group">
+                                        <label class="modern-label">
+                                            <i class="las la-concierge-bell"></i>
+                                            @lang('Dịch vụ cung cấp')
+                                        </label>
+                                        <div class="services-container">
+                                            @if(!empty($company->services))
+                                                @foreach($company->services as $i => $service)
+                                                    <div class="service-entry mb-3">
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <input type="text" name="services[{{ $i }}][name]" class="form--control"
+                                                                    placeholder="@lang('Tên dịch vụ')" value="{{ $service['name'] ?? '' }}" required>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <input type="text" name="services[{{ $i }}][price]" class="form--control"
+                                                                    placeholder="@lang('Giá dịch vụ')" value="{{ $service['price'] ?? '' }}">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <textarea name="services[{{ $i }}][description]" class="form--control"
+                                                                    placeholder="@lang('Mô tả dịch vụ')" rows="2">{{ $service['description'] ?? '' }}</textarea>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <button type="button" class="btn btn--danger btn-sm remove-service"><i class="la la-trash"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <div class="service-entry mb-3">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <input type="text" name="services[0][name]" class="form--control"
+                                                                placeholder="@lang('Tên dịch vụ')" required>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <input type="text" name="services[0][price]" class="form--control"
+                                                                placeholder="@lang('Giá dịch vụ')">
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <textarea name="services[0][description]" class="form--control"
+                                                                placeholder="@lang('Mô tả dịch vụ')" rows="2"></textarea>
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <button type="button" class="btn btn--danger btn-sm remove-service"><i class="la la-trash"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <button type="button" class="btn btn--base btn-sm mt-2 add-service"><i class="la la-plus"></i> @lang('Thêm dịch vụ')</button>
+                                    </div>
+                                    
+                                    <!-- Business Hours Section -->
+                                    <div class="col-lg-12 form-group">
+                                        <label class="modern-label">
+                                            <i class="las la-clock"></i>
+                                            @lang('Giờ làm việc')
+                                        </label>
+                                        <div class="business-hours-container">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label class="form-label">@lang('Ngày thường')</label>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <input type="time" name="business_hours[weekdays][start]" class="form--control"
+                                                                value="{{ $company->business_hours['weekdays']['start'] ?? '08:00' }}">
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <input type="time" name="business_hours[weekdays][end]" class="form--control"
+                                                                value="{{ $company->business_hours['weekdays']['end'] ?? '18:00' }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">@lang('Thứ 7')</label>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <input type="time" name="business_hours[saturday][start]" class="form--control"
+                                                                value="{{ $company->business_hours['saturday']['start'] ?? '08:00' }}">
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <input type="time" name="business_hours[saturday][end]" class="form--control"
+                                                                value="{{ $company->business_hours['saturday']['end'] ?? '16:00' }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">@lang('Chủ nhật')</label>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <select name="business_hours[sunday][status]" class="form--control">
+                                                                <option value="open" @selected(($company->business_hours['sunday']['status'] ?? 'closed') == 'open')>@lang('Mở cửa')</option>
+                                                                <option value="closed" @selected(($company->business_hours['sunday']['status'] ?? 'closed') == 'closed')>@lang('Đóng cửa')</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="time" name="business_hours[sunday][start]" class="form--control"
+                                                                value="{{ $company->business_hours['sunday']['start'] ?? '09:00' }}"
+                                                                @if(($company->business_hours['sunday']['status'] ?? 'closed') == 'closed') disabled @endif>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="time" name="business_hours[sunday][end]" class="form--control"
+                                                                value="{{ $company->business_hours['sunday']['end'] ?? '15:00' }}"
+                                                                @if(($company->business_hours['sunday']['status'] ?? 'closed') == 'closed') disabled @endif>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">@lang('24/7')</label>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="business_hours[24_7]" class="form-check-input" value="1"
+                                                            @checked(($company->business_hours['24_7'] ?? false) == true)>
+                                                        <label class="form-check-label">@lang('Hoạt động 24/7')</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="col-lg-12 form-group">
                                         <label>@lang('Dự án tiêu biểu') </label>
                                         <div class="project-container">
@@ -649,12 +807,46 @@
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
             margin-top: 0px !important;
         }
-        .certificate-entry, .project-entry {
+        .certificate-entry, .project-entry, .service-entry {
             border: 1px solid #e0e0e0;
             padding: 15px;
             border-radius: 8px;
             background-color: #f9f9f9;
             margin-bottom: 10px;
+        }
+        
+        .service-entry .row {
+            align-items: center;
+        }
+        
+        .business-hours-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .business-hours-container .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .remove-service {
+            display: none;
+        }
+        
+        .service-entry:not(:first-child) .remove-service {
+            display: inline-block;
+        }
+        
+        .add-service {
+            background-color: #28a745;
+            color: #fff;
+        }
+        
+        .add-service:hover {
+            background-color: #218838;
         }
         .certificate-entry .row, .project-entry .row {
             align-items: center;
@@ -758,6 +950,82 @@
             function companyProfilePhoto(input) {
                 if (input.files && input.files[0]) {
                     var reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        $('#imagePreview img').attr('src', e.target.result);
+                    }
+                    
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            
+            // Services Management
+            let serviceIndex = $('.service-entry').length;
+            
+            $('.add-service').on('click', function() {
+                serviceIndex++;
+                const newService = `
+                    <div class="service-entry mb-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" name="services[${serviceIndex}][name]" class="form--control"
+                                    placeholder="@lang('Tên dịch vụ')" required>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" name="services[${serviceIndex}][price]" class="form--control"
+                                    placeholder="@lang('Giá dịch vụ')">
+                            </div>
+                            <div class="col-md-3">
+                                <textarea name="services[${serviceIndex}][description]" class="form--control"
+                                    placeholder="@lang('Mô tả dịch vụ')" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn--danger btn-sm remove-service"><i class="la la-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('.services-container').append(newService);
+            });
+            
+            $(document).on('click', '.remove-service', function() {
+                $(this).closest('.service-entry').remove();
+            });
+            
+            // Business Hours Management
+            $('select[name="business_hours[sunday][status]"]').on('change', function() {
+                const isOpen = $(this).val() === 'open';
+                $('input[name="business_hours[sunday][start]"]').prop('disabled', !isOpen);
+                $('input[name="business_hours[sunday][end]"]').prop('disabled', !isOpen);
+            });
+            
+            // 24/7 Toggle
+            $('input[name="business_hours[24_7]"]').on('change', function() {
+                const is247 = $(this).is(':checked');
+                if (is247) {
+                    $('input[name="business_hours[weekdays][start]"], input[name="business_hours[weekdays][end]"]').prop('disabled', true);
+                    $('input[name="business_hours[saturday][start]"], input[name="business_hours[saturday][end]"]').prop('disabled', true);
+                    $('select[name="business_hours[sunday][status]"]').prop('disabled', true);
+                    $('input[name="business_hours[sunday][start]"], input[name="business_hours[sunday][end]"]').prop('disabled', true);
+                } else {
+                    $('input[name="business_hours[weekdays][start]"], input[name="business_hours[weekdays][end]"]').prop('disabled', false);
+                    $('input[name="business_hours[saturday][start]"], input[name="business_hours[saturday][end]"]').prop('disabled', false);
+                    $('select[name="business_hours[sunday][status]"]').prop('disabled', false);
+                    // Re-check Sunday status
+                    const sundayStatus = $('select[name="business_hours[sunday][status]"]').val();
+                    if (sundayStatus === 'open') {
+                        $('input[name="business_hours[sunday][start]"], input[name="business_hours[sunday][end]"]').prop('disabled', false);
+                    }
+                }
+            });
+            
+            // Initialize 24/7 state
+            if ($('input[name="business_hours[24_7]"]').is(':checked')) {
+                $('input[name="business_hours[weekdays][start]"], input[name="business_hours[weekdays][end]"]').prop('disabled', true);
+                $('input[name="business_hours[saturday][start]"], input[name="business_hours[saturday][end]"]').prop('disabled', true);
+                $('select[name="business_hours[sunday][status]"]').prop('disabled', true);
+                $('input[name="business_hours[sunday][start]"], input[name="business_hours[sunday][end]"]').prop('disabled', true);
+            }
                     reader.onload = function(e) {
                         var preview = $(input).parents('.profile-thumb').find('.profilePicPreview');
                         $(preview).css('background-image', 'url(' + e.target.result + ')');

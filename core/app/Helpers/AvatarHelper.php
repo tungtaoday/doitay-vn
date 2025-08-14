@@ -132,8 +132,22 @@ class AvatarHelper
     {
         // If company has uploaded image
         if ($company->image) {
-            $rootAssetsPath = base_path('../assets/images/company/' . $company->image);
-            if (file_exists($rootAssetsPath)) {
+            // Try multiple paths for different environments
+            $paths = [
+                base_path('../assets/images/company/' . $company->image), // Local development
+                base_path('public/assets/images/company/' . $company->image), // Laravel public
+                public_path('assets/images/company/' . $company->image), // Laravel public helper
+                base_path('../../assets/images/company/' . $company->image), // Production relative
+            ];
+            
+            foreach ($paths as $path) {
+                if (file_exists($path)) {
+                    return asset('assets/images/company/' . $company->image);
+                }
+            }
+            
+            // If file doesn't exist locally but we're on production, return the URL directly
+            if (app()->environment('production') || app()->environment('staging')) {
                 return asset('assets/images/company/' . $company->image);
             }
         }
