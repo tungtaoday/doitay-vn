@@ -32,9 +32,9 @@
                                         <div class="contractor-meta">
                                             <div class="rating-section">
                                                 <div class="rating-stars">
-                                                    @php echo avgRating($company->avg_rating); @endphp
+                                                    @php echo avgRating($company->avg_rating ?? 0); @endphp
                                                 </div>
-                                                <span class="rating-score">{{ number_format($company->avg_rating, 1) }}</span>
+                                                <span class="rating-score">{{ number_format($company->avg_rating ?? 0, 1) }}</span>
                                                 <span class="rating-count">({{ $company->ratings->count() }} đánh giá)</span>
                                             </div>
                                             
@@ -45,7 +45,7 @@
                                             
                                             <div class="location-info">
                                                 <i class="las la-map-marker-alt"></i>
-                                                <span>{{ $company->address }}</span>
+                                                <span>{{ $company->address ?? 'Đang cập nhật' }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -62,7 +62,8 @@
                                         <span>Khu vực hoạt động</span>
                                     </div>
                                     <div class="location-address">
-                                        {{ $company->address }}
+                                        <strong>{{ $company->district ?? 'Đang cập nhật' }}</strong><br>
+                                        <small>{{ $company->city ?? '' }}</small>
                                     </div>
                                     
                                     <button type="button" class="btn btn-primary-cta" data-bs-toggle="modal" data-bs-target="#appointmentModal">
@@ -172,22 +173,22 @@
                                     <div class="stats-grid">
                                         <div class="stat-card">
                                             <div class="stat-number">{{ number_format($company->avg_rating, 1) }}</div>
-                                            <div class="stat-label">Điểm đánh giá</div>
+                                            <div class="stat-label" importance="high">Điểm đánh giá</div>
                                             <div class="stat-sublabel">Trên {{ $company->ratings->count() }} đánh giá</div>
                                         </div>
                                         <div class="stat-card">
                                             <div class="stat-number">{{ $company->experience ?? 5 }}+</div>
-                                            <div class="stat-label">Năm kinh nghiệm</div>
+                                            <div class="stat-label" importance="medium">Năm kinh nghiệm</div>
                                             <div class="stat-sublabel">Trong ngành</div>
                                         </div>
                                         <div class="stat-card">
                                             <div class="stat-number">100%</div>
-                                            <div class="stat-label">Hoàn thành</div>
+                                            <div class="stat-label" importance="high">Hoàn thành</div>
                                             <div class="stat-sublabel">Tỷ lệ dự án</div>
                                         </div>
                                         <div class="stat-card">
                                             <div class="stat-number">24/7</div>
-                                            <div class="stat-label">Hỗ trợ</div>
+                                            <div class="stat-label" importance="medium">Hỗ trợ</div>
                                             <div class="stat-sublabel">Khách hàng</div>
                                         </div>
                                     </div>
@@ -201,29 +202,41 @@
                                     Dịch vụ chuyên môn
                                 </h2>
                                 
-                                <div class="services-grid">
-                                    @if(isset($features) && $features->count() > 0)
-                                        @foreach($features as $feature)
-                                            <div class="service-item">
-                                                <div class="service-icon">
-                                                    <i class="las la-check-circle"></i>
+                                <!-- Company Services -->
+                                @if(isset($company->services) && is_array($company->services) && count($company->services) > 0)
+                                    <div class="company-services mb-4">
+                                        <h3 class="subsection-title">
+                                            <i class="las la-tools text-success"></i>
+                                            Dịch vụ của {{ $company->name }}
+                                        </h3>
+                                        <div class="services-grid">
+                                            @foreach($company->services as $service)
+                                                <div class="service-item">
+                                                    <div class="service-icon">
+                                                        <i class="las la-tools"></i>
+                                                    </div>
+                                                    <div class="service-content">
+                                                        <h3>{{ $service['name'] ?? 'Dịch vụ' }}</h3>
+                                                        <p>{{ $service['description'] ?? 'Dịch vụ chuyên nghiệp với chất lượng cao' }}</p>
+                                                        @if(isset($service['price']) && $service['price'])
+                                                            <div class="service-price-badge">
+                                                                <span class="price">{{ $service['price'] }}</span>
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 </div>
-                                                <div class="service-content">
-                                                    <h3>{{ $feature->name }}</h3>
-                                                    <p>Dịch vụ chuyên nghiệp với chất lượng cao</p>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div class="no-services">
-                                            <div class="empty-state">
-                                                <i class="las la-tools"></i>
-                                                <h3>Dịch vụ đang cập nhật</h3>
-                                                <p>Thông tin dịch vụ chi tiết sẽ sớm được bổ sung</p>
-                                            </div>
+                                            @endforeach
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                @else
+                                    <div class="no-services">
+                                        <div class="empty-state">
+                                            <i class="las la-tools"></i>
+                                            <h3>Dịch vụ đang cập nhật</h3>
+                                            <p>Thông tin dịch vụ chi tiết sẽ sớm được bổ sung</p>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                             <!-- Reviews Section -->
@@ -351,10 +364,15 @@
                                 
                                 <div class="photo-gallery">
                                     @if($company->portfolios->count() > 0)
-                                        <div class="main-photo">
-                                            <img src="{{ getImage(getFilePath('portfolio') . '/' . $company->portfolios->first()->image) }}" 
-                                                 alt="{{ $company->portfolios->first()->title }}" class="gallery-main-image">
-                                        </div>
+                                        @php
+                                            $firstPortfolio = $company->portfolios->first();
+                                        @endphp
+                                        @if($firstPortfolio)
+                                            <div class="main-photo">
+                                                <img src="{{ getImage(getFilePath('portfolio') . '/' . $firstPortfolio->image) }}" 
+                                                     alt="{{ $firstPortfolio->title ?? 'Dự án' }}" class="gallery-main-image">
+                                            </div>
+                                        @endif
                                         
                                         <div class="photo-grid">
                                             @foreach($company->portfolios->take(8) as $portfolio)
@@ -397,20 +415,56 @@
                                     Giờ làm việc
                                 </h3>
                                 
-                                <div class="hours-list">
-                                    <div class="hours-item">
-                                        <span class="day">Thứ 2 - Thứ 6</span>
-                                        <span class="time">8:00 - 18:00</span>
+                                @if(isset($company->business_hours) && is_array($company->business_hours))
+                                    <div class="hours-list">
+                                        <div class="hours-item">
+                                            <span class="day">Thứ 2 - Thứ 6</span>
+                                            <span class="time">
+                                                {{ $company->business_hours['weekdays']['start'] ?? '08:00' }} - 
+                                                {{ $company->business_hours['weekdays']['end'] ?? '18:00' }}
+                                            </span>
+                                        </div>
+                                        <div class="hours-item">
+                                            <span class="day">Thứ 7</span>
+                                            <span class="time">
+                                                {{ $company->business_hours['saturday']['start'] ?? '08:00' }} - 
+                                                {{ $company->business_hours['saturday']['end'] ?? '16:00' }}
+                                            </span>
+                                        </div>
+                                        <div class="hours-item">
+                                            <span class="day">Chủ nhật</span>
+                                            <span class="time">
+                                                @if(isset($company->business_hours['sunday']['status']) && $company->business_hours['sunday']['status'] === 'open')
+                                                    {{ $company->business_hours['sunday']['start'] ?? '09:00' }} - 
+                                                    {{ $company->business_hours['sunday']['end'] ?? '15:00' }}
+                                                @else
+                                                    Nghỉ
+                                                @endif
+                                            </span>
+                                        </div>
+                                        @if(isset($company->business_hours['24_7']) && $company->business_hours['24_7'])
+                                            <div class="hours-item special">
+                                                <span class="day">Dịch vụ 24/7</span>
+                                                <span class="time">Khẩn cấp</span>
+                                            </div>
+                                        @endif
                                     </div>
-                                    <div class="hours-item">
-                                        <span class="day">Thứ 7</span>
-                                        <span class="time">8:00 - 16:00</span>
+                                @else
+                                    <div class="hours-list">
+                                        <div class="hours-item">
+                                            <span class="day">Thứ 2 - Thứ 6</span>
+                                            <span class="time">8:00 - 18:00</span>
+                                        </div>
+                                        <div class="hours-item">
+                                            <span class="day">Thứ 7</span>
+                                            <span class="time">8:00 - 16:00</span>
+                                        </div>
+                                        <div class="hours-item">
+                                            <span class="day">Chủ nhật</span>
+                                            <span class="time">Nghỉ</span>
+                                        </div>
                                     </div>
-                                    <div class="hours-item">
-                                        <span class="day">Chủ nhật</span>
-                                        <span class="time">Nghỉ</span>
-                                    </div>
-                                </div>
+                                @endif
                             </div>
 
                             <!-- Response Card -->
@@ -1149,10 +1203,20 @@
 .stat-label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--gray-600);
+    color: #000000;
     margin-top: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.stat-label[importance="high"] {
+    color: #000000;
+    font-weight: 700;
+}
+
+.stat-label[importance="medium"] {
+    color: #000000;
+    font-weight: 600;
 }
 
 .stat-sublabel {
@@ -1161,11 +1225,92 @@
     margin-top: 4px;
 }
 
+/* Stats Grid Enhancement */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.8rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    border-color: var(--primary-light);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+}
+
 /* === SERVICES SECTION === */
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
+}
+
+/* Company Services */
+.company-services {
+    margin-bottom: 3rem;
+}
+
+.subsection-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.service-price-badge {
+    margin-top: 0.5rem;
+}
+
+.service-price-badge .price {
+    background: var(--primary-light);
+    color: var(--white);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .service-item {
@@ -2740,19 +2885,19 @@
 @endpush
 
 @push('meta')
-    <meta name="description" content="Khám phá chuyên gia {{ $company->name }} tại {{ $company->address }}. Xem kỹ năng, dự án tiêu biểu và đánh giá.">
-    <meta name="keywords" content="{{ $company->name }}, thuê chuyên gia, {{ $company->address }}, {{ is_array($company->tags) ? implode(', ', $company->tags) : $company->tags }}">
+    <meta name="description" content="Khám phá chuyên gia {{ $company->name }} tại {{ $company->address ?? 'Đang cập nhật' }}. Xem kỹ năng, dự án tiêu biểu và đánh giá.">
+    <meta name="keywords" content="{{ $company->name }}, thuê chuyên gia, {{ $company->address ?? 'Đang cập nhật' }}, {{ is_array($company->tags) ? (isset($company->tags['tags']) ? implode(', ', $company->tags['tags']) : '') : ($company->tags ?? '') }}">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "Person",
-        "name": "{{ $company->name }}",
+        "name": "{{ $company->name ?? 'Đang cập nhật' }}",
         "jobTitle": "Chuyên Gia",
         "address": {
             "@type": "PostalAddress",
-            "streetAddress": "{{ $company->address }}"
+            "streetAddress": "{{ $company->address ?? 'Đang cập nhật' }}"
         },
-        "email": "{{ $company->email }}"
+        "email": "{{ $company->email ?? 'Đang cập nhật' }}"
     }
     </script>
 @endpush

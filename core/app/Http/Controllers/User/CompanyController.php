@@ -99,8 +99,21 @@ class CompanyController extends Controller
             'district_code' => 'required', 
             'ward_code' => 'nullable',
             'description' => 'required|string|min:50',
-            'experience' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'experience' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'services' => 'nullable|array',
+            'services.*.name' => 'nullable|string|max:255',
+            'services.*.description' => 'nullable|string|max:500',
+            'services.*.price' => 'nullable|string|max:100',
+            'business_hours' => 'nullable|array',
+            'business_hours.weekdays.start' => 'nullable|date_format:H:i',
+            'business_hours.weekdays.end' => 'nullable|date_format:H:i',
+            'business_hours.saturday.start' => 'nullable|date_format:H:i',
+            'business_hours.saturday.end' => 'nullable|date_format:H:i',
+            'business_hours.sunday.status' => 'nullable|in:open,closed',
+            'business_hours.sunday.start' => 'nullable|date_format:H:i',
+            'business_hours.sunday.end' => 'nullable|date_format:H:i',
+            'business_hours.24_7' => 'nullable|boolean'
         ]);
 
         try {
@@ -162,6 +175,24 @@ class CompanyController extends Controller
             $company->category_id = $request->category;
             $company->user_id = auth()->id();
             $company->status = 2; // Pending approval
+            
+            // Store services if provided
+            if ($request->has('services') && is_array($request->services)) {
+                $company->services = array_filter($request->services, function($service) {
+                    return !empty($service['name']);
+                });
+            }
+            
+            // Store business hours if provided
+            if ($request->has('business_hours') && is_array($request->business_hours)) {
+                $company->business_hours = $request->business_hours;
+            }
+            
+            // Store tags if provided
+            if ($request->has('tags') && is_array($request->tags)) {
+                $company->tags = array_filter($request->tags);
+            }
+            
             $company->save();
 
             // Store certificates if provided
@@ -347,6 +378,18 @@ class CompanyController extends Controller
             // Handle tags - only if column exists
             if (Schema::hasColumn('companies', 'tags') && $request->has('tags') && is_array($request->tags)) {
                 $company->tags = $request->tags;
+            }
+            
+            // Handle services - only if column exists
+            if (Schema::hasColumn('companies', 'services') && $request->has('services') && is_array($request->services)) {
+                $company->services = array_filter($request->services, function($service) {
+                    return !empty($service['name']);
+                });
+            }
+            
+            // Handle business hours - only if column exists
+            if (Schema::hasColumn('companies', 'business_hours') && $request->has('business_hours') && is_array($request->business_hours)) {
+                $company->business_hours = $request->business_hours;
             }
             
             $company->save();

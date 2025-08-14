@@ -13,7 +13,9 @@ class Company extends Model
     use UserNotify, Notifiable;
 
     protected $casts = [
-        'tags' => 'array'
+        'tags' => 'array',
+        'services' => 'array',
+        'business_hours' => 'array'
     ];
 
 

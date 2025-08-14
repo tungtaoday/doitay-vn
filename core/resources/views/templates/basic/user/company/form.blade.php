@@ -155,7 +155,19 @@
                                         </select>
                                     </div>
                                     
-                                    <div class="col-md-12 mb-4">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="fw-semibold mb-2">Số Năm Kinh Nghiệm *</label>
+                                        <select name="experience" class="form-select form-select-lg" data-required="true">
+                                            <option value="">Chọn số năm kinh nghiệm</option>
+                                            <option value="0" {{ old('experience') == '0' ? 'selected' : '' }}>Mới vào nghề (0-1 năm)</option>
+                                            <option value="2" {{ old('experience') == '2' ? 'selected' : '' }}>2-3 năm</option>
+                                            <option value="5" {{ old('experience') == '5' ? 'selected' : '' }}>5-7 năm</option>
+                                            <option value="8" {{ old('experience') == '8' ? 'selected' : '' }}>8-10 năm</option>
+                                            <option value="10" {{ old('experience') == '10' ? 'selected' : '' }}>Trên 10 năm</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-4">
                                         <label class="fw-semibold mb-2">Mô Tả Kỹ Năng & Kinh Nghiệm *</label>
                                         <textarea name="description" class="form-control" rows="6" 
                                                   placeholder="Giới thiệu về kỹ năng, kinh nghiệm làm việc, thế mạnh, cam kết chất lượng..." data-required="true">{{ old('description') }}</textarea>
@@ -209,6 +221,86 @@
                                     </button>
                                     </div>
 
+                                <!-- Services Section -->
+                                <div class="services-section mb-4">
+                                    <h5 class="section-title">
+                                        <i class="fas fa-tools text-success me-2"></i>
+                                        Dịch Vụ Cung Cấp
+                                    </h5>
+                                    <div class="services-container">
+                                        <div class="service-item">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <input type="text" name="services[0][name]" class="form-control mb-3" 
+                                                           placeholder="Tên dịch vụ (VD: Sửa chữa điện, Thi công xây dựng...)">
+                                                    <textarea name="services[0][description]" class="form-control" rows="2"
+                                                              placeholder="Mô tả ngắn về dịch vụ..."></textarea>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="text" name="services[0][price]" class="form-control" 
+                                                           placeholder="Giá (VD: 500k)">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-outline-danger remove-service d-none">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-success btn-sm mt-3 add-service">
+                                        <i class="fas fa-plus me-2"></i>Thêm Dịch Vụ
+                                    </button>
+                                </div>
+
+                                <!-- Business Hours Section -->
+                                <div class="business-hours-section mb-4">
+                                    <h5 class="section-title">
+                                        <i class="fas fa-clock text-primary me-2"></i>
+                                        Giờ Làm Việc
+                                    </h5>
+                                    <div class="hours-container">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label class="fw-semibold mb-2">Thứ 2 - Thứ 6</label>
+                                                <div class="input-group">
+                                                    <input type="time" name="business_hours[weekdays][start]" class="form-control" value="08:00">
+                                                    <span class="input-group-text">đến</span>
+                                                    <input type="time" name="business_hours[weekdays][end]" class="form-control" value="18:00">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="fw-semibold mb-2">Thứ 7</label>
+                                                <div class="input-group">
+                                                    <input type="time" name="business_hours[saturday][start]" class="form-control" value="08:00">
+                                                    <span class="input-group-text">đến</span>
+                                                    <input type="time" name="business_hours[saturday][end]" class="form-control" value="16:00">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="fw-semibold mb-2">Chủ nhật</label>
+                                                <div class="input-group">
+                                                    <select name="business_hours[sunday][status]" class="form-select">
+                                                        <option value="closed">Nghỉ</option>
+                                                        <option value="open">Có làm việc</option>
+                                                    </select>
+                                                    <div class="sunday-hours d-none">
+                                                        <input type="time" name="business_hours[sunday][start]" class="form-control" value="09:00">
+                                                        <span class="input-group-text">đến</span>
+                                                        <input type="time" name="business_hours[sunday][end]" class="form-control" value="15:00">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" name="business_hours[24_7]" id="24_7_service">
+                                            <label class="form-check-label" for="24_7_service">
+                                                Dịch vụ 24/7 (khẩn cấp)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Portfolio Section -->
                                 <div class="portfolio-section mb-4">
                                     <h5 class="section-title">
@@ -227,10 +319,10 @@
                                                 <div class="col-md-4">
                                                     <div class="project-image-upload">
                                                         <div class="image-preview">
-                                                            <img class="project-preview" src="{{ getImage('', '300x200') }}" alt="Project Image">
+                                                            <img class="project-preview" src="{{ getImage('', '700x500') }}" alt="Project Image">
                                                             <div class="upload-overlay">
                                                                 <i class="fas fa-camera"></i>
-                                                                <p>Thêm Ảnh</p>
+                                                                <p>Thêm Ảnh<br><small>700x500px</small></p>
                                                             </div>
                                                         </div>
                                                         <input type="file" name="projects[0][image]" class="project-file-input" accept="image/*" hidden>
@@ -461,7 +553,7 @@ label {
 .image-preview {
     position: relative;
     width: 100%;
-    height: 120px;
+    height: 300px;
     border: 2px dashed #dee2e6;
     border-radius: 10px;
     overflow: hidden;
@@ -768,10 +860,10 @@ label {
                     <div class="col-md-4">
                         <div class="project-image-upload">
                             <div class="image-preview">
-                                <img class="project-preview" src="{{ getImage('', '300x200') }}" alt="Project Image">
+                                <img class="project-preview" src="{{ getImage('', '700x500') }}" alt="Project Image">
                                 <div class="upload-overlay">
                                     <i class="fas fa-camera"></i>
-                                    <p>Thêm Ảnh</p>
+                                    <p>Thêm Ảnh<br><small>700x500px</small></p>
                                 </div>
                             </div>
                             <input type="file" name="projects[${projectIndex}][image]" class="project-file-input" accept="image/*" hidden>
@@ -788,6 +880,33 @@ label {
                 projectIndex++;
             });
 
+            // Add service functionality
+            $('.add-service').on('click', function() {
+                const serviceCount = $('.service-item').length;
+                const newService = `
+                    <div class="service-item">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="text" name="services[${serviceCount}][name]" class="form-control mb-3" 
+                                       placeholder="Tên dịch vụ (VD: Sửa chữa điện, Thi công xây dựng...)">
+                                <textarea name="services[${serviceCount}][description]" class="form-control" rows="2"
+                                          placeholder="Mô tả ngắn về dịch vụ..."></textarea>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" name="services[${serviceCount}][price]" class="form-control" 
+                                       placeholder="Giá (VD: 500k)">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-outline-danger remove-service">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('.services-container').append(newService);
+            });
+
     $(document).on('click', '.remove-cert', function() {
         $(this).closest('.certificate-item').fadeOut(function() {
             $(this).remove();
@@ -799,6 +918,21 @@ label {
             $(this).remove();
         });
     });
+
+            $(document).on('click', '.remove-service', function() {
+                $(this).closest('.service-item').fadeOut(function() {
+                    $(this).remove();
+                });
+            });
+
+            // Business hours functionality
+            $('select[name="business_hours[sunday][status]"]').on('change', function() {
+                if ($(this).val() === 'open') {
+                    $('.sunday-hours').removeClass('d-none');
+                } else {
+                    $('.sunday-hours').addClass('d-none');
+                }
+            });
 
          // Location API handlers
      function loadCities() {

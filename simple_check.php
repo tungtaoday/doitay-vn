@@ -5,36 +5,38 @@ $username = 'root';
 $password = 'Vuivui@123';
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     
-    echo "=== CẤU TRÚC BẢNG FRONTENDS ===\n";
+    echo "=== COMPANY ID 61 ===\n";
+    $stmt = $pdo->prepare("SELECT id, name, email, address, tags, services, business_hours FROM companies WHERE id = 61");
+    $stmt->execute();
+    $company = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    $stmt = $pdo->query("DESCRIBE frontends");
-    $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    foreach ($columns as $col) {
-        echo $col['Field'] . " - " . $col['Type'] . " - " . $col['Null'] . " - " . $col['Key'] . " - " . $col['Default'] . " - " . $col['Extra'] . "\n";
+    if ($company) {
+        echo "ID: " . $company['id'] . "\n";
+        echo "Name: " . $company['name'] . "\n";
+        echo "Email: " . $company['email'] . "\n";
+        echo "Address: " . $company['address'] . "\n";
+        echo "Tags length: " . strlen($company['tags']) . "\n";
+        echo "Tags preview: " . substr($company['tags'], 0, 200) . "...\n";
+        echo "Services: " . $company['services'] . "\n";
+        echo "Business Hours: " . $company['business_hours'] . "\n";
+        
+        // Kiểm tra JSON
+        if ($company['tags']) {
+            $decoded = json_decode($company['tags'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                echo "Tags JSON: OK\n";
+                if (is_array($decoded)) {
+                    echo "Tags is array with " . count($decoded) . " items\n";
+                }
+            } else {
+                echo "Tags JSON ERROR: " . json_last_error_msg() . "\n";
+            }
+        }
     }
     
-    echo "\n=== DỮ LIỆU HIỆN TẠI ===\n";
-    
-    $stmt = $pdo->query("SELECT * FROM frontends WHERE data_keys = 'blog.element' ORDER BY id");
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    foreach ($rows as $row) {
-        echo "ID: " . $row['id'] . " | Slug: " . $row['slug'] . " | Created: " . $row['created_at'] . "\n";
-    }
-    
-    echo "\n=== KIỂM TRA AUTO_INCREMENT ===\n";
-    
-    $stmt = $pdo->query("SHOW TABLE STATUS LIKE 'frontends'");
-    $tableStatus = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    echo "Auto Increment: " . $tableStatus['Auto_increment'] . "\n";
-    echo "Engine: " . $tableStatus['Engine'] . "\n";
-    
-} catch(PDOException $e) {
-    echo "Lỗi kết nối: " . $e->getMessage();
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage() . "\n";
 }
 ?> 
