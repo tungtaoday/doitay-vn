@@ -122,25 +122,41 @@ class FrontendController extends Controller
                             ->where('tempname', activeTemplateName());
                     })];
                 }
+                
+                // Đảm bảo title unique cho blog mới
+                if ($inputField == 'title' && $key == 'blog' && $request->type == 'element') {
+                    $validationRule[$inputField] = ['required', 'string', 'max:255'];
+                }
             }
 
             $request->validate($validationRule, $validationMessage, ['image_input' => 'image']);
 
             if ($request->id) {
+                // Update existing content
                 $content = Frontend::findOrFail($request->id);
             } else {
-                // Tìm record hiện tại
-                $content = Frontend::where('data_keys', $key . '.' . $request->type);
-                if ($type != 'data') {
-                    $content = $content->where('tempname', activeTemplateName());
-                }
-                $content = $content->first();
-
-                // Chỉ tạo mới nếu thực sự cần thiết
-                if (!$content) {
+                // Create new content - ALWAYS create new for blog.element
+                if ($key == 'blog' && $request->type == 'element') {
                     $content = new Frontend();
                     $content->data_keys = $key . '.' . $request->type;
-                    // Không save ngay, để tránh tạo record với ID = 0
+                    $content->tempname = activeTemplateName();
+                    $content->created_at = now();
+                    $content->updated_at = now();
+                } else {
+                    // For other content types, check if exists
+                    $content = Frontend::where('data_keys', $key . '.' . $request->type);
+                    if ($type != 'data') {
+                        $content = $content->where('tempname', activeTemplateName());
+                    }
+                    $content = $content->first();
+
+                    if (!$content) {
+                        $content = new Frontend();
+                        $content->data_keys = $key . '.' . $request->type;
+                        $content->tempname = activeTemplateName();
+                        $content->created_at = now();
+                        $content->updated_at = now();
+                    }
                 }
             }
 
@@ -190,7 +206,11 @@ class FrontendController extends Controller
                 $content->save();
                 \Log::info('Content saved successfully', [
                     'id' => $content->id,
-                    'data_keys' => $content->data_keys
+                    'data_keys' => $content->data_keys,
+                    'is_new' => !$request->id,
+                    'key' => $key,
+                    'type' => $request->type,
+                    'slug' => $content->slug
                 ]);
             } catch (\Exception $e) {
                 \Log::error('Failed to save content', [
