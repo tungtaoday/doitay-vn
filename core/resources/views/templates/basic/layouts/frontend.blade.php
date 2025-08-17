@@ -88,7 +88,7 @@
             justify-content: center;
             width: 100%;
             height: 100%;
-        ">��</span>
+        ">💬</span>
     </div>
 
     <!-- <div class="scroll-to-top">

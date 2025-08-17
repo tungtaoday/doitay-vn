@@ -78,12 +78,12 @@
                                                     </button>
                                                 </div>
                                                 <small class="form-text text-muted">
-                                                    URL ảnh avatar cho widget chat. Để trống sẽ sử dụng file mặc định từ assets/images/zalo-avatar.jpg
+                                                    URL ảnh avatar cho widget chat. Để trống sẽ sử dụng file mặc định từ public/assets/images/zalo-avatar.jpg
                                                 </small>
                                                 <div class="mt-2">
                                                     <small class="text-info">
                                                         <i class="las la-info-circle"></i>
-                                                        File mặc định: <code>assets/images/zalo-avatar.jpg</code>
+                                                        File mặc định: <code>public/assets/images/zalo-avatar.jpg</code>
                                                     </small>
                                                 </div>
                                             </div>
