@@ -29,6 +29,29 @@
 
 <body>
 
+<!-- Zalo Chat Widget - Simple Button -->
+<div id="zalo-chat-widget" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #00A6FF 0%, #0088CC 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 166, 255, 0.3);
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 24px;
+    animation: zalo-pulse 2s infinite;
+" onclick="openZaloApp('0901234567')" title="Chat Zalo">
+    💬
+</div>
+
 @include($activeTemplate . 'partials.preloader')
 
     @yield('content')
@@ -48,74 +71,41 @@
 
     @php echo loadExtension('tawk-chat') @endphp
 
+    <!-- Zalo Chat Widget CSS -->
+    <style>
+    @keyframes zalo-pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    #zalo-chat-widget:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(0, 166, 255, 0.4);
+    }
+    </style>
+
+    <!-- Zalo Chat Widget JavaScript -->
+    <script>
+    function openZaloApp(phone) {
+        console.log('🎯 Mở Zalo app với số:', phone);
+        const zaloUrl = `zalo://chat?phone=${phone}`;
+        window.location.href = zaloUrl;
+        
+        setTimeout(() => {
+            const webUrl = `https://zalo.me/${phone}`;
+            window.open(webUrl, '_blank');
+        }, 1000);
+    }
+    
+    console.log('🎉 Zalo Widget đã được load!');
+    </script>
+
     @if (gs('pn'))
         @include('partials.push_script')
     @endif
 
     @stack('script')
-
-    <script>
-        (function($) {
-            "use strict";
-            
-            $('form').on('submit', function() {
-                if (typeof $(this).valid === 'function' && $(this).valid()) {
-                    $(':submit', this).attr('disabled', 'disabled');
-                } else if (typeof $(this).valid !== 'function') {
-                    // Fallback validation
-                    var isValid = true;
-                    $(this).find('[required]').each(function() {
-                        if (!$(this).val() || $(this).val().trim() === '') {
-                            isValid = false;
-                        }
-                    });
-                    if (isValid) {
-                        $(':submit', this).attr('disabled', 'disabled');
-                    }
-                }
-            });
-
-            $(".langSel").on("click", function() {
-                var value = $(this).data('value');
-                window.location.href = "{{ route('home') }}/change/" + value;
-            });
-
-            var inputElements = $('[type=text],[type=password],select,textarea');
-            $.each(inputElements, function(index, element) {
-                element = $(element);
-                element.closest('.form-group').find('label').attr('for', element.attr('name'));
-                element.attr('id', element.attr('name'))
-            });
-
-            $.each($('input, select, textarea'), function(i, element) {
-                if (element.hasAttribute('required') && element.type != 'checkbox') {
-                    $(element).closest('.form-group').find('label').addClass('required');
-                }
-            });
-
-            $('.showFilterBtn').on('click', function() {
-                $('.responsive-filter-card').slideToggle();
-            });
-
-            Array.from(document.querySelectorAll('table')).forEach(table => {
-                let heading = table.querySelectorAll('thead tr th');
-                Array.from(table.querySelectorAll('tbody tr')).forEach((row) => {
-                    Array.from(row.querySelectorAll('td')).forEach((colum, i) => {
-                        colum.setAttribute('data-label', heading[i].innerText)
-                    });
-                });
-            });
-
-            let disableSubmission = false;
-            $('.disableSubmission').on('submit', function(e) {
-                if (disableSubmission) {
-                    e.preventDefault()
-                } else {
-                    disableSubmission = true;
-                }
-            });
-        })(jQuery);
-    </script>
 </body>
 
 </html>

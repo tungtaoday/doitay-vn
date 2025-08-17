@@ -2,10 +2,6 @@
 @php
     $loginContent = getContent('login.content', true);
 @endphp
-
-@push('meta')
-@include('partials.auth_seo')
-@endpush
 @section('content')
     <section class="account-section">
         <div class="container">

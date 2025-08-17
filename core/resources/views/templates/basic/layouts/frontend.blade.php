@@ -38,6 +38,59 @@
 <body>
     @stack('fbComment')
 
+    <!-- Zalo Chat Widget - Simple Button -->
+    <div id="zalo-chat-widget" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #00A6FF 0%, #0088CC 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(0, 166, 255, 0.3);
+        transition: all 0.3s ease;
+        color: white;
+        font-size: 24px;
+        animation: zalo-pulse 2s infinite;
+        overflow: hidden;
+    " onclick="openZaloApp('{{ gs('zalo_phone') ?? '0901234567' }}')" title="Chat Zalo">
+        
+        @if(gs('zalo_avatar'))
+            <img src="{{ gs('zalo_avatar') }}" 
+                 alt="Zalo Avatar" 
+                 style="
+                     width: 100%;
+                     height: 100%;
+                     object-fit: cover;
+                     border-radius: 50%;
+                 "
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        @else
+            <img src="{{ asset('assets/images/zalo-avatar.jpg') }}" 
+                 alt="Zalo Avatar" 
+                 style="
+                     width: 100%;
+                     height: 100%;
+                     object-fit: cover;
+                     border-radius: 50%;
+                 "
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        @endif
+        
+        <span style="
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        ">��</span>
+    </div>
+
     <!-- <div class="scroll-to-top">
         <span class="scroll-icon">
             <i class="las la-arrow-up"></i>
@@ -93,6 +146,90 @@
     @endif
 
     @stack('script')
+
+    <!-- Zalo Chat Widget CSS -->
+    <style>
+    @keyframes zalo-pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    #zalo-chat-widget:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(0, 166, 255, 0.4);
+    }
+    </style>
+
+    <!-- Zalo Chat Widget JavaScript -->
+    <script>
+    function openZaloApp(phone) {
+        console.log('🎯 Mở Zalo app với số:', phone);
+        const zaloUrl = `zalo://chat?phone=${phone}`;
+        window.location.href = zaloUrl;
+        
+        setTimeout(() => {
+            const webUrl = `https://zalo.me/${phone}`;
+            window.open(webUrl, '_blank');
+        }, 1000);
+    }
+    
+    // Kiểm tra và xử lý avatar
+    document.addEventListener('DOMContentLoaded', function() {
+        const widget = document.getElementById('zalo-chat-widget');
+        const avatarImg = widget.querySelector('img');
+        const emojiSpan = widget.querySelector('span');
+        
+        console.log('🎉 Zalo Widget đã được load!');
+        console.log('📱 Số điện thoại:', '{{ gs('zalo_phone') ?? '0901234567' }}');
+        console.log('👤 Avatar từ admin:', '{{ gs('zalo_avatar') ?? 'Không có' }}');
+        console.log('🖼️ Avatar mặc định:', '{{ asset('assets/images/zalo-avatar.jpg') }}');
+        
+        if (avatarImg) {
+            console.log('🔍 Tìm thấy avatar image element');
+            console.log('📁 Avatar src:', avatarImg.src);
+            
+            // Xử lý lỗi load avatar
+            avatarImg.onerror = function() {
+                console.log('⚠️ Avatar không load được, chuyển sang emoji');
+                this.style.display = 'none';
+                emojiSpan.style.display = 'flex';
+            };
+            
+            // Avatar load thành công
+            avatarImg.onload = function() {
+                console.log('✅ Avatar đã load thành công!');
+                this.style.display = 'block';
+                emojiSpan.style.display = 'none';
+            };
+            
+            // Test avatar ngay lập tức
+            if (avatarImg.complete) {
+                console.log('✅ Avatar đã load xong');
+            } else {
+                console.log('⏳ Avatar đang load...');
+            }
+        } else {
+            console.log('❌ Không tìm thấy avatar image element');
+        }
+        
+        // Test tất cả đường dẫn avatar
+        const testPaths = [
+            '{{ asset('assets/images/zalo-avatar.jpg') }}',
+            '{{ gs('zalo_avatar') ?? 'Không có' }}'
+        ];
+        
+        console.log('🧪 Test các đường dẫn avatar:');
+        testPaths.forEach((path, index) => {
+            if (path && path !== 'Không có') {
+                const testImg = new Image();
+                testImg.onload = () => console.log(`✅ Path ${index + 1}: ${path} - LOAD THÀNH CÔNG`);
+                testImg.onerror = () => console.log(`❌ Path ${index + 1}: ${path} - LOAD THẤT BẠI`);
+                testImg.src = path;
+            }
+        });
+    });
+    </script>
 
     <!-- Include Tracking Scripts -->
     @include('templates.basic.partials.appointment-tracking')

@@ -107,6 +107,15 @@ Route::middleware('admin')->group(function () {
         Route::post('store/{id?}', 'store')->name('store');
     });
 
+    // Zalo Chat Settings
+    Route::controller('ZaloChatController')->name('settings.zalo.')->prefix('settings/zalo')->group(function(){
+        Route::get('chat', 'index')->name('chat');
+        Route::post('chat/update', 'update')->name('chat.update');
+        Route::get('chat/test', 'test')->name('chat.test');
+        Route::get('chat/settings', 'getSettings')->name('chat.settings');
+        Route::post('chat/reset', 'reset')->name('chat.reset');
+    });
+
     // Users Manager
     Route::controller('ManageUsersController')->name('users.')->prefix('users')->group(function(){
         Route::get('/', 'allUsers')->name('all');

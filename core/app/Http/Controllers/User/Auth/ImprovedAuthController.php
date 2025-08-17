@@ -69,24 +69,74 @@ class ImprovedAuthController extends Controller
         
         $exists = false;
         $field = '';
+        $identifier = '';
         
-        if (isset($data['email'])) {
-            $exists = User::where('email', $data['email'])->exists();
-            $field = 'Email';
-        } elseif (isset($data['mobile'])) {
-            $exists = User::where('mobile', $data['mobile'])->exists();
-            $field = 'Phone';
-        } elseif ($request->email) {
-            $exists = User::where('email', $request->email)->exists();
-            $field = 'Email';
-        } elseif ($request->mobile) {
-            $exists = User::where('mobile', $request->mobile)->exists();
-            $field = 'Phone';
+        // Check for email_or_phone field (from progressive form)
+        if (isset($data['email_or_phone'])) {
+            $identifier = $data['email_or_phone'];
+            $fieldType = $this->determineLoginFieldType($identifier);
+            
+            if ($fieldType === 'email') {
+                $exists = User::where('email', $identifier)->exists();
+                $field = 'Email';
+            } elseif ($fieldType === 'mobile') {
+                $exists = User::where('mobile', $identifier)->exists();
+                $field = 'Phone';
+                // Also check mobile variants
+                if (!$exists) {
+                    $mobileVariants = $this->getMobileVariants($identifier);
+                    foreach ($mobileVariants as $variant) {
+                        if (User::where('mobile', $variant)->exists()) {
+                            $exists = true;
+                            $field = 'Phone';
+                            break;
+                        }
+                    }
+                }
+            } else {
+                // Check as username, email, and mobile
+                $exists = User::where('username', $identifier)->exists();
+                if (!$exists) {
+                    $exists = User::where('email', $identifier)->exists();
+                    if ($exists) {
+                        $field = 'Email';
+                    }
+                }
+                if (!$exists) {
+                    $mobileVariants = $this->getMobileVariants($identifier);
+                    foreach ($mobileVariants as $variant) {
+                        if (User::where('mobile', $variant)->exists()) {
+                            $exists = true;
+                            $field = 'Phone';
+                            break;
+                        }
+                    }
+                }
+                if ($exists && $field === '') {
+                    $field = 'Username';
+                }
+            }
+        } else {
+            // Handle individual fields
+            if (isset($data['email'])) {
+                $exists = User::where('email', $data['email'])->exists();
+                $field = 'Email';
+            } elseif (isset($data['mobile'])) {
+                $exists = User::where('mobile', $data['mobile'])->exists();
+                $field = 'Phone';
+            } elseif ($request->email) {
+                $exists = User::where('email', $request->email)->exists();
+                $field = 'Email';
+            } elseif ($request->mobile) {
+                $exists = User::where('mobile', $request->mobile)->exists();
+                $field = 'Phone';
+            }
         }
 
         return response()->json([
             'exists' => $exists,
             'field' => $field,
+            'identifier' => $identifier,
             'message' => $exists ? 'Account already exists' : 'Available'
         ]);
     }
@@ -205,23 +255,20 @@ class ImprovedAuthController extends Controller
             $identifier = $request->identifier;
             $fieldType = $this->determineLoginFieldType($identifier);
             
-            // Attempt login
-            $credentials = [
-                $fieldType => $identifier,
-                'password' => $request->password
-            ];
-
-            if (Auth::attempt($credentials, $request->remember)) {
-                $user = Auth::user();
-                
+            // Attempt login with flexible field matching
+            $user = $this->findUserByField($identifier, $fieldType);
+            
+            if ($user && Hash::check($request->password, $user->password)) {
                 // Check user status
                 if (!$user->status) {
-                    Auth::logout();
                     return response()->json([
                         'success' => false,
                         'message' => 'Your account has been suspended.'
                     ], 403);
                 }
+
+                // Login user
+                Auth::login($user, $request->remember);
 
                 // Log successful login
                 $this->logUserLogin($user);
@@ -358,24 +405,57 @@ class ImprovedAuthController extends Controller
             $passwordValidation = $passwordValidation->mixedCase()->numbers();
         }
 
+        // Determine if user is registering with email or mobile
+        $loginField = $this->getRegistrationField($request->all());
+        
         $rules = [
-            'email' => 'required_without:mobile|string|email|unique:users',
-            'mobile' => 'required_without:email|string|unique:users',
             'password' => ['required', $passwordValidation],
             'firstname' => 'required|string|max:50',
             'lastname' => 'required|string|max:50',
             'user_role' => 'required|in:customer,contractor,both'
         ];
 
+        // Add validation for email or mobile based on input
+        if ($loginField === 'email') {
+            $rules['email'] = 'required|string|email|unique:users';
+            $rules['mobile'] = 'nullable|string|unique:users';
+        } elseif ($loginField === 'mobile') {
+            $rules['mobile'] = 'required|string|unique:users|regex:/^(\+84|84|0)[0-9]{9}$/';
+            $rules['email'] = 'nullable|string|email|unique:users';
+        } else {
+            // Default to email
+            $rules['email'] = 'required|string|email|unique:users';
+            $rules['mobile'] = 'nullable|string|unique:users';
+        }
+
         $messages = [
             'firstname.required' => 'First name is required',
             'lastname.required' => 'Last name is required',
             'user_role.required' => 'Please select your role',
             'email.unique' => 'This email is already registered',
-            'mobile.unique' => 'This phone number is already registered'
+            'mobile.unique' => 'This phone number is already registered',
+            'mobile.regex' => 'Số điện thoại không đúng định dạng Việt Nam'
         ];
 
         return Validator::make($request->all(), $rules, $messages);
+    }
+
+    /**
+     * Determine registration field type
+     */
+    private function getRegistrationField(array $data)
+    {
+        // Check if user provided email or mobile
+        if (isset($data['email']) && !empty($data['email'])) {
+            return 'email';
+        }
+        
+        if (isset($data['mobile']) && !empty($data['mobile'])) {
+            return 'mobile';
+        }
+        
+        // Default to email
+        return 'email';
     }
 
     /**
@@ -393,16 +473,30 @@ class ImprovedAuthController extends Controller
         $user->ev = gs('ev') ? Status::UNVERIFIED : Status::VERIFIED;
         $user->sv = gs('sv') ? Status::UNVERIFIED : Status::VERIFIED;
 
-        // Handle email or mobile
-        if (!empty($data['email'])) {
+        // Handle email or mobile based on registration field
+        $registrationField = $this->getRegistrationField($data);
+        
+        if ($registrationField === 'email' && !empty($data['email'])) {
             $user->email = strtolower($data['email']);
             if (!gs('ev')) {
                 $user->email_verified_at = now();
             }
         }
 
-        if (!empty($data['mobile'])) {
+        if ($registrationField === 'mobile' && !empty($data['mobile'])) {
             $user->mobile = $data['mobile'];
+            if (!gs('sv')) {
+                $user->mobile_verified_at = now();
+            }
+        }
+
+        // If user provided both, store both
+        if (!empty($data['email']) && !empty($data['mobile'])) {
+            $user->email = strtolower($data['email']);
+            $user->mobile = $data['mobile'];
+            if (!gs('ev')) {
+                $user->email_verified_at = now();
+            }
             if (!gs('sv')) {
                 $user->mobile_verified_at = now();
             }
@@ -535,11 +629,87 @@ class ImprovedAuthController extends Controller
             return 'email';
         }
         
-        if (preg_match('/^[0-9+\-\s()]+$/', $identifier)) {
+        if (preg_match('/^(\+84|84|0)[0-9]{9}$/', $identifier)) {
             return 'mobile';
         }
         
         return 'username';
+    }
+
+    /**
+     * Find user by flexible field matching
+     */
+    private function findUserByField($identifier, $fieldType)
+    {
+        // Try exact match first
+        $user = User::where($fieldType, $identifier)->first();
+        
+        if ($user) {
+            return $user;
+        }
+        
+        // If fieldType is mobile, try different mobile formats
+        if ($fieldType === 'mobile') {
+            $mobileVariants = $this->getMobileVariants($identifier);
+            
+            foreach ($mobileVariants as $variant) {
+                $user = User::where('mobile', $variant)->first();
+                if ($user) {
+                    return $user;
+                }
+            }
+        }
+        
+        // If fieldType is username, also try email and mobile
+        if ($fieldType === 'username') {
+            // Try as email
+            if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+                $user = User::where('email', $identifier)->first();
+                if ($user) {
+                    return $user;
+                }
+            }
+            
+            // Try as mobile
+            if (preg_match('/^(\+84|84|0)[0-9]{9}$/', $identifier)) {
+                $mobileVariants = $this->getMobileVariants($identifier);
+                
+                foreach ($mobileVariants as $variant) {
+                    $user = User::where('mobile', $variant)->first();
+                    if ($user) {
+                        return $user;
+                    }
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get mobile number variants for flexible matching
+     */
+    private function getMobileVariants($mobile)
+    {
+        $variants = [$mobile];
+        
+        // Remove all non-digit characters
+        $cleanMobile = preg_replace('/[^0-9]/', '', $mobile);
+        
+        if (strlen($cleanMobile) === 11 && substr($cleanMobile, 0, 2) === '84') {
+            // 84901234567 -> 0901234567
+            $variants[] = '0' . substr($cleanMobile, 2);
+        } elseif (strlen($cleanMobile) === 10 && substr($cleanMobile, 0, 1) === '0') {
+            // 0901234567 -> 84901234567
+            $variants[] = '84' . substr($cleanMobile, 1);
+        } elseif (strlen($cleanMobile) === 9 && substr($cleanMobile, 0, 1) !== '0') {
+            // 901234567 -> 0901234567
+            $variants[] = '0' . $cleanMobile;
+            // 901234567 -> 84901234567
+            $variants[] = '84' . $cleanMobile;
+        }
+        
+        return array_unique($variants);
     }
 
     /**

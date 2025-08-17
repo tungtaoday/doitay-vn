@@ -5,10 +5,12 @@ namespace App\Http\Controllers\User\Auth;
 use App\Http\Controllers\Controller;
 use App\Lib\Intended;
 use App\Models\UserLogin;
+use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Status;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -68,7 +70,19 @@ class LoginController extends Controller
     {
         $login = request()->input('username');
 
-        $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        // Check if input is email
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            $fieldType = 'email';
+        }
+        // Check if input is mobile number (Vietnamese format)
+        elseif (preg_match('/^(\+84|84|0)[0-9]{9}$/', $login)) {
+            $fieldType = 'mobile';
+        }
+        // Default to username
+        else {
+            $fieldType = 'username';
+        }
+
         request()->merge([$fieldType => $login]);
         return $fieldType;
     }
@@ -90,6 +104,24 @@ class LoginController extends Controller
             $validator->validate();
         }
 
+    }
+
+    protected function attemptLogin(Request $request)
+    {
+        $credentials = $request->only($this->username(), 'password');
+        
+        // Get the field type (email, mobile, or username)
+        $fieldType = $this->username();
+        
+        // Build the query based on field type
+        $user = User::where($fieldType, $credentials[$fieldType])->first();
+        
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            $this->guard()->login($user, $request->boolean('remember'));
+            return true;
+        }
+        
+        return false;
     }
 
     public function logout()

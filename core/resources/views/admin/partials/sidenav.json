@@ -316,6 +316,13 @@
             }
         ]
     },
+    "zalo_chat": {
+        "keyword": ["Zalo Chat", "Zalo", "Chat Widget", "Customer Support", "Live Chat", "Zalo Integration"],
+        "title": "Zalo Chat",
+        "icon": "las la-comments",
+        "route_name": "admin.settings.zalo.chat",
+        "menu_active": "admin.settings.zalo.chat"
+    },
     "system_setting": {
         "keyword": ["System Setting", "setting", "System configuration", "System preferences", "Configuration management", "System setup"],
         "title": "System Setting",
