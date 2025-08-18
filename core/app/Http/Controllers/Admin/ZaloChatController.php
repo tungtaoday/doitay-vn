@@ -15,6 +15,16 @@ class ZaloChatController extends Controller
     public function index()
     {
         $pageTitle = 'Cài đặt Zalo Chat Widget';
+        
+        // Debug: Log dữ liệu được đọc
+        \Log::info('Zalo settings loaded in admin:', [
+            'zalo_phone' => gs('zalo_phone'),
+            'zalo_name' => gs('zalo_name'),
+            'zalo_avatar' => gs('zalo_avatar'),
+            'zalo_online' => gs('zalo_online'),
+            'zalo_message' => gs('zalo_message'),
+        ]);
+        
         return view('admin.settings.zalo_chat', compact('pageTitle'));
     }
 
@@ -55,28 +65,71 @@ class ZaloChatController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        // Update settings
-        $settings = [
-            'zalo_phone' => $request->zalo_phone,
-            'zalo_name' => $request->zalo_name,
-            'zalo_avatar' => $request->zalo_avatar,
-            'zalo_online' => $request->zalo_online,
-            'zalo_message' => $request->zalo_message,
-            'zalo_position' => $request->zalo_position,
-            'zalo_button_size' => $request->zalo_button_size,
-            'zalo_auto_hide' => $request->zalo_auto_hide ?? 5,
-            'zalo_show_mobile' => $request->zalo_show_mobile,
-            'zalo_custom_css' => $request->zalo_custom_css,
-        ];
+        try {
+            // Debug: Log dữ liệu đầu vào
+            \Log::info('Zalo settings update request:', $request->all());
+            
+            // Update settings vào cột riêng
+            $settings = [
+                'zalo_phone' => $request->zalo_phone,
+                'zalo_name' => $request->zalo_name,
+                'zalo_avatar' => $request->zalo_avatar,
+                'zalo_online' => $request->zalo_online,
+                'zalo_message' => $request->zalo_message,
+                'zalo_position' => $request->zalo_position,
+                'zalo_button_size' => $request->zalo_button_size,
+                'zalo_auto_hide' => $request->zalo_auto_hide ?? 5,
+                'zalo_show_mobile' => $request->zalo_show_mobile,
+                'zalo_custom_css' => $request->zalo_custom_css,
+            ];
 
-        foreach ($settings as $key => $value) {
-            gs()->$key = $value;
+            // Debug: Log settings trước khi lưu
+            \Log::info('Zalo settings to save:', $settings);
+
+            // Cập nhật từng cột riêng biệt
+            foreach ($settings as $key => $value) {
+                gs()->$key = $value;
+            }
+            gs()->save();
+
+            // Debug: Log sau khi lưu cột riêng
+            \Log::info('Zalo settings saved to individual columns:', [
+                'zalo_phone' => gs('zalo_phone'),
+                'zalo_name' => gs('zalo_name'),
+            ]);
+
+            // Cập nhật global_shortcodes để đảm bảo tương thích
+            $globalShortcodes = gs('global_shortcodes') ?? [];
+            if (!is_array($globalShortcodes)) {
+                $globalShortcodes = [];
+            }
+
+            // Cập nhật Zalo settings trong global_shortcodes
+            foreach ($settings as $key => $value) {
+                $globalShortcodes[$key] = $value;
+            }
+
+            // Debug: Log global_shortcodes trước khi lưu
+            \Log::info('Global shortcodes to save:', $globalShortcodes);
+
+            // Lưu global_shortcodes
+            gs()->global_shortcodes = $globalShortcodes;
+            gs()->save();
+
+            // Debug: Log sau khi lưu global_shortcodes
+            \Log::info('Zalo settings saved to global_shortcodes:', [
+                'zalo_phone' => gs('zalo_phone'),
+                'zalo_name' => gs('zalo_name'),
+            ]);
+
+            $notify[] = ['success', 'Cài đặt Zalo Chat đã được cập nhật thành công!'];
+            return back()->withNotify($notify);
+
+        } catch (\Exception $e) {
+            \Log::error('Lỗi cập nhật Zalo settings: ' . $e->getMessage());
+            $notify[] = ['error', 'Có lỗi xảy ra khi cập nhật: ' . $e->getMessage()];
+            return back()->withNotify($notify);
         }
-
-        gs()->save();
-
-        $notify[] = ['success', 'Cài đặt Zalo Chat đã được cập nhật thành công!'];
-        return back()->withNotify($notify);
     }
 
     /**
@@ -108,6 +161,9 @@ class ZaloChatController extends Controller
             'zalo_custom_css' => gs('zalo_custom_css') ?? '',
         ];
 
+        // Log để debug
+        \Log::info('Zalo settings loaded:', $settings);
+
         return response()->json($settings);
     }
 
@@ -116,26 +172,50 @@ class ZaloChatController extends Controller
      */
     public function reset()
     {
-        $defaultSettings = [
-            'zalo_phone' => '0901234567',
-            'zalo_name' => 'Tư vấn viên',
-            'zalo_avatar' => asset('assets/images/zalo-avatar.jpg'),
-            'zalo_online' => true,
-            'zalo_message' => 'Xin chào! Tôi có thể giúp gì cho bạn?',
-            'zalo_position' => 'bottom-right',
-            'zalo_button_size' => 'medium',
-            'zalo_auto_hide' => 5,
-            'zalo_show_mobile' => true,
-            'zalo_custom_css' => '',
-        ];
+        try {
+            // Lấy số điện thoại hiện tại hoặc dùng số mặc định
+            $currentPhone = gs('zalo_phone');
+            $defaultPhone = $currentPhone ?: '0901234567';
+            
+            $defaultSettings = [
+                'zalo_phone' => $defaultPhone, // Giữ số điện thoại hiện tại
+                'zalo_name' => 'Tư vấn viên',
+                'zalo_avatar' => asset('assets/images/zalo-avatar.jpg'),
+                'zalo_online' => true,
+                'zalo_message' => 'Xin chào! Tôi có thể giúp gì cho bạn?',
+                'zalo_position' => 'bottom-right',
+                'zalo_button_size' => 'medium',
+                'zalo_auto_hide' => 5,
+                'zalo_show_mobile' => true,
+                'zalo_custom_css' => '',
+            ];
 
-        foreach ($defaultSettings as $key => $value) {
-            gs()->$key = $value;
+            // Reset về cột riêng
+            foreach ($defaultSettings as $key => $value) {
+                gs()->$key = $value;
+            }
+            gs()->save();
+
+            // Reset global_shortcodes
+            $globalShortcodes = gs('global_shortcodes') ?? [];
+            if (!is_array($globalShortcodes)) {
+                $globalShortcodes = [];
+            }
+
+            foreach ($defaultSettings as $key => $value) {
+                $globalShortcodes[$key] = $value;
+            }
+
+            gs()->global_shortcodes = $globalShortcodes;
+            gs()->save();
+
+            $notify[] = ['success', 'Đã reset Zalo Chat về mặc định!'];
+            return back()->withNotify($notify);
+
+        } catch (\Exception $e) {
+            \Log::error('Lỗi reset Zalo settings: ' . $e->getMessage());
+            $notify[] = ['error', 'Có lỗi xảy ra khi reset: ' . $e->getMessage()];
+            return back()->withNotify($notify);
         }
-
-        gs()->save();
-
-        $notify[] = ['success', 'Cài đặt Zalo Chat đã được khôi phục về mặc định!'];
-        return back()->withNotify($notify);
     }
 } 
