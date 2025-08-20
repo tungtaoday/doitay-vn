@@ -72,40 +72,82 @@ try {
         'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=300'
     ];
 
-    // Danh sách dịch vụ theo category_id
+    // Danh sách dịch vụ theo category_id (theo bảng production)
     $servicesByCategory = [
-        23 => [ // Điện nước
-            ['name' => 'Sửa chữa điện sinh hoạt', 'price' => 'Liên hệ', 'description' => 'Thay thế ổ cắm, công tắc, bóng đèn, aptomat, cầu dao'],
-            ['name' => 'Lắp đặt mới hệ thống điện', 'price' => 'Liên hệ', 'description' => 'Lắp đặt mới hệ thống điện cho nhà ở, văn phòng, cửa hàng'],
-            ['name' => 'Sửa chữa đường ống nước', 'price' => 'Liên hệ', 'description' => 'Thay thế hoặc hàn nối đường ống PVC, PPR, inox'],
-            ['name' => 'Thông tắc bồn cầu, lavabo', 'price' => 'Liên hệ', 'description' => 'Dùng máy lò xo, máy áp lực để thông tắc hiệu quả']
+        23 => [ // Thợ Điện
+            ['name' => 'Sửa chữa điện sinh hoạt', 'price' => 'Liên hệ', 'description' => 'Thay thế ổ cắm, công tắc, bóng đèn, aptomat, cầu dao, sửa chập điện'],
+            ['name' => 'Lắp đặt mới hệ thống điện', 'price' => 'Liên hệ', 'description' => 'Lắp đặt mới hệ thống điện cho nhà ở, văn phòng, cửa hàng, xưởng sản xuất'],
+            ['name' => 'Thi công điện âm tường', 'price' => 'Liên hệ', 'description' => 'Đi dây điện âm tường, nổi, lắp đặt tủ điện, bảng điện'],
+            ['name' => 'Bảo trì hệ thống điện', 'price' => 'Liên hệ', 'description' => 'Kiểm tra, bảo trì định kỳ hệ thống điện, thay thế thiết bị cũ']
         ],
-        24 => [ // Vệ sinh
-            ['name' => 'Vệ sinh định kỳ', 'price' => 'Liên hệ', 'description' => 'Quét dọn, lau sàn, hút bụi, lau kính, vệ sinh bếp, nhà tắm'],
-            ['name' => 'Vệ sinh khi chuyển nhà', 'price' => 'Liên hệ', 'description' => 'Dọn sạch trước khi bàn giao hoặc trước khi chuyển vào ở'],
-            ['name' => 'Tổng vệ sinh toàn bộ nhà', 'price' => 'Liên hệ', 'description' => 'Làm sạch trần, tường, cửa, nội thất, thiết bị điện, sàn nhà'],
-            ['name' => 'Vệ sinh văn phòng hàng ngày', 'price' => 'Liên hệ', 'description' => 'Lau bàn ghế, hút bụi thảm, lau kính, vệ sinh nhà vệ sinh']
+        24 => [ // Thợ Nước
+            ['name' => 'Sửa chữa đường ống nước', 'price' => 'Liên hệ', 'description' => 'Thay thế hoặc hàn nối đường ống PVC, PPR, inox, sửa rò rỉ'],
+            ['name' => 'Thông tắc bồn cầu, lavabo', 'price' => 'Liên hệ', 'description' => 'Dùng máy lò xo, máy áp lực để thông tắc hiệu quả'],
+            ['name' => 'Lắp đặt thiết bị vệ sinh', 'price' => 'Liên hệ', 'description' => 'Lắp đặt bồn cầu, lavabo, vòi sen, chậu rửa bát, phễu thoát sàn'],
+            ['name' => 'Bảo trì hệ thống cấp thoát nước', 'price' => 'Liên hệ', 'description' => 'Vệ sinh đường ống, kiểm tra van khóa, thay phao bồn nước']
         ],
-        26 => [ // Sơn nhà
+        25 => [ // Thợ Xây Dựng
+            ['name' => 'Xây dựng nhà ở', 'price' => 'Liên hệ', 'description' => 'Xây dựng nhà ở dân dụng, biệt thự, nhà phố theo thiết kế'],
+            ['name' => 'Sửa chữa, cải tạo nhà', 'price' => 'Liên hệ', 'description' => 'Sửa chữa, cải tạo, nâng cấp nhà cũ, thêm tầng, mở rộng'],
+            ['name' => 'Xây dựng công trình dân dụng', 'price' => 'Liên hệ', 'description' => 'Xây dựng tường rào, sân vườn, nhà kho, gara để xe'],
+            ['name' => 'Thi công phần thô', 'price' => 'Liên hệ', 'description' => 'Đào móng, xây tường, đổ sàn, làm mái, thi công kết cấu']
+        ],
+        26 => [ // Thợ Sơn
             ['name' => 'Sơn nhà mới', 'price' => 'Liên hệ', 'description' => 'Thi công sơn hoàn thiện cho công trình mới xây'],
             ['name' => 'Sơn lại nhà cũ', 'price' => 'Liên hệ', 'description' => 'Làm mới bề mặt tường đã xuống cấp, bong tróc, bạc màu'],
             ['name' => 'Sơn chống thấm', 'price' => 'Liên hệ', 'description' => 'Ngăn ngừa nước thấm qua tường, trần, ban công'],
             ['name' => 'Sơn chống nóng', 'price' => 'Liên hệ', 'description' => 'Giảm hấp thụ nhiệt, giúp không gian mát hơn']
         ],
-        31 => [ // Vệ sinh
+        27 => [ // Thợ Mộc
+            ['name' => 'Đóng bàn ghế gỗ', 'price' => 'Liên hệ', 'description' => 'Đóng bàn ghế gỗ theo yêu cầu, sửa chữa đồ gỗ cũ'],
+            ['name' => 'Làm tủ bếp, tủ quần áo', 'price' => 'Liên hệ', 'description' => 'Thiết kế và thi công tủ bếp, tủ quần áo theo không gian'],
+            ['name' => 'Làm cửa gỗ, ván sàn', 'price' => 'Liên hệ', 'description' => 'Làm cửa gỗ, ván sàn, ốp tường gỗ tự nhiên'],
+            ['name' => 'Sửa chữa đồ gỗ', 'price' => 'Liên hệ', 'description' => 'Sửa chữa, phục hồi đồ gỗ cũ, thay thế phụ kiện']
+        ],
+        28 => [ // Thợ Điều Hòa
+            ['name' => 'Lắp đặt điều hòa mới', 'price' => 'Liên hệ', 'description' => 'Lắp đặt điều hòa âm trần, treo tường, tủ đứng'],
+            ['name' => 'Sửa chữa điều hòa', 'price' => 'Liên hệ', 'description' => 'Sửa chữa, bảo trì điều hòa, thay gas, thay linh kiện'],
+            ['name' => 'Vệ sinh điều hòa', 'price' => 'Liên hệ', 'description' => 'Vệ sinh dàn nóng, dàn lạnh, thay lọc gió định kỳ'],
+            ['name' => 'Di chuyển điều hòa', 'price' => 'Liên hệ', 'description' => 'Tháo lắp, di chuyển điều hòa từ vị trí cũ sang mới']
+        ],
+        29 => [ // Thợ Ốp Lát
+            ['name' => 'Ốp lát gạch ốp tường', 'price' => 'Liên hệ', 'description' => 'Ốp lát gạch ốp tường, gạch trang trí theo thiết kế'],
+            ['name' => 'Lát gạch sàn nhà', 'price' => 'Liên hệ', 'description' => 'Lát gạch sàn nhà, gạch granite, gạch ceramic'],
+            ['name' => 'Ốp đá tự nhiên', 'price' => 'Liên hệ', 'description' => 'Ốp đá tự nhiên, đá nhân tạo cho mặt tiền, cầu thang'],
+            ['name' => 'Sửa chữa gạch ốp lát', 'price' => 'Liên hệ', 'description' => 'Thay thế, sửa chữa gạch bị vỡ, bong tróc']
+        ],
+        30 => [ // Thợ Hàn
+            ['name' => 'Hàn sắt thép xây dựng', 'price' => 'Liên hệ', 'description' => 'Hàn khung sắt, lan can, cửa sắt, cổng sắt'],
+            ['name' => 'Hàn inox, nhôm', 'price' => 'Liên hệ', 'description' => 'Hàn inox, nhôm cho lan can, cửa, bàn ghế'],
+            ['name' => 'Hàn ống nước, ống gas', 'price' => 'Liên hệ', 'description' => 'Hàn ống nước, ống gas, ống thông gió'],
+            ['name' => 'Sửa chữa đồ kim loại', 'price' => 'Liên hệ', 'description' => 'Sửa chữa, hàn nối các đồ kim loại bị gãy, vỡ']
+        ],
+        31 => [ // Thợ Vệ Sinh
             ['name' => 'Vệ sinh định kỳ', 'price' => 'Liên hệ', 'description' => 'Quét dọn, lau sàn, hút bụi, lau kính, vệ sinh bếp, nhà tắm'],
             ['name' => 'Vệ sinh khi chuyển nhà', 'price' => 'Liên hệ', 'description' => 'Dọn sạch trước khi bàn giao hoặc trước khi chuyển vào ở'],
             ['name' => 'Tổng vệ sinh toàn bộ nhà', 'price' => 'Liên hệ', 'description' => 'Làm sạch trần, tường, cửa, nội thất, thiết bị điện, sàn nhà'],
             ['name' => 'Vệ sinh văn phòng hàng ngày', 'price' => 'Liên hệ', 'description' => 'Lau bàn ghế, hút bụi thảm, lau kính, vệ sinh nhà vệ sinh']
+        ],
+        32 => [ // Thợ Sửa Chữa Tổng Hợp
+            ['name' => 'Sửa chữa điện nước', 'price' => 'Liên hệ', 'description' => 'Sửa chữa các vấn đề về điện nước trong nhà'],
+            ['name' => 'Sửa chữa thiết bị gia dụng', 'price' => 'Liên hệ', 'description' => 'Sửa chữa tủ lạnh, máy giặt, bếp gas, quạt điện'],
+            ['name' => 'Sửa chữa đồ gỗ, nội thất', 'price' => 'Liên hệ', 'description' => 'Sửa chữa bàn ghế, tủ, cửa, nội thất bị hỏng'],
+            ['name' => 'Dịch vụ sửa chữa tổng hợp', 'price' => 'Liên hệ', 'description' => 'Cung cấp dịch vụ sửa chữa đa dạng, đáp ứng mọi nhu cầu']
         ]
     ];
 
-    // Danh sách tags theo category
+    // Danh sách tags theo category (theo bảng production)
     $tagsByCategory = [
-        23 => ['sửa chữa điện sinh hoạt', 'lắp đặt hệ thống điện', 'thi công điện âm tường', 'sửa chữa đường ống nước', 'thông tắc bồn cầu'],
-        24 => ['dịch vụ vệ sinh', 'thợ vệ sinh', 'vệ sinh nhà cửa', 'vệ sinh văn phòng', 'vệ sinh công trình'],
-        26 => ['dịch vụ sơn nhà', 'thợ sơn nhà', 'sơn nhà giá rẻ', 'sơn nhà uy tín', 'sơn chống thấm'],
-        31 => ['dịch vụ vệ sinh', 'thợ vệ sinh', 'vệ sinh nhà cửa', 'vệ sinh văn phòng', 'vệ sinh công trình']
+        23 => ['thợ điện', 'sửa chữa điện', 'lắp đặt điện', 'thi công điện âm tường', 'bảo trì điện', 'sửa chập điện'],
+        24 => ['thợ nước', 'sửa chữa nước', 'thông tắc bồn cầu', 'lắp đặt thiết bị vệ sinh', 'sửa rò rỉ nước', 'bảo trì nước'],
+        25 => ['thợ xây dựng', 'xây dựng nhà ở', 'sửa chữa nhà', 'cải tạo nhà', 'thi công phần thô', 'xây dựng dân dụng'],
+        26 => ['thợ sơn', 'sơn nhà', 'sơn chống thấm', 'sơn chống nóng', 'sơn lại nhà cũ', 'thi công sơn'],
+        27 => ['thợ mộc', 'đóng bàn ghế gỗ', 'làm tủ bếp', 'làm tủ quần áo', 'cửa gỗ', 'ván sàn', 'sửa chữa đồ gỗ'],
+        28 => ['thợ điều hòa', 'lắp đặt điều hòa', 'sửa chữa điều hòa', 'vệ sinh điều hòa', 'di chuyển điều hòa', 'bảo trì điều hòa'],
+        29 => ['thợ ốp lát', 'ốp lát gạch', 'lát gạch sàn', 'ốp đá tự nhiên', 'gạch ốp tường', 'sửa chữa gạch'],
+        30 => ['thợ hàn', 'hàn sắt thép', 'hàn inox', 'hàn nhôm', 'hàn ống nước', 'sửa chữa kim loại'],
+        31 => ['thợ vệ sinh', 'vệ sinh nhà cửa', 'vệ sinh văn phòng', 'vệ sinh định kỳ', 'vệ sinh chuyển nhà', 'tổng vệ sinh'],
+        32 => ['thợ sửa chữa tổng hợp', 'sửa chữa điện nước', 'sửa thiết bị gia dụng', 'sửa đồ gỗ', 'dịch vụ đa năng', 'sửa chữa đa dạng']
     ];
 
     // Danh sách business hours mẫu
@@ -132,7 +174,7 @@ try {
         ]
     ];
 
-    // Danh sách mô tả mẫu
+    // Danh sách mô tả mẫu theo từng ngành nghề
     $descriptions = [
         'Tôi là thợ có kinh nghiệm lâu năm trong lĩnh vực này, luôn đảm bảo chất lượng công việc và sự hài lòng của khách hàng.',
         'Với nhiều năm kinh nghiệm, tôi cam kết mang đến dịch vụ chất lượng cao, giá cả hợp lý và thời gian thi công nhanh chóng.',
@@ -143,7 +185,12 @@ try {
         'Tôi chuyên về lĩnh vực này với nhiều năm kinh nghiệm, đảm bảo mọi công việc đều được hoàn thành đúng hẹn.',
         'Là đơn vị uy tín trong lĩnh vực này, chúng tôi luôn đặt chất lượng và sự hài lòng của khách hàng lên hàng đầu.',
         'Tôi có kinh nghiệm thi công nhiều dự án lớn nhỏ, đảm bảo chất lượng và tiến độ như cam kết.',
-        'Với phương châm "Chất lượng tạo nên uy tín", tôi luôn cố gắng mang đến những sản phẩm tốt nhất cho khách hàng.'
+        'Với phương châm "Chất lượng tạo nên uy tín", tôi luôn cố gắng mang đến những sản phẩm tốt nhất cho khách hàng.',
+        'Tôi là thợ chuyên nghiệp, có tay nghề vững vàng và giàu kinh nghiệm thực tế trong lĩnh vực này.',
+        'Với sự nhiệt tình và tận tâm, tôi mong muốn mang lại trải nghiệm tốt nhất cho khách hàng.',
+        'Tôi luôn cập nhật những kỹ thuật mới nhất để mang đến dịch vụ chất lượng cao nhất.',
+        'Là người có trách nhiệm cao với công việc, tôi cam kết hoàn thành mọi dự án đúng hẹn và chất lượng.',
+        'Tôi chuyên về lĩnh vực này với đội ngũ thợ lành nghề, đảm bảo mọi công việc đều được thực hiện hoàn hảo.'
     ];
 
     // Danh sách feedback mẫu
@@ -209,10 +256,16 @@ try {
 
     function getCategoryName($categoryId) {
         $categories = [
-            23 => 'Điện Nước',
-            24 => 'Vệ Sinh',
-            26 => 'Sơn Nhà',
-            31 => 'Vệ Sinh'
+            23 => 'Thợ Điện',
+            24 => 'Thợ Nước',
+            25 => 'Thợ Xây Dựng',
+            26 => 'Thợ Sơn',
+            27 => 'Thợ Mộc',
+            28 => 'Thợ Điều Hòa',
+            29 => 'Thợ Ốp Lát',
+            30 => 'Thợ Hàn',
+            31 => 'Thợ Vệ Sinh',
+            32 => 'Thợ Sửa Chữa Tổng Hợp'
         ];
         return $categories[$categoryId] ?? 'Dịch Vụ';
     }
@@ -293,17 +346,8 @@ try {
             $experience = rand(2, 15);
             $companyImage = $companyImages[array_rand($companyImages)];
             
-            // Tạo tên công ty từ tên người
-            $companyTypes = ['Dịch Vụ', 'Cửa Hàng', 'Công Ty', 'Xưởng', 'Tiệm'];
-            $companyNameTypes = [
-                $fullName . ' ' . $companyTypes[array_rand($companyTypes)],
-                $fullName . ' - Dịch vụ ' . getCategoryName($categoryId),
-                getCategoryName($categoryId) . ' ' . $lastName,
-                'Công ty ' . getCategoryName($categoryId) . ' ' . $firstName,
-                'Dịch vụ ' . getCategoryName($categoryId) . ' ' . $lastName . ' ' . $firstName
-            ];
-            
-            $companyName = $companyNameTypes[array_rand($companyNameTypes)];
+            // Tạo tên công ty - chỉ sử dụng tên thợ
+            $companyName = $fullName;
             
             $stmt = $pdo->prepare("
                 INSERT INTO companies (
