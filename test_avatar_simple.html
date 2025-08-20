@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Avatar Zalo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .avatar-test {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .avatar-test img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #00A6FF;
+            margin: 10px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Avatar Zalo</h1>
+    
+    <div class="avatar-test">
+        <h3>🖼️ Test Avatar từ assets/images/zalo-avatar.jpg</h3>
+        
+        <div id="avatar-status" class="status info">
+            Đang kiểm tra avatar...
+        </div>
+        
+        <img id="zalo-avatar" 
+             src="assets/images/zalo-avatar.jpg" 
+             alt="Zalo Avatar"
+             onload="avatarLoaded()"
+             onerror="avatarError()">
+             
+        <p><strong>Đường dẫn:</strong> assets/images/zalo-avatar.jpg</p>
+        <p><strong>URL đầy đủ:</strong> <span id="full-url"></span></p>
+    </div>
+    
+    <div class="avatar-test">
+        <h3>🔍 Test các đường dẫn khác:</h3>
+        
+        <img src="/assets/images/zalo-avatar.jpg" 
+             alt="Zalo Avatar (absolute)"
+             onload="console.log('✅ /assets/images/zalo-avatar.jpg - OK')"
+             onerror="console.log('❌ /assets/images/zalo-avatar.jpg - FAIL')">
+        <p>Đường dẫn tuyệt đối: /assets/images/zalo-avatar.jpg</p>
+        
+        <img src="../assets/images/zalo-avatar.jpg" 
+             alt="Zalo Avatar (relative)"
+             onload="console.log('✅ ../assets/images/zalo-avatar.jpg - OK')"
+             onerror="console.log('❌ ../assets/images/zalo-avatar.jpg - FAIL')">
+        <p>Đường dẫn tương đối: ../assets/images/zalo-avatar.jpg</p>
+        
+        <img src="../../assets/images/zalo-avatar.jpg" 
+             alt="Zalo Avatar (relative 2)"
+             onload="console.log('✅ ../../assets/images/zalo-avatar.jpg - OK')"
+             onerror="console.log('❌ ../../assets/images/zalo-avatar.jpg - FAIL')">
+        <p>Đường dẫn tương đối: ../../assets/images/zalo-avatar.jpg</p>
+    </div>
+    
+    <div class="avatar-test">
+        <h3>📱 Console Logs:</h3>
+        <p>Mở Developer Tools (F12) để xem kết quả test</p>
+        <button onclick="testAllPaths()">🧪 Test tất cả đường dẫn</button>
+    </div>
+
+    <script>
+        // Hiển thị URL đầy đủ
+        document.getElementById('full-url').textContent = window.location.origin + '/assets/images/zalo-avatar.jpg';
+        
+        // Xử lý avatar load thành công
+        function avatarLoaded() {
+            const status = document.getElementById('avatar-status');
+            status.className = 'status success';
+            status.textContent = '✅ Avatar đã load thành công!';
+            console.log('🎉 Avatar Zalo đã load thành công!');
+        }
+        
+        // Xử lý avatar load lỗi
+        function avatarError() {
+            const status = document.getElementById('avatar-status');
+            status.className = 'status error';
+            status.textContent = '❌ Avatar không load được!';
+            console.log('❌ Avatar Zalo không load được!');
+        }
+        
+        // Test tất cả đường dẫn
+        function testAllPaths() {
+            const paths = [
+                'assets/images/zalo-avatar.jpg',
+                '/assets/images/zalo-avatar.jpg',
+                '../assets/images/zalo-avatar.jpg',
+                '../../assets/images/zalo-avatar.jpg'
+            ];
+            
+            console.log('🧪 Bắt đầu test tất cả đường dẫn...');
+            
+            paths.forEach(path => {
+                const img = new Image();
+                img.onload = () => console.log(`✅ ${path} - LOAD THÀNH CÔNG`);
+                img.onerror = () => console.log(`❌ ${path} - LOAD THẤT BẠI`);
+                img.src = path;
+            });
+        }
+        
+        // Test ngay khi load trang
+        testAllPaths();
+    </script>
+</body>
+</html> 

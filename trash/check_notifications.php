@@ -1,109 +1,106 @@
 <?php
-$pdo = new PDO("mysql:host=localhost;dbname=t_review_db", 'root', 'Vuivui@123');
+require_once 'core/bootstrap/app.php';
 
-echo "=== CHECKING NOTIFICATIONS FOR COMPANY 58 ===" . PHP_EOL;
-echo PHP_EOL;
+echo "=== KIỂM TRA NOTIFICATION CHO APPOINTMENT 117 ===\n\n";
 
-// Get company 58 user info
-$stmt = $pdo->query("SELECT id, name, user_id FROM companies WHERE id = 58");
-$company = $stmt->fetch();
-
-if (!$company) {
-    echo "❌ Company 58 not found!" . PHP_EOL;
-    exit;
-}
-
-echo "Company 58 info:" . PHP_EOL;
-echo "  - Name: {$company['name']}" . PHP_EOL;
-echo "  - User ID: {$company['user_id']}" . PHP_EOL;
-echo PHP_EOL;
-
-if (!$company['user_id']) {
-    echo "❌ Company 58 has no user_id - cannot receive notifications!" . PHP_EOL;
-    exit;
-}
-
-// Check user_notifications table
-$stmt = $pdo->prepare("
-    SELECT * FROM user_notifications 
-    WHERE user_id = ? 
-    ORDER BY created_at DESC 
-    LIMIT 10
-");
-$stmt->execute([$company['user_id']]);
-$notifications = $stmt->fetchAll();
-
-echo "=== USER_NOTIFICATIONS TABLE ===" . PHP_EOL;
-if (count($notifications) > 0) {
-    echo "Found " . count($notifications) . " notifications for user {$company['user_id']}:" . PHP_EOL;
-    foreach ($notifications as $notif) {
-        echo "  - [{$notif['created_at']}] {$notif['type']}: {$notif['title']}" . PHP_EOL;
-        echo "    Message: {$notif['message']}" . PHP_EOL;
-        echo "    Read: " . ($notif['is_read'] ? 'YES' : 'NO') . PHP_EOL;
-        echo "    Action URL: {$notif['action_url']}" . PHP_EOL;
-        echo PHP_EOL;
+try {
+    // 1. Kiểm tra appointment 117
+    echo "1. Thông tin Appointment 117:\n";
+    $appointment = \App\Models\Appointment::find(117);
+    if ($appointment) {
+        echo "   - User ID: {$appointment->user_id}\n";
+        echo "   - Company ID: {$appointment->company_id}\n";
+        echo "   - Status: {$appointment->status}\n";
+        echo "   - Recipient: {$appointment->recipient_name}\n";
+        echo "   - Phone: {$appointment->recipient_phone}\n";
+        echo "   - Date: {$appointment->appointment_date}\n";
+        echo "   - Time: {$appointment->appointment_time}\n";
+        echo "   - Created: {$appointment->created_at}\n";
+    } else {
+        echo "   ❌ Appointment 117 không tồn tại!\n";
+        exit;
     }
-} else {
-    echo "❌ No notifications found in user_notifications table for user {$company['user_id']}" . PHP_EOL;
-}
 
-// Check Laravel notifications table
-echo "=== LARAVEL NOTIFICATIONS TABLE ===" . PHP_EOL;
-$stmt = $pdo->prepare("
-    SELECT * FROM notifications 
-    WHERE notifiable_id = ? AND notifiable_type = 'App\\\\Models\\\\User'
-    ORDER BY created_at DESC 
-    LIMIT 10
-");
-$stmt->execute([$company['user_id']]);
-$laravelNotifications = $stmt->fetchAll();
-
-if (count($laravelNotifications) > 0) {
-    echo "Found " . count($laravelNotifications) . " Laravel notifications:" . PHP_EOL;
-    foreach ($laravelNotifications as $notif) {
-        echo "  - [{$notif['created_at']}] {$notif['type']}" . PHP_EOL;
-        echo "    Read: " . ($notif['read_at'] ? 'YES' : 'NO') . PHP_EOL;
-        echo "    Data: " . substr($notif['data'], 0, 100) . "..." . PHP_EOL;
-        echo PHP_EOL;
-    }
-} else {
-    echo "❌ No Laravel notifications found for user {$company['user_id']}" . PHP_EOL;
-}
-
-// Check recent activity around lead 28 creation
-echo "=== RECENT ACTIVITY AROUND LEAD 28 ===" . PHP_EOL;
-$stmt = $pdo->query("SELECT created_at FROM leads WHERE id = 28");
-$lead28 = $stmt->fetch();
-
-if ($lead28) {
-    $leadTime = $lead28['created_at'];
-    echo "Lead 28 created at: {$leadTime}" . PHP_EOL;
+    // 2. Kiểm tra user notifications liên quan
+    echo "\n2. UserNotifications cho User ID {$appointment->user_id}:\n";
+    $userNotifications = \App\Models\UserNotification::where('user_id', $appointment->user_id)
+        ->where('type', 'appointment')
+        ->latest()
+        ->take(10)
+        ->get();
     
-    // Check notifications created around that time (±5 minutes)
-    $stmt = $pdo->prepare("
-        SELECT * FROM user_notifications 
-        WHERE created_at BETWEEN DATE_SUB(?, INTERVAL 5 MINUTE) AND DATE_ADD(?, INTERVAL 5 MINUTE)
-        ORDER BY created_at DESC
-    ");
-    $stmt->execute([$leadTime, $leadTime]);
-    $recentNotifications = $stmt->fetchAll();
-    
-    echo "Notifications created around lead 28 time (±5 min):" . PHP_EOL;
-    if (count($recentNotifications) > 0) {
-        foreach ($recentNotifications as $notif) {
-            echo "  - User {$notif['user_id']}: {$notif['type']} - {$notif['title']}" . PHP_EOL;
-            echo "    Created: {$notif['created_at']}" . PHP_EOL;
+    if ($userNotifications->count() > 0) {
+        foreach ($userNotifications as $notif) {
+            $data = json_decode($notif->data, true);
+            $appointmentId = $data['appointment_id'] ?? 'N/A';
+            echo "   - ID {$notif->id}: {$notif->title} (Appointment: {$appointmentId}) - {$notif->created_at}\n";
         }
     } else {
-        echo "  ❌ No notifications created around that time!" . PHP_EOL;
+        echo "   ❌ Không có UserNotification nào cho user này!\n";
     }
+
+    // 3. Kiểm tra company notifications nếu có
+    if ($appointment->company_id) {
+        echo "\n3. UserNotifications cho Company ID {$appointment->company_id}:\n";
+        $companyUser = \App\Models\Company::find($appointment->company_id)->user ?? null;
+        if ($companyUser) {
+            $companyNotifications = \App\Models\UserNotification::where('user_id', $companyUser->id)
+                ->where('user_type', 'company')
+                ->where('type', 'appointment')
+                ->latest()
+                ->take(10)
+                ->get();
+            
+            if ($companyNotifications->count() > 0) {
+                foreach ($companyNotifications as $notif) {
+                    $data = json_decode($notif->data, true);
+                    $appointmentId = $data['appointment_id'] ?? 'N/A';
+                    echo "   - ID {$notif->id}: {$notif->title} (Appointment: {$appointmentId}) - {$notif->created_at}\n";
+                }
+            } else {
+                echo "   ❌ Không có UserNotification nào cho company này!\n";
+            }
+        } else {
+            echo "   ❌ Không tìm thấy user của company!\n";
+        }
+    }
+
+    // 4. Tổng số notifications trong hệ thống
+    echo "\n4. Tổng quan notifications:\n";
+    $totalNotifications = \App\Models\UserNotification::count();
+    $appointmentNotifications = \App\Models\UserNotification::where('type', 'appointment')->count();
+    $recentNotifications = \App\Models\UserNotification::latest()->take(5)->get(['id', 'title', 'type', 'user_id', 'created_at']);
+    
+    echo "   - Tổng UserNotifications: {$totalNotifications}\n";
+    echo "   - Appointment notifications: {$appointmentNotifications}\n";
+    echo "   - 5 notifications gần nhất:\n";
+    foreach ($recentNotifications as $notif) {
+        echo "     * ID {$notif->id}: {$notif->title} ({$notif->type}) - User {$notif->user_id} - {$notif->created_at}\n";
+    }
+
+    // 5. Kiểm tra Laravel notifications (bảng notifications)
+    echo "\n5. Laravel notifications (bảng notifications):\n";
+    $laravelNotifications = \DB::table('notifications')
+        ->where('data', 'like', '%appointment%')
+        ->orWhere('data', 'like', '%117%')
+        ->latest()
+        ->take(5)
+        ->get(['id', 'type', 'notifiable_type', 'notifiable_id', 'data', 'created_at']);
+    
+    if ($laravelNotifications->count() > 0) {
+        foreach ($laravelNotifications as $notif) {
+            $data = json_decode($notif->data, true);
+            echo "   - {$notif->type} -> {$notif->notifiable_type}:{$notif->notifiable_id} - {$notif->created_at}\n";
+            echo "     Data: " . json_encode($data, JSON_UNESCAPED_UNICODE) . "\n";
+        }
+    } else {
+        echo "   ❌ Không có Laravel notifications nào!\n";
+    }
+
+} catch (Exception $e) {
+    echo "❌ Lỗi: " . $e->getMessage() . "\n";
 }
 
-// Check if SmartLeadNotification class exists
-echo PHP_EOL . "=== CHECKING NOTIFICATION CLASSES ===" . PHP_EOL;
-if (file_exists('core/app/Notifications/SmartLeadNotification.php')) {
-    echo "✅ SmartLeadNotification class exists" . PHP_EOL;
-} else {
-    echo "❌ SmartLeadNotification class NOT found!" . PHP_EOL;
-    echo "This explains why notifications failed." . PHP_EOL;
-} 
+echo "\n=== KẾT THÚC KIỂM TRA ===\n";
+?> 
+ 

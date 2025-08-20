@@ -2,108 +2,254 @@
 <html>
 <head>
     <title>Test Notification API</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; white-space: pre-wrap; }
+        .error { background: #ffebee; border-left: 4px solid #f44336; }
+        .success { background: #e8f5e8; border-left: 4px solid #4caf50; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
 </head>
 <body>
     <h1>Test Notification API</h1>
     
-    <div>
-        <h3>Step 1: Test Header Data API</h3>
-        <button onclick="testHeaderData()">Test /user/notifications/header-data</button>
-        <div id="headerResult"></div>
+    <div class="test-section">
+        <h3>1. Test API Connection</h3>
+        <button onclick="testAPI()">Test /user/notifications/header-data</button>
+        <div id="apiResult" class="result"></div>
     </div>
     
-    <div>
-        <h3>Step 2: Test Mark as Read API</h3>
-        <input type="number" id="notificationId" placeholder="Enter notification ID">
-        <button onclick="testMarkAsRead()">Test Mark as Read</button>
-        <div id="markResult"></div>
+    <div class="test-section">
+        <h3>2. Create Test Notification</h3>
+        <button onclick="createTestNotification()">Create Test Notification</button>
+        <div id="createResult" class="result"></div>
     </div>
     
-    <div>
-        <h3>Step 3: Debug Info</h3>
-        <div id="debugInfo"></div>
+    <div class="test-section">
+        <h3>3. Test Notification Bell</h3>
+        <div id="testBell">
+            <!-- Copy paste notification bell component here -->
+            <div class="notification-bell" id="notificationBell">
+                <div class="dropdown">
+                    <a class="notification-toggle" href="#" id="notificationToggle">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </a>
+                    
+                    <div class="dropdown-menu notification-dropdown">
+                        <div class="notification-header">
+                            <h6>Notifications</h6>
+                        </div>
+                        
+                        <div class="notification-list" id="notificationList">
+                            <div class="notification-loading text-center py-3">
+                                <i class="fas fa-spinner fa-spin"></i> Loading...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button onclick="testNotificationBell()">Load Notifications</button>
+        <div id="bellResult" class="result"></div>
     </div>
 
     <script>
-        // Test header data API
-        function testHeaderData() {
-            const resultDiv = document.getElementById('headerResult');
-            resultDiv.innerHTML = 'Loading...';
-            
-            fetch('/user/notifications/header-data')
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Header data:', data);
-                    resultDiv.innerHTML = `
-                        <pre>${JSON.stringify(data, null, 2)}</pre>
-                    `;
-                    
-                    // Show available notification IDs for testing
-                    if (data.notifications && data.notifications.length > 0) {
-                        const ids = data.notifications.map(n => n.id).join(', ');
-                        document.getElementById('debugInfo').innerHTML = `
-                            <strong>Available notification IDs for testing:</strong> ${ids}
-                        `;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    resultDiv.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
-                });
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            element.className = 'result ' + (isError ? 'error' : 'success');
         }
         
-        // Test mark as read API
-        function testMarkAsRead() {
-            const id = document.getElementById('notificationId').value;
-            if (!id) {
-                alert('Please enter a notification ID');
-                return;
-            }
+        function testAPI() {
+            log('apiResult', 'Testing API...', false);
             
-            const resultDiv = document.getElementById('markResult');
-            resultDiv.innerHTML = 'Loading...';
-            
-            // Get CSRF token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            
-            fetch(`/user/notifications/${id}/read`, {
-                method: 'POST',
+            fetch('/user/notifications/header-data', {
+                method: 'GET',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Content-Type': 'application/json'
-                }
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
             })
             .then(response => {
-                console.log('Mark as read response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
                 return response.json();
             })
             .then(data => {
-                console.log('Mark as read data:', data);
-                resultDiv.innerHTML = `
-                    <pre>${JSON.stringify(data, null, 2)}</pre>
-                `;
+                log('apiResult', 'API Success!\n' + JSON.stringify(data, null, 2), false);
             })
             .catch(error => {
-                console.error('Error:', error);
-                resultDiv.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+                log('apiResult', 'API Error: ' + error.message, true);
             });
         }
         
-        // Auto-test header data on load
-        window.onload = function() {
-            document.getElementById('debugInfo').innerHTML = `
-                <strong>Debug Info:</strong><br>
-                - CSRF Token: ${document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'NOT FOUND'}<br>
-                - Current URL: ${window.location.href}<br>
-                - User Agent: ${navigator.userAgent}
-            `;
+        function createTestNotification() {
+            log('createResult', 'Creating test notification...', false);
             
-            // Automatically test header data
-            testHeaderData();
+            // This would require a create notification endpoint
+            log('createResult', 'Test notification creation requires backend endpoint', false);
+        }
+        
+        function testNotificationBell() {
+            log('bellResult', 'Testing notification bell...', false);
+            
+            // Simplified notification bell test
+            fetch('/user/notifications/header-data', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateNotificationBell(data.unread_count, data.notifications);
+                    log('bellResult', `Bell updated! Unread: ${data.unread_count}, Notifications: ${data.notifications.length}`, false);
+                } else {
+                    log('bellResult', 'Bell error: ' + (data.error || 'Unknown error'), true);
+                }
+            })
+            .catch(error => {
+                log('bellResult', 'Bell fetch error: ' + error.message, true);
+            });
+        }
+        
+        function updateNotificationBell(count, notifications) {
+            const badge = document.getElementById('notificationBadge');
+            const list = document.getElementById('notificationList');
+            
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+            
+            if (notifications.length === 0) {
+                list.innerHTML = '<div class="notification-empty">No notifications</div>';
+            } else {
+                list.innerHTML = notifications.map(notif => `
+                    <div class="notification-item ${!notif.is_read ? 'unread' : ''}">
+                        <div class="notification-content">
+                            <div class="notification-title">${notif.title}</div>
+                            <div class="notification-message">${notif.message}</div>
+                            <div class="notification-time">${notif.time_ago}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Auto test on page load
+        window.addEventListener('load', function() {
+            setTimeout(testAPI, 1000);
+        });
+    </script>
+</body>
+</html> 
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/user/dashboard');
+                log('auth-result', `Auth Check: ${response.status}\nURL: ${response.url}\nRedirected: ${response.redirected}`);
+            } catch (error) {
+                log('auth-result', `Auth Error: ${error.message}`, true);
+            }
+        }
+
+        async function testNotificationAPI() {
+            try {
+                console.log('Testing notification API...');
+                const response = await fetch('/user/notifications/header-data', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                const text = await response.text();
+                console.log('Response text:', text);
+                
+                if (response.ok) {
+                    try {
+                        const data = JSON.parse(text);
+                        log('api-result', `✅ Success!\nStatus: ${response.status}\nData: ${JSON.stringify(data, null, 2)}`);
+                    } catch (e) {
+                        log('api-result', `⚠️ Non-JSON Response:\nStatus: ${response.status}\nContent: ${text}`, true);
+                    }
+                } else {
+                    log('api-result', `❌ HTTP Error: ${response.status}\nContent: ${text}`, true);
+                }
+            } catch (error) {
+                log('api-result', `❌ Network Error: ${error.message}`, true);
+            }
+        }
+
+        async function testWithCSRF() {
+            try {
+                // Get CSRF token from meta tag
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                
+                const response = await fetch('/user/notifications/header-data', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': token || 'no-token'
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                const text = await response.text();
+                
+                if (response.ok) {
+                    const data = JSON.parse(text);
+                    log('csrf-result', `✅ Success with CSRF!\nToken: ${token ? 'Found' : 'Missing'}\nData: ${JSON.stringify(data, null, 2)}`);
+                } else {
+                    log('csrf-result', `❌ Error: ${response.status}\nContent: ${text}`, true);
+                }
+            } catch (error) {
+                log('csrf-result', `❌ Error: ${error.message}`, true);
+            }
+        }
+
+        function renderBell() {
+            const bellHTML = `
+                <div style="position: relative; display: inline-block; margin: 20px;">
+                    <i class="fas fa-bell" style="font-size: 24px; color: #007bff; cursor: pointer;"></i>
+                    <span id="test-badge" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;">3</span>
+                </div>
+                <div>
+                    <p>This is how the bell should look with notifications</p>
+                    <button onclick="updateTestBadge()">Update Badge</button>
+                </div>
+            `;
+            document.getElementById('bell-container').innerHTML = bellHTML;
+        }
+
+        function updateTestBadge() {
+            const badge = document.getElementById('test-badge');
+            const count = Math.floor(Math.random() * 10);
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        // Auto-run tests when page loads
+        window.onload = function() {
+            console.log('=== Notification Debug Page Loaded ===');
+            checkAuth();
         };
     </script>
 </body>

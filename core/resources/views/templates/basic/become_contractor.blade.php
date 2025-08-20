@@ -36,12 +36,17 @@
                     </div>
 
                     <div class="hero-actions">
-                        <a href="#registration-form" class="btn btn-primary btn-lg scroll-to-form" onclick="scrollToForm(event); return false;">
+                        <a href="#registration-form" class="btn btn-primary btn-lg scroll-to-form me-3" onclick="scrollToForm(event); return false;">
                             <i class="las la-rocket me-2"></i>Đăng ký ngay
                         </a>
-                        <a href="{{ route('home') }}" class="btn btn-outline-light btn-lg" onclick="goToHome(event); return false;">
-                            <i class="las la-play-circle me-2"></i>Tìm hiểu thêm
+                        <a href="https://zalo.me/{{ gs('zalo_phone') ?? '0972585990' }}" 
+                           class="btn btn-success btn-lg zalo-chat-btn me-3"
+                           target="_blank">
+                            <i class="las la-comments me-2"></i>Hỗ trợ đăng ký bằng chat Zalo
                         </a>
+                        <!-- <a href="{{ route('home') }}" class="btn btn-outline-light btn-lg" onclick="goToHome(event); return false;">
+                            <i class="las la-play-circle me-2"></i>Tìm hiểu thêm
+                        </a> -->
                         <!-- Debug button -->
                         <!-- <button type="button" class="btn btn-warning btn-sm" onclick="alert('Button works!'); console.log('Debug button clicked');">
                             Test Click
@@ -124,6 +129,106 @@
                         <li>✓ Thanh toán an toàn & nhanh</li>
                         <li>✓ Thưởng cho thợ xuất sắc</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Comparison Infographic -->
+<section class="comparison-section py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h3 class="text-center mb-5">Thợ tìm khách hàng: Truyền thống có khó? Doitay.vn dễ hơn thế nào?</h3>
+                
+                <div class="comparison-container">
+                    <!-- Cách truyền thống -->
+                    <div class="comparison-card traditional">
+                        <div class="card-header">
+                            <div class="icon-wrapper">
+                                <i class="las la-times-circle"></i>
+                            </div>
+                            <h4>Cách truyền thống</h4>
+                            <p class="card-subtitle">Khó khăn & Rủi ro cao</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="feature-list">
+                                <li class="negative">
+                                    <i class="las la-times"></i>
+                                    <span><strong>Tìm khách hàng khó khăn</strong><br><small>Chỉ 20-30% thời gian có việc và không được nhận đánh giá</small></span>
+                                </li>
+                                <li class="negative">
+                                    <i class="las la-times"></i>
+                                    <span><strong>Khó quyết định được giá</strong><br><small>Dễ bị chủ thầu hoặc công ty ép giá 15-25%</small></span>
+                                </li>
+                                <li class="negative">
+                                    <i class="las la-times"></i>
+                                    <span><strong>Khó xây dựng uy tín</strong><br><small>Không nhận được đánh giá, chủ yếu uy tín trong một nhóm nhỏ người quen</small></span>
+                                </li>
+                                <li class="negative">
+                                    <i class="las la-times"></i>
+                                    <span><strong>Không chủ động thời gian</strong><br><small>Thời gian phụ thuộc vào chủ thầu, hoặc công ty đưa ra, không tự chủ động thời gian với khách hàng</small></span>
+                                </li>
+                                <li class="negative">
+                                    <i class="las la-times"></i>
+                                    <span><strong>Thu nhập thấp</strong><br><small>Chỉ 8-12 triệu/tháng</small></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- VS -->
+                    <div class="vs-badge">
+                        <span>VS</span>
+                    </div>
+
+                    <!-- Doitay.vn -->
+                    <div class="comparison-card doitay">
+                        <div class="card-header">
+                            <div class="icon-wrapper">
+                                <i class="las la-check-circle"></i>
+                            </div>
+                            <h4>Doitay.vn</h4>
+                            <p class="card-subtitle">Dễ dàng & Đảm bảo</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="feature-list">
+                                <li class="positive">
+                                    <i class="las la-check"></i>
+                                    <span><strong>Khách hàng chất lượng</strong><br><small>90% thời gian có việc ổn định nếu được đánh giá tốt</small></span>
+                                </li>
+                                <li class="positive">
+                                    <i class="las la-check"></i>
+                                    <span><strong>Giá cả do mình quyết định</strong><br><small>Bạn được quyền tự thương lượng về giá với khách hàng</small></span>
+                                </li>
+                                <li class="positive">
+                                    <i class="las la-check"></i>
+                                    <span><strong>Xây dựng uy tín</strong><br><small>Tạo trang riêng cho bạn, uy tín lan tỏa không giới hạn số lượng khách hàng</small></span>
+                                </li>
+                                <li class="positive">
+                                    <i class="las la-check"></i>
+                                    <span><strong>Chủ động thời gian</strong><br><small>Bạn được chọn các công việc phù hợp với thời gian rảnh của bạn</small></span>
+                                </li>
+                                <li class="positive">
+                                    <i class="las la-check"></i>
+                                    <span><strong>Thu nhập cao</strong><br><small>15-35 triệu/tháng (+30% so với truyền thống)</small></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nút Zalo Chat sau infographic -->
+                <div class="text-center mt-5">
+                    <h4 class="mb-3">Bạn cần hỗ trợ thêm?</h4>
+                    <p class="mb-4 text-muted">Chúng tôi sẽ hỗ trợ mở tài khoản và tạo trang cá nhân của bạn</p>
+                    <a href="https://zalo.me/{{ gs('zalo_phone') ?? '0972585990' }}" 
+                       class="btn btn-success btn-lg zalo-chat-btn"
+                       target="_blank">
+                        <i class="las la-comments"></i>
+                        Zalo Chat - Chúng tôi sẽ hỗ trợ mở tài khoản và tạo trang cá nhân của bạn
+                    </a>
                 </div>
             </div>
         </div>
@@ -231,6 +336,17 @@
                                     <i class="las la-edit me-2"></i>Chỉnh sửa
                                 </a>
                             </div>
+                            
+                            <!-- Nút Zalo hỗ trợ -->
+                            <div class="mt-4">
+                                <p class="text-white-50 mb-3">Cần hỗ trợ thêm?</p>
+                                <a href="https://zalo.me/{{ gs('zalo_phone') ?? '0972585990' }}" 
+                                   class="btn btn-success btn-lg zalo-chat-btn"
+                                   target="_blank">
+                                    <i class="las la-comments me-2"></i>
+                                    Zalo Chat - Hỗ trợ thợ chuyên nghiệp
+                                </a>
+                            </div>
                         </div>
                     @else
                         <!-- Authenticated user without company - Redirect to create company -->
@@ -244,6 +360,17 @@
                             <a href="{{ url('user-data-v2') }}" class="btn btn-light btn-lg">
                                 <i class="las la-plus-circle me-2"></i>Tạo hồ sơ thợ ngay
                             </a>
+                            
+                            <!-- Nút Zalo hỗ trợ -->
+                            <div class="mt-4">
+                                <p class="text-white-50 mb-3">Cần hỗ trợ tạo hồ sơ?</p>
+                                <a href="https://zalo.me/{{ gs('zalo_phone') ?? '0972585990' }}" 
+                                   class="btn btn-success btn-lg zalo-chat-btn"
+                                   target="_blank">
+                                    <i class="las la-comments me-2"></i>
+                                    Zalo Chat - Hỗ trợ tạo hồ sơ thợ
+                                </a>
+                            </div>
                         </div>
                     @endif
                 @else
@@ -270,6 +397,17 @@
                                 Sau khi đăng nhập, bạn sẽ được chuyển đến trang tạo hồ sơ thợ
                             </p>
                         </div>
+                        
+                        <!-- Nút Zalo hỗ trợ -->
+                        <div class="mt-4">
+                            <p class="text-white-50 mb-3">Cần hỗ trợ đăng ký hoặc tạo hồ sơ?</p>
+                            <a href="https://zalo.me/{{ gs('zalo_phone') ?? '0972585990' }}" 
+                               class="btn btn-success btn-lg zalo-chat-btn"
+                               target="_blank">
+                                <i class="las la-comments me-2"></i>
+                                Zalo Chat - Hướng dẫn đăng ký và tạo hồ sơ thợ
+                            </a>
+                        </div>
                     </div>
                 @endif
             </div>
@@ -289,7 +427,7 @@
             <div class="col-lg-4 mb-4">
                 <div class="story-card">
                     <div class="story-avatar">
-                        <img src="{{ asset('assets/images/frontend/success_stories/6354dee02fa141666506464.jpg') }}" alt="Anh Minh">
+                        <img src="{{ asset('assets/images/frontend/success_stories/tho_dien.png') }}" alt="Anh Minh">
                     </div>
                     <h5>Anh Minh - Thợ điện</h5>
                     <div class="story-stats">
@@ -303,7 +441,7 @@
                         </div>
                     </div>
                     <p>"Từ khi tham gia Doitay.vn, thu nhập của tôi đã tăng gấp 3 lần. 
-                       Khách hàng đều chất lượng, thanh toán đúng hẹn."</p>
+                       Khách hàng đều chất lượng, tôi có thêm nguồn thu nhập mới"</p>
                     <div class="rating">
                         ⭐⭐⭐⭐⭐ <span>4.9/5</span>
                     </div>
@@ -313,9 +451,9 @@
             <div class="col-lg-4 mb-4">
                 <div class="story-card">
                     <div class="story-avatar">
-                        <img src="{{ asset('assets/images/frontend/success_stories/6354df261f44e1666506534.jpg') }}" alt="Chị Lan">
+                        <img src="{{ asset('assets/images/frontend/success_stories/tho_son.png') }}" alt="Anh Tùng">
                     </div>
-                    <h5>Chị Lan - Thợ trang trí</h5>
+                    <h5>Anh Tùng - Thợ sơn</h5>
                     <div class="story-stats">
                         <div class="stat">
                             <strong>80+</strong>
@@ -326,7 +464,7 @@
                             <span>Thu nhập/tháng</span>
                         </div>
                     </div>
-                    <p>"Platform rất chuyên nghiệp, hỗ trợ tốt. Tôi có thể cân bằng 
+                    <p>"Doitay.vn rất chuyên nghiệp, hỗ trợ tốt. Tôi có thể cân bằng 
                        công việc và chăm sóc gia đình một cách dễ dàng."</p>
                     <div class="rating">
                         ⭐⭐⭐⭐⭐ <span>4.8/5</span>
@@ -337,7 +475,7 @@
             <div class="col-lg-4 mb-4">
                 <div class="story-card">
                     <div class="story-avatar">
-                        <img src="{{ asset('assets/images/avatar-placeholder.png') }}" alt="Anh Tuấn">
+                        <img src="{{ asset('assets/images/frontend/success_stories/tho_xd.png') }}" alt="Anh Tuấn">
                     </div>
                     <h5>Anh Tuấn - Thợ xây dựng</h5>
                     <div class="story-stats">
@@ -350,7 +488,7 @@
                             <span>Thu nhập/tháng</span>
                         </div>
                     </div>
-                    <p>"Doitay.vn giúp tôi mở rộng thị trường, tiếp cận nhiều dự án 
+                    <p>"Doitay.vn giúp tôi mở rộng khách hàng, tiếp cận nhiều công trình 
                        lớn hơn. Đây chính là bước ngoặt trong sự nghiệp."</p>
                     <div class="rating">
                         ⭐⭐⭐⭐⭐ <span>5.0/5</span>
@@ -794,6 +932,238 @@
     border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Comparison Infographic Styles */
+.comparison-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.comparison-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+}
+
+.comparison-card {
+    flex: 1;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.comparison-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.comparison-card.traditional:hover {
+    opacity: 0.9;
+    transform: translateY(-3px);
+}
+
+.comparison-card.doitay:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 25px 70px rgba(0, 123, 255, 0.25);
+}
+
+.comparison-card.traditional {
+    border-left: 5px solid #dc3545;
+    background: #f8f9fa;
+    opacity: 0.8;
+}
+
+.comparison-card.doitay {
+    border-left: 5px solid #007bff;
+    background: white;
+    box-shadow: 0 15px 50px rgba(0, 123, 255, 0.15);
+    transform: scale(1.02);
+}
+
+.card-header {
+    padding: 2rem 2rem 1rem;
+    text-align: center;
+}
+
+.traditional .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #6c757d;
+}
+
+.doitay .card-header {
+    background: linear-gradient(135deg, #e8f4ff 0%, #d4e9ff 100%);
+    color: #0d47a1;
+}
+
+.doitay .card-subtitle {
+    color: #1976d2;
+}
+
+.icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 2.5rem;
+}
+
+.traditional .icon-wrapper {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    opacity: 0.7;
+}
+
+.doitay .icon-wrapper {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+}
+
+.card-header h4 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.doitay .card-header h4 {
+    color: #0d47a1;
+}
+
+.card-subtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.feature-list li.negative {
+    background: #f8f9fa;
+    color: #6c757d;
+    border-left: 3px solid #dc3545;
+}
+
+.feature-list li.positive {
+    background: #f8fbff;
+    color: #0d47a1;
+    border-left: 3px solid #007bff;
+}
+
+.feature-list li i {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    min-width: 20px;
+}
+
+.feature-list li span {
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.feature-list li span strong {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.feature-list li span small {
+    opacity: 0.8;
+    font-size: 0.85rem;
+}
+
+.vs-badge {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
+    z-index: 10;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Zalo Chat Button Styles */
+.zalo-chat-btn {
+    background: linear-gradient(135deg, #00A6FF 0%, #0088CC 100%) !important;
+    border: none !important;
+    color: white !important;
+    padding: 1rem 2rem !important;
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(0, 166, 255, 0.3) !important;
+}
+
+.zalo-chat-btn:hover {
+    background: linear-gradient(135deg, #0088CC 0%, #006699 100%) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(0, 166, 255, 0.4) !important;
+    color: white !important;
+}
+
+.zalo-chat-btn i {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+
+
+/* Mobile Responsive for Comparison */
+@media (max-width: 768px) {
+    .comparison-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .vs-badge {
+        order: -1;
+        margin: 1rem 0;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+    }
+    
+    .hero-actions .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .hero-title {
@@ -807,10 +1177,12 @@
     
     .hero-actions {
         flex-direction: column;
+        gap: 1rem;
     }
     
     .hero-actions .btn {
         width: 100%;
+        margin-bottom: 0.5rem;
     }
     
     .registration-tabs {
@@ -827,6 +1199,11 @@
     
     .section-subtitle {
         font-size: 1rem;
+    }
+    
+    .zalo-chat-btn {
+        padding: 0.75rem 1.5rem !important;
+        font-size: 0.9rem !important;
     }
 }
 </style>
@@ -883,5 +1260,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
+
+
 
 @endsection 

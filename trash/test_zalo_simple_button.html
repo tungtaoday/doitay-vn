@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Zalo Simple Button</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #00A6FF;
+            text-align: center;
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .test-info h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Zalo Simple Button</h1>
+        
+        <div class="test-info">
+            <h3>📋 Hướng dẫn test:</h3>
+            <p><strong>1.</strong> Nhìn góc phải dưới màn hình - bạn sẽ thấy nút chat màu xanh</p>
+            <p><strong>2.</strong> <strong>Click vào nút chat để mở Zalo app trực tiếp</strong> (không mở chat box)</p>
+            <p><strong>3.</strong> Hover vào nút để thấy label "Chat Zalo"</p>
+            <p><strong>4.</strong> Mở Developer Tools (F12) để xem console log</p>
+        </div>
+        
+        <div class="test-info">
+            <h3>🔍 Kiểm tra Console:</h3>
+            <p>Sẽ thấy: "🎉 Zalo Widget đã được load thành công!"</p>
+            <p>Và: "💬 Click vào nút để mở Zalo app trực tiếp"</p>
+        </div>
+        
+        <div class="test-info">
+            <h3>📱 Chức năng:</h3>
+            <p><strong>✅ Nút đơn giản</strong> - chỉ để mở Zalo app</p>
+            <p><strong>✅ Không có chat box</strong> - click trực tiếp vào app</p>
+            <p><strong>✅ Hover effect</strong> - hiển thị label khi hover</p>
+            <p><strong>✅ Responsive</strong> - hoạt động trên mọi thiết bị</p>
+        </div>
+        
+        <p style="text-align: center; color: #666; margin-top: 30px;">
+            Nếu bạn thấy nút chat màu xanh ở góc phải dưới → Widget hoạt động! 🎉
+        </p>
+    </div>
+
+    <!-- Zalo Chat Widget - Simple Button Only -->
+    <div id="zalo-chat-widget" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        font-family: Arial, sans-serif;
+    ">
+        <!-- Zalo Button - Direct to App -->
+        <div id="zalo-chat-button" style="
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00A6FF 0%, #0088CC 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 166, 255, 0.3);
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 24px;
+            animation: zalo-pulse 2s infinite;
+        " onclick="openZaloApp('0901234567')" title="Chat Zalo">
+            💬
+        </div>
+        
+        <!-- Hover Label -->
+        <div style="
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        " id="zalo-label">Chat Zalo</div>
+    </div>
+
+    <!-- Zalo Chat Widget CSS -->
+    <style>
+    @keyframes zalo-pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 4px 20px rgba(0, 166, 255, 0.3);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(0, 166, 255, 0.4);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 4px 20px rgba(0, 166, 255, 0.3);
+        }
+    }
+
+    #zalo-chat-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(0, 166, 255, 0.4);
+    }
+
+    #zalo-chat-button:hover + #zalo-label {
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        #zalo-chat-widget {
+            bottom: 10px;
+            right: 10px;
+        }
+    }
+    </style>
+
+    <!-- Zalo Chat Widget JavaScript -->
+    <script>
+    // Open Zalo app directly
+    function openZaloApp(phone) {
+        console.log('🎯 Mở Zalo app với số:', phone);
+        
+        // Try to open Zalo app first
+        const zaloUrl = `zalo://chat?phone=${phone}`;
+        window.location.href = zaloUrl;
+        
+        // Fallback to web after a short delay
+        setTimeout(() => {
+            const webUrl = `https://zalo.me/${phone}`;
+            window.open(webUrl, '_blank');
+        }, 1000);
+    }
+
+    // Test if widget elements exist
+    document.addEventListener('DOMContentLoaded', function() {
+        const widget = document.getElementById('zalo-chat-widget');
+        const button = document.getElementById('zalo-chat-button');
+        const label = document.getElementById('zalo-label');
+        
+        if (widget && button && label) {
+            console.log('🎉 Zalo Widget đã được load thành công!');
+            console.log('📱 Widget sẽ hiển thị ở góc phải dưới màn hình');
+            console.log('💬 Click vào nút để mở Zalo app trực tiếp');
+        } else {
+            console.log('❌ Có vấn đề với việc tạo Zalo Widget elements!');
+            console.log('Widget:', widget ? '✅' : '❌');
+            console.log('Button:', button ? '✅' : '❌');
+            console.log('Label:', label ? '✅' : '❌');
+        }
+    });
+
+    console.log('🎉 Zalo Chat Widget đã được load trực tiếp!');
+    console.log('📱 Widget sẽ hiển thị ở góc phải dưới màn hình');
+    console.log('💬 Click vào nút để mở Zalo app trực tiếp');
+    </script>
+</body>
+</html> 
