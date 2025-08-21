@@ -18,13 +18,13 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
 
-    protected $username;
+    // Không cần property $username nữa vì field type được xác định động
 
 
     public function __construct()
     {
         parent::__construct();
-        $this->username = $this->findUsername();
+        // Không set username ở đây, để nó được xác định động khi login
     }
 
     public function showLoginForm()
@@ -83,40 +83,38 @@ class LoginController extends Controller
             $fieldType = 'username';
         }
 
-        request()->merge([$fieldType => $login]);
         return $fieldType;
     }
 
     public function username()
     {
-        return $this->username;
+        // Trả về field type động dựa trên input hiện tại
+        return $this->findUsername();
     }
 
     protected function validateLogin($request)
     {
-
+        // Luôn validate username field vì đó là field input
         $validator = Validator::make($request->all(), [
-            $this->username() => 'required|string',
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
         if ($validator->fails()) {
             Intended::reAssignSession();
             $validator->validate();
         }
-
     }
 
     protected function attemptLogin(Request $request)
     {
-        $credentials = $request->only($this->username(), 'password');
+        // Xác định field type động cho mỗi lần login
+        $fieldType = $this->findUsername();
+        $loginValue = $request->input('username');
         
-        // Get the field type (email, mobile, or username)
-        $fieldType = $this->username();
+        // Tìm user theo field type
+        $user = User::where($fieldType, $loginValue)->first();
         
-        // Build the query based on field type
-        $user = User::where($fieldType, $credentials[$fieldType])->first();
-        
-        if ($user && Hash::check($credentials['password'], $user->password)) {
+        if ($user && Hash::check($request->input('password'), $user->password)) {
             $this->guard()->login($user, $request->boolean('remember'));
             return true;
         }
