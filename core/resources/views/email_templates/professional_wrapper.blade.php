@@ -28,7 +28,7 @@
         
         /* Header */
         .email-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #102f4b;
             padding: 30px 20px;
             text-align: center;
             color: white;
@@ -60,7 +60,7 @@
         
         .greeting {
             font-size: 18px;
-            color: #2c3e50;
+            color: #102f4b;
             margin-bottom: 20px;
             font-weight: 500;
         }
@@ -73,7 +73,7 @@
             color: #34495e;
             font-size: 20px;
             margin-bottom: 15px;
-            border-bottom: 2px solid #3498db;
+            border-bottom: 2px solid #48bbe2;
             padding-bottom: 5px;
         }
         
@@ -109,7 +109,7 @@
         
         .info-box {
             background-color: #ecf0f1;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid #48bbe2;
             padding: 15px 20px;
             margin: 15px 0;
             border-radius: 0 4px 4px 0;
@@ -135,7 +135,7 @@
         .btn {
             display: inline-block;
             padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #102f4b;
             color: white;
             text-decoration: none;
             border-radius: 25px;
@@ -151,7 +151,7 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            background: linear-gradient(135deg, #48bbe2 0%, #2980b9 100%);
         }
         
         .btn-success {
@@ -200,7 +200,7 @@
         
         /* Footer */
         .email-footer {
-            background-color: #2c3e50;
+            background-color: #102f4b;
             color: #ecf0f1;
             padding: 30px 20px;
             text-align: center;
@@ -211,7 +211,7 @@
         }
         
         .footer-links a {
-            color: #3498db;
+            color: #48bbe2;
             text-decoration: none;
             margin: 0 15px;
             font-size: 14px;
@@ -312,7 +312,7 @@
             <div class="footer-text">
                 © {{current_year}} {{site_name}}. All rights reserved.<br>
                 This email was sent to {{user_email}}. If you no longer wish to receive these emails, 
-                <a href="{{unsubscribe_url}}" style="color: #3498db;">unsubscribe here</a>.
+                <a href="{{unsubscribe_url}}" style="color: #48bbe2;">unsubscribe here</a>.
             </div>
         </div>
     </div>

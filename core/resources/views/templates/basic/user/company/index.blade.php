@@ -263,7 +263,7 @@
 .contact-section {
     padding: 2rem 0 4rem 0 !important;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #102f4b;
     position: relative;
     overflow: hidden;
 }
@@ -291,7 +291,7 @@
 .contact-section {
     padding: 2rem 0 4rem 0 !important;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #102f4b;
     position: relative;
     overflow: hidden;
 }

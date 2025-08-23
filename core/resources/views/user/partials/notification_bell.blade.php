@@ -147,7 +147,7 @@
 
 .notification-header {
     padding: 15px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #102f4b;
     color: white;
     display: flex;
     justify-content: space-between;

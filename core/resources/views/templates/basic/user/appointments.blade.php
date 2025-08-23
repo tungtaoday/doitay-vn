@@ -242,7 +242,7 @@
                                 </div>
                                 <div class="appointment-time">
                                     <small class="text-muted">
-                                        Tạo {{ $appointment->created_at->diffForHumans() }}
+                                        Tạo {{ $appointment->created_at->locale('vi')->diffForHumans() }}
                                     </small>
                                 </div>
                             </div>

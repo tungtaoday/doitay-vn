@@ -496,9 +496,14 @@ class SiteController extends Controller
         return view('Template::company.companies', compact('categories', 'companies'));
     }
 
-    public function companyDetails(Request $request, $id, $slug)
+    public function companyDetails(Request $request, Company $company, $slug)
     {
-        $company = Company::where('id', $id)->approved()->with('portfolios')->firstOrFail();
+        // Company model đã được resolve tự động, chỉ cần kiểm tra approved status
+        if ($company->status != Status::APPROVED) {
+            abort(404);
+        }
+        
+        $company->load('portfolios');
 
         $ratings = Rating::where('company_id', $company->id)->with('user', 'company')->where('status', 1)->latest()->take(20)->get();
 

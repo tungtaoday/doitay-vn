@@ -141,7 +141,7 @@
                                         <div class="estimated-time mt-2">
                                             <small class="text-muted">
                                                 <i class="las la-calendar-day me-1"></i>
-                                                {{ \Carbon\Carbon::parse($appointment->appointment_date)->diffForHumans() }}
+                                                {{ \Carbon\Carbon::parse($appointment->appointment_date)->locale('vi')->diffForHumans() }}
                                             </small>
                                         </div>
                                     @endif

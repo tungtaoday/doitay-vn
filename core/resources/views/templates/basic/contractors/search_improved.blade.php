@@ -402,7 +402,7 @@
 <style>
 /* Enhanced Search UX Styles */
 .search-hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #102f4b;
     padding: 3rem 0;
     color: white;
 }
@@ -444,7 +444,7 @@
 }
 
 .search-btn {
-    background: #667eea;
+    background: #48bbe2;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -521,7 +521,7 @@
 }
 
 .quick-action:hover {
-    background: #667eea;
+    background: #48bbe2;
     color: white;
     transform: scale(1.1);
 }
@@ -636,7 +636,7 @@
 
 /* Lead CTA Card */
 .lead-cta-card {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #48bbe2, #764ba2);
     border-radius: 12px;
     padding: 1.5rem;
     text-align: center;
@@ -646,7 +646,7 @@
 
 .btn-create-lead {
     background: white;
-    color: #667eea;
+    color: #48bbe2;
     padding: 10px 20px;
     border-radius: 8px;
     text-decoration: none;
@@ -660,7 +660,7 @@
 .btn-create-lead:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    color: #667eea;
+    color: #48bbe2;
 }
 
 /* Results Header */

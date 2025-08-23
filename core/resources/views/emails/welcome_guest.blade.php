@@ -21,7 +21,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #102f4b;
             color: white;
             padding: 30px;
             text-align: center;
@@ -41,14 +41,14 @@
         }
         .login-box {
             background-color: #f8f9fa;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #48bbe2;
             padding: 20px;
             margin: 20px 0;
             border-radius: 0 4px 4px 0;
         }
         .login-box h3 {
             margin-top: 0;
-            color: #667eea;
+            color: #48bbe2;
         }
         .login-info {
             font-family: 'Courier New', monospace;
@@ -64,7 +64,7 @@
         }
         .button {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #102f4b;
             color: white;
             padding: 15px 30px;
             text-decoration: none;

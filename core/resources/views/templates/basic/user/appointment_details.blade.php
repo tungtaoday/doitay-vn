@@ -297,7 +297,7 @@
                                 </div>
                                 <div class="info-item">
                                     <span class="label">Cập nhật:</span>
-                                    <span class="value">{{ $appointment->updated_at->diffForHumans() }}</span>
+                                    <span class="value">{{ $appointment->updated_at->locale('vi')->diffForHumans() }}</span>
                                 </div>
                             </div>
                         </div>

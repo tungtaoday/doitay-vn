@@ -151,7 +151,7 @@
                             </td>
                             <td>
                                 <small>{{ $purchase->created_at->format('d/m/Y H:i') }}</small><br>
-                                <small class="text-muted">{{ $purchase->created_at->diffForHumans() }}</small>
+                                <small class="text-muted">{{ $purchase->created_at->locale('vi')->diffForHumans() }}</small>
                             </td>
                             <td>
                                 <div class="btn-group-vertical" role="group">

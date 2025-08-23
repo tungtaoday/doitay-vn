@@ -3,12 +3,12 @@
 @section('content')
 <div class="contractors-page">
     <!-- Hero Search Section -->
-    <section class="hero-search-section py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <section class="hero-search-section py-5" style="background: #102f4b;">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="text-center text-white mb-4">
-                        <h1 class="display-5 fw-bold mb-3">{{ $pageTitle }}</h1>
+                        <h1 class="display-5 fw-bold mb-3 text-white">{{ $pageTitle }}</h1>
                         <p class="lead">Khám phá {{ $companies->total() }} thợ chuyên nghiệp được xác minh trên toàn quốc</p>
                     </div>
                     
@@ -200,8 +200,8 @@
 }
 
 .search-input:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    border-color: #48bbe2;
+    box-shadow: 0 0 0 0.25rem rgba(16, 47, 75, 0.25);
 }
 
 .category-select, .location-select {
@@ -213,7 +213,7 @@
 
 .btn-search {
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #102f4b;
     border: none;
     border-radius: 10px;
     color: white;
@@ -223,7 +223,7 @@
 
 .btn-search:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(16, 47, 75, 0.4);
     color: white;
 }
 
@@ -311,8 +311,8 @@
 }
 
 .view-toggle .btn.active {
-    background-color: #667eea;
-    border-color: #667eea;
+    background-color: #48bbe2;
+    border-color: #48bbe2;
     color: white;
 }
 

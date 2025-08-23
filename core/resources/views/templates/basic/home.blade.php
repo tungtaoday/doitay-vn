@@ -288,7 +288,7 @@
 .section-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: #102f4b;
     margin-bottom: 1rem;
     font-family: 'Inter', sans-serif;
 }
@@ -400,7 +400,7 @@
 .process-step h4 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #2c3e50;
+    color: #102f4b;
     margin-bottom: 1rem;
 }
 
@@ -475,7 +475,7 @@
 .category-card .card-title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #2c3e50;
+    color: #102f4b;
 }
 
 .category-card .card-text {
@@ -512,7 +512,7 @@
 .contractor-card .card-title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #2c3e50;
+    color: #102f4b;
 }
 
 .contractor-card .text-muted {
@@ -551,7 +551,7 @@
     font-weight: 600;
     font-size: 0.875rem;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 15px rgba(72, 187, 226, 0.25);
+    box-shadow: 0 4px 15px rgba(16, 47, 75, 0.25);
     font-family: 'Inter', sans-serif;
 }
 
@@ -575,7 +575,7 @@
     border-radius: 20px;
     padding: 2rem;
     box-shadow: 0 10px 40px rgba(16, 47, 75, 0.08);
-    border: 1px solid rgba(72, 187, 226, 0.1);
+    border: 1px solid rgba(16, 47, 75, 0.1);
 }
 
 @media (max-width: 768px) {
@@ -651,7 +651,7 @@
 
 .tab-btn:hover {
     color: #48bbe2;
-    background: rgba(72, 187, 226, 0.1);
+    background: rgba(16, 47, 75, 0.1);
     pointer-events: auto;
 }
 
@@ -701,7 +701,7 @@
     font-weight: 600;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(72, 187, 226, 0.2);
+    border-bottom: 2px solid rgba(16, 47, 75, 0.2);
     font-size: 1.125rem;
     font-family: 'Inter', sans-serif;
 }
@@ -732,7 +732,7 @@
 .modern-input,
 .modern-select,
 .modern-textarea {
-    border: 2px solid rgba(72, 187, 226, 0.2);
+    border: 2px solid rgba(16, 47, 75, 0.2);
     border-radius: 12px;
     padding: 0.75rem 1rem;
     font-size: 1rem;
@@ -746,7 +746,7 @@
 .modern-select:focus,
 .modern-textarea:focus {
     border-color: #48bbe2;
-    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.15);
+    box-shadow: 0 0 0 0.2rem rgba(16, 47, 75, 0.15);
     background: white;
     outline: none;
 }
@@ -766,10 +766,10 @@
 }
 
 .terms-checkbox {
-    background: rgba(72, 187, 226, 0.05);
+    background: rgba(16, 47, 75, 0.05);
     padding: 1rem;
     border-radius: 12px;
-    border: 1px solid rgba(72, 187, 226, 0.15);
+    border: 1px solid rgba(16, 47, 75, 0.15);
 }
 
 .terms-checkbox .form-check-label {
@@ -805,7 +805,7 @@
 }
 
 .hero-video-placeholder {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #102f4b;
     border-radius: 20px;
     height: 250px;
     display: flex;
@@ -887,7 +887,7 @@
 }
 
 .trust-title {
-    color: #2c3e50;
+    color: #102f4b;
     font-weight: 700;
     margin-bottom: 1.5rem;
     font-size: 1.25rem;
@@ -932,7 +932,7 @@
 }
 
 .trust-text h6 {
-    color: #2c3e50;
+    color: #102f4b;
     font-weight: 600;
     margin-bottom: 0.25rem;
     font-size: 1rem;
@@ -983,7 +983,7 @@
 
 /* Customer Reviews */
 .reviews-title {
-    color: #2c3e50;
+    color: #102f4b;
     font-weight: 700;
     margin-bottom: 1.5rem;
     font-size: 1.25rem;
@@ -1014,7 +1014,7 @@
 
 .review-text {
     font-style: italic;
-    color: #2c3e50;
+    color: #102f4b;
     margin-bottom: 1rem;
     font-size: 1.1rem;
     line-height: 1.6;
@@ -1090,7 +1090,7 @@
     font-weight: 600;
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 20px rgba(72, 187, 226, 0.25);
+    box-shadow: 0 4px 20px rgba(16, 47, 75, 0.25);
     position: relative;
     z-index: 2;
 }
@@ -1140,7 +1140,7 @@
     height: 8px;
     background: #48bbe2;
     border-radius: 50%;
-    box-shadow: 0 0 0 3px rgba(72, 187, 226, 0.15);
+    box-shadow: 0 0 0 3px rgba(16, 47, 75, 0.15);
 }
 
 /* Process Step Cards */
@@ -1149,7 +1149,7 @@
     border-radius: 20px;
     padding: 2rem 1.5rem;
     box-shadow: 0 8px 32px rgba(16, 47, 75, 0.08);
-    border: 1px solid rgba(72, 187, 226, 0.1);
+    border: 1px solid rgba(16, 47, 75, 0.1);
     transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
@@ -1173,7 +1173,7 @@
 .process-step-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 16px 48px rgba(16, 47, 75, 0.15);
-    border-color: rgba(72, 187, 226, 0.3);
+    border-color: rgba(16, 47, 75, 0.3);
 }
 
 .process-step-card:hover::before {
@@ -1182,8 +1182,8 @@
 
 /* Featured Step Card */
 .step-card-featured {
-    background: rgba(72, 187, 226, 0.02);
-    border: 2px solid rgba(72, 187, 226, 0.2);
+    background: rgba(16, 47, 75, 0.02);
+    border: 2px solid rgba(16, 47, 75, 0.2);
     transform: scale(1.02);
 }
 
@@ -1209,7 +1209,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 24px rgba(72, 187, 226, 0.25);
+    box-shadow: 0 8px 24px rgba(16, 47, 75, 0.25);
     transition: all 0.3s ease;
 }
 
@@ -1297,13 +1297,13 @@
 .feature-tag {
     display: inline-flex;
     align-items: center;
-    background: rgba(72, 187, 226, 0.1);
+    background: rgba(16, 47, 75, 0.1);
     color: #102f4b;
     padding: 0.4rem 0.8rem;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
-    border: 1px solid rgba(72, 187, 226, 0.2);
+    border: 1px solid rgba(16, 47, 75, 0.2);
 }
 
 .featured-tag {
@@ -1413,7 +1413,7 @@
 .quick-lead-form .btn-primary:focus {
     outline: 2px solid #48bbe2;
     outline-offset: 2px;
-    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(16, 47, 75, 0.25);
 }
 
 .quick-lead-form .btn-primary:active {
@@ -1458,7 +1458,7 @@
 .next-step-auth:focus {
     outline: 2px solid #48bbe2 !important;
     outline-offset: 2px !important;
-    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 47, 75, 0.25) !important;
 }
 
 .next-step-auth:active {
@@ -1474,7 +1474,7 @@
     z-index: 15 !important;
     display: inline-block !important;
     background: transparent !important;
-    border: 2px solid rgba(72, 187, 226, 0.3) !important;
+    border: 2px solid rgba(16, 47, 75, 0.3) !important;
     color: #102f4b !important;
     font-weight: 500 !important;
     padding: 0.75rem 1.5rem !important;
@@ -1486,22 +1486,22 @@
 }
 
 .prev-step-auth:hover {
-    background: rgba(72, 187, 226, 0.1) !important;
+    background: rgba(16, 47, 75, 0.1) !important;
     border-color: #48bbe2 !important;
     color: #102f4b !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(72, 187, 226, 0.1) !important;
+    box-shadow: 0 4px 12px rgba(16, 47, 75, 0.1) !important;
 }
 
 .prev-step-auth:focus {
     outline: 2px solid #48bbe2 !important;
     outline-offset: 2px !important;
-    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 47, 75, 0.25) !important;
 }
 
 .prev-step-auth:active {
     transform: translateY(0) !important;
-    background: rgba(72, 187, 226, 0.2) !important;
+    background: rgba(16, 47, 75, 0.2) !important;
 }
 
 /* Ensure parent containers don't block clicks */
@@ -1542,11 +1542,11 @@
     border-color: #48bbe2;
     color: white;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(72, 187, 226, 0.2);
+    box-shadow: 0 4px 12px rgba(16, 47, 75, 0.2);
 }
 
 .quick-lead-form .btn-outline-secondary {
-    border-color: rgba(72, 187, 226, 0.3);
+    border-color: rgba(16, 47, 75, 0.3);
     color: #102f4b;
     font-family: 'Inter', sans-serif;
     font-weight: 500;
@@ -1557,7 +1557,7 @@
 }
 
 .quick-lead-form .btn-outline-secondary:hover {
-    background: rgba(72, 187, 226, 0.1);
+    background: rgba(16, 47, 75, 0.1);
     border-color: #48bbe2;
     color: #102f4b;
 }
@@ -1607,7 +1607,7 @@
 }
 
 .modern-select:disabled:focus {
-    border-color: rgba(72, 187, 226, 0.2);
+    border-color: rgba(16, 47, 75, 0.2);
     box-shadow: none;
 }
 
@@ -1646,7 +1646,7 @@
 .next-step:focus {
     outline: 2px solid #48bbe2 !important;
     outline-offset: 2px !important;
-    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 47, 75, 0.25) !important;
 }
 
 .next-step:active {
@@ -1669,7 +1669,7 @@
     z-index: 20 !important;
     display: inline-block !important;
     background: transparent !important;
-    border: 2px solid rgba(72, 187, 226, 0.3) !important;
+    border: 2px solid rgba(16, 47, 75, 0.3) !important;
     color: #102f4b !important;
     font-weight: 500 !important;
     padding: 0.75rem 1.5rem !important;
@@ -1686,22 +1686,22 @@
 }
 
 .prev-step:hover {
-    background: rgba(72, 187, 226, 0.1) !important;
+    background: rgba(16, 47, 75, 0.1) !important;
     border-color: #48bbe2 !important;
     color: #102f4b !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(72, 187, 226, 0.1) !important;
+    box-shadow: 0 4px 12px rgba(16, 47, 75, 0.1) !important;
 }
 
 .prev-step:focus {
     outline: 2px solid #48bbe2 !important;
     outline-offset: 2px !important;
-    box-shadow: 0 0 0 0.2rem rgba(72, 187, 226, 0.25) !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 47, 75, 0.25) !important;
 }
 
 .prev-step:active {
     transform: translateY(0) !important;
-    background: rgba(72, 187, 226, 0.2) !important;
+    background: rgba(16, 47, 75, 0.2) !important;
 }
 
 /* Ensure guest form containers allow clicks */
@@ -2999,7 +2999,7 @@ function showNewUserModal(loginInfo) {
                 animation: modalSlideIn 0.3s ease-out;
             ">
                 <div style="
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: #102f4b;
                     color: white;
                     padding: 20px;
                     border-radius: 8px 8px 0 0;
@@ -3012,12 +3012,12 @@ function showNewUserModal(loginInfo) {
                 <div style="padding: 30px;">
                     <div style="
                         background-color: #f8f9fa;
-                        border-left: 4px solid #667eea;
+                        border-left: 4px solid #48bbe2;
                         padding: 20px;
                         margin: 20px 0;
                         border-radius: 0 4px 4px 0;
                     ">
-                        <h4 style="margin-top: 0; color: #667eea;">🔑 Thông tin đăng nhập:</h4>
+                        <h4 style="margin-top: 0; color: #48bbe2;">🔑 Thông tin đăng nhập:</h4>
                         
                         <div style="
                             background-color: #fff;
@@ -3071,7 +3071,7 @@ function showNewUserModal(loginInfo) {
                     
                     <div style="text-align: center; margin-top: 30px;">
                         <button onclick="closeNewUserModal()" style="
-                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            background: #102f4b;
                             color: white;
                             border: none;
                             padding: 12px 30px;

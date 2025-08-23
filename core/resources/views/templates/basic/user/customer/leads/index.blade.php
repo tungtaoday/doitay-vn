@@ -281,7 +281,7 @@
 <style>
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #102f4b;
     color: white;
     padding: 2rem 0;
     border-radius: 12px;
@@ -371,7 +371,7 @@
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
-    color: #2c3e50;
+    color: #102f4b;
 }
 
 .stat-content p {
@@ -479,7 +479,7 @@
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
-    color: #2c3e50;
+    color: #102f4b;
     line-height: 1.4;
 }
 

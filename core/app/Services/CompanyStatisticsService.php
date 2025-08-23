@@ -13,10 +13,25 @@ class CompanyStatisticsService
      */
     public function incrementViews(Company $company)
     {
-        DB::transaction(function () use ($company) {
-            $statistics = $company->statistics()->firstOrCreate();
-            $statistics->increment('views');
-        });
+        try {
+            DB::transaction(function () use ($company) {
+                $statistics = $company->statistics()->firstOrCreate();
+                $statistics->increment('views');
+                
+                \Log::info('CompanyStatisticsService: Successfully incremented views', [
+                    'company_id' => $company->id,
+                    'statistics_id' => $statistics->id,
+                    'new_views_count' => $statistics->views
+                ]);
+            });
+        } catch (\Exception $e) {
+            \Log::error('CompanyStatisticsService: Error incrementing views', [
+                'company_id' => $company->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -24,10 +39,25 @@ class CompanyStatisticsService
      */
     public function incrementHires(Company $company)
     {
-        DB::transaction(function () use ($company) {
-            $statistics = $company->statistics()->firstOrCreate();
-            $statistics->increment('hires');
-        });
+        try {
+            DB::transaction(function () use ($company) {
+                $statistics = $company->statistics()->firstOrCreate();
+                $statistics->increment('hires');
+                
+                \Log::info('CompanyStatisticsService: Successfully incremented hires', [
+                    'company_id' => $company->id,
+                    'statistics_id' => $company->id,
+                    'new_hires_count' => $statistics->hires
+                ]);
+            });
+        } catch (\Exception $e) {
+            \Log::error('CompanyStatisticsService: Error incrementing hires', [
+                'company_id' => $company->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -35,6 +65,24 @@ class CompanyStatisticsService
      */
     public function getStatistics(Company $company)
     {
-        return $company->statistics()->firstOrCreate();
+        try {
+            $statistics = $company->statistics()->firstOrCreate();
+            
+            \Log::info('CompanyStatisticsService: Retrieved statistics', [
+                'company_id' => $company->id,
+                'statistics_id' => $statistics->id,
+                'views' => $statistics->views,
+                'hires' => $statistics->hires
+            ]);
+            
+            return $statistics;
+        } catch (\Exception $e) {
+            \Log::error('CompanyStatisticsService: Error getting statistics', [
+                'company_id' => $company->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 } 

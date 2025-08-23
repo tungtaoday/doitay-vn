@@ -86,7 +86,7 @@
                            class="btn btn-outline-primary">
                             <i class="fas fa-eye me-1"></i> Xem chi tiết
                         </a>
-                        <button class="btn btn-primary" onclick="quickContact({{ $company->id }})">
+                        <button class="btn btn-primary custom-primary-btn" onclick="quickContact({{ $company->id }})">
                             <i class="fas fa-phone me-1"></i> Liên hệ ngay
                         </button>
                     </div>
@@ -101,7 +101,7 @@
                 </div>
                 <h4>Không tìm thấy thợ chuyên nghiệp nào</h4>
                 <p class="text-muted">Hãy thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác</p>
-                <button class="btn btn-primary" onclick="clearAllFilters()">
+                <button class="btn btn-primary custom-primary-btn" onclick="clearAllFilters()">
                     <i class="fas fa-refresh me-1"></i> Xóa bộ lọc
                 </button>
             </div>
@@ -118,6 +118,28 @@
 @endif
 
 <style>
+/* Custom Primary Button */
+.custom-primary-btn {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+}
+
+.custom-primary-btn:hover {
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+    color: white !important;
+}
+
+.custom-primary-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+}
+
 /* Contractor Cards */
 .contractor-card {
     background: white;
