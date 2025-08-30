@@ -158,6 +158,9 @@ class ImprovedAuthController extends Controller
 
             RateLimiter::hit($rateLimitKey, 300); // 5 minutes
 
+            // Debug logging
+            Log::info('Registration request data:', $request->all());
+            
             // Validation
             $validator = $this->validateRegistration($request);
             
@@ -203,12 +206,15 @@ class ImprovedAuthController extends Controller
             DB::rollBack();
             Log::error('Registration error: ' . $e->getMessage(), [
                 'request' => $request->all(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred. Please try again.'
+                'message' => 'An error occurred: ' . $e->getMessage(),
+                'debug' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
@@ -415,18 +421,26 @@ class ImprovedAuthController extends Controller
             'user_role' => 'required|in:customer,contractor,both'
         ];
 
+        // Debug logging
+        Log::info('Registration field determined:', ['loginField' => $loginField]);
+        
         // Add validation for email or mobile based on input
         if ($loginField === 'email') {
             $rules['email'] = 'required|string|email|unique:users';
             $rules['mobile'] = 'nullable|string|unique:users';
+            Log::info('Using email validation rules');
         } elseif ($loginField === 'mobile') {
-            $rules['mobile'] = 'required|string|unique:users|regex:/^(\+84|84|0)[0-9]{9}$/';
-            $rules['email'] = 'nullable|string|email|unique:users';
+            $rules['mobile'] = 'required|string|unique:users|min:10|max:11';
+            $rules['email'] = 'nullable|string|email';
+            Log::info('Using mobile validation rules');
         } else {
             // Default to email
             $rules['email'] = 'required|string|email|unique:users';
             $rules['mobile'] = 'nullable|string|unique:users';
+            Log::info('Using default email validation rules');
         }
+        
+        Log::info('Final validation rules:', $rules);
 
         $messages = [
             'firstname.required' => 'First name is required',
@@ -445,16 +459,22 @@ class ImprovedAuthController extends Controller
      */
     private function getRegistrationField(array $data)
     {
+        // Debug logging
+        Log::info('getRegistrationField input data:', $data);
+        
         // Check if user provided email or mobile
         if (isset($data['email']) && !empty($data['email'])) {
+            Log::info('Registration field determined: email');
             return 'email';
         }
         
         if (isset($data['mobile']) && !empty($data['mobile'])) {
+            Log::info('Registration field determined: mobile');
             return 'mobile';
         }
         
         // Default to email
+        Log::info('Registration field defaulted to: email');
         return 'email';
     }
 
@@ -463,6 +483,16 @@ class ImprovedAuthController extends Controller
      */
     private function createUser(array $data)
     {
+        // Clean up empty strings to NULL
+        if (isset($data['email']) && $data['email'] === '') {
+            $data['email'] = null;
+        }
+        if (isset($data['mobile']) && $data['mobile'] === '') {
+            $data['mobile'] = null;
+        }
+        
+        Log::info('Creating user with cleaned data:', $data);
+        
         $user = new User();
         $user->firstname = $data['firstname'];
         $user->lastname = $data['lastname'];
@@ -501,13 +531,36 @@ class ImprovedAuthController extends Controller
                 $user->mobile_verified_at = now();
             }
         }
+        
+        // Ensure email is not empty string for mobile-only registration
+        if ($registrationField === 'mobile' && empty($data['email'])) {
+            $user->email = null; // Set to NULL instead of empty string
+            Log::info('Mobile-only registration: setting email to NULL');
+        }
+        
+        // Ensure mobile is not empty string for email-only registration
+        if ($registrationField === 'email' && empty($data['mobile'])) {
+            $user->mobile = null; // Set to NULL instead of empty string
+            Log::info('Email-only registration: setting mobile to NULL');
+        }
 
         // Handle referral
         if (session('referrer_id')) {
             $user->referred_by = session('referrer_id');
         }
 
+        // Debug: Log user object before save
+        Log::info('User object before save:', [
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'email' => $user->email,
+            'mobile' => $user->mobile,
+            'status' => $user->status
+        ]);
+
         $user->save();
+        
+        Log::info('User saved successfully with ID: ' . $user->id);
 
         // Process referral reward
         if ($user->referred_by) {
@@ -569,7 +622,7 @@ class ImprovedAuthController extends Controller
             notify($user, 'USER_WELCOME', [
                 'fullname' => $user->fullname,
                 'site' => gs('site_name'),
-                'login_url' => route('user.login')
+                'login_url' => route('user.login.v2')
             ]);
             
             // Debug log

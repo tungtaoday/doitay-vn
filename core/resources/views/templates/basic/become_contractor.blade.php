@@ -386,7 +386,7 @@
                             <a href="{{ route('user.register') }}" class="btn btn-light btn-lg">
                                 <i class="las la-user-plus me-2"></i>Đăng ký tài khoản
                             </a>
-                            <a href="{{ route('user.login') }}" class="btn btn-outline-light btn-lg">
+                            <a href="{{ route('user.login.v2') }}" class="btn btn-outline-light btn-lg">
                                 <i class="las la-sign-in-alt me-2"></i>Đăng nhập
                             </a>
                                 </div>

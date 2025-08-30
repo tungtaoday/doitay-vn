@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.status === 401) {
                     // User not authenticated - redirect to login
                     console.log('User not authenticated, redirecting to login');
-                    window.location.href = '{{ route("user.login") }}';
+                    window.location.href = '{{ route("user.login.v2") }}';
                     return;
                 }
                 
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     renderNotifications(data.notifications);
                 } else if (data && data.error === 'Not authenticated') {
                     console.log('Authentication error, redirecting to login');
-                    window.location.href = '{{ route("user.login") }}';
+                    window.location.href = '{{ route("user.login.v2") }}';
                 }
             })
             .catch(error => {
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => {
             if (response.status === 401) {
                 console.log('Authentication error in mark as read, redirecting to login');
-                window.location.href = '{{ route("user.login") }}';
+                window.location.href = '{{ route("user.login.v2") }}';
                 return;
             }
             if (response.status === 419) {
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } else if (data && data.error === 'Not authenticated') {
                 console.log('Authentication error in mark as read, redirecting to login');
-                window.location.href = '{{ route("user.login") }}';
+                window.location.href = '{{ route("user.login.v2") }}';
             } else {
                 console.error('Failed to mark notification as read:', data ? data.message : 'Unknown error');
             }

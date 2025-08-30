@@ -503,7 +503,20 @@ class SiteController extends Controller
             abort(404);
         }
         
-        $company->load('portfolios');
+        // Load company với ratings và tính toán avg_rating
+        $company->load(['portfolios', 'ratings' => function($query) {
+            $query->where('status', 1);
+        }]);
+
+        // Tính avg_rating từ rating_details (chính xác hơn)
+        $avgRating = DB::table('rating_details')
+            ->join('ratings', 'rating_details.rating_id', '=', 'ratings.id')
+            ->where('ratings.company_id', $company->id)
+            ->where('ratings.status', 1)
+            ->avg('rating_details.rating') ?? 0;
+
+        // Cập nhật avg_rating cho company
+        $company->avg_rating = round($avgRating, 2);
 
         $ratings = Rating::where('company_id', $company->id)->with('user', 'company')->where('status', 1)->latest()->take(20)->get();
 
@@ -512,8 +525,6 @@ class SiteController extends Controller
         $reviews = Rating::where('company_id', $company->id)->with(['user', 'ratingDetails.feature'])->where('status', 1)->latest()->paginate(10);
 
         $pageTitle = $company->name;
-
-        $avgRating = Rating::where('company_id', $company->id)->avg('avg_rating') ?? 0;
 
         $averageRatings = [];
         // Only get features that belong to the company's category
@@ -524,6 +535,7 @@ class SiteController extends Controller
             $averageRatings[$feature->id] = RatingDetail::where('feature_id', $feature->id)
                 ->whereHas('rating', function ($query) use ($company) {
                     $query->where('company_id', $company->id);
+                    $query->where('status', 1);
                 })
                 ->avg('rating') ?? 0;
         }

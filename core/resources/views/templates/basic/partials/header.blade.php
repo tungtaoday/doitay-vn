@@ -93,7 +93,7 @@
                             </a>
                             <a href="{{ route('user.company.index') }}">
                                 <i class="las la-tools"></i>
-                                @lang('Nhóm thợ của tôi')
+                                @lang('Hồ sơ thợ của tôi')
                             </a>
                         @else
                             {{-- Menu cho khách hàng --}}
@@ -248,7 +248,7 @@
                             </a>
                             <a href="{{ route('user.company.index') }}" class="mobile-action-btn">
                                 <i class="las la-tools"></i>
-                                @lang('Nhóm thợ của tôi')
+                                @lang('Hồ sơ thợ của tôi')
                             </a>
                         @else
                             {{-- Mobile menu cho khách hàng --}}

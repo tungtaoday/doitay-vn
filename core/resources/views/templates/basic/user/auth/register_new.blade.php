@@ -225,6 +225,7 @@
                         <input type="hidden" name="firstname" value="">
                         <input type="hidden" name="lastname" value="">
                         <input type="hidden" name="email" value="">
+                        <input type="hidden" name="mobile" value="">
                         <input type="hidden" name="password_confirmation" value="">
                     </form>
 
@@ -1037,12 +1038,22 @@ class RegistrationFlow {
                 const emailPhone = document.querySelector('input[name="email_or_phone"]').value;
                 const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailPhone);
                 
+                console.log('Step 1 - Processing:', { emailPhone, isEmail });
+                
                 if (isEmail) {
+                    // Email registration
                     document.querySelector('input[name="email"]').value = emailPhone;
+                    document.querySelector('input[name="mobile"]').value = '';
                     this.formData.email = emailPhone;
+                    this.formData.mobile = '';
+                    console.log('Email registration - Set email:', emailPhone, 'Clear mobile');
                 } else {
-                    // Handle phone number
+                    // Mobile registration
+                    document.querySelector('input[name="mobile"]').value = emailPhone;
+                    document.querySelector('input[name="email"]').value = '';
                     this.formData.mobile = emailPhone;
+                    this.formData.email = '';
+                    console.log('Mobile registration - Set mobile:', emailPhone, 'Clear email');
                 }
                 
                 // Show identifier in next step
@@ -1081,7 +1092,23 @@ class RegistrationFlow {
         this.showLoading(true);
 
         try {
+            // Debug: Log form data before submission
+            console.log('Form data before submission:', {
+                email: document.querySelector('input[name="email"]').value,
+                mobile: document.querySelector('input[name="mobile"]').value,
+                firstname: document.querySelector('input[name="firstname"]').value,
+                lastname: document.querySelector('input[name="lastname"]').value,
+                user_role: document.querySelector('input[name="user_role"]').value
+            });
+            
             const formData = new FormData(this.form);
+            
+            // Debug: Log all form data entries
+            console.log('=== FORM DATA ENTRIES ===');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            console.log('=== END FORM DATA ===');
             
             const response = await fetch(this.form.action, {
                 method: 'POST',

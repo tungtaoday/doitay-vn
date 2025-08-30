@@ -40,7 +40,7 @@
         <!-- Action Buttons -->
         <div class="header-actions">
             @guest
-                <a href="{{ route('user.login') }}" class="btn-login">
+                <a href="{{ route('user.login.v2') }}" class="btn-login">
                     <i class="las la-sign-in-alt"></i>
                     <span>@lang('Đăng nhập')</span>
                 </a>
@@ -157,7 +157,7 @@
             <!-- Mobile Auth Actions -->
             <div class="mobile-auth">
                 @guest
-                    <a href="{{ route('user.login') }}" class="mobile-btn mobile-btn-primary">
+                    <a href="{{ route('user.login.v2') }}" class="mobile-btn mobile-btn-primary">
                         <i class="las la-sign-in-alt"></i>
                         @lang('Đăng nhập')
                     </a>

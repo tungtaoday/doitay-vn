@@ -169,7 +169,7 @@ trait SupportTicketManager
                         'message'=>['error'=>$notify],
                     ]);
                 }
-                return to_route($this->userType . '.login');
+                return to_route($this->userType == 'user' ? 'user.login.v2' : $this->userType . '.login');
             }
         }
 

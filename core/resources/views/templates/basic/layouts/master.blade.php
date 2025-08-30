@@ -52,7 +52,7 @@
     💬
 </div>
 
-@include($activeTemplate . 'partials.preloader')
+@include($activeTemplate . 'partials.preloader_optimized')
 
     @yield('content')
 

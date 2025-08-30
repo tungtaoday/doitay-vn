@@ -142,7 +142,7 @@ class RegisterController extends Controller
             notify($user, 'USER_WELCOME', [
                 'fullname' => $user->fullname,
                 'site' => gs('site_name'),
-                'login_url' => route('user.login')
+                'login_url' => route('user.login.v2')
             ]);
             
             // Debug log

@@ -3491,7 +3491,7 @@ function initQuickLeadForm() {
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('{{ route("user.login") }}', {
+                const response = await fetch('{{ route("user.login.v2.post") }}', {
                     method: 'POST',
                     body: formData,
                     headers: {
