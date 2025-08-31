@@ -60,7 +60,7 @@
                             <div class="col-4">
                                 <div class="stat-item">
                                     <h4 class="stat-number">{{ $formattedAppointments }}</h4>
-                                    <p class="stat-label">Jobs</p>
+                                    <p class="stat-label">Lịch hẹn</p>
                                 </div>
                             </div>
                             <div class="col-4">
