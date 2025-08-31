@@ -8,6 +8,16 @@
     if (strpos($mobileImage, 'placeholder-image') !== false) {
         $mobileImage = $desktopImage;
     }
+    
+    // Lấy thống kê thực tế từ database
+    $totalCompanies = \App\Models\Company::where('status', 1)->count();
+    $totalAppointments = \App\Models\Appointment::count();
+    $avgRating = \App\Models\Company::where('status', 1)->avg('avg_rating') ?? 0;
+    
+    // Format số liệu
+    $formattedCompanies = $totalCompanies >= 1000 ? number_format($totalCompanies / 1000, 1) . 'K+' : $totalCompanies . '+';
+    $formattedAppointments = $totalAppointments >= 1000 ? number_format($totalAppointments / 1000, 1) . 'K+' : $totalAppointments . '+';
+    $formattedRating = number_format($avgRating, 1);
 @endphp
 
 <!-- Hero Section with Admin Managed Background Image -->
@@ -43,19 +53,19 @@
                         <div class="row">
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <h4 class="stat-number">2,500+</h4>
+                                    <h4 class="stat-number">{{ $formattedCompanies }}</h4>
                                     <p class="stat-label">Thợ</p>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <h4 class="stat-number">15,000+</h4>
+                                    <h4 class="stat-number">{{ $formattedAppointments }}</h4>
                                     <p class="stat-label">Jobs</p>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <h4 class="stat-number">4.9⭐</h4>
+                                    <h4 class="stat-number">{{ $formattedRating }}⭐</h4>
                                     <p class="stat-label">Đánh giá</p>
                                 </div>
                             </div>
