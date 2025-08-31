@@ -20,8 +20,13 @@
     $formattedRating = number_format($avgRating, 1);
 @endphp
 
+<!-- Include Mobile-Optimized CSS -->
+<link rel="stylesheet" href="{{ asset('assets/templates/basic/css/hero-mobile.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/templates/basic/css/hero-additional.css') }}">
+
 <!-- Hero Section with Admin Managed Background Image -->
 <section class="hero-section bg_img" 
+         data-desktop-image="{{ $desktopImage }}"
          data-mobile-image="{{ $mobileImage }}" 
          style="background-image: url('{{ $desktopImage }}');">
     <div class="hero-overlay"></div>
@@ -81,4 +86,51 @@
             </div>
         </div>
     </div>
-</section> 
+</section>
+
+<!-- JavaScript for Mobile Background Optimization -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const heroSection = document.querySelector('.hero-section');
+    const desktopImage = heroSection.getAttribute('data-desktop-image');
+    const mobileImage = heroSection.getAttribute('data-mobile-image');
+    
+    function updateBackgroundImage() {
+        if (window.innerWidth <= 767) {
+            // Mobile: Use mobile image or desktop image as fallback
+            const imageToUse = mobileImage && !mobileImage.includes('placeholder-image') ? mobileImage : desktopImage;
+            heroSection.style.backgroundImage = `url('${imageToUse}')`;
+            
+            // Ensure full width on mobile
+            heroSection.style.width = '100vw';
+            heroSection.style.marginLeft = '-50vw';
+            heroSection.style.marginRight = '-50vw';
+            heroSection.style.position = 'relative';
+            heroSection.style.left = '50%';
+            heroSection.style.right = '50%';
+        } else {
+            // Desktop: Use desktop image
+            heroSection.style.backgroundImage = `url('${desktopImage}')`;
+            
+            // Reset mobile styles
+            heroSection.style.width = '';
+            heroSection.style.marginLeft = '';
+            heroSection.style.marginRight = '';
+            heroSection.style.position = '';
+            heroSection.style.left = '';
+            heroSection.style.right = '';
+        }
+    }
+    
+    // Initial call
+    updateBackgroundImage();
+    
+    // Update on resize
+    window.addEventListener('resize', updateBackgroundImage);
+    
+    // Update on orientation change
+    window.addEventListener('orientationchange', function() {
+        setTimeout(updateBackgroundImage, 100);
+    });
+});
+</script> 
