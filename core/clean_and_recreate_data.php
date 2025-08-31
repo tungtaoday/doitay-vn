@@ -20,21 +20,6 @@ try {
     DB::connection()->getPdo();
     echo "✅ Database connection successful\n\n";
     
-    // Debug: Kiểm tra cấu trúc bảng
-    echo "🔍 KIỂM TRA CẤU TRÚC BẢNG:\n";
-    
-    // Kiểm tra bảng appointments
-    $appointmentColumns = DB::getSchemaBuilder()->getColumnListing('appointments');
-    echo "   - Bảng appointments có các cột: " . implode(', ', $appointmentColumns) . "\n";
-    
-    // Kiểm tra bảng ratings
-    $ratingColumns = DB::getSchemaBuilder()->getColumnListing('ratings');
-    echo "   - Bảng ratings có các cột: " . implode(', ', $ratingColumns) . "\n";
-    
-    // Kiểm tra bảng rating_details
-    $ratingDetailColumns = DB::getSchemaBuilder()->getColumnListing('rating_details');
-    echo "   - Bảng rating_details có các cột: " . implode(', ', $ratingDetailColumns) . "\n\n";
-    
     // XÓA DỮ LIỆU CŨ
     echo "🗑️  Đang xóa dữ liệu cũ...\n";
     
@@ -125,42 +110,20 @@ try {
         
         $appointmentTime = sprintf('%02d:%02d:00', rand(8, 20), rand(0, 59));
         
-        // Tạo appointment - kiểm tra cấu trúc bảng trước
-        $appointmentData = [
+        // Tạo appointment
+        $appointmentId = DB::table('appointments')->insertGetId([
+            'user_id' => $customer->id,
+            'company_id' => $company->id,
+            'recipient_name' => $customer->firstname . ' ' . $customer->lastname,
+            'recipient_phone' => $customer->mobile ?: '0' . rand(900000000, 999999999),
+            'recipient_address' => generateRandomAddress(),
+            'appointment_date' => $appointmentDate->format('Y-m-d'),
+            'appointment_time' => $appointmentTime,
+            'status' => 'pending',
+            'notes' => generateRandomNotes(),
             'created_at' => $appointmentDate->copy()->subDays(rand(1, 14)), // Đặt lịch trước 1-14 ngày
             'updated_at' => $appointmentDate->copy()->subDays(rand(1, 14))
-        ];
-        
-        // Chỉ thêm các cột nếu chúng tồn tại trong bảng
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'user_id')) {
-            $appointmentData['user_id'] = $customer->id;
-        }
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'company_id')) {
-            $appointmentData['company_id'] = $company->id;
-        }
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'recipient_name')) {
-            $appointmentData['recipient_name'] = $customer->firstname . ' ' . $customer->lastname;
-        }
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'recipient_phone')) {
-            $appointmentData['recipient_phone'] = $customer->mobile ?: '0' . rand(900000000, 999999999);
-        }
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'recipient_address')) {
-            $appointmentData['recipient_address'] = generateRandomAddress();
-        }
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'appointment_date')) {
-            $appointmentData['appointment_date'] = $appointmentDate->format('Y-m-d');
-        }
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'appointment_time')) {
-            $appointmentData['appointment_time'] = $appointmentTime;
-        }
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'status')) {
-            $appointmentData['status'] = 'pending';
-        }
-        if (DB::getSchemaBuilder()->hasColumn('appointments', 'notes')) {
-            $appointmentData['notes'] = generateRandomNotes();
-        }
-        
-        $appointmentId = DB::table('appointments')->insertGetId($appointmentData);
+        ]);
         
         $createdCount++;
         
@@ -189,18 +152,12 @@ try {
                 $statusUpdateTime = $appointmentDate->copy()->subDays(rand(1, 5));
             }
             
-            $updateData = [
-                'updated_at' => $statusUpdateTime
-            ];
-            
-            // Chỉ cập nhật status nếu cột tồn tại
-            if (DB::getSchemaBuilder()->hasColumn('appointments', 'status')) {
-                $updateData['status'] = $status;
-            }
-            
             DB::table('appointments')
                 ->where('id', $appointmentId)
-                ->update($updateData);
+                ->update([
+                    'status' => $status,
+                    'updated_at' => $statusUpdateTime
+                ]);
         }
         
         // Hiển thị tiến độ
@@ -326,24 +283,15 @@ function createReview($appointmentId, $userId, $companyId, $features) {
     // Review được tạo từ 1-7 ngày sau khi hoàn thành
     $reviewDate = $appointmentDate->copy()->addDays(rand(1, 7));
     
-    // Kiểm tra xem bảng ratings có cột appointment_id không
-    $hasAppointmentId = DB::getSchemaBuilder()->hasColumn('ratings', 'appointment_id');
-    
-    $ratingData = [
+    $ratingId = DB::table('ratings')->insertGetId([
         'company_id' => $companyId,
         'user_id' => $userId,
+        'appointment_id' => $appointmentId,
         'suggest' => generateRandomReview(),
         'status' => 1,
         'created_at' => $reviewDate,
         'updated_at' => $reviewDate
-    ];
-    
-    // Chỉ thêm appointment_id nếu cột tồn tại
-    if ($hasAppointmentId) {
-        $ratingData['appointment_id'] = $appointmentId;
-    }
-    
-    $ratingId = DB::table('ratings')->insertGetId($ratingData);
+    ]);
     
     // Tạo rating chi tiết chỉ cho features của category này
     $totalRating = 0;
