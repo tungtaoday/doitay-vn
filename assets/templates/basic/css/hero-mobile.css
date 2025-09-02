@@ -1,0 +1,267 @@
+/* ========================================
+   HERO SECTION MOBILE OPTIMIZATION
+   Tối ưu background image cho mobile
+   ======================================== */
+
+/* Hero Section Base Styles */
+.hero-section {
+    position: relative;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Hero Overlay */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+/* Hero Content */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+}
+
+/* Hero Title */
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Hero Description */
+.hero-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* Hero Actions */
+.hero-actions {
+    margin-bottom: 2rem;
+}
+
+.hero-actions .btn {
+    margin-bottom: 1rem;
+    margin-right: 0;
+    width: 100%;
+    max-width: 300px;
+}
+
+/* Hero Stats */
+.hero-stats {
+    margin-top: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* ========================================
+   MOBILE OPTIMIZATION
+   ======================================== */
+
+@media (max-width: 767px) {
+    /* Hero Section Mobile */
+    .hero-section {
+        min-height: 100vh;
+        background-position: center center !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+    }
+    
+    /* Ensure full width on mobile */
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100%;
+        background-image: inherit;
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        z-index: -1;
+    }
+    
+    /* Hero Title Mobile */
+    .hero-title {
+        font-size: 2rem;
+        text-align: center;
+    }
+    
+    /* Hero Description Mobile */
+    .hero-description {
+        font-size: 1rem;
+        text-align: center;
+    }
+    
+    /* Hero Actions Mobile */
+    .hero-actions {
+        text-align: center;
+    }
+    
+    .hero-actions .btn {
+        display: block;
+        margin: 0 auto 1rem auto;
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    /* Hero Stats Mobile */
+    .hero-stats .row {
+        margin: 0;
+    }
+    
+    .hero-stats .col-4 {
+        padding: 0 0.5rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+}
+
+/* ========================================
+   SMALL MOBILE OPTIMIZATION
+   ======================================== */
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-description {
+        font-size: 0.95rem;
+    }
+    
+    .stat-number {
+        font-size: 1.3rem;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+    }
+}
+
+/* ========================================
+   LANDSCAPE MOBILE OPTIMIZATION
+   ======================================== */
+
+@media (max-width: 767px) and (orientation: landscape) {
+    .hero-section {
+        min-height: 100vh;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-description {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-actions {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* ========================================
+   TABLET OPTIMIZATION
+   ======================================== */
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-description {
+        font-size: 1.05rem;
+    }
+    
+    .hero-actions .btn {
+        margin-right: 1rem;
+        width: auto;
+    }
+}
+
+/* ========================================
+   BACKGROUND IMAGE FALLBACK
+   ======================================== */
+
+/* Ensure background image is always visible */
+.hero-section[style*="background-image"] {
+    background-attachment: scroll;
+}
+
+/* Fallback for older browsers */
+.hero-section {
+    background-color: #2c3e50;
+}
+
+/* ========================================
+   PERFORMANCE OPTIMIZATION
+   ======================================== */
+
+/* Optimize background rendering */
+.hero-section {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Smooth transitions */
+.hero-section,
+.hero-content,
+.hero-overlay {
+    transition: all 0.3s ease;
+}
