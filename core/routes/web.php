@@ -32,7 +32,7 @@ Route::prefix('company')->name('company.')->group(function () {
     Route::get('/', action: [SiteController::class, 'searchFromBanner'])->name('search');
     Route::get('category/{id}/{slug}', action: [SiteController::class, 'categoryCompany'])->name('category');
     Route::get('filter', action: [SiteController::class, 'filterCompanies'])->name('filter');
-    Route::get('{id}/{slug}', action: [SiteController::class, 'companyDetails'])->name('details');
+    Route::get('{id}/{slug}', action: [SiteController::class, 'companyDetails'])->middleware('update.company.view')->name('details');
     
     // V2 Create Company Routes (Independent Flow)
     Route::get('create-v2', action: [SiteController::class, 'createCompanyV2'])->name('create.v2');
