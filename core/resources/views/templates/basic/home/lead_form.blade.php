@@ -545,9 +545,9 @@
 </section>
 
 @push('style')
-<link rel="stylesheet" href="{{ asset('public/css/home.css') }}">
+<link rel="stylesheet" href="{{ asset('css/home.css') }}">
 @endpush
 
 @push('script')
-<script src="{{ asset('public/js/home.js') }}"></script>
+<script src="{{ asset('js/home.js') }}"></script>
 @endpush

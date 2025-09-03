@@ -1,0 +1,17 @@
+# Force correct MIME type for JavaScript files
+<Files "*.js">
+    ForceType application/javascript
+    Header set Content-Type "application/javascript; charset=utf-8"
+</Files>
+
+# Cache JavaScript files
+<Files "*.js">
+    ExpiresActive On
+    ExpiresByType application/javascript "access plus 1 month"
+    Header set Cache-Control "public, max-age=2592000"
+</Files>
+
+# Enable compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE application/javascript
+</IfModule>
