@@ -1,0 +1,17 @@
+# Force correct MIME type for CSS files
+<Files "*.css">
+    ForceType text/css
+    Header set Content-Type "text/css; charset=utf-8"
+</Files>
+
+# Cache CSS files
+<Files "*.css">
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    Header set Cache-Control "public, max-age=2592000"
+</Files>
+
+# Enable compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/css
+</IfModule>

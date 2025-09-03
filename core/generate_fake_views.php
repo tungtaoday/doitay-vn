@@ -72,3 +72,4 @@ try {
     echo "File: " . $e->getFile() . "\n";
     echo "Line: " . $e->getLine() . "\n";
 }
+

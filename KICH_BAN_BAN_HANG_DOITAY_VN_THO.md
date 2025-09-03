@@ -39,7 +39,7 @@ Chào anh/chị! Em thấy anh/chị đang tìm việc làm thợ. Em có thể 
 ✅ Tạo trang riêng để quảng bá thương hiệu
 
 
-Anh/chị có muốn em hướng dẫn đăng ký không? Để lại số điện thoại - Em sẽ hỗ trợ từng bước một ạ. Các anh chi có thể tham khảo qua tại http://localhost/become-contractor, hoặc tham khảo một thợ thành công tại https://doitay.vn/companies/204/tran-bao-ngoc
+Anh/chị có muốn em hướng dẫn đăng ký không? Để lại số điện thoại - Em sẽ hỗ trợ từng bước một ạ. Các anh chi có thể tham khảo qua tại http://doitay.vn/become-contractor, hoặc tham khảo một thợ thành công tại https://doitay.vn/companies/204/tran-bao-ngoc
 
 
 ### **Script comment cho thợ điện:**
@@ -78,7 +78,7 @@ Chào anh/chị thợ xây dựng! Em thấy anh/chị đang tìm việc. Em có
 - Xây dựng công trình nhỏ
 - Bảo trì, tu sửa công trình
 
-Em sẽ hướng dẫn đăng ký miễn phí và hỗ trợ tìm việc ạ.
+Vui lòng inbox hoặc để lại số điện thoại. Em sẽ hướng dẫn đăng ký miễn phí và hỗ trợ tìm việc ạ.
 ```
 
 ### **Script comment cho thợ sơn:**
@@ -91,7 +91,7 @@ Chào anh/chị thợ sơn! Em thấy anh/chị đang tìm việc. Em có thể 
 - Sơn nội thất, ngoại thất
 - Tư vấn màu sắc và vật liệu
 
-Em sẽ hướng dẫn đăng ký miễn phí và hỗ trợ tìm việc ạ.
+Vui lòng inbox hoặc để lại số điện thoại. Em sẽ hướng dẫn đăng ký miễn phí và hỗ trợ tìm việc ạ.
 ```
 
 ### **Script comment cho thợ mộc:**

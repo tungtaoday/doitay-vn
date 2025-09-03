@@ -266,3 +266,4 @@ try {
     file_put_contents($errorLogFile, $errorContent);
     echo "📝 Đã lưu log lỗi vào file: $errorLogFile\n";
 }
+
