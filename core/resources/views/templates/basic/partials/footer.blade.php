@@ -139,6 +139,14 @@
                                 @php echo @$iconElement->data_values->social_icon; @endphp
                             </a>
                             @endforeach
+                            
+                            <!-- Explicit Facebook & LinkedIn links -->
+                            <a href="https://www.facebook.com/profile.php?id=61578878617812" target="_blank" rel="noopener nofollow" class="social-link" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/company/yourcompany" target="_blank" rel="noopener nofollow" class="social-link" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
                         </div>
                         
                         <!-- Policy Links -->

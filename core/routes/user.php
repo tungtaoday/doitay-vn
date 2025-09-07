@@ -185,9 +185,12 @@ Route::controller('User\CustomerLeadController')->prefix('customer/leads')->name
 // Success page (accessible to both guests and authenticated users)
 Route::get('/appointment/success/{id}', [AppointmentController::class, 'success'])->name('appointment.success');
 
+// Public routes for appointment booking (allow guests to create, controller will auto-create user)
+Route::post('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+
 Route::middleware('auth')->group(function () {
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
-    Route::post('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+    // Moved above to allow guest booking and auto account creation
     Route::post('/appointments/{appointmentId}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
     Route::get('/appointments/{appointmentId}', [AppointmentController::class, 'show'])->name('appointments.show');
     Route::get('/appointments/{appointmentId}/company-category', [AppointmentController::class, 'getAppointmentCompanyCategory'])->name('appointments.company.category');
