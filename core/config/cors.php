@@ -19,7 +19,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // Frontend origins. In production, set FRONTEND_URL=https://app.doitay.vn
+    // (or comma-separated list). Localhost defaults are kept for dev.
+    'allowed_origins' => array_filter(array_map('trim', explode(',', env('FRONTEND_URL', 'http://localhost:3000,http://127.0.0.1:3000')))),
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +31,8 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    // Token mode does not technically require credentials, but enabling it
+    // keeps the door open for the SPA cookie mode if we ever need to switch.
+    'supports_credentials' => true,
 
 ];
