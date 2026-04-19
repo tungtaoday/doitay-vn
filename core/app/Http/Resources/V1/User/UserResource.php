@@ -16,16 +16,28 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'name'       => $this->name ?? trim(($this->firstname ?? '') . ' ' . ($this->lastname ?? '')),
-            'email'      => $this->email,
-            'mobile'     => $this->mobile,
-            'avatar'     => $this->image
+            'id'               => $this->id,
+            'name'             => $this->name ?? trim(($this->firstname ?? '') . ' ' . ($this->lastname ?? '')),
+            'username'         => $this->username,
+            'email'            => $this->email,
+            'mobile'           => $this->mobile,
+            'avatar'           => $this->image
                 ? asset('assets/images/user/profile/' . $this->image)
                 : null,
-            'role'       => 'user',
-            'status'     => (int) $this->status,
-            'created_at' => optional($this->created_at)->toIso8601String(),
+            'profile_complete' => (bool) $this->profile_complete,
+            'has_company'      => $this->companies()->exists(),
+            'pending_role'     => cache('user_role:pending:' . $this->id),
+            'ev'               => (bool) $this->ev,
+            'sv'               => (bool) $this->sv,
+            'location'         => [
+                'city'     => $this->city,
+                'district' => $this->district,
+                'ward'     => $this->ward,
+                'address'  => $this->address,
+            ],
+            'role'             => 'user',
+            'status'           => (int) $this->status,
+            'created_at'       => optional($this->created_at)->toIso8601String(),
         ];
     }
 }

@@ -31,12 +31,28 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     // Auth (shared)
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::post('register', [\App\Http\Controllers\API\V1\AuthController::class, 'register'])
-            ->middleware('throttle:5,1')
+            ->middleware('throttle:20,1')
             ->name('register');
 
         Route::post('login', [\App\Http\Controllers\API\V1\AuthController::class, 'login'])
-            ->middleware('throttle:5,1')
+            ->middleware('throttle:20,1')
             ->name('login');
+
+        Route::post('social/google', [\App\Http\Controllers\API\V1\AuthController::class, 'socialGoogle'])
+            ->middleware('throttle:10,1')
+            ->name('social.google');
+
+        Route::post('social/facebook', [\App\Http\Controllers\API\V1\AuthController::class, 'socialFacebook'])
+            ->middleware('throttle:10,1')
+            ->name('social.facebook');
+
+        Route::post('password/forgot', [\App\Http\Controllers\API\V1\AuthController::class, 'forgotPassword'])
+            ->middleware('throttle:3,1')
+            ->name('password.forgot');
+
+        Route::post('password/reset', [\App\Http\Controllers\API\V1\AuthController::class, 'resetPassword'])
+            ->middleware('throttle:5,1')
+            ->name('password.reset');
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('me',      [\App\Http\Controllers\API\V1\AuthController::class, 'me'])->name('me');

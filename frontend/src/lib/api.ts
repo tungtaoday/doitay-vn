@@ -30,12 +30,14 @@ export class ApiError extends Error {
 export interface ApiOptions extends Omit<RequestInit, 'body'> {
   /** Object body — will be JSON-stringified. */
   json?: unknown;
+  /** FormData / string body passed through as-is (for multipart uploads). */
+  body?: BodyInit | null;
   /** Bearer token for the Authorization header. */
   token?: string;
 }
 
 export async function api<T>(path: string, opts: ApiOptions = {}): Promise<T> {
-  const { json, token, headers, ...rest } = opts;
+  const { json, body: rawBody, token, headers, ...rest } = opts;
 
   const init: RequestInit = {
     cache: 'no-store',
@@ -46,27 +48,30 @@ export async function api<T>(path: string, opts: ApiOptions = {}): Promise<T> {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-    ...(json !== undefined ? { body: JSON.stringify(json) } : {}),
+    ...(json !== undefined
+      ? { body: JSON.stringify(json) }
+      : rawBody !== undefined && rawBody !== null
+      ? { body: rawBody }
+      : {}),
   };
 
   const url = path.startsWith('http') ? path : `${BASE}${path}`;
   const res = await fetch(url, init);
 
-  // 204 No Content
   if (res.status === 204) {
     return undefined as T;
   }
 
-  let body: unknown = null;
+  let responseBody: unknown = null;
   try {
-    body = await res.json();
+    responseBody = await res.json();
   } catch {
     // non-JSON response
   }
 
   if (!res.ok) {
-    throw new ApiError(res.status, body);
+    throw new ApiError(res.status, responseBody);
   }
 
-  return body as T;
+  return responseBody as T;
 }

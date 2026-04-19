@@ -1,31 +1,59 @@
 import type { Metadata } from 'next';
+import { Be_Vietnam_Pro, Inter } from 'next/font/google';
 import './globals.css';
+import { SiteHeader } from '@/components/site-header';
+import { SiteFooter } from '@/components/site-footer';
+import { ZaloWidget } from '@/components/zalo-widget';
+import { getSiteSettings } from '@/lib/site-settings';
 
-export const metadata: Metadata = {
-  title: {
-    default: 'doitay.vn — Tìm dịch vụ uy tín',
-    template: '%s | doitay.vn',
-  },
-  description: 'Marketplace kết nối khách hàng với nhà thầu, dịch vụ uy tín tại Việt Nam.',
-};
+const inter = Inter({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '500', '700', '800'],
+  variable: '--font-be-vietnam-pro',
+  display: 'swap',
+});
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: {
+      default: `${settings.site_name} — Kết nối bàn tay thợ tài hoa`,
+      template: `%s | ${settings.site_name}`,
+    },
+    description:
+      'Marketplace kết nối khách hàng với thợ và nhà thầu uy tín tại Việt Nam.',
+    icons: settings.site_favicon ? { icon: settings.site_favicon } : undefined,
+  };
+}
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const settings = await getSiteSettings();
+
   return (
-    <html lang="vi">
-      <body>
-        <header className="border-b bg-white">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-            <a href="/" className="text-xl font-bold">doitay.vn</a>
-            <div className="flex gap-4 text-sm">
-              <a href="/cong-ty" className="hover:underline">Công ty</a>
-              <a href="/login" className="hover:underline">Đăng nhập</a>
-            </div>
-          </nav>
-        </header>
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
-        <footer className="border-t mt-16 py-6 text-center text-sm text-gray-500">
-          © doitay.vn — Headless rebuild Phase 1
-        </footer>
+    <html lang="vi" className={`${inter.variable} ${beVietnamPro.variable}`}>
+      <head>
+        {/* Material Symbols Outlined — used as wayfinding icons across pages. */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        />
+      </head>
+      <body className="bg-background text-on-surface antialiased">
+        <SiteHeader settings={settings} />
+        <main className="pt-20">{children}</main>
+        <SiteFooter settings={settings} />
+        <ZaloWidget settings={settings.zalo} />
       </body>
     </html>
   );

@@ -1,0 +1,136 @@
+import Link from 'next/link';
+import type { Route } from 'next';
+import type { SiteSettings, AuthUser, Appointment, WalletTransaction } from '@/lib/api-types';
+import { getToken } from '@/lib/auth';
+import { api } from '@/lib/api';
+import { getRecentNotifications, getUnreadCount } from '@/lib/notifications';
+import { getWalletOverview, getWalletTransactions } from '@/lib/wallet';
+import { getMyAppointments } from '@/lib/appointments';
+import { NotificationBell } from '@/components/notification-bell';
+import { UserDropdown } from '@/components/user-dropdown';
+
+const NAV_LINKS: { href: Route; label: string }[] = [
+  { href: '/' as Route, label: 'Trang chủ' },
+  { href: '/cong-ty' as Route, label: 'Dịch vụ' },
+  { href: '/yeu-cau' as Route, label: 'Tạo yêu cầu' },
+];
+
+const CUSTOMER_LINKS: { href: Route; label: string }[] = [
+  { href: '/vi/lich-hen' as Route, label: 'Lịch hẹn' },
+];
+
+const PENDING_CONTRACTOR_LINKS: { href: Route; label: string }[] = [
+  { href: '/vi/lich-hen' as Route, label: 'Lịch hẹn' },
+  { href: '/vi/tho/dang-ky' as Route, label: 'Đăng ký thợ' },
+];
+
+const CONTRACTOR_LINKS: { href: Route; label: string }[] = [
+  { href: '/vi/tho/lich-hen' as Route, label: 'Quản lý thợ' },
+  { href: '/vi/wallet' as Route, label: 'Ví' },
+];
+
+async function getCurrentUser(): Promise<AuthUser | null> {
+  const token = await getToken();
+  if (!token) return null;
+  try {
+    const res = await api<{ data: AuthUser }>('/auth/me', { token });
+    return res.data;
+  } catch {
+    return null;
+  }
+}
+
+export async function SiteHeader({ settings }: { settings: SiteSettings }) {
+  const user = await getCurrentUser();
+  const [unreadCount, recent, walletData, appointmentData, txData] = user
+    ? await Promise.all([
+        getUnreadCount(),
+        getRecentNotifications(5),
+        getWalletOverview().catch(() => null),
+        getMyAppointments(1).catch(() => null),
+        getWalletTransactions({ per_page: '4' }).catch(() => null),
+      ])
+    : [0, null, null, null, null];
+
+  const dashboardBalance = walletData?.data?.totals?.balance ?? null;
+  const recentAppointments: Appointment[] = appointmentData?.data?.slice(0, 3) ?? [];
+  const recentTransactions: WalletTransaction[] = txData?.data?.slice(0, 4) ?? [];
+
+  return (
+    <nav className="fixed top-0 left-0 z-50 w-full bg-surface/80 backdrop-blur-md">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 md:px-8">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-headline text-2xl font-bold tracking-tight text-primary"
+        >
+          {settings.site_logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={settings.site_logo} alt={settings.site_name} className="h-9 w-auto" />
+          ) : (
+            <span>{settings.site_name}</span>
+          )}
+        </Link>
+
+        <div className="hidden items-center gap-8 font-headline text-sm font-medium md:flex">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-on-surface-variant transition-colors hover:text-primary"
+            >
+              {link.label}
+            </Link>
+          ))}
+          {user && (user.has_company
+            ? CONTRACTOR_LINKS
+            : !user.has_company && (user.pending_role === 'contractor' || user.pending_role === 'both')
+              ? PENDING_CONTRACTOR_LINKS
+              : CUSTOMER_LINKS
+          ).map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-on-surface-variant transition-colors hover:text-primary"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-3">
+          {user ? (
+            <div className="flex items-center gap-4">
+              <NotificationBell
+                initialUnreadCount={unreadCount}
+                initialRecent={recent}
+              />
+              <UserDropdown
+                user={user}
+                dashboardBalance={dashboardBalance}
+                recentAppointments={recentAppointments}
+                recentTransactions={recentTransactions}
+              />
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-xl px-5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-surface-container-low"
+              >
+                Đăng nhập
+              </Link>
+              {settings.features.registration ? (
+                <Link
+                  href={'/dang-ky' as Route}
+                  className="rounded-xl bg-gradient-to-r from-primary to-primary-container px-5 py-2 text-sm font-semibold text-on-primary shadow-ambient transition-all active:scale-95"
+                >
+                  Đăng ký
+                </Link>
+              ) : null}
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}

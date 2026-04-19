@@ -156,6 +156,12 @@ class DepositRequest extends Model
                 'admin_notes' => $adminNotes
             ]);
         });
+
+        $this->notifyOwner(
+            'Nạp tiền thành công',
+            'Yêu cầu nạp ' . number_format((float) $this->amount) . 'đ (#' . $this->deposit_code . ') đã được duyệt và cộng vào ví của bạn.',
+            'deposit_approved',
+        );
     }
 
     public function reject($reason, $adminId = null, $adminNotes = null)
@@ -167,6 +173,38 @@ class DepositRequest extends Model
             'processed_at' => now(),
             'admin_notes' => $adminNotes
         ]);
+
+        $this->notifyOwner(
+            'Yêu cầu nạp tiền bị từ chối',
+            'Yêu cầu nạp #' . $this->deposit_code . ' đã bị từ chối. Lý do: ' . $reason,
+            'deposit_rejected',
+        );
+    }
+
+    /**
+     * Push an in-app notification to the deposit owner.
+     * Best-effort: swallow errors so payment flow never breaks on notify failure.
+     */
+    protected function notifyOwner(string $title, string $message, string $type): void
+    {
+        try {
+            $owner = $this->user ?? \App\Models\User::find($this->user_id);
+            if (! $owner) {
+                return;
+            }
+            \App\Services\NotificationService::sendSystemNotification(
+                $owner,
+                $title,
+                $message,
+                $type,
+                url('/vi/wallet/deposits/' . $this->id),
+            );
+        } catch (\Throwable $e) {
+            \Log::warning('DepositRequest notifyOwner failed', [
+                'id' => $this->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function cancel($reason = null)

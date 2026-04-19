@@ -1,72 +1,48 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { login } from './actions';
+import type { Route } from 'next';
+import Link from 'next/link';
+import { SocialButtons } from '@/components/social-buttons';
+import { LoginForm } from './login-form';
 
 export const metadata: Metadata = {
-  title: 'Đăng nhập',
+  title: 'Đăng nhập | doitay.vn',
 };
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>;
-}) {
-  async function action(formData: FormData) {
-    'use server';
-    const email = String(formData.get('email') ?? '');
-    const password = String(formData.get('password') ?? '');
-    const result = await login(email, password);
-    if (result.ok) {
-      redirect('/');
-    } else {
-      redirect(`/login?error=${encodeURIComponent(result.error)}`);
-    }
-  }
-
+export default function LoginPage() {
   return (
-    <div className="mx-auto max-w-sm space-y-6">
-      <h1 className="text-2xl font-bold">Đăng nhập</h1>
+    <>
+      <header className="mb-12">
+        <h2 className="mb-4 font-headline text-[3.5rem] font-bold leading-none tracking-tighter text-on-surface">
+          Chào mừng trở lại
+        </h2>
+        <p className="text-[1.375rem] font-medium text-secondary">
+          Nhập thông tin của bạn để tiếp tục
+        </p>
+      </header>
 
-      <ErrorBanner searchParams={searchParams} />
+      <LoginForm />
 
-      <form action={action} className="space-y-4">
-        <label className="block">
-          <span className="text-sm font-medium">Email</span>
-          <input
-            name="email"
-            type="email"
-            required
-            className="mt-1 w-full rounded-lg border px-3 py-2"
-          />
-        </label>
-        <label className="block">
-          <span className="text-sm font-medium">Mật khẩu</span>
-          <input
-            name="password"
-            type="password"
-            required
-            minLength={6}
-            className="mt-1 w-full rounded-lg border px-3 py-2"
-          />
-        </label>
-        <button className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-white hover:bg-blue-700">
-          Đăng nhập
-        </button>
-      </form>
-    </div>
-  );
-}
+      <div className="my-12 flex items-center gap-6">
+        <div className="h-[2px] flex-grow bg-surface-container-highest" />
+        <span className="text-lg font-bold uppercase tracking-widest text-secondary">
+          Hoặc
+        </span>
+        <div className="h-[2px] flex-grow bg-surface-container-highest" />
+      </div>
 
-async function ErrorBanner({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>;
-}) {
-  const sp = await searchParams;
-  if (!sp.error) return null;
-  return (
-    <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-      {sp.error}
-    </div>
+      <SocialButtons />
+
+      <footer className="mt-12 text-center">
+        <p className="text-[1.125rem] font-medium text-secondary">
+          Chưa có tài khoản?{' '}
+          <Link
+            href={'/dang-ky' as Route}
+            className="font-bold text-primary hover:underline"
+          >
+            Đăng ký ngay
+          </Link>
+        </p>
+      </footer>
+    </>
   );
 }

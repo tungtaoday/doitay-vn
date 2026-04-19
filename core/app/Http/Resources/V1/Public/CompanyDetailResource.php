@@ -48,7 +48,7 @@ class CompanyDetailResource extends JsonResource
             'portfolios'      => $this->whenLoaded('portfolios', fn () => $this->portfolios->map(fn ($p) => [
                 'id'    => $p->id,
                 'title' => $p->title ?? null,
-                'image' => $p->image ?? null,
+                'image' => $p->image ? asset('assets/images/portfolio/' . $p->image) : null,
             ])),
             'ratings_recent'  => $this->whenLoaded('ratings', fn () => $this->ratings->take(5)->map(fn ($r) => [
                 'id'         => $r->id,
@@ -57,7 +57,7 @@ class CompanyDetailResource extends JsonResource
                 'created_at' => optional($r->created_at)->toIso8601String(),
                 'user'       => $r->relationLoaded('user') && $r->user ? [
                     'name'   => $r->user->name ?? null,
-                    'avatar' => $r->user->image ?? null,
+                    'avatar' => $r->user->image ? asset('assets/images/user/profile/' . $r->user->image) : null,
                 ] : null,
             ])),
             'show_contact'    => $showContact,
