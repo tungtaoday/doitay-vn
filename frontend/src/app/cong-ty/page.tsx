@@ -276,20 +276,12 @@ function CompanyCard({ c }: { c: PublicCompanyListItem }) {
       className="group block overflow-hidden rounded-4xl bg-surface-container-lowest transition-all duration-300 hover:-translate-y-2 hover:shadow-ambient"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-surface-container-low to-surface-container">
-        {c.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={c.image}
-            alt={c.name}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-on-surface-variant">
-            <span className="material-symbols-outlined text-6xl">
-              engineering
-            </span>
-          </div>
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={c.image ?? ''}
+          alt={c.name}
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
         <div className="absolute left-4 top-4">
           <span className="flex items-center gap-1 rounded-full bg-tertiary-container px-3 py-1.5 text-xs font-bold text-on-tertiary-container shadow-sm">
             <span className="material-symbols-outlined fill text-sm">

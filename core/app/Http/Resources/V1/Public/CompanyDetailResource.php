@@ -28,7 +28,7 @@ class CompanyDetailResource extends JsonResource
             'description'     => $this->description,
             'image'           => $this->image
                 ? asset('assets/images/company/' . $this->image)
-                : null,
+                : asset('assets/images/placeholders/worker-' . (($this->id % 4) + 1) . '.jpg'),
             'category'        => $this->whenLoaded('category', fn () => [
                 'id'   => $this->category->id,
                 'name' => $this->category->name,

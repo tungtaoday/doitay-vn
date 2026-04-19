@@ -24,7 +24,7 @@ class CompanyResource extends JsonResource
             'name'              => $this->name,
             'image'             => $this->image
                 ? asset('assets/images/company/' . $this->image)
-                : null,
+                : asset('assets/images/placeholders/worker-' . (($this->id % 4) + 1) . '.jpg'),
             'short_description' => $this->description
                 ? mb_substr(strip_tags($this->description), 0, 160)
                 : null,

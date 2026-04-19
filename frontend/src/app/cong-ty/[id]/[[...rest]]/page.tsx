@@ -145,20 +145,12 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
           <section className="flex flex-col items-start gap-8 md:flex-row md:items-center">
             <div className="group relative">
               <div className="h-40 w-40 overflow-hidden rounded-full border-4 border-surface-container-highest shadow-ambient">
-                {company.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={company.image}
-                    alt={company.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary-fixed to-primary-container text-on-primary-fixed">
-                    <span className="material-symbols-outlined text-6xl">
-                      engineering
-                    </span>
-                  </div>
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={company.image ?? ''}
+                  alt={company.name}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="absolute bottom-2 right-2 rounded-full border-2 border-surface bg-tertiary-container p-1.5 text-on-tertiary-container shadow-ambient">
                 <span className="material-symbols-outlined fill text-sm">
