@@ -47,7 +47,6 @@ class CompanySearchService
         }
 
         return $query
-            ->orderBy('is_seeded')          // real companies (0) always before seeded (1)
             ->orderByDesc('avg_rating')
             ->orderByDesc('id')
             ->paginate($perPage)
