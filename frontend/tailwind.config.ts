@@ -5,52 +5,52 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ── Primary — sky blue #48BBE2 ──────────────────────────────
-        primary:                    '#48BBE2',
+        // ── Primary — xanh mòng két đậm #006781 ─────────────────────
+        primary:                    '#006781',
         'on-primary':               '#FFFFFF',
-        'primary-container':        '#B8E6F7',
+        'primary-container':        '#48BBE2',   // xanh lơ sáng
         'on-primary-container':     '#001F2A',
-        'primary-fixed':            '#B8E6F7',
-        'primary-fixed-dim':        '#7ECDE8',
+        'primary-fixed':            '#65D4FC',   // xanh lơ nhạt nhất
+        'primary-fixed-dim':        '#48BBE2',
         'on-primary-fixed':         '#001F2A',
-        'on-primary-fixed-variant': '#1D4A5E',
+        'on-primary-fixed-variant': '#004D62',
 
-        // ── Secondary — deep navy #102F4B ───────────────────────────
+        // ── Secondary — navy đậm #102F4B ─────────────────────────────
         secondary:                  '#102F4B',
         'on-secondary':             '#FFFFFF',
         'secondary-container':      '#C4D8E8',
         'on-secondary-container':   '#001D35',
 
-        // ── Tertiary — gold #FFD700 (verified badges only) ──────────
-        tertiary:                   '#FFD700',
-        'on-tertiary':              '#1A1400',
-        'tertiary-fixed':           '#FFD700',
-        'on-tertiary-fixed':        '#1A1400',
-        'on-tertiary-fixed-variant':'#3D2F00',
-        'tertiary-container':       '#FFECB3',
-        'on-tertiary-container':    '#1A1400',
+        // ── Tertiary — vàng đồng (verified badges, stars) ────────────
+        tertiary:                   '#705D00',
+        'on-tertiary':              '#FFFFFF',
+        'tertiary-fixed':           '#FFE16D',
+        'on-tertiary-fixed':        '#221B00',
+        'on-tertiary-fixed-variant':'#534400',
+        'tertiary-container':       '#FFE16D',
+        'on-tertiary-container':    '#221B00',
 
-        // ── Error ───────────────────────────────────────────────────
+        // ── Error ─────────────────────────────────────────────────────
         error:                      '#BA1A1A',
         'on-error':                 '#FFFFFF',
         'error-container':          '#FFDAD6',
         'on-error-container':       '#410002',
 
-        // ── Surface / Neutral ───────────────────────────────────────
+        // ── Surface / Neutral ─────────────────────────────────────────
         background:                 '#F8F9FF',
         'on-background':            '#102F4B',
         surface:                    '#F8F9FF',
         'surface-bright':           '#FDFDFF',
         'on-surface':               '#001D35',
-        'on-surface-variant':       '#3D5066',
+        'on-surface-variant':       '#3E484D',   // xám/slate cho text phụ
         'surface-container-lowest': '#FFFFFF',
-        'surface-container-low':    '#EEF1F8',
-        'surface-container':        '#E4E8F2',
-        'surface-container-high':   '#D8DCE8',
-        'surface-container-highest':'#CDD2DC',
+        'surface-container-low':    '#EEF4FF',   // card nền xanh rất nhạt
+        'surface-container':        '#DAE9FF',   // card nền xanh nhạt
+        'surface-container-high':   '#C8DAEF',
+        'surface-container-highest':'#B5CEEA',
         outline:                    '#6B8099',
         'outline-variant':          '#B0BEC8',
-        'inverse-on-surface':       '#EEF1F8',
+        'inverse-on-surface':       '#EEF4FF',
       },
 
       fontFamily: {
@@ -64,7 +64,6 @@ const config: Config = {
       },
 
       boxShadow: {
-        // Ambient shadow tinted navy at 6% opacity
         ambient: '0 4px 32px 0 rgba(16, 47, 75, 0.06), 0 1px 4px 0 rgba(16, 47, 75, 0.04)',
         soft:    '0 2px 16px 0 rgba(16, 47, 75, 0.04)',
       },
