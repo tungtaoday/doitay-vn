@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useTransition } from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import type { AuthUser, Appointment, WalletTransaction } from '@/lib/api-types';
 import { logoutAction } from '@/app/(auth)/logout/actions';
+import { fetchDashboardDataAction } from '@/lib/dashboard-actions';
 import { formatVND, formatSignedVND } from '@/lib/format';
 import { UserAvatar } from '@/components/user-avatar';
 
@@ -32,10 +33,10 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/vi/tho/lich-hen',      label: 'Quản lý thợ',    icon: 'engineering',    contractorOnly: true },
   { href: '/vi/tho/sua-ho-so',     label: 'Hồ sơ của tôi',  icon: 'person',         contractorOnly: true, hideWhenNoCompany: true },
   { href: '/vi/tro-thanh-tho',     label: 'Trở thành thợ',  icon: 'handyman',       customerOnly: true },
-  { href: '/vi/wallet',            label: 'Ví của tôi',     icon: 'account_balance_wallet' },
-  { href: '/vi/wallet/giao-dich',  label: 'Giao dịch',      icon: 'receipt_long' },
-  { href: '/vi/nap-tien',          label: 'Nạp tiền',       icon: 'add_card' },
-  { href: '/vi/nap-tien/lich-su',  label: 'Lịch sử nạp',   icon: 'history' },
+  { href: '/vi/wallet',            label: 'Ví của tôi',     icon: 'account_balance_wallet', contractorOnly: true },
+  { href: '/vi/wallet/giao-dich',  label: 'Giao dịch',      icon: 'receipt_long',           contractorOnly: true },
+  { href: '/vi/nap-tien',          label: 'Nạp tiền',       icon: 'add_card',               contractorOnly: true },
+  { href: '/vi/nap-tien/lich-su',  label: 'Lịch sử nạp',   icon: 'history',                contractorOnly: true },
 ];
 
 // ── Onboarding steps ──────────────────────────────────────────────────────────
@@ -73,24 +74,36 @@ const TIPS = [
 // ── Component ─────────────────────────────────────────────────────────────────
 interface UserDropdownProps {
   user: AuthUser;
-  dashboardBalance: number | null;
-  recentAppointments: Appointment[];
-  recentTransactions: WalletTransaction[];
 }
 
-export function UserDropdown({
-  user,
-  dashboardBalance,
-  recentAppointments,
-  recentTransactions,
-}: UserDropdownProps) {
+export function UserDropdown({ user }: UserDropdownProps) {
   const [open, setOpen] = useState(false);
+  const [dashboardBalance, setDashboardBalance] = useState<number | null>(null);
+  const [recentAppointments, setRecentAppointments] = useState<Appointment[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<WalletTransaction[]>([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [, startTransition] = useTransition();
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   const isContractor = user.has_company ||
     user.pending_role === 'contractor' ||
     user.pending_role === 'both';
+
+  // Lazy-fetch dashboard data on first open to avoid blocking page load
+  function handleOpen() {
+    const next = !open;
+    setOpen(next);
+    if (next && !dataLoaded) {
+      startTransition(async () => {
+        const data = await fetchDashboardDataAction();
+        setDashboardBalance(data.balance);
+        setRecentAppointments(data.recentAppointments);
+        setRecentTransactions(data.recentTransactions);
+        setDataLoaded(true);
+      });
+    }
+  }
 
   const visibleItems = NAV_ITEMS.filter((item) => {
     if (item.contractorOnly && !isContractor) return false;
@@ -125,7 +138,7 @@ export function UserDropdown({
     <div ref={ref} className="relative">
       {/* ── Trigger ── */}
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleOpen}
         className="flex items-center gap-3 border-l border-on-surface/10 pl-6 transition-opacity hover:opacity-80"
         aria-expanded={open}
       >
@@ -303,20 +316,37 @@ export function UserDropdown({
 
                 {/* Stats row */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl bg-surface-container-lowest px-5 py-4">
-                    <p className="text-[0.6875rem] font-bold uppercase tracking-widest text-secondary">Số dư</p>
-                    <p className="mt-1 font-headline text-[1.25rem] font-bold text-on-surface">
-                      {dashboardBalance !== null ? formatVND(dashboardBalance) : '—'}
-                    </p>
-                    <Link
-                      href={'/vi/wallet' as Route}
-                      onClick={() => setOpen(false)}
-                      className="mt-2 inline-flex items-center gap-1 text-[0.75rem] font-medium text-primary hover:underline"
-                    >
-                      <span className="material-symbols-outlined text-[0.875rem]">add_card</span>
-                      Nạp tiền
-                    </Link>
-                  </div>
+                  {isContractor ? (
+                    <div className="rounded-xl bg-surface-container-lowest px-5 py-4">
+                      <p className="text-[0.6875rem] font-bold uppercase tracking-widest text-secondary">Số dư</p>
+                      <p className="mt-1 font-headline text-[1.25rem] font-bold text-on-surface">
+                        {dashboardBalance !== null ? formatVND(dashboardBalance) : '—'}
+                      </p>
+                      <Link
+                        href={'/vi/wallet' as Route}
+                        onClick={() => setOpen(false)}
+                        className="mt-2 inline-flex items-center gap-1 text-[0.75rem] font-medium text-primary hover:underline"
+                      >
+                        <span className="material-symbols-outlined text-[0.875rem]">add_card</span>
+                        Nạp tiền
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl bg-surface-container-lowest px-5 py-4">
+                      <p className="text-[0.6875rem] font-bold uppercase tracking-widest text-secondary">Lịch hẹn</p>
+                      <p className="mt-1 font-headline text-[1.25rem] font-bold text-on-surface">
+                        {recentAppointments.length > 0 ? recentAppointments.length : '0'}
+                      </p>
+                      <Link
+                        href={'/vi/lich-hen' as Route}
+                        onClick={() => setOpen(false)}
+                        className="mt-2 inline-flex items-center gap-1 text-[0.75rem] font-medium text-primary hover:underline"
+                      >
+                        <span className="material-symbols-outlined text-[0.875rem]">calendar_month</span>
+                        Xem tất cả
+                      </Link>
+                    </div>
+                  )}
 
                   <div className="rounded-xl bg-surface-container-lowest px-5 py-4">
                     <p className="text-[0.6875rem] font-bold uppercase tracking-widest text-secondary">Hoàn thành hồ sơ</p>

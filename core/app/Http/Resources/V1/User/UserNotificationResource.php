@@ -47,13 +47,13 @@ class UserNotificationResource extends JsonResource
 
         $path = parse_url($url, PHP_URL_PATH) ?: $url;
 
-        // Customer-side appointment detail
-        if (preg_match('#/user/appointments/(\d+)#', $path, $m)) {
-            return '/vi/lich-hen/' . $m[1];
-        }
-        // Contractor-side appointment detail
+        // Contractor-side appointment detail (check before customer to avoid prefix clash)
         if (preg_match('#/company/appointments/(\d+)#', $path, $m)) {
             return '/vi/tho/lich-hen/' . $m[1];
+        }
+        // Customer-side appointment detail (legacy /user/appointments or bare /appointments)
+        if (preg_match('#^(?:/user)?/appointments/(\d+)#', $path, $m)) {
+            return '/vi/lich-hen/' . $m[1];
         }
         // Deposits
         if (preg_match('#/user/deposits/(\d+)#', $path, $m)) {

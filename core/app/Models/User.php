@@ -40,7 +40,8 @@ class User extends Authenticatable
         'address', 'email', 'mobile', 'password', 'referral_code', 'referred_by',
         'referral_count', 'total_referral_earnings', 'provider', 'provider_id',
         'firstname', 'lastname', 'name', 'ev', 'sv', 'profile_complete', 'kyc_data',
-        'about', 'ver_code', 'ver_code_send_at', 'ban_reason'
+        'about', 'ver_code', 'ver_code_send_at', 'ban_reason',
+        'is_seeded', 'seed_batch',
     ];
 
     public function notifications()

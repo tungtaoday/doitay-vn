@@ -87,7 +87,7 @@ class CompanyAppointmentController extends Controller
             return redirect()->back()->with('error', 'Vui lòng tạo ví cho công ty trước khi xác nhận lịch hẹn.');
         }
 
-        $leadAccessFee = 50000; // 50k VND to access customer info
+        $leadAccessFee = 10000; // 10k VND to access customer info
         
         if (!$wallet->hasSufficientFunds($leadAccessFee)) {
             return redirect()->back()->with('error', 'Số dư ví không đủ để truy cập thông tin khách hàng. Vui lòng nạp thêm tiền.');

@@ -1,17 +1,15 @@
 import Link from 'next/link';
 import type { Route } from 'next';
-import type { SiteSettings, AuthUser, Appointment, WalletTransaction } from '@/lib/api-types';
+import type { SiteSettings, AuthUser, UserCompany } from '@/lib/api-types';
 import { getToken } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { getRecentNotifications, getUnreadCount } from '@/lib/notifications';
-import { getWalletOverview, getWalletTransactions } from '@/lib/wallet';
-import { getMyAppointments } from '@/lib/appointments';
 import { NotificationBell } from '@/components/notification-bell';
 import { UserDropdown } from '@/components/user-dropdown';
 
 const NAV_LINKS: { href: Route; label: string }[] = [
   { href: '/' as Route, label: 'Trang chủ' },
-  { href: '/cong-ty' as Route, label: 'Dịch vụ' },
+  { href: '/tho' as Route, label: 'Dịch vụ' },
   { href: '/yeu-cau' as Route, label: 'Tạo yêu cầu' },
 ];
 
@@ -22,11 +20,6 @@ const CUSTOMER_LINKS: { href: Route; label: string }[] = [
 const PENDING_CONTRACTOR_LINKS: { href: Route; label: string }[] = [
   { href: '/vi/lich-hen' as Route, label: 'Lịch hẹn' },
   { href: '/vi/tho/dang-ky' as Route, label: 'Đăng ký thợ' },
-];
-
-const CONTRACTOR_LINKS: { href: Route; label: string }[] = [
-  { href: '/vi/tho/lich-hen' as Route, label: 'Quản lý thợ' },
-  { href: '/vi/wallet' as Route, label: 'Ví' },
 ];
 
 async function getCurrentUser(): Promise<AuthUser | null> {
@@ -40,22 +33,32 @@ async function getCurrentUser(): Promise<AuthUser | null> {
   }
 }
 
+async function getOwnCompanyId(token: string): Promise<number | null> {
+  try {
+    const res = await api<{ data: UserCompany[] }>('/user/companies', { token });
+    return res.data[0]?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function SiteHeader({ settings }: { settings: SiteSettings }) {
   const user = await getCurrentUser();
-  const [unreadCount, recent, walletData, appointmentData, txData] = user
+  const token = user?.has_company ? await getToken() : null;
+  const [unreadCount, recent, contractorCompanyId] = user
     ? await Promise.all([
         getUnreadCount(),
         getRecentNotifications(5),
-        getWalletOverview().catch(() => null),
-        getMyAppointments(1).catch(() => null),
-        getWalletTransactions({ per_page: '4' }).catch(() => null),
+        token ? getOwnCompanyId(token) : Promise.resolve(null),
       ])
-    : [0, null, null, null, null];
+    : [0, null, null];
 
-  const dashboardBalance = walletData?.data?.totals?.balance ?? null;
-  const recentAppointments: Appointment[] = appointmentData?.data?.slice(0, 3) ?? [];
-  const recentTransactions: WalletTransaction[] = txData?.data?.slice(0, 4) ?? [];
-
+  const contractorLinks: { href: Route; label: string }[] = [
+    { href: '/vi/tho/lich-hen' as Route, label: 'Lịch hẹn' },
+    ...(contractorCompanyId
+      ? [{ href: `/tho/${contractorCompanyId as number}` as Route, label: 'Hồ sơ cá nhân' }]
+      : []),
+  ];
   return (
     <nav className="fixed top-0 left-0 z-50 w-full bg-surface/80 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 md:px-8">
@@ -63,12 +66,12 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
           href="/"
           className="flex items-center gap-2 font-headline text-2xl font-bold tracking-tight text-primary"
         >
-          {settings.site_logo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={settings.site_logo} alt={settings.site_name} className="h-9 w-auto" />
-          ) : (
-            <span>{settings.site_name}</span>
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={settings.site_logo ?? '/logo.png'}
+            alt={settings.site_name}
+            className="h-9 w-auto"
+          />
         </Link>
 
         <div className="hidden items-center gap-8 font-headline text-sm font-medium md:flex">
@@ -82,7 +85,7 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
             </Link>
           ))}
           {user && (user.has_company
-            ? CONTRACTOR_LINKS
+            ? contractorLinks
             : !user.has_company && (user.pending_role === 'contractor' || user.pending_role === 'both')
               ? PENDING_CONTRACTOR_LINKS
               : CUSTOMER_LINKS
@@ -104,12 +107,7 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
                 initialUnreadCount={unreadCount}
                 initialRecent={recent}
               />
-              <UserDropdown
-                user={user}
-                dashboardBalance={dashboardBalance}
-                recentAppointments={recentAppointments}
-                recentTransactions={recentTransactions}
-              />
+              <UserDropdown user={user} />
             </div>
           ) : (
             <>

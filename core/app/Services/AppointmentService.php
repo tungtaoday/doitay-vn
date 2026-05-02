@@ -163,7 +163,7 @@ class AppointmentService
             throw new \DomainException('Vui lòng tạo ví cho công ty trước khi xác nhận lịch hẹn.');
         }
 
-        $leadFee = 50000;
+        $leadFee = 10000;
 
         $this->walletService->debitWithLock(
             $wallet->id,

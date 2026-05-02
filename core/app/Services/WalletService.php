@@ -13,12 +13,19 @@ class WalletService
 {
     /**
      * Wallets owned by a user (via their companies), eager-loaded with company.
+     * Auto-creates a wallet for any approved company that doesn't have one yet.
      */
     public function walletsForUser(User $user): Collection
     {
-        $companyIds = $user->companies()->pluck('id');
+        $companies = $user->companies()->with('wallet')->get();
 
-        return CompanyWallet::whereIn('company_id', $companyIds)
+        foreach ($companies as $company) {
+            if ($company->status === \App\Constants\Status::APPROVED && ! $company->wallet) {
+                CompanyWallet::createForCompany($company);
+            }
+        }
+
+        return CompanyWallet::whereIn('company_id', $companies->pluck('id'))
             ->with('company:id,name,user_id')
             ->orderBy('id')
             ->get();

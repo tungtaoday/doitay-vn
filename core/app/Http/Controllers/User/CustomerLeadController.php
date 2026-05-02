@@ -194,7 +194,7 @@ class CustomerLeadController extends Controller
                 'status' => 'active',
                 'needed_by' => $validated['needed_by'],
                 'max_contractors' => $validated['max_contractors'] ?? 5,
-                'lead_price' => 50000, // Default lead price
+                'lead_price' => 10000, // Default lead price
                 'expires_at' => now()->addDays(30),
                 'requirements' => $validated['feature_requirements'] ?? [],
                 'customer_info' => [

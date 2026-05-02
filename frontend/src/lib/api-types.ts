@@ -91,7 +91,7 @@ export interface ServiceRequestResponse {
 export interface UserCompany {
   id: number;
   name: string;
-  email: string;
+  email: string | null;
   phone: string | null;
   category_id: number;
   description: string;
@@ -155,6 +155,7 @@ export interface PublicCompanyDetail extends PublicCompanyListItem {
     comment: string | null;
     created_at: string | null;
     user: { name: string | null; avatar: string | null } | null;
+    features: { name: string; rating: number }[];
   }[];
   show_contact: boolean;
   phone: string | null;

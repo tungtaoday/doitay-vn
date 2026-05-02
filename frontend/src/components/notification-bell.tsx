@@ -69,6 +69,7 @@ export function NotificationBell({ initialUnreadCount, initialRecent }: Props) {
   };
 
   const handleItemClick = (n: UserNotification) => {
+    if (n.action_url) setOpen(false);
     if (!n.is_read) {
       startTransition(async () => {
         const res = await markNotificationReadAction(n.id);

@@ -26,8 +26,10 @@ class NotificationService
         // Create notification for the user
         UserNotification::createAppointmentNotification($user, $type, $appointment, $message);
 
-        // Always notify the company for all appointment events
-        if ($appointment->company && $appointment->company->user) {
+        // Notify company owner — but only when the caller is the customer,
+        // not when the caller IS already the company owner (avoids duplicate).
+        if ($appointment->company && $appointment->company->user &&
+            $appointment->company->user->id !== $user->id) {
             $userName = $user->fullname ? $user->fullname : $user->username;
             
             $companyMessages = [

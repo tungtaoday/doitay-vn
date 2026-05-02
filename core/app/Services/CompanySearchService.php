@@ -47,6 +47,7 @@ class CompanySearchService
         }
 
         return $query
+            ->orderBy('is_seeded')          // real companies (0) always before seeded (1)
             ->orderByDesc('avg_rating')
             ->orderByDesc('id')
             ->paginate($perPage)
@@ -64,7 +65,7 @@ class CompanySearchService
     public function showPublicById(int $id): Company
     {
         return Company::approved()
-            ->with(['category', 'portfolios', 'ratings.user'])
+            ->with(['category', 'portfolios', 'ratings.user', 'ratings.ratingDetails.feature'])
             ->where('id', $id)
             ->firstOrFail();
     }

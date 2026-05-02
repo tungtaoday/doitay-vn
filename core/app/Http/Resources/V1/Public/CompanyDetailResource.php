@@ -52,13 +52,19 @@ class CompanyDetailResource extends JsonResource
             ])),
             'ratings_recent'  => $this->whenLoaded('ratings', fn () => $this->ratings->take(5)->map(fn ($r) => [
                 'id'         => $r->id,
-                'score'      => (float) ($r->rating ?? $r->score ?? 0),
-                'comment'    => $r->comment ?? null,
+                'score'      => (float) ($r->avg_rating ?? 0),
+                'comment'    => $r->suggest ?? null,
                 'created_at' => optional($r->created_at)->toIso8601String(),
                 'user'       => $r->relationLoaded('user') && $r->user ? [
                     'name'   => $r->user->name ?? null,
                     'avatar' => $r->user->image ? asset('assets/images/user/profile/' . $r->user->image) : null,
                 ] : null,
+                'features'   => $r->relationLoaded('ratingDetails')
+                    ? $r->ratingDetails->filter(fn ($d) => $d->feature)->map(fn ($d) => [
+                        'name'   => $d->feature->name,
+                        'rating' => (float) $d->rating,
+                    ])->values()->all()
+                    : [],
             ])),
             'show_contact'    => $showContact,
             'phone'           => $showContact ? $this->phone : null,

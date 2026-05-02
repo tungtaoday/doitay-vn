@@ -5,10 +5,26 @@ import { DepositCreateForm } from './deposit-create-form';
 export const metadata = { title: 'Nạp tiền' };
 
 export default async function DepositCreatePage() {
-  const [overview, methods] = await Promise.all([
-    getWalletOverview(),
-    getDepositMethods(),
-  ]);
+  let overview;
+  let methods;
+  try {
+    [overview, methods] = await Promise.all([
+      getWalletOverview(),
+      getDepositMethods(),
+    ]);
+  } catch {
+    return (
+      <div className="space-y-6">
+        <header>
+          <h1 className="font-headline text-3xl font-bold text-on-surface">Nạp tiền vào ví</h1>
+        </header>
+        <div className="rounded-2xl bg-error-container p-8 text-center text-on-error-container">
+          <p className="font-headline text-lg font-bold">Không tải được thông tin nạp tiền</p>
+          <p className="mt-2 text-sm">Vui lòng thử lại sau.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -20,8 +36,10 @@ export default async function DepositCreatePage() {
       </header>
 
       {overview.data.wallets.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-outline-variant px-6 py-10 text-center text-sm text-on-surface-variant">
-          Bạn chưa có ví nào. Hãy tạo công ty trước.
+        <div className="rounded-2xl border border-dashed border-outline-variant px-6 py-16 text-center text-on-surface-variant">
+          <span className="material-symbols-outlined mb-3 block text-4xl opacity-30">account_balance_wallet</span>
+          <p className="font-headline text-base font-bold">Chưa có ví nào</p>
+          <p className="mt-1 text-sm">Tính năng nạp tiền dành cho thợ đã được duyệt. Hồ sơ công ty của bạn cần được admin phê duyệt trước khi có thể nạp tiền vào ví.</p>
         </div>
       ) : methods.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-outline-variant px-6 py-10 text-center text-sm text-on-surface-variant">
@@ -31,7 +49,7 @@ export default async function DepositCreatePage() {
         <DepositCreateForm
           wallets={overview.data.wallets.map((w) => ({
             id: w.id,
-            label: `${w.company.name ?? 'Ví'} — số dư ${formatVND(w.balance)}`,
+            label: `Ví của bạn — số dư ${formatVND(w.balance)}`,
           }))}
           methods={methods}
         />
