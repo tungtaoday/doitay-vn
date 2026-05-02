@@ -155,7 +155,7 @@ export default async function HomePage() {
                 className="h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-secondary/60 via-transparent to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-10">
+              <div className="absolute bottom-16 left-0 right-0 p-10">
                 <p className="font-headline text-2xl font-bold text-white">
                   Thợ chuyên nghiệp
                 </p>
