@@ -161,8 +161,8 @@ export function CompanyEditForm({
     <form action={formAction} className="space-y-10">
       <input type="hidden" name="company_id" value={company.id} />
       <input type="hidden" name="name" value={name} />
-      <input type="hidden" name="email" value={email} />
-      <input type="hidden" name="phone" value={phone} />
+      <input type="hidden" name="email" value={email ?? ''} />
+      <input type="hidden" name="phone" value={phone ?? ''} />
       <input type="hidden" name="category_id" value={categoryId} />
       <input type="hidden" name="experience" value={experience} />
       <input type="hidden" name="description" value={description} />
@@ -225,7 +225,7 @@ export function CompanyEditForm({
           </div>
           <div>
             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Email liên hệ</label>
-            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120}
+            <input type="text" value={email ?? ''} onChange={(e) => setEmail(e.target.value)} maxLength={120}
               className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary" />
           </div>
           <div>
