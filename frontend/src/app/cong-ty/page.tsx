@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata, Route } from 'next';
 import { api, ApiError } from '@/lib/api';
 import type { Paginated, PublicCompanyListItem } from '@/lib/api-types';
+import { getPlaceholderImage } from '@/lib/placeholder-images';
 
 export const metadata: Metadata = {
   title: 'Danh sách thợ chuyên nghiệp',
@@ -278,7 +279,7 @@ function CompanyCard({ c }: { c: PublicCompanyListItem }) {
       <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-surface-container-low to-surface-container">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={c.image ?? ''}
+          src={c.image ?? getPlaceholderImage(c.category?.name)}
           alt={c.name}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
