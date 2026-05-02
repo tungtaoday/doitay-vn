@@ -25,6 +25,12 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Prose-style content (dùng cho privacy policy, FAQ, terms) */
+.prose-custom p { margin-bottom: 0.75rem; }
+.prose-custom ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+.prose-custom ul li { margin-bottom: 0.25rem; }
+.prose-custom a { color: #48BBE2; text-decoration: underline; }
+
 body {
   background-color: #f8f9ff;
   color: #001d35;

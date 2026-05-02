@@ -47,6 +47,8 @@ class CompanySearchService
         }
 
         return $query
+            ->when(\Illuminate\Support\Facades\Schema::hasColumn('companies', 'is_seeded'),
+                fn ($q) => $q->orderBy('is_seeded'))
             ->orderByDesc('avg_rating')
             ->orderByDesc('id')
             ->paginate($perPage)
