@@ -13,7 +13,7 @@ import type {
 } from '@/lib/api-types';
 import { getServiceRequest } from '@/lib/service-requests';
 import { AppointmentBookingForm } from './appointment-form';
-import { getPlaceholderImage } from '@/lib/placeholder-images';
+import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
 
 async function loadCurrentUser(): Promise<AuthUser | null> {
   const token = await getToken();
@@ -148,7 +148,7 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
               <div className="h-40 w-40 overflow-hidden rounded-full border-4 border-surface-container-highest shadow-ambient">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={company.image ?? getPlaceholderImage(company.category?.name)}
+                  src={isSeedImage(company.image) ? getPlaceholderImage(company.category?.name) : company.image!}
                   alt={company.name}
                   className="h-full w-full object-cover"
                 />

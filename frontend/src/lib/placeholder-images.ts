@@ -6,6 +6,12 @@ const PLACEHOLDER_IMAGES: Record<string, string> = {
   general:   'https://lh3.googleusercontent.com/aida-public/AB6AXuCTzzrdorE-Ei3PAj_fqoCbfyi17TfafvIcB0nwfMnvTW4QYLmV3OQ2gUuYVsv7rNftmYkC9Nce8PQEWsXm9cJPjCXL2bsicfiC2o8vtdU3hxGNRNnkGMuLaxxE3LO_4RC96HAzhGMgCdP01hw6o7zCXG-yJMWPs0cC4YQT6g1OYcC-Z38jnAsweT5wP0Czdf6gOvnRPCn4u0Gdf7Ljhto1rIwIXPM0SmEFHtUcguj42a2JRB7ja58CK3yVQj-4A-zh5VJgVPNIi9ez',
 };
 
+/** Returns true for seed/stock images that should be replaced with profession-specific placeholders */
+export function isSeedImage(url?: string | null): boolean {
+  if (!url) return true;
+  return url.includes('unsplash.com');
+}
+
 export function getPlaceholderImage(categoryName?: string | null): string {
   const name = (categoryName ?? '').toLowerCase();
   if (/nước|ống|thông|bồn/.test(name)) return PLACEHOLDER_IMAGES.plumbing;
