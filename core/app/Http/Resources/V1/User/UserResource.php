@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'email'            => $this->email,
             'mobile'           => $this->mobile,
             'avatar'           => $this->image
-                ? asset('assets/images/user/profile/' . $this->image)
+                ? (str_starts_with($this->image, 'http') ? $this->image : asset('assets/images/user/profile/' . $this->image))
                 : null,
             'profile_complete' => (bool) $this->profile_complete,
             'has_company'      => $this->companies()->exists(),

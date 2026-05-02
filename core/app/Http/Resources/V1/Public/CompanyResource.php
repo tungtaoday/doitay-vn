@@ -23,8 +23,8 @@ class CompanyResource extends JsonResource
             'vanity_slug'       => Str::slug((string) $this->name),
             'name'              => $this->name,
             'image'             => $this->image
-                ? asset('assets/images/company/' . $this->image)
-                : asset('assets/images/placeholders/worker-' . (($this->id % 4) + 1) . '.jpg'),
+                ? (str_starts_with($this->image, 'http') ? $this->image : asset('assets/images/company/' . $this->image))
+                : null,
             'short_description' => $this->description
                 ? mb_substr(strip_tags($this->description), 0, 160)
                 : null,
