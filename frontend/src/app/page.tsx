@@ -45,12 +45,12 @@ const COMMITMENTS = [
   {
     icon: 'verified_user',
     title: 'Bảo vệ quyền lợi khách hàng',
-    desc: 'Chỉ thanh toán khi công việc được nghiệm thu hài lòng.',
+    desc: 'Đúng thợ khách hàng chọn với hồ sơ chính xác nhất.',
   },
   {
     icon: 'payments',
-    title: 'Minh bạch tài chính',
-    desc: 'Giá cả rõ ràng từ đầu, không phát sinh chi phí ẩn.',
+    title: 'Minh bạch không qua trung gian',
+    desc: 'Khách hàng làm việc trực tiếp với thợ, không sợ chi phí ẩn của nền tảng.',
   },
   {
     icon: 'support_agent',
@@ -417,7 +417,7 @@ export default async function HomePage() {
             </h2>
             <p className="text-lg leading-relaxed text-inverse-on-surface/70">
               Tại doitay.vn, chúng tôi đặt sự an toàn và hài lòng của bạn lên
-              hàng đầu với quy trình kiểm soát nghiêm ngặt.
+              hàng đầu với quy trình kiểm soát đánh giá nghiêm ngặt.
             </p>
             <div className="space-y-6">
               {COMMITMENTS.map((c) => (
