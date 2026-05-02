@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { api, ApiError } from '@/lib/api';
 import type { Paginated, PublicCompanyListItem } from '@/lib/api-types';
+import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
 
 /**
  * Homepage — rebuild from frontend/stitch/trang_ch_m_i.
@@ -328,18 +329,12 @@ export default async function HomePage() {
                   <div className="mb-8 flex items-start justify-between">
                     <div className="relative">
                       <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-surface-container-low text-on-surface-variant">
-                        {c.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={c.image}
-                            alt={c.name}
-                            className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
-                          />
-                        ) : (
-                          <span className="material-symbols-outlined text-3xl">
-                            person
-                          </span>
-                        )}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={isSeedImage(c.image) ? getPlaceholderImage(c.category?.name) : c.image!}
+                          alt={c.name}
+                          className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
+                        />
                       </div>
                       <div className="absolute -bottom-2 -right-2 rounded-full bg-tertiary-container px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-on-tertiary-container shadow-md">
                         Verified
