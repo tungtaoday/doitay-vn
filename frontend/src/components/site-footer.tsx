@@ -95,7 +95,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-8 text-center text-xs text-on-surface-variant md:px-8">
-        © {new Date().getFullYear()} {settings.site_name} — The Digital Craftsman.
+        © {new Date().getFullYear()} {settings.site_name} — Kết nối bàn tay Thợ tài hoa.
       </div>
     </footer>
   );

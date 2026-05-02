@@ -27,12 +27,12 @@ const STEPS = [
   {
     icon: 'how_to_reg',
     title: 'Chọn thợ',
-    desc: 'Xem báo giá, hồ sơ năng lực và đánh giá từ cộng đồng.',
+    desc: 'Xem hồ sơ năng lực và đánh giá từ cộng đồng.',
   },
   {
     icon: 'task_alt',
     title: 'Hoàn thành',
-    desc: 'Thanh toán an toàn qua ứng dụng sau khi hài lòng với dịch vụ.',
+    desc: 'Thanh toán trực tiếp cho thợ không qua bất cứ bên nào.',
   },
 ] as const;
 
@@ -146,8 +146,8 @@ export default async function HomePage() {
           </div>
 
           {/* Right — banner photo */}
-          <div className="relative hidden lg:block">
-            <div className="relative z-10 h-[600px] overflow-hidden rounded-[3rem] rotate-2 shadow-ambient transition-transform duration-700 hover:rotate-0">
+          <div className="relative">
+            <div className="relative z-10 h-[260px] overflow-hidden rounded-[2rem] shadow-ambient transition-transform duration-700 sm:h-[340px] lg:h-[600px] lg:rotate-2 lg:rounded-[3rem] lg:hover:rotate-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/banner-worker.jpg"
@@ -155,16 +155,16 @@ export default async function HomePage() {
                 className="h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-secondary/60 via-transparent to-transparent" />
-              <div className="absolute bottom-16 left-0 right-0 p-10">
-                <p className="font-headline text-2xl font-bold text-white">
+              <div className="absolute bottom-6 left-0 right-0 p-6 lg:bottom-16 lg:p-10">
+                <p className="font-headline text-lg font-bold text-white lg:text-2xl">
                   Thợ chuyên nghiệp
                 </p>
-                <p className="mt-1 text-white/80">
+                <p className="mt-1 text-sm text-white/80 lg:text-base">
                   Sẵn sàng phục vụ tận nơi — toàn quốc.
                 </p>
               </div>
             </div>
-            <div className="absolute -bottom-8 -left-8 z-20 flex items-center gap-4 rounded-3xl bg-surface-container-lowest p-6 shadow-ambient">
+            <div className="absolute -bottom-8 -left-8 z-20 hidden items-center gap-4 rounded-3xl bg-surface-container-lowest p-6 shadow-ambient lg:flex">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-tertiary-fixed text-on-tertiary-fixed">
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
               </div>

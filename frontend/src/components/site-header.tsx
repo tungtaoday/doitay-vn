@@ -70,7 +70,7 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
           <img
             src={settings.site_logo ?? '/logo.png'}
             alt={settings.site_name}
-            className="h-9 w-auto"
+            className="h-9 w-auto shrink-0 object-contain"
           />
         </Link>
 
