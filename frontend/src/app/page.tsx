@@ -145,26 +145,28 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Right card stack — hidden on mobile, signature element on desktop. */}
+          {/* Right — banner photo */}
           <div className="relative hidden lg:block">
-            <div className="relative z-10 h-[600px] overflow-hidden rounded-[3rem] rotate-2 bg-gradient-to-br from-primary to-primary-container shadow-ambient transition-transform duration-700 hover:rotate-0">
-              <div className="flex h-full items-end p-12">
-                <div className="space-y-2 text-on-primary">
-                  <span className="material-symbols-outlined text-6xl opacity-60">
-                    handyman
-                  </span>
-                  <p className="font-headline text-3xl font-bold">
-                    Thợ chuyên nghiệp
-                  </p>
-                  <p className="text-on-primary/80">
-                    Sẵn sàng phục vụ tận nơi — toàn quốc.
-                  </p>
-                </div>
+            <div className="relative z-10 h-[600px] overflow-hidden rounded-[3rem] rotate-2 shadow-ambient transition-transform duration-700 hover:rotate-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/banner-worker.jpg"
+                alt="Thợ chuyên nghiệp doitay.vn"
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-secondary/60 via-transparent to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-10">
+                <p className="font-headline text-2xl font-bold text-white">
+                  Thợ chuyên nghiệp
+                </p>
+                <p className="mt-1 text-white/80">
+                  Sẵn sàng phục vụ tận nơi — toàn quốc.
+                </p>
               </div>
             </div>
             <div className="absolute -bottom-8 -left-8 z-20 flex items-center gap-4 rounded-3xl bg-surface-container-lowest p-6 shadow-ambient">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-tertiary-fixed text-on-tertiary-fixed">
-                <span className="material-symbols-outlined fill">verified</span>
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
               </div>
               <div>
                 <p className="font-headline font-bold text-on-surface">

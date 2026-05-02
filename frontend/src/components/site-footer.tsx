@@ -4,8 +4,9 @@ import type { SiteSettings } from '@/lib/api-types';
 
 const QUICK_LINKS: { href: Route; label: string }[] = [
   { href: '/' as Route, label: 'Trang chủ' },
-  { href: '/cong-ty' as Route, label: 'Dịch vụ' },
+  { href: '/tho' as Route, label: 'Tìm thợ' },
   { href: '/yeu-cau' as Route, label: 'Tạo yêu cầu' },
+  { href: '/gioi-thieu' as Route, label: 'Giới thiệu' },
   { href: '/lien-he' as Route, label: 'Liên hệ' },
 ];
 

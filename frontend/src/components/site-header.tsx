@@ -9,7 +9,7 @@ import { UserDropdown } from '@/components/user-dropdown';
 
 const NAV_LINKS: { href: Route; label: string }[] = [
   { href: '/' as Route, label: 'Trang chủ' },
-  { href: '/tho' as Route, label: 'Dịch vụ' },
+  { href: '/tho' as Route, label: 'Tìm thợ' },
   { href: '/yeu-cau' as Route, label: 'Tạo yêu cầu' },
 ];
 
