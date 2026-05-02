@@ -29,7 +29,14 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description:
       'Marketplace kết nối khách hàng với thợ và nhà thầu uy tín tại Việt Nam.',
-    icons: settings.site_favicon ? { icon: settings.site_favicon } : undefined,
+    icons: {
+      icon: [
+        { url: settings.site_favicon ?? '/favicon.ico', sizes: 'any' },
+        { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+      ],
+      apple: '/apple-icon.png',
+      shortcut: '/favicon.ico',
+    },
   };
 }
 
