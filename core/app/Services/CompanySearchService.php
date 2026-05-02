@@ -17,7 +17,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class CompanySearchService
 {
     /**
-     * @param  array{q?: ?string, category?: ?int, location?: ?int}  $filters
+     * @param  array{q?: ?string, category?: ?int, district?: ?string, min_rating?: ?float}  $filters
      */
     public function listPublic(array $filters, int $perPage = 20): LengthAwarePaginator
     {
@@ -31,11 +31,12 @@ class CompanySearchService
             $query->where('category_id', $filters['category']);
         }
 
-        if (! empty($filters['location'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('district', $filters['location'])
-                  ->orWhere('city', $filters['location']);
-            });
+        if (! empty($filters['district'])) {
+            $query->where('district', $filters['district']);
+        }
+
+        if (! empty($filters['min_rating'])) {
+            $query->where('avg_rating', '>=', (float) $filters['min_rating']);
         }
 
         if (! empty($filters['q'])) {
