@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Route } from 'next';
+import { unstable_cache } from 'next/cache';
 import { api, ApiError } from '@/lib/api';
 import type { Paginated, PublicCompanyListItem } from '@/lib/api-types';
 import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
@@ -60,6 +61,30 @@ const COMMITMENTS = [
   },
 ] as const;
 
+interface PlatformStats {
+  approved_contractors: number;
+  completed_appointments: number;
+  satisfied_customers: number;
+}
+
+const loadStats = unstable_cache(
+  async (): Promise<PlatformStats> => {
+    try {
+      const res = await api<{ data: PlatformStats }>('/public/stats');
+      return res.data;
+    } catch {
+      return { approved_contractors: 0, completed_appointments: 0, satisfied_customers: 0 };
+    }
+  },
+  ['platform-stats'],
+  { revalidate: 3600 },
+);
+
+function fmtStat(n: number): string {
+  if (n >= 1000) return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1).replace('.0', '') + 'k+';
+  return n > 0 ? `${n}+` : '—';
+}
+
 async function loadFeaturedCompanies(): Promise<PublicCompanyListItem[]> {
   try {
     const res = await api<Paginated<PublicCompanyListItem>>(
@@ -77,7 +102,10 @@ async function loadFeaturedCompanies(): Promise<PublicCompanyListItem[]> {
 }
 
 export default async function HomePage() {
-  const featured = await loadFeaturedCompanies();
+  const [featured, stats] = await Promise.all([
+    loadFeaturedCompanies(),
+    loadStats(),
+  ]);
 
   return (
     <>
@@ -129,7 +157,7 @@ export default async function HomePage() {
             <div className="flex gap-10 pt-4">
               <div className="flex flex-col">
                 <span className="font-headline text-3xl font-bold text-primary">
-                  5,000+
+                  {fmtStat(stats.approved_contractors)}
                 </span>
                 <span className="text-sm font-medium text-outline">
                   Thợ xác thực
@@ -137,10 +165,18 @@ export default async function HomePage() {
               </div>
               <div className="flex flex-col">
                 <span className="font-headline text-3xl font-bold text-primary">
-                  12k+
+                  {fmtStat(stats.completed_appointments)}
                 </span>
                 <span className="text-sm font-medium text-outline">
                   Dự án hoàn thành
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-headline text-3xl font-bold text-primary">
+                  {fmtStat(stats.satisfied_customers)}
+                </span>
+                <span className="text-sm font-medium text-outline">
+                  Khách hài lòng
                 </span>
               </div>
             </div>
