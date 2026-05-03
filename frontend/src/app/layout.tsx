@@ -23,6 +23,7 @@ const beVietnamPro = Be_Vietnam_Pro({
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   return {
+    metadataBase: new URL('https://doitay.vn'),
     title: {
       default: `${settings.site_name} — Kết nối bàn tay thợ tài hoa`,
       template: `%s | ${settings.site_name}`,
