@@ -77,7 +77,7 @@ const loadStats = unstable_cache(
     }
   },
   ['platform-stats'],
-  { revalidate: 3600 },
+  { revalidate: 300 },
 );
 
 function fmtStat(n: number): string {
