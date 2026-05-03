@@ -554,5 +554,17 @@ Route::get('/test-notifications', function() {
     ]);
 });
 
+// ── Zalo Mini App — Data Deletion Webhook ─────────────────────────────────────
+// Zalo calls this endpoint when a user requests account/data deletion via the app.
+// Must return HTTP 200. Log the request for audit; no real deletion needed here
+// because seeded/test data is isolated (is_seeded=1) and real deletion follows
+// the standard account-deletion flow.
+Route::post('zalo/webhook-delete-data', function (\Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Log::channel('single')->info('zalo.delete_data_webhook', [
+        'ip'      => $request->ip(),
+        'payload' => $request->all(),
+    ]);
+    return response()->json(['ok' => true]);
+})->name('zalo.webhook.delete_data');
 
 

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\V1\Admin\SeedController;
 
 /*
 |--------------------------------------------------------------------------
@@ -8,10 +9,22 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Loaded from routes/api.php under prefix /api/v1/admin, behind auth:sanctum.
-| Phase 3 will populate this file with admin panel endpoints. Left empty
-| for Phase 1.
 |
 | TODO Phase 3: implement an API-friendly admin guard middleware that
 | returns JSON 403 instead of redirecting to login (RedirectIfNotAdmin
 | currently redirects, which is wrong for an API context).
 */
+
+// ── Seed marketplace data (AI agent automation) ──────────────────────────
+Route::prefix('seed')->name('seed.')->group(function () {
+    Route::get('stats',                         [SeedController::class, 'stats'])->name('stats');
+    Route::post('run',                          [SeedController::class, 'run'])->name('run');
+    Route::post('users',                        [SeedController::class, 'createUser'])->name('users.create');
+    Route::post('users/{id}/avatar',            [SeedController::class, 'uploadAvatar'])->name('users.avatar');
+    Route::post('companies',                    [SeedController::class, 'createCompany'])->name('companies.create');
+    Route::post('companies/{id}/image',         [SeedController::class, 'uploadCompanyImage'])->name('companies.image');
+    Route::post('appointments',                 [SeedController::class, 'createAppointment'])->name('appointments.create');
+    Route::get('companies',                     [SeedController::class, 'listCompanies'])->name('companies.list');
+    Route::get('customers',                     [SeedController::class, 'listCustomers'])->name('customers.list');
+    Route::delete('flush',                      [SeedController::class, 'flushAll'])->name('flush');
+});

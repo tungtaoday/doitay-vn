@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Danh sách Dịch vụ - doitay.vn</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#baeaff",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed": "#221b00",
+                    "secondary-fixed-dim": "#adc9ec",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#dae9ff",
+                    "secondary-container": "#bddafd",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#705d00",
+                    "on-secondary": "#ffffff",
+                    "primary-container": "#48bbe2",
+                    "surface-container": "#e4efff",
+                    "on-tertiary-container": "#4e4100",
+                    "inverse-surface": "#14324e",
+                    "surface-dim": "#c1dcff",
+                    "primary": "#006781",
+                    "secondary-fixed": "#d0e4ff",
+                    "on-background": "#001d35",
+                    "inverse-primary": "#65d4fc",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#445f7e",
+                    "surface-variant": "#d0e4ff",
+                    "outline-variant": "#bdc8ce",
+                    "on-surface": "#001d35",
+                    "tertiary-fixed": "#ffe16d",
+                    "background": "#f8f9ff",
+                    "surface-container-highest": "#d0e4ff",
+                    "on-primary-fixed": "#001f29",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#00485b",
+                    "surface-bright": "#f8f9ff",
+                    "surface-container-low": "#eef4ff",
+                    "surface": "#f8f9ff",
+                    "outline": "#6e797e",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#544600",
+                    "on-surface-variant": "#3e484d",
+                    "primary-fixed-dim": "#65d4fc",
+                    "on-secondary-fixed": "#001d35",
+                    "tertiary-fixed-dim": "#e9c400",
+                    "secondary": "#45607f",
+                    "on-primary-fixed-variant": "#004d62",
+                    "on-secondary-fixed-variant": "#2d4966",
+                    "tertiary-container": "#ccac00",
+                    "surface-tint": "#006781",
+                    "inverse-on-surface": "#e9f1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Be Vietnam Pro"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-slate-900/80 backdrop-blur-md">
+<nav class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+<div class="flex items-center gap-12">
+<a class="text-2xl font-bold tracking-tight text-cyan-800 dark:text-cyan-300 font-headline" href="#">doitay.vn</a>
+<div class="hidden md:flex items-center gap-8 font-headline font-medium text-sm">
+<a class="text-slate-600 dark:text-slate-400 hover:text-cyan-600 transition-colors" href="#">Trang chủ</a>
+<a class="text-cyan-700 dark:text-cyan-400 border-b-2 border-cyan-700 pb-1" href="#">Dịch vụ</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-cyan-600 transition-colors" href="#">Blog</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-cyan-600 transition-colors" href="#">Liên hệ</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 transition-all">Đăng nhập</button>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-xl font-medium text-sm active:opacity-80 active:scale-95 transition-all">Đăng ký</button>
+</div>
+</nav>
+<div class="bg-surface-container-low dark:bg-slate-800 h-[1px] w-full"></div>
+</header>
+<main class="pt-28 pb-32 max-w-7xl mx-auto px-8">
+<!-- Breadcrumbs & Title -->
+<nav class="mb-12">
+<div class="flex items-center gap-2 text-sm text-outline mb-4">
+<a class="hover:text-primary transition-colors" href="#">Trang chủ</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-on-surface font-medium">Danh sách Dịch vụ</span>
+</div>
+<h1 class="text-4xl md:text-5xl font-headline font-bold text-on-surface tracking-tight max-w-2xl">
+                Tìm kiếm Thợ tay nghề cao <span class="text-primary italic">cho ngôi nhà của bạn.</span>
+</h1>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Filter Sidebar -->
+<aside class="lg:col-span-3 space-y-10">
+<!-- Search Box -->
+<div class="relative group">
+<label class="block text-xs font-bold uppercase tracking-widest text-outline mb-3">Tìm thợ</label>
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+<span class="material-symbols-outlined text-primary-fixed-dim mr-3">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-sm placeholder:text-outline" placeholder="Tìm tên thợ, mã dịch vụ..." type="text"/>
+</div>
+</div>
+<!-- Region Filter -->
+<div>
+<label class="block text-xs font-bold uppercase tracking-widest text-outline mb-4">Khu vực</label>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+<span class="text-sm text-on-surface-variant group-hover:text-primary">Tất cả khu vực</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+<span class="text-sm text-on-surface-variant group-hover:text-primary">Quận 1, TP. HCM</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+<span class="text-sm text-on-surface-variant group-hover:text-primary">Quận 7, TP. HCM</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+<span class="text-sm text-on-surface-variant group-hover:text-primary">TP. Thủ Đức</span>
+</label>
+</div>
+</div>
+<!-- Specialist Filter -->
+<div>
+<label class="block text-xs font-bold uppercase tracking-widest text-outline mb-4">Loại thợ</label>
+<div class="grid grid-cols-1 gap-2">
+<button class="flex items-center justify-between px-4 py-3 bg-primary text-on-primary rounded-xl text-sm font-medium transition-all">
+                            Điện lạnh <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="flex items-center justify-between px-4 py-3 bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-xl text-sm transition-all text-left">
+                            Sửa ống nước
+                        </button>
+<button class="flex items-center justify-between px-4 py-3 bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-xl text-sm transition-all text-left">
+                            Nội thất &amp; Gỗ
+                        </button>
+<button class="flex items-center justify-between px-4 py-3 bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-xl text-sm transition-all text-left">
+                            Sơn &amp; Xây dựng
+                        </button>
+</div>
+</div>
+<!-- Price Range -->
+<div>
+<label class="block text-xs font-bold uppercase tracking-widest text-outline mb-4">Khoảng giá (VND)</label>
+<input class="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex justify-between mt-3 text-xs font-medium text-outline">
+<span>100.000đ</span>
+<span>2.000.000đ+</span>
+</div>
+</div>
+</aside>
+<!-- Listing Content -->
+<section class="lg:col-span-9">
+<!-- Sorting & Summary -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+<p class="text-on-surface-variant">Tìm thấy <span class="font-bold text-on-surface">124</span> chuyên gia điện lạnh tại TP. HCM</p>
+<div class="flex items-center gap-4 bg-surface-container-low p-1.5 rounded-xl">
+<button class="px-4 py-2 bg-surface-container-lowest text-on-surface text-sm font-medium rounded-lg shadow-sm">Mới nhất</button>
+<button class="px-4 py-2 text-outline text-sm font-medium rounded-lg hover:text-on-surface">Đánh giá cao</button>
+<button class="px-4 py-2 text-outline text-sm font-medium rounded-lg hover:text-on-surface">Giá thấp</button>
+</div>
+</div>
+<!-- Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Professional Card 1 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_24px_48px_-12px_rgba(0,29,53,0.08)]">
+<div class="aspect-[16/10] overflow-hidden relative">
+<img alt="Service worker" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="professional electrician with safety equipment working on complex electrical panel in modern bright workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCl62-YA2pH38HtKVTw-WUYSAXZILvt4MoxzPn7d6l1SY9RRYheqB7jA-EsotYPkyMqJqrKvLstq0xdL1B3TSY_SGppsN-ohf-IUMTWYYWBU-WTYFJfCc-l2TfDxlLAXShpiyCVSMJMjGcAUcLe3wcP29DoPB5Ao-XwU6g5nZqP9B5MZmkc2eNRsqair4ksUuf8dQc82AXPo1eT_jKZWQGBQOGJzhAhqguBLiPZaD0dle2E17f-_bVJfzvhCBBQvj868yNDqsBhX5yg"/>
+<div class="absolute top-4 left-4">
+<span class="bg-tertiary-container text-on-tertiary-container px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified</span> CHUYÊN GIA
+                                </span>
+</div>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-3">
+<h3 class="text-xl font-headline font-bold text-on-surface">Nguyễn Văn Nam</h3>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold text-on-surface">4.9</span>
+</div>
+</div>
+<p class="text-primary font-medium text-sm mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">home_repair_service</span>
+                                Kỹ sư điện lạnh - 12 năm kinh nghiệm
+                            </p>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container-low p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-outline mb-1">Công việc</span>
+<span class="text-sm font-bold text-on-surface">1,240+ đã làm</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-outline mb-1">Phản hồi</span>
+<span class="text-sm font-bold text-on-surface">98% hài lòng</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Từ</span>
+<span class="text-lg font-bold text-on-surface">350.000đ</span>
+</div>
+<a class="bg-surface-container-highest text-primary px-6 py-3 rounded-xl text-sm font-bold hover:bg-primary hover:text-on-primary transition-all" href="#">Xem chi tiết</a>
+</div>
+</div>
+</div>
+<!-- Professional Card 2 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_24px_48px_-12px_rgba(0,29,53,0.08)]">
+<div class="aspect-[16/10] overflow-hidden relative">
+<img alt="Service worker" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="expert plumber fixing sink leak with professional tools in clean modern home interior with natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALSW3nWbn0-0LSL5-X9NL4MH075PfMbcHu-OTj7cR0GwsZ9ZnIi9aCRaT7osxCNzqqBAPBJFS8HZsfUe0YgxhT9te4GXWp6BX89Pkj-uVnqZ64Md6yiCxF1KhFtwrcEcnUlqXAvk-BMO_QxpSLP8h8IXREK64JjYM1JZxGtro5HOcSmDSD5AiPvDa1ZYIgfFJW6qVf60oamqBWWbT_QLKiGsA6XppfNixWK1Vjjja74M97qcsmg-w9eFTNvAKf1-SzRm7pa8YpZhKx"/>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-3">
+<h3 class="text-xl font-headline font-bold text-on-surface">Trần Minh Tâm</h3>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold text-on-surface">4.7</span>
+</div>
+</div>
+<p class="text-primary font-medium text-sm mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">plumbing</span>
+                                Lắp đặt máy lạnh &amp; Bảo trì
+                            </p>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container-low p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-outline mb-1">Công việc</span>
+<span class="text-sm font-bold text-on-surface">850+ đã làm</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-outline mb-1">Khu vực</span>
+<span class="text-sm font-bold text-on-surface">Quận 7, Nhà Bè</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Từ</span>
+<span class="text-lg font-bold text-on-surface">280.000đ</span>
+</div>
+<a class="bg-surface-container-highest text-primary px-6 py-3 rounded-xl text-sm font-bold hover:bg-primary hover:text-on-primary transition-all" href="#">Xem chi tiết</a>
+</div>
+</div>
+</div>
+<!-- Professional Card 3 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_24px_48px_-12px_rgba(0,29,53,0.08)]">
+<div class="aspect-[16/10] overflow-hidden relative">
+<img alt="Service worker" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="technician repairing outdoor AC unit on rooftop during sunset with warm cinematic lighting and professional tools" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwVVPJnma4-cgqm1NYTFZiQ98oKdh7z7cHcfMY3FDbF9_w8MOA6wKB3FPmexkeBCV-Hzk6wTGkvuEEItv7lwe-cQDq1-7yeRI3kfQLKoVVdSRfcfKIxLoVlWzh_GvR3b_iX0_TA-cd9L5PT9iWX4iT7D5wTGpGtD7W1MJw9raQ9kEnKBHg-iV3lFOsNfIC1jarQjOHWIHsZjzxsjZ9etmyOgy7vV2zdYY22B_nXUn-E8sqSEJ2-P8XABc5GLRNlaZnFpd4y_Ob5Die"/>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-3">
+<h3 class="text-xl font-headline font-bold text-on-surface">Lê Hoàng Nam</h3>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold text-on-surface">5.0</span>
+</div>
+</div>
+<p class="text-primary font-medium text-sm mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">ac_unit</span>
+                                Hệ thống lạnh trung tâm (VRV/VRF)
+                            </p>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container-low p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-outline mb-1">Công việc</span>
+<span class="text-sm font-bold text-on-surface">430+ đã làm</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-outline mb-1">Dịch vụ</span>
+<span class="text-sm font-bold text-on-surface">Công nghiệp</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Từ</span>
+<span class="text-lg font-bold text-on-surface">500.000đ</span>
+</div>
+<a class="bg-surface-container-highest text-primary px-6 py-3 rounded-xl text-sm font-bold hover:bg-primary hover:text-on-primary transition-all" href="#">Xem chi tiết</a>
+</div>
+</div>
+</div>
+<!-- Professional Card 4 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_24px_48px_-12px_rgba(0,29,53,0.08)]">
+<div class="aspect-[16/10] overflow-hidden relative">
+<img alt="Service worker" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="focused technician using tablet to diagnose technical equipment in a high-tech facility with soft blue light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTzzrdorE-Ei3PAj_fqoCbfyi17TfafvIcB0nwfMnvTW4QYLmV3OQ2gUuYVsv7rNftmYkC9Nce8PQEWsXm9cJPjCXL2bsicfiC2o8vtdU3hxGNRNnkGMuLaxxE3LO_4RC96HAzhGMgCdP01hw6o7zCXG-yJMWPs0cC4YQT6g1OYcC-Z38jnAsweT5wP0Czdf6gOvnRPCn4u0Gdf7Ljhto1rIwIXPM0SmEFHtUcguj42a2JRB7ja58CK3yVQj-4A-zh5VJgVPNIi9ez"/>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-3">
+<h3 class="text-xl font-headline font-bold text-on-surface">Phạm Quốc Huy</h3>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold text-on-surface">4.8</span>
+</div>
+</div>
+<p class="text-primary font-medium text-sm mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">settings_suggest</span>
+                                Sửa chữa tủ lạnh &amp; Máy giặt
+                            </p>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container-low p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-outline mb-1">Công việc</span>
+<span class="text-sm font-bold text-on-surface">1,890+ đã làm</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-outline mb-1">Thời gian</span>
+<span class="text-sm font-bold text-on-surface">24/7 Sẵn sàng</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Từ</span>
+<span class="text-lg font-bold text-on-surface">250.000đ</span>
+</div>
+<a class="bg-surface-container-highest text-primary px-6 py-3 rounded-xl text-sm font-bold hover:bg-primary hover:text-on-primary transition-all" href="#">Xem chi tiết</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-20 flex justify-center items-center gap-2">
+<button class="w-12 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-12 h-12 rounded-2xl bg-primary text-on-primary font-bold shadow-lg shadow-primary/20">1</button>
+<button class="w-12 h-12 rounded-2xl bg-surface-container-low text-on-surface-variant font-bold hover:bg-primary-container/20 hover:text-primary transition-all">2</button>
+<button class="w-12 h-12 rounded-2xl bg-surface-container-low text-on-surface-variant font-bold hover:bg-primary-container/20 hover:text-primary transition-all">3</button>
+<span class="mx-2 text-outline">...</span>
+<button class="w-12 h-12 rounded-2xl bg-surface-container-low text-on-surface-variant font-bold hover:bg-primary-container/20 hover:text-primary transition-all">12</button>
+<button class="w-12 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-950 w-full border-t border-slate-200 dark:border-slate-800">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-7xl mx-auto px-8 py-16">
+<div class="col-span-1 md:col-span-1">
+<a class="text-xl font-bold text-cyan-800 dark:text-cyan-300 mb-4 block font-headline" href="#">doitay.vn</a>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-body">
+                    Nền tảng kết nối thợ tay nghề cao và khách hàng tin cậy. Mang sự tỉ mỉ của người thợ thủ công đến từng ngôi nhà Việt.
+                </p>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface mb-6">Khám phá</h4>
+<ul class="space-y-4 font-body text-sm">
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors hover:underline decoration-cyan-500/30 underline-offset-4" href="#">Về chúng tôi</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors hover:underline decoration-cyan-500/30 underline-offset-4" href="#">Quy trình làm việc</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors hover:underline decoration-cyan-500/30 underline-offset-4" href="#">Bảng giá dịch vụ</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors hover:underline decoration-cyan-500/30 underline-offset-4" href="#">Hỏi đáp (FAQ)</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface mb-6">Hợp tác</h4>
+<ul class="space-y-4 font-body text-sm">
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors hover:underline decoration-cyan-500/30 underline-offset-4" href="#">Tuyển dụng thợ</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors hover:underline decoration-cyan-500/30 underline-offset-4" href="#">Gia nhập cộng đồng</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors hover:underline decoration-cyan-500/30 underline-offset-4" href="#">Chính sách thợ</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface mb-6">Liên hệ</h4>
+<ul class="space-y-4 font-body text-sm">
+<li class="flex items-center gap-3 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-primary text-lg">mail</span>
+                        contact@doitay.vn
+                    </li>
+<li class="flex items-center gap-3 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-primary text-lg">call</span>
+                        1900 6789
+                    </li>
+<li class="flex items-center gap-3 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-primary text-lg">location_on</span>
+                        Q. 1, TP. Hồ Chí Minh
+                    </li>
+</ul>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 py-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-body">© 2024 doitay.vn - The Digital Craftsman. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">hub</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+</div>
+</div>
+</footer>
+</body></html>

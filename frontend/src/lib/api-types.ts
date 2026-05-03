@@ -433,3 +433,12 @@ export interface SiteSettings {
     image: string | null;
   };
 }
+
+export interface SeedStats {
+  seeded_contractors:  number;
+  seeded_customers:    number;
+  seeded_appointments: number;
+  real_contractors:    number;
+  real_customers:      number;
+}
+

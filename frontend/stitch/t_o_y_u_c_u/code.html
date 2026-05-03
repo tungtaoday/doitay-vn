@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Đăng ký yêu cầu dịch vụ - doitay.vn</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#baeaff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#221b00",
+                        "secondary-fixed-dim": "#adc9ec",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#dae9ff",
+                        "secondary-container": "#bddafd",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#705d00",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#48bbe2",
+                        "surface-container": "#e4efff",
+                        "on-tertiary-container": "#4e4100",
+                        "inverse-surface": "#14324e",
+                        "surface-dim": "#c1dcff",
+                        "primary": "#006781",
+                        "secondary-fixed": "#d0e4ff",
+                        "on-background": "#001d35",
+                        "inverse-primary": "#65d4fc",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#445f7e",
+                        "surface-variant": "#d0e4ff",
+                        "outline-variant": "#bdc8ce",
+                        "on-surface": "#001d35",
+                        "tertiary-fixed": "#ffe16d",
+                        "background": "#f8f9ff",
+                        "surface-container-highest": "#d0e4ff",
+                        "on-primary-fixed": "#001f29",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#00485b",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container-low": "#eef4ff",
+                        "surface": "#f8f9ff",
+                        "outline": "#6e797e",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-surface-variant": "#3e484d",
+                        "primary-fixed-dim": "#65d4fc",
+                        "on-secondary-fixed": "#001d35",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "secondary": "#45607f",
+                        "on-primary-fixed-variant": "#004d62",
+                        "on-secondary-fixed-variant": "#2d4966",
+                        "tertiary-container": "#ccac00",
+                        "surface-tint": "#006781",
+                        "inverse-on-surface": "#e9f1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Be Vietnam Pro"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Be Vietnam Pro', sans-serif; }
+        .glass-panel {
+            background: rgba(248, 249, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 glass-panel">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+<div class="text-2xl font-bold tracking-tight text-cyan-800 dark:text-cyan-300">doitay.vn</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-600 dark:text-slate-400 hover:text-cyan-600 font-['Be_Vietnam_Pro'] font-medium text-sm transition-colors" href="#">Trang chủ</a>
+<a class="text-cyan-700 dark:text-cyan-400 border-b-2 border-cyan-700 pb-1 font-['Be_Vietnam_Pro'] font-medium text-sm" href="#">Dịch vụ</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-cyan-600 font-['Be_Vietnam_Pro'] font-medium text-sm transition-colors" href="#">Blog</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-cyan-600 font-['Be_Vietnam_Pro'] font-medium text-sm transition-colors" href="#">Liên hệ</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-6 py-2 rounded-full font-['Be_Vietnam_Pro'] text-sm font-medium text-cyan-700 dark:text-cyan-400 hover:bg-slate-100/50 transition-all">Đăng nhập</button>
+<button class="bg-gradient-to-br from-primary to-primary-container px-6 py-2 rounded-full font-['Be_Vietnam_Pro'] text-sm font-medium text-white shadow-lg shadow-primary/10 hover:opacity-90 transition-all">Đăng ký</button>
+</div>
+</div>
+<div class="bg-surface-container-low dark:bg-slate-800 h-[1px] w-full"></div>
+</nav>
+<main class="pt-32 pb-24 px-4 md:px-8 max-w-7xl mx-auto">
+<div class="flex flex-col lg:flex-row gap-12">
+<!-- Main Form Column -->
+<div class="flex-1">
+<div class="mb-12">
+<h1 class="text-4xl font-bold text-on-surface mb-4 tracking-tight">Tạo yêu cầu dịch vụ</h1>
+<p class="text-on-surface-variant max-w-xl">Kết nối với những người thợ lành nghề nhất. Hãy cho chúng tôi biết bạn cần hỗ trợ điều gì.</p>
+</div>
+<!-- Stepper -->
+<div class="flex items-center gap-4 mb-12">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">1</div>
+<span class="font-headline font-semibold text-primary">Mô tả</span>
+</div>
+<div class="flex-1 h-[2px] bg-surface-container-high rounded-full">
+<div class="w-1/3 h-full bg-primary rounded-full"></div>
+</div>
+<div class="flex items-center gap-3 opacity-40">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-sm">2</div>
+<span class="font-headline font-semibold">Địa điểm</span>
+</div>
+<div class="flex-1 h-[2px] bg-surface-container-high rounded-full"></div>
+<div class="flex items-center gap-3 opacity-40">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-sm">3</div>
+<span class="font-headline font-semibold">Liên hệ</span>
+</div>
+</div>
+<!-- Form Card -->
+<div class="bg-surface-container-lowest rounded-3xl p-8 md:p-12 shadow-sm border border-outline-variant/15">
+<form class="space-y-10">
+<!-- Step 1 Content -->
+<section class="space-y-8">
+<div>
+<label class="block text-sm font-semibold text-on-surface-variant mb-3 font-label">LOẠI DỊCH VỤ</label>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<button class="flex flex-col items-center gap-3 p-6 rounded-2xl bg-surface-container-low border-2 border-primary text-primary transition-all" type="button">
+<span class="material-symbols-outlined text-3xl">bolt</span>
+<span class="text-xs font-bold font-label uppercase tracking-wider">Điện</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-6 rounded-2xl bg-surface-container-lowest border-2 border-transparent hover:border-outline-variant text-on-surface-variant transition-all" type="button">
+<span class="material-symbols-outlined text-3xl">water_drop</span>
+<span class="text-xs font-bold font-label uppercase tracking-wider">Nước</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-6 rounded-2xl bg-surface-container-lowest border-2 border-transparent hover:border-outline-variant text-on-surface-variant transition-all" type="button">
+<span class="material-symbols-outlined text-3xl">build</span>
+<span class="text-xs font-bold font-label uppercase tracking-wider">Gia dụng</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-6 rounded-2xl bg-surface-container-lowest border-2 border-transparent hover:border-outline-variant text-on-surface-variant transition-all" type="button">
+<span class="material-symbols-outlined text-3xl">more_horiz</span>
+<span class="text-xs font-bold font-label uppercase tracking-wider">Khác</span>
+</button>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-semibold text-on-surface-variant mb-2 font-label">TIÊU ĐỀ YÊU CẦU</label>
+<input class="w-full bg-surface-container-low border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-primary/20 placeholder:text-outline text-on-surface font-body" placeholder="Ví dụ: Sửa bóng đèn phòng khách bị hỏng" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-semibold text-on-surface-variant mb-2 font-label">MÔ TẢ CHI TIẾT</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-primary/20 placeholder:text-outline text-on-surface font-body" placeholder="Mô tả cụ thể tình trạng hư hỏng hoặc yêu cầu của bạn..." rows="5"></textarea>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-on-surface-variant mb-3 font-label">HÌNH ẢNH MINH HỌA (TÙY CHỌN)</label>
+<div class="grid grid-cols-3 gap-4">
+<div class="aspect-square rounded-2xl bg-surface-container-low border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-outline">add_a_photo</span>
+<span class="text-[10px] font-bold text-outline uppercase">Tải ảnh lên</span>
+</div>
+<div class="aspect-square rounded-2xl overflow-hidden relative group">
+<img class="w-full h-full object-cover" data-alt="close up of a broken electrical outlet on a white wall with visible wires" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm-WlxT3AyARS7RtYfjO65RY9NaQ1kpDslxuQVY6BA7N-yIEYaW-b7oOPjGWqYrTLJY_UUMDYUaGSgO2b7XSkTVptiP-O30MmrKsGU3Gwv1_t-gdUXWzSquzejDJL33O_WLucWynSfA1yr8AoFny7sPXXpUz_uI1P3wybQg0AxkI_L_VfRMX22zfrIaEcRQZiaIBQ9m8vtK-p9ysRze96DAyHzXjrvKFO_boCel3CzEZ68jMuNAAm0_BwCX_P7pHyN3EOJmaTO7ZOS"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white cursor-pointer">delete</span>
+</div>
+</div>
+<div class="aspect-square rounded-2xl overflow-hidden relative group">
+<img class="w-full h-full object-cover" data-alt="professional electrician tools spread out on a wooden surface with neutral lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_SaG4Viec7cXrInzyV77hT_lX4GJDLErOSTy1Xm1dXMY68eldCjPodmDO34CZa5994CW4JdAR1twUBq0-HeiRgS1qsVn0qUJzGZ0gnYHgBsslysozhilMwqcnUx1vL2K7ykyK0f_yivcrfWNEmqBRAkbPf1Sg-HUVNY4Is8X_8-D4sniZ97DkaoNIH-B9Fv9PmMy8NUO4ZQ8liEQrV2W5J8dECL4V89x4MC_7ZCrAiuSbQa2-N7zfAYmltIB0xie2XLMJmfYQzCxJ"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white cursor-pointer">delete</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="pt-8 flex justify-between items-center">
+<button class="px-8 py-3 rounded-full text-outline font-semibold font-headline hover:text-on-surface transition-colors" type="button">Hủy bỏ</button>
+<button class="bg-gradient-to-br from-primary to-primary-container px-10 py-4 rounded-full text-white font-bold font-headline shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all" type="button">Tiếp tục bước 2</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Sidebar Summary -->
+<aside class="w-full lg:w-[400px]">
+<div class="sticky top-32 space-y-6">
+<div class="bg-surface-container-low rounded-3xl p-8 border border-outline-variant/10">
+<h3 class="text-xl font-bold mb-6 font-headline flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">assignment</span>
+                            Tóm tắt yêu cầu
+                        </h3>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-primary-fixed">bolt</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-outline-variant uppercase tracking-widest font-label mb-1">Dịch vụ</p>
+<p class="font-semibold text-on-surface">Sửa chữa điện gia dụng</p>
+</div>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/10 space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-sm text-on-surface-variant">Phí kiểm tra dự kiến</span>
+<span class="font-bold text-on-surface">150.000đ</span>
+</div>
+<div class="h-[1px] bg-outline-variant/10"></div>
+<p class="text-xs text-outline leading-relaxed italic">
+                                    * Phí cuối cùng sẽ được kỹ thuật viên báo giá trực tiếp sau khi khảo sát thực tế tình trạng.
+                                </p>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">verified</span>
+<span class="text-sm">Bảo hành 30 ngày cho mọi dịch vụ</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">support_agent</span>
+<span class="text-sm">Hỗ trợ trực tuyến 24/7</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Help Card -->
+<div class="bg-gradient-to-br from-cyan-900 to-cyan-950 rounded-3xl p-8 text-white relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="text-lg font-bold mb-2 font-headline">Cần hỗ trợ ngay?</h4>
+<p class="text-cyan-100/70 text-sm mb-6 leading-relaxed">Đội ngũ kỹ thuật viên của chúng tôi luôn sẵn sàng giải đáp thắc mắc của bạn.</p>
+<a class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-colors text-sm font-medium" href="tel:19001234">
+<span class="material-symbols-outlined text-sm">call</span>
+                                1900 1234
+                            </a>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">construction</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-slate-50 dark:bg-slate-950 w-full border-t border-slate-200 dark:border-slate-800">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-7xl mx-auto px-8 py-16">
+<div class="col-span-1 md:col-span-1">
+<span class="text-xl font-bold text-cyan-800 dark:text-cyan-300 mb-4 block">doitay.vn</span>
+<p class="text-slate-500 dark:text-slate-400 font-['Inter'] text-sm leading-relaxed">Nền tảng kết nối thợ chuyên nghiệp hàng đầu Việt Nam.</p>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6 font-headline">Dịch vụ</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 font-['Inter'] text-sm transition-colors" href="#">Sửa chữa điện</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 font-['Inter'] text-sm transition-colors" href="#">Sửa chữa nước</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 font-['Inter'] text-sm transition-colors" href="#">Vệ sinh máy lạnh</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6 font-headline">Công ty</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 font-['Inter'] text-sm transition-colors" href="#">Về chúng tôi</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 font-['Inter'] text-sm transition-colors" href="#">Điều khoản dịch vụ</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-cyan-600 font-['Inter'] text-sm transition-colors" href="#">Chính sách bảo mật</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6 font-headline">Liên hệ</h4>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-slate-500 text-sm"><span class="material-symbols-outlined text-cyan-700">mail</span> contact@doitay.vn</li>
+<li class="flex items-center gap-3 text-slate-500 text-sm"><span class="material-symbols-outlined text-cyan-700">call</span> 1900 1234</li>
+</ul>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 py-8 border-t border-slate-200/50 text-center text-slate-400 text-xs font-['Inter']">
+            © 2024 doitay.vn - The Digital Craftsman. All rights reserved.
+        </div>
+</footer>
+</body></html>

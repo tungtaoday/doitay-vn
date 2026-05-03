@@ -22,14 +22,23 @@ const beVietnamPro = Be_Vietnam_Pro({
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
+  const defaultTitle = `${settings.site_name} — Kết nối bàn tay thợ tài hoa`;
+  const description = 'Marketplace kết nối khách hàng với thợ và nhà thầu uy tín tại Việt Nam.';
   return {
     metadataBase: new URL('https://doitay.vn'),
     title: {
-      default: `${settings.site_name} — Kết nối bàn tay thợ tài hoa`,
+      default: defaultTitle,
       template: `%s | ${settings.site_name}`,
     },
-    description:
-      'Marketplace kết nối khách hàng với thợ và nhà thầu uy tín tại Việt Nam.',
+    description,
+    openGraph: {
+      type: 'website',
+      locale: 'vi_VN',
+      url: 'https://doitay.vn',
+      siteName: settings.site_name,
+      title: defaultTitle,
+      description,
+    },
     icons: {
       icon: [
         { url: settings.site_favicon ?? '/favicon.ico', sizes: 'any' },
