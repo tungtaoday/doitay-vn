@@ -17,7 +17,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class CompanySearchService
 {
     /**
-     * @param  array{q?: ?string, category?: ?int, district?: ?string, min_rating?: ?float}  $filters
+     * @param  array{q?: ?string, category?: ?int, district?: ?string, min_rating?: ?float, sort?: ?string}  $filters
      */
     public function listPublic(array $filters, int $perPage = 20): LengthAwarePaginator
     {
@@ -47,13 +47,16 @@ class CompanySearchService
             });
         }
 
-        return $query
-            ->when(\Illuminate\Support\Facades\Schema::hasColumn('companies', 'is_seeded'),
-                fn ($q) => $q->orderBy('is_seeded'))
-            ->orderByDesc('avg_rating')
-            ->orderByDesc('id')
-            ->paginate($perPage)
-            ->withQueryString();
+        $query->when(\Illuminate\Support\Facades\Schema::hasColumn('companies', 'is_seeded'),
+            fn ($q) => $q->orderBy('is_seeded'));
+
+        match ($filters['sort'] ?? 'newest') {
+            'rating'  => $query->orderByDesc('avg_rating')->orderByDesc('id'),
+            'newest'  => $query->orderByDesc('id'),
+            default   => $query->orderByDesc('id'),
+        };
+
+        return $query->paginate($perPage)->withQueryString();
     }
 
     /**

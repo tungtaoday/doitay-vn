@@ -18,6 +18,7 @@ class ListCompaniesRequest extends FormRequest
             'category'   => ['nullable', 'integer', 'exists:categories,id'],
             'district'   => ['nullable', 'string', 'max:150'],
             'min_rating' => ['nullable', 'numeric', 'min:1', 'max:5'],
+            'sort'       => ['nullable', 'string', 'in:newest,rating'],
             'page'       => ['nullable', 'integer', 'min:1'],
             'per_page'   => ['nullable', 'integer', 'min:1', 'max:50'],
         ];
