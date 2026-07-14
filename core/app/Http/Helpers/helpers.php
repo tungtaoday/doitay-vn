@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 
 function systemDetails()
 {
-    $system['name']          = 'ratelab';
+    $system['name']          = 'doitay';
     $system['version']       = '3.0';
     $system['build_version'] = '5.0.2';
     return $system;
