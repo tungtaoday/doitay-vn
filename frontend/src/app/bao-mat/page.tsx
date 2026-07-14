@@ -17,15 +17,16 @@ export default function PrivacyPage() {
             Bảo mật thông tin
           </span>
           <h1 className="mt-6 font-headline text-4xl font-bold text-on-surface">Chính sách bảo mật</h1>
-          <p className="mt-4 text-on-surface-variant">Cập nhật lần cuối: 01/05/2026</p>
+          <p className="mt-4 text-on-surface-variant">Cập nhật lần cuối: 14/07/2026</p>
         </header>
 
         <div className="prose-custom space-y-10 text-on-surface-variant">
 
           <Section title="1. Thông tin chúng tôi thu thập">
-            <p>Khi bạn sử dụng doitay.vn, chúng tôi có thể thu thập các thông tin sau:</p>
+            <p>Khi bạn sử dụng doitay.vn hoặc ứng dụng Zalo Mini App &ldquo;Thợ Tốt Doitay&rdquo;, chúng tôi có thể thu thập các thông tin sau:</p>
             <ul>
               <li><strong className="text-on-surface">Thông tin tài khoản:</strong> Họ tên, số điện thoại, địa chỉ email, ảnh đại diện.</li>
+              <li><strong className="text-on-surface">Số điện thoại qua Zalo:</strong> Khi bạn sử dụng ứng dụng Zalo Mini App và đồng ý cấp quyền, chúng tôi có thể nhận số điện thoại từ Zalo để điền sẵn thông tin liên hệ trên hồ sơ. Bạn có thể từ chối và nhập số thủ công.</li>
               <li><strong className="text-on-surface">Thông tin sử dụng:</strong> Lịch sử đặt lịch, đánh giá, giao dịch ví.</li>
               <li><strong className="text-on-surface">Thông tin thiết bị:</strong> Địa chỉ IP, loại trình duyệt, hệ điều hành (cho mục đích bảo mật và tối ưu dịch vụ).</li>
               <li><strong className="text-on-surface">Thông tin xác minh thợ:</strong> CMND/CCCD, ảnh công trình, thông tin nghề nghiệp.</li>
@@ -67,7 +68,7 @@ export default function PrivacyPage() {
             <ul>
               <li><strong className="text-on-surface">Truy cập:</strong> Xem thông tin chúng tôi đang lưu về bạn qua trang hồ sơ.</li>
               <li><strong className="text-on-surface">Chỉnh sửa:</strong> Cập nhật thông tin bất kỳ lúc nào trong cài đặt tài khoản.</li>
-              <li><strong className="text-on-surface">Xoá tài khoản:</strong> Gửi yêu cầu xoá tài khoản qua email support@doitay.vn. Dữ liệu sẽ được xoá trong 30 ngày.</li>
+              <li><strong className="text-on-surface">Xoá tài khoản:</strong> Gửi yêu cầu xoá tài khoản qua email admin@doitay.vn. Dữ liệu sẽ được xoá trong 30 ngày.</li>
               <li><strong className="text-on-surface">Phản đối:</strong> Từ chối nhận email marketing qua link huỷ trong mỗi email.</li>
             </ul>
           </Section>

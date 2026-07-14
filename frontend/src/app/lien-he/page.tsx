@@ -17,9 +17,9 @@ const CONTACT_ITEMS = [
   {
     icon: 'mail',
     label: 'Email hỗ trợ',
-    value: 'support@doitay.vn',
+    value: 'admin@doitay.vn',
     sub: 'Phản hồi trong vòng 2 giờ',
-    href: 'mailto:support@doitay.vn',
+    href: 'mailto:admin@doitay.vn',
   },
   {
     icon: 'mail',
@@ -122,7 +122,7 @@ export default function ContactPage() {
               Điền form bên dưới — chúng tôi sẽ phản hồi trong vòng 2 giờ (giờ hành chính).
             </p>
             <form
-              action="mailto:support@doitay.vn"
+              action="mailto:admin@doitay.vn"
               method="get"
               encType="text/plain"
               className="space-y-5"

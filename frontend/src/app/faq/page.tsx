@@ -106,7 +106,7 @@ export default function FaqPage() {
             <span className="text-primary">thường gặp</span>
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-xl leading-relaxed text-on-surface-variant">
-            Không tìm thấy câu trả lời? Liên hệ hotline <a href="tel:0972585990" className="font-semibold text-primary hover:underline">0972 585 990</a> hoặc email <a href="mailto:support@doitay.vn" className="font-semibold text-primary hover:underline">support@doitay.vn</a>.
+            Không tìm thấy câu trả lời? Liên hệ hotline <a href="tel:0972585990" className="font-semibold text-primary hover:underline">0972 585 990</a> hoặc email <a href="mailto:admin@doitay.vn" className="font-semibold text-primary hover:underline">admin@doitay.vn</a>.
           </p>
         </div>
       </section>
