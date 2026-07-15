@@ -20,8 +20,21 @@ class SubmissionReviewController extends Controller
     {
     }
 
+    /**
+     * Chỉ Quản lý (user_id trong config sale.manager_user_ids) được duyệt.
+     * Rỗng = khoá hết (an toàn mặc định). TODO Phase 3: admin guard chuẩn.
+     */
+    private function assertManager(): void
+    {
+        $ids = config('sale.manager_user_ids', []);
+        if (empty($ids) || ! in_array((int) auth()->id(), $ids, true)) {
+            abort(403, 'Bạn không có quyền duyệt hồ sơ.');
+        }
+    }
+
     public function index(Request $request): JsonResponse
     {
+        $this->assertManager();
         $status  = $request->query('status', 'pending');
         $perPage = max(1, min(50, (int) $request->integer('per_page', 20)));
 
@@ -43,6 +56,7 @@ class SubmissionReviewController extends Controller
 
     public function approve(int $id): JsonResponse
     {
+        $this->assertManager();
         $submission = ThoSubmission::findOrFail($id);
         $updated = $this->service->approve($submission);
 
@@ -51,6 +65,7 @@ class SubmissionReviewController extends Controller
 
     public function reject(RejectSubmissionRequest $request, int $id): JsonResponse
     {
+        $this->assertManager();
         $submission = ThoSubmission::findOrFail($id);
         $updated = $this->service->reject($submission, $request->validated()['ly_do']);
 

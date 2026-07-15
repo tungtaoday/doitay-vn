@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { requireUser } from '@/lib/require-user';
 import { getToken } from '@/lib/auth';
-import { api } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
 import type { SaleSubmission, SaleSubmissionListResponse } from '../types';
 import { ReviewItem } from './review-item';
 
@@ -17,13 +17,29 @@ export default async function DuyetPage() {
   const token = await getToken();
 
   let items: SaleSubmission[] = [];
+  let denied = false;
   try {
     const res = await api<SaleSubmissionListResponse>('/admin/submissions?status=pending', {
       token: token ?? undefined,
     });
     items = res.data;
-  } catch {
-    // rỗng nếu lỗi
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 403) denied = true;
+    // các lỗi khác: giữ danh sách rỗng
+  }
+
+  if (denied) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-20 text-center">
+        <h1 className="font-headline text-2xl font-bold text-on-surface">Không có quyền</h1>
+        <p className="mt-3 text-on-surface-variant">
+          Trang này chỉ dành cho Quản lý duyệt hồ sơ.
+        </p>
+        <Link href={'/sale' as Route} className="mt-6 inline-block text-primary hover:underline">
+          ← Về danh sách của tôi
+        </Link>
+      </div>
+    );
   }
 
   return (

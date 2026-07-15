@@ -12,4 +12,11 @@ return [
 
     // Category mặc định khi không match được nghề của submission.
     'default_category_id' => (int) env('SALE_DEFAULT_CATEGORY_ID', 1),
+
+    // Danh sách user_id được quyền DUYỆT hồ sơ (Quản lý). Rỗng = khoá hết (an toàn mặc định).
+    // Cấu hình: SALE_MANAGER_USER_IDS=12,34 trong .env
+    'manager_user_ids' => array_values(array_filter(array_map(
+        'intval',
+        explode(',', (string) env('SALE_MANAGER_USER_IDS', ''))
+    ))),
 ];

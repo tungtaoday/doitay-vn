@@ -17,8 +17,9 @@ use Illuminate\Validation\ValidationException;
  * Ref: DUC-SUBMISSION-APPROVE, DUC-SUBMISSION-REJECT.
  *
  * Lưu ý: tạo thợ ánh xạ nghề→category (LIKE, fallback default) và khu_vuc (text)
- * vì submission chỉ có dữ liệu tự do. Company tạo ở trạng thái PENDING để đi tiếp
- * qua luồng duyệt company hiện có (an toàn — không tự publish dữ liệu chưa vet).
+ * vì submission chỉ có dữ liệu tự do. Company tạo ở trạng thái APPROVED — vì việc
+ * Quản lý duyệt submission (kiểm ảnh + thông tin) CHÍNH LÀ bước vet → thợ lên chợ ngay
+ * (FR-006), tránh double-approval.
  */
 class SubmissionReviewService
 {
@@ -122,7 +123,8 @@ class SubmissionReviewService
             'country'        => 'Vietnam',
             'description'    => 'Thợ ' . $submission->nghe . ' — khu vực ' . $submission->khu_vuc,
             'experience'     => (int) ($submission->nam_kn ?? 0),
-            'status'         => Status::PENDING,
+            // Duyệt submission = đã vet → publish thợ lên chợ ngay (FR-006).
+            'status'         => Status::APPROVED,
             'tags'           => [],
             'services'       => $submission->bang_gia ?? [],
             'business_hours' => [],

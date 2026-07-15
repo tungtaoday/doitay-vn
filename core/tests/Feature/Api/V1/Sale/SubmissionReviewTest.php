@@ -102,10 +102,12 @@ class SubmissionReviewTest extends TestCase
         // thợ user tạo theo SĐT chuẩn hoá
         $this->assertDatabaseHas('users', ['mobile' => '0972585990']);
         // company tạo, gắn đúng category name-match, trạng thái PENDING (đi tiếp luồng duyệt company)
+        // Company tạo APPROVED (status=1) → thợ lên chợ ngay (FR-006, auto-publish)
         $this->assertDatabaseHas('companies', [
             'id'          => $result->company_id,
             'name'        => 'Vũ Hùng',
             'category_id' => $catId,
+            'status'      => 1,
         ]);
         // hoa hồng ghi cho CTV
         $this->assertDatabaseHas('commissions', [
