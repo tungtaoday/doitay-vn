@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ThoSubmission;
 use App\Models\User;
+use App\Support\Identifier;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -20,13 +21,8 @@ class SubmissionService
      */
     public static function normalizePhone(string $phone): string
     {
-        $digits = preg_replace('/\D+/', '', $phone) ?? '';
-
-        if (str_starts_with($digits, '84')) {
-            $digits = '0' . substr($digits, 2);
-        }
-
-        return $digits;
+        // Dùng chung helper với users.mobile để dedup nhất quán.
+        return Identifier::normalizePhone($phone);
     }
 
     /**

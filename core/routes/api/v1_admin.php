@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\Admin\SeedController;
+use App\Http\Controllers\API\V1\Admin\SubmissionReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,8 @@ Route::prefix('seed')->name('seed.')->group(function () {
     Route::get('customers',                     [SeedController::class, 'listCustomers'])->name('customers.list');
     Route::delete('flush',                      [SeedController::class, 'flushAll'])->name('flush');
 });
+
+// ── Sale submissions review (Quản lý duyệt hồ sơ thợ) ─────────────────────
+Route::get('submissions',                [SubmissionReviewController::class, 'index'])->name('submissions.index');
+Route::patch('submissions/{id}/approve', [SubmissionReviewController::class, 'approve'])->whereNumber('id')->name('submissions.approve');
+Route::patch('submissions/{id}/reject',  [SubmissionReviewController::class, 'reject'])->whereNumber('id')->name('submissions.reject');
