@@ -37,7 +37,8 @@ export function RequestWizard({
   user,
 }: {
   categories: PublicCategory[];
-  user: AuthUser;
+  /** null = khách chưa đăng nhập — vẫn cho điền form, gate ở bước gửi (server action trả needsLogin). */
+  user: AuthUser | null;
 }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -50,14 +51,14 @@ export function RequestWizard({
     description: '',
     images: [],
     cityCode: '',
-    cityName: user.location?.city ?? '',
+    cityName: user?.location?.city ?? '',
     districtCode: '',
-    districtName: user.location?.district ?? '',
+    districtName: user?.location?.district ?? '',
     wardCode: '',
-    wardName: user.location?.ward ?? '',
-    address: user.location?.address ?? '',
-    phone: user.mobile ?? '',
-    name: user.name ?? '',
+    wardName: user?.location?.ward ?? '',
+    address: user?.location?.address ?? '',
+    phone: user?.mobile ?? '',
+    name: user?.name ?? '',
   });
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 

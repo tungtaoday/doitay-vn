@@ -1,21 +1,56 @@
-// Profession-specific placeholder images from design stitch (Google AI generated)
-const PLACEHOLDER_IMAGES: Record<string, string> = {
-  electric: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCl62-YA2pH38HtKVTw-WUYSAXZILvt4MoxzPn7d6l1SY9RRYheqB7jA-EsotYPkyMqJqrKvLstq0xdL1B3TSY_SGppsN-ohf-IUMTWYYWBU-WTYFJfCc-l2TfDxlLAXShpiyCVSMJMjGcAUcLe3wcP29DoPB5Ao-XwU6g5nZqP9B5MZmkc2eNRsqair4ksUuf8dQc82AXPo1eT_jKZWQGBQOGJzhAhqguBLiPZaD0dle2E17f-_bVJfzvhCBBQvj868yNDqsBhX5yg',
-  plumbing:  'https://lh3.googleusercontent.com/aida-public/AB6AXuALSW3nWbn0-0LSL5-X9NL4MH075PfMbcHu-OTj7cR0GwsZ9ZnIi9aCRaT7osxCNzqqBAPBJFS8HZsfUe0YgxhT9te4GXWp6BX89Pkj-uVnqZ64Md6yiCxF1KhFtwrcEcnUlqXAvk-BMO_QxpSLP8h8IXREK64JjYM1JZxGtro5HOcSmDSD5AiPvDa1ZYIgfFJW6qVf60oamqBWWbT_QLKiGsA6XppfNixWK1Vjjja74M97qcsmg-w9eFTNvAKf1-SzRm7pa8YpZhKx',
-  cooling:   'https://lh3.googleusercontent.com/aida-public/AB6AXuCwVVPJnma4-cgqm1NYTFZiQ98oKdh7z7cHcfMY3FDbF9_w8MOA6wKB3FPmexkeBCV-Hzk6wTGkvuEEItv7lwe-cQDq1-7yeRI3kfQLKoVVdSRfcfKIxLoVlWzh_GvR3b_iX0_TA-cd9L5PT9iWX4iT7D5wTGpGtD7W1MJw9raQ9kEnKBHg-iV3lFOsNfIC1jarQjOHWIHsZjzxsjZ9etmyOgy7vV2zdYY22B_nXUn-E8sqSEJ2-P8XABc5GLRNlaZnFpd4y_Ob5Die',
-  general:   'https://lh3.googleusercontent.com/aida-public/AB6AXuCTzzrdorE-Ei3PAj_fqoCbfyi17TfafvIcB0nwfMnvTW4QYLmV3OQ2gUuYVsv7rNftmYkC9Nce8PQEWsXm9cJPjCXL2bsicfiC2o8vtdU3hxGNRNnkGMuLaxxE3LO_4RC96HAzhGMgCdP01hw6o7zCXG-yJMWPs0cC4YQT6g1OYcC-Z38jnAsweT5wP0Czdf6gOvnRPCn4u0Gdf7Ljhto1rIwIXPM0SmEFHtUcguj42a2JRB7ja58CK3yVQj-4A-zh5VJgVPNIi9ez',
-};
+/**
+ * Placeholder trung thực cho ảnh thợ seed/stock — KHÔNG dùng ảnh mặt người AI.
+ *
+ * Trước đây: 4 ảnh AI theo nghề → cùng 1 khuôn mặt lặp lại hàng chục lần trên
+ * trang danh sách, khách nhận ra chợ ảo ngay. Giờ: sinh SVG data-URI (chữ cái
+ * đầu tên + gradient theo brand) — mỗi thợ một hình riêng, trung thực, on-brand.
+ */
 
-/** Returns true for seed/stock images that should be replaced with profession-specific placeholders */
-export function isSeedImage(url?: string | null): boolean {
-  if (!url) return true;
-  return url.includes('unsplash.com');
+// Cặp màu gradient lấy từ design system (primary/secondary + biến thể tonal).
+const PALETTES: Array<[string, string]> = [
+  ['#48BBE2', '#2E7DA6'], // sky (primary)
+  ['#1E8849', '#0F5E30'], // green
+  ['#102F4B', '#2C5578'], // navy (secondary)
+  ['#5B8DB8', '#33618C'], // steel blue
+  ['#3AA6A0', '#1F6E69'], // teal
+];
+
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
 }
 
-export function getPlaceholderImage(categoryName?: string | null): string {
-  const name = (categoryName ?? '').toLowerCase();
-  if (/nước|ống|thông|bồn/.test(name)) return PLACEHOLDER_IMAGES.plumbing;
-  if (/máy lạnh|điều hòa|điều hoà|lạnh trung tâm|vrv|vrf/.test(name)) return PLACEHOLDER_IMAGES.cooling;
-  if (/điện/.test(name)) return PLACEHOLDER_IMAGES.electric;
-  return PLACEHOLDER_IMAGES.general;
+/** True với ảnh seed/stock cần thay bằng placeholder (unsplash, ảnh AI cũ). */
+export function isSeedImage(url?: string | null): boolean {
+  if (!url) return true;
+  return url.includes('unsplash.com') || url.includes('lh3.googleusercontent.com');
+}
+
+/**
+ * Trả về SVG data-URI: chữ cái đầu của tên thợ trên nền gradient.
+ * `seedName` (tên thợ) quyết định màu + chữ cái → mỗi thợ một hình khác nhau.
+ */
+export function getPlaceholderImage(
+  categoryName?: string | null,
+  seedName?: string | null,
+): string {
+  const base = (seedName ?? categoryName ?? 'Thợ').trim();
+  const initial = (base.charAt(0) || 'T').toUpperCase();
+  const [c1, c2] = PALETTES[hashString(base) % PALETTES.length];
+
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">` +
+    `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">` +
+    `<stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/>` +
+    `</linearGradient></defs>` +
+    `<rect width="640" height="400" fill="url(#g)"/>` +
+    `<circle cx="540" cy="60" r="180" fill="#ffffff" opacity="0.08"/>` +
+    `<circle cx="90" cy="360" r="150" fill="#ffffff" opacity="0.06"/>` +
+    `<text x="50%" y="53%" font-family="Arial, Helvetica, sans-serif" font-size="180" ` +
+    `font-weight="bold" fill="#ffffff" opacity="0.95" text-anchor="middle" ` +
+    `dominant-baseline="middle">${initial}</text>` +
+    `</svg>`;
+
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }

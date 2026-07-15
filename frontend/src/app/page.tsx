@@ -130,7 +130,7 @@ export default async function HomePage() {
             </p>
 
             <form
-              action="/cong-ty"
+              action="/tho"
               className="flex max-w-2xl flex-col gap-2 rounded-[2rem] bg-surface-container-lowest p-2 shadow-ambient"
             >
               <div className="flex flex-col gap-2 md:flex-row">
@@ -270,7 +270,7 @@ export default async function HomePage() {
               </h2>
             </div>
             <Link
-              href="/cong-ty"
+              href="/tho"
               className="hidden items-center gap-2 font-bold text-primary hover:underline md:flex"
             >
               Tất cả dịch vụ
@@ -359,7 +359,7 @@ export default async function HomePage() {
               {featured.map((c) => (
                 <Link
                   key={c.id}
-                  href={`/cong-ty/${c.id}/${c.vanity_slug}`}
+                  href={`/tho/${c.id}/${c.vanity_slug}`}
                   className="group rounded-4xl bg-surface-container-lowest p-8 shadow-soft transition-all duration-500 hover:-translate-y-1 hover:shadow-ambient"
                 >
                   <div className="mb-8 flex items-start justify-between">
@@ -367,14 +367,16 @@ export default async function HomePage() {
                       <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-surface-container-low text-on-surface-variant">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={isSeedImage(c.image) ? getPlaceholderImage(c.category?.name) : c.image!}
+                          src={isSeedImage(c.image) ? getPlaceholderImage(c.category?.name, c.name) : c.image!}
                           alt={c.name}
                           className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
                         />
                       </div>
-                      <div className="absolute -bottom-2 -right-2 rounded-full bg-tertiary-container px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-on-tertiary-container shadow-md">
-                        Verified
-                      </div>
+                      {c.rating_avg >= 4.5 && c.rating_count >= 3 ? (
+                        <div className="absolute -bottom-2 -right-2 rounded-full bg-tertiary-container px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-on-tertiary-container shadow-md">
+                          Uy tín
+                        </div>
+                      ) : null}
                     </div>
                     <div className="text-right">
                       <div className="mb-1 flex items-center gap-1 font-bold text-tertiary">
@@ -504,13 +506,13 @@ export default async function HomePage() {
             </p>
             <div className="flex flex-col justify-center gap-4 md:flex-row">
               <Link
-                href={'/dang-ky-tho' as Route}
+                href={'/tuyen-dung-tho' as Route}
                 className="rounded-full bg-surface-container-lowest px-10 py-5 font-headline text-lg font-bold text-primary shadow-ambient transition-all hover:bg-surface-container-low"
               >
                 Đăng ký thợ ngay
               </Link>
               <Link
-                href="/cong-ty"
+                href="/tho"
                 className="rounded-full border-2 border-on-primary/30 px-10 py-5 font-headline text-lg font-bold text-on-primary transition-all hover:bg-on-primary/10"
               >
                 Tìm hiểu thêm

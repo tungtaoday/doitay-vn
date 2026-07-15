@@ -6,6 +6,7 @@ import { api } from '@/lib/api';
 import { getRecentNotifications, getUnreadCount } from '@/lib/notifications';
 import { NotificationBell } from '@/components/notification-bell';
 import { UserDropdown } from '@/components/user-dropdown';
+import { MobileNav } from '@/components/mobile-nav';
 
 const NAV_LINKS: { href: Route; label: string }[] = [
   { href: '/' as Route, label: 'Trang chủ' },
@@ -59,6 +60,20 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
       ? [{ href: `/tho/${contractorCompanyId as number}` as Route, label: 'Hồ sơ cá nhân' }]
       : []),
   ];
+
+  const roleLinks = user
+    ? (user.has_company
+        ? contractorLinks
+        : user.pending_role === 'contractor' || user.pending_role === 'both'
+          ? PENDING_CONTRACTOR_LINKS
+          : CUSTOMER_LINKS)
+    : [];
+  const mobileLinks = [
+    ...NAV_LINKS,
+    ...roleLinks,
+    ...(user ? [] : [{ href: '/tuyen-dung-tho' as Route, label: 'Trở thành thợ' }]),
+  ];
+
   return (
     <nav className="fixed top-0 left-0 z-50 w-full bg-surface/80 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 md:px-8">
@@ -120,13 +135,14 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
               {settings.features.registration ? (
                 <Link
                   href={'/dang-ky' as Route}
-                  className="rounded-xl bg-gradient-to-r from-primary to-primary-container px-5 py-2 text-sm font-semibold text-on-primary shadow-ambient transition-all active:scale-95"
+                  className="hidden rounded-xl bg-gradient-to-r from-primary to-primary-container px-5 py-2 text-sm font-semibold text-on-primary shadow-ambient transition-all active:scale-95 sm:block"
                 >
                   Đăng ký
                 </Link>
               ) : null}
             </>
           )}
+          <MobileNav links={mobileLinks} />
         </div>
       </div>
     </nav>

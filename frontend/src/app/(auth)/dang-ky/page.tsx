@@ -15,7 +15,7 @@ export default function RegisterPage() {
           Đăng ký thành viên
         </h1>
         <p className="text-[1.375rem] font-medium text-secondary">
-          Bắt đầu hành trình của bạn ngay hôm nay.
+          Miễn phí — tạo yêu cầu và nhận phản hồi từ thợ trong khu vực của bạn.
         </p>
       </header>
 

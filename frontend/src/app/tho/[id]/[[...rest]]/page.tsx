@@ -12,6 +12,7 @@ import type {
   UserCompany,
 } from '@/lib/api-types';
 import { getServiceRequest } from '@/lib/service-requests';
+import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
 // @ts-ignore — TypeScript cannot resolve paths containing Next.js dynamic segment brackets
 import { AppointmentBookingForm } from '@/app/cong-ty/[id]/[[...rest]]/appointment-form';
 
@@ -66,7 +67,8 @@ export async function generateMetadata({
     openGraph: {
       title: company.name,
       description: company.description?.slice(0, 160) ?? undefined,
-      images: company.image ? [company.image] : undefined,
+      // Không share ảnh stock/AI seed lên mạng xã hội — fallback về og icon Doitay.
+      images: company.image && !isSeedImage(company.image) ? [company.image] : ['/og-icon.png'],
     },
     alternates: {
       canonical: `/tho/${company.id}/${company.vanity_slug}`,
@@ -145,7 +147,9 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
               <div className="h-40 w-40 overflow-hidden rounded-full border-4 border-surface-container-highest shadow-ambient">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={company.image ?? ''}
+                  src={isSeedImage(company.image)
+                    ? getPlaceholderImage(company.category?.name, company.name)
+                    : company.image!}
                   alt={company.name}
                   className="h-full w-full object-cover"
                 />

@@ -293,16 +293,19 @@ function ContractorCard({ c }: { c: PublicCompanyListItem }) {
       <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-surface-container-low to-surface-container">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={isSeedImage(c.image) ? getPlaceholderImage(c.category?.name) : c.image!}
+          src={isSeedImage(c.image) ? getPlaceholderImage(c.category?.name, c.name) : c.image!}
           alt={c.name}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="absolute left-4 top-4">
-          <span className="flex items-center gap-1 rounded-full bg-tertiary-container px-3 py-1.5 text-xs font-bold text-on-tertiary-container shadow-sm">
-            <span className="material-symbols-outlined fill text-sm">verified</span>
-            CHUYÊN GIA
-          </span>
-        </div>
+        {/* Badge chỉ dành cho thợ thật sự nổi bật — gắn đại trà làm badge mất nghĩa */}
+        {c.rating_avg >= 4.5 && c.rating_count >= 3 ? (
+          <div className="absolute left-4 top-4">
+            <span className="flex items-center gap-1 rounded-full bg-tertiary-container px-3 py-1.5 text-xs font-bold text-on-tertiary-container shadow-sm">
+              <span className="material-symbols-outlined fill text-sm">verified</span>
+              UY TÍN
+            </span>
+          </div>
+        ) : null}
       </div>
       <div className="p-8">
         <div className="mb-3 flex items-start justify-between">
