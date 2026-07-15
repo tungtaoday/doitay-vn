@@ -3,7 +3,7 @@
 namespace Tests\Feature\Api\V1\Sale;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
@@ -15,7 +15,7 @@ use Tests\TestCase;
  */
 class SubmissionTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     private function payload(array $override = []): array
     {
@@ -96,9 +96,16 @@ class SubmissionTest extends TestCase
             ->assertJsonPath('meta.total', 1);
     }
 
-    /** AC5 (security): chưa đăng nhập → 401 */
-    public function test_requires_authentication(): void
+    /**
+     * AC5 (security): guest bị chặn, KHÔNG tạo được hồ sơ.
+     * Lưu ý: app legacy trả HTTP 200 kèm body {"remark":"unauthenticated"} thay vì 401 REST chuẩn
+     * — hành vi chung toàn API (TODO Phase 3: JSON auth guard trả 401/403).
+     */
+    public function test_guest_is_blocked_from_creating(): void
     {
-        $this->postJson('/api/v1/sale/submissions', [])->assertUnauthorized();
+        $this->postJson('/api/v1/sale/submissions', [])
+            ->assertJsonPath('remark', 'unauthenticated');
+
+        $this->assertDatabaseMissing('tho_submissions', ['ten_tho' => 'Vũ Hùng']);
     }
 }

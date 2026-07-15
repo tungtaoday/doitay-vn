@@ -6,7 +6,7 @@ use App\Models\ThoSubmission;
 use App\Models\User;
 use App\Services\CommissionService;
 use App\Services\SubmissionReviewService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
@@ -17,7 +17,7 @@ use Tests\TestCase;
  */
 class SubmissionReviewTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     private function submission(array $override = []): ThoSubmission
     {
