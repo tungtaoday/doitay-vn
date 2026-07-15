@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\CommissionService;
 use App\Services\SubmissionReviewService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
@@ -71,5 +72,61 @@ class SubmissionReviewTest extends TestCase
             'ctv_id'        => $s->ctv_id,
             'loai'          => 'base',
         ]);
+    }
+
+    private function seedCategory(string $name = 'Thợ điện'): int
+    {
+        return DB::table('categories')->insertGetId([
+            'name'        => $name,
+            'icon'        => '',
+            'description' => '',
+            'image'       => '',
+            'status'      => 1,
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ]);
+    }
+
+    /** Approve → tạo thợ (User+Company) + ghi hoa hồng + duyệt ảnh. Ref: DUC-SUBMISSION-APPROVE. */
+    public function test_approve_creates_tho_and_records_commission(): void
+    {
+        $catId = $this->seedCategory('Thợ điện');
+        $s = $this->submission();
+        $s->images()->create(['url' => 'http://x/a.jpg', 'approved' => false]);
+
+        $result = app(SubmissionReviewService::class)->approve($s);
+
+        $this->assertSame('approved', $result->status);
+        $this->assertNotNull($result->company_id);
+
+        // thợ user tạo theo SĐT chuẩn hoá
+        $this->assertDatabaseHas('users', ['mobile' => '0972585990']);
+        // company tạo, gắn đúng category name-match, trạng thái PENDING (đi tiếp luồng duyệt company)
+        $this->assertDatabaseHas('companies', [
+            'id'          => $result->company_id,
+            'name'        => 'Vũ Hùng',
+            'category_id' => $catId,
+        ]);
+        // hoa hồng ghi cho CTV
+        $this->assertDatabaseHas('commissions', [
+            'submission_id' => $s->id,
+            'ctv_id'        => $s->ctv_id,
+            'loai'          => 'base',
+        ]);
+        // ảnh được đánh dấu đã duyệt
+        $this->assertDatabaseHas('submission_images', [
+            'submission_id' => $s->id,
+            'approved'      => 1,
+        ]);
+    }
+
+    /** Không approve được submission đã rejected. */
+    public function test_cannot_approve_non_pending(): void
+    {
+        $this->seedCategory();
+        $s = $this->submission(['status' => 'rejected']);
+
+        $this->expectException(ValidationException::class);
+        app(SubmissionReviewService::class)->approve($s);
     }
 }
