@@ -38,7 +38,10 @@ class SubmissionReviewController extends Controller
         $status  = $request->query('status', 'pending');
         $perPage = max(1, min(50, (int) $request->integer('per_page', 20)));
 
+        // with('images'): Quản lý phải NHÌN được ảnh mới nghiệm thu (BR-2) —
+        // trước đây chỉ trả số lượng ảnh, màn duyệt bị "duyệt mù".
         $page = ThoSubmission::where('status', $status)
+            ->with('images')
             ->withCount('images')
             ->latest()
             ->paginate($perPage);

@@ -35,9 +35,11 @@ class SubmissionController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        $userId  = $request->user()->id;
         $perPage = max(1, min(50, (int) $request->integer('per_page', 20)));
 
-        $query = ThoSubmission::where('ctv_id', $request->user()->id)
+        $query = ThoSubmission::where('ctv_id', $userId)
+            ->with('images')
             ->withCount('images')
             ->latest();
 
@@ -47,13 +49,25 @@ class SubmissionController extends Controller
 
         $page = $query->paginate($perPage);
 
+        // Thống kê cho dashboard CTV: đếm theo trạng thái + tổng hoa hồng.
+        $byStatus = ThoSubmission::where('ctv_id', $userId)
+            ->selectRaw('status, count(*) as n')
+            ->groupBy('status')
+            ->pluck('n', 'status');
+
         return response()->json([
             'data' => SubmissionResource::collection($page->items()),
             'meta' => [
-                'current_page' => $page->currentPage(),
-                'last_page'    => $page->lastPage(),
-                'per_page'     => $page->perPage(),
-                'total'        => $page->total(),
+                'current_page'  => $page->currentPage(),
+                'last_page'     => $page->lastPage(),
+                'per_page'      => $page->perPage(),
+                'total'         => $page->total(),
+                'counts'        => [
+                    'pending'  => (int) ($byStatus['pending'] ?? 0),
+                    'approved' => (int) ($byStatus['approved'] ?? 0),
+                    'rejected' => (int) ($byStatus['rejected'] ?? 0),
+                ],
+                'tong_hoa_hong' => (int) \App\Models\Commission::where('ctv_id', $userId)->sum('so_tien'),
             ],
         ]);
     }

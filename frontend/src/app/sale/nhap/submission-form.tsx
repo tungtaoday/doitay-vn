@@ -106,6 +106,9 @@ export function SubmissionForm() {
         <label className="mb-1.5 block text-sm font-semibold text-on-surface">
           Ảnh công việc ({files.length}/5) — tối thiểu 3
         </label>
+        <p className="mb-2 text-xs text-outline">
+          Ảnh phải là công việc THẬT của thợ (ảnh mạng sẽ bị từ chối, không tính công).
+        </p>
         <div className="grid grid-cols-3 gap-3">
           {files.map((f, i) => (
             <div key={i} className="relative aspect-square overflow-hidden rounded-xl bg-surface-container-low">
