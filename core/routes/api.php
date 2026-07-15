@@ -72,6 +72,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         ->middleware(['auth:sanctum'])
         ->group(base_path('routes/api/v1_user.php'));
 
+    // Sale namespace (auth:sanctum — CTV nhập hồ sơ thợ)
+    Route::prefix('sale')
+        ->name('sale.')
+        ->middleware(['auth:sanctum'])
+        ->group(base_path('routes/api/v1_sale.php'));
+
     // Admin namespace (auth:sanctum + admin guard)
     // NOTE: 'admin' middleware below is the existing RedirectIfNotAdmin alias.
     // It will need a JSON variant for API context — tracked as TODO Phase 3.
