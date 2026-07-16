@@ -145,7 +145,7 @@ export default async function ContractorListPage({ searchParams }: PageProps) {
 
             <button
               type="submit"
-              className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-container px-6 py-3 font-headline text-sm font-bold text-on-primary transition-all active:scale-95"
+              className="w-full rounded-xl bg-primary px-6 py-3 font-headline text-sm font-bold text-on-primary transition-all hover:bg-primary-hover active:scale-95"
             >
               Tìm kiếm
             </button>

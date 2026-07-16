@@ -141,7 +141,7 @@ function MatchCard({
       <div className="md:w-48">
         <Link
           href={bookingHref}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-primary to-primary-container font-headline font-bold text-on-primary shadow-ambient transition-all hover:opacity-90 active:scale-95"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary font-headline font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95"
         >
           Đặt lịch ngay
           <span className="material-symbols-outlined text-lg">arrow_forward</span>

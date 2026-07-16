@@ -7,6 +7,7 @@ const config: Config = {
       colors: {
         // ── Primary — xanh mòng két đậm #006781 ─────────────────────
         primary:                    '#006781',
+        'primary-hover':            '#00546A',   // tông đậm hơn cho hover nút (tonal shift)
         'on-primary':               '#FFFFFF',
         'primary-container':        '#48BBE2',   // xanh lơ sáng
         'on-primary-container':     '#001F2A',

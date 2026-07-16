@@ -145,7 +145,7 @@ export default async function HomePage() {
                 </div>
                 <button
                   type="submit"
-                  className="rounded-full bg-gradient-to-r from-primary to-primary-container px-10 py-4 font-headline text-lg font-bold text-on-primary transition-all active:scale-95"
+                  className="rounded-full bg-primary px-10 py-4 font-headline text-lg font-bold text-on-primary transition-all hover:bg-primary-hover active:scale-95"
                 >
                   Tìm ngay
                 </button>

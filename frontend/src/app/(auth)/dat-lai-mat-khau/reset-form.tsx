@@ -89,7 +89,7 @@ export function ResetForm({ identifier }: { identifier: string }) {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full rounded-2xl bg-gradient-to-r from-primary to-primary-container px-6 py-3.5 text-sm font-semibold text-on-primary shadow-ambient transition-all active:scale-[0.98] disabled:opacity-60"
+          className="w-full rounded-2xl bg-primary px-6 py-3.5 text-sm font-semibold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-[0.98] disabled:opacity-60"
         >
           {isPending ? 'Đang xử lý...' : 'Đặt lại mật khẩu'}
         </button>

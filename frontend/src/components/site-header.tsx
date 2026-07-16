@@ -135,7 +135,7 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
               {settings.features.registration ? (
                 <Link
                   href={'/dang-ky' as Route}
-                  className="hidden rounded-xl bg-gradient-to-r from-primary to-primary-container px-5 py-2 text-sm font-semibold text-on-primary shadow-ambient transition-all active:scale-95 sm:block"
+                  className="hidden rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 sm:block"
                 >
                   Đăng ký
                 </Link>

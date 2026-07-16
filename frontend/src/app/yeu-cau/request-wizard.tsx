@@ -298,7 +298,7 @@ export function RequestWizard({
             type="button"
             onClick={next}
             disabled={!canContinue || isPending}
-            className="flex h-14 items-center gap-3 rounded-lg bg-gradient-to-br from-primary to-primary-container px-12 font-headline text-lg font-bold text-on-primary shadow-ambient transition-all hover:opacity-90 active:scale-95 disabled:opacity-30"
+            className="flex h-14 items-center gap-3 rounded-lg bg-primary px-12 font-headline text-lg font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-30"
           >
             {step === TOTAL_STEPS ? (isPending ? 'Đang gửi…' : 'Gửi yêu cầu') : 'Tiếp tục'}
             <span className="material-symbols-outlined text-2xl">arrow_forward</span>

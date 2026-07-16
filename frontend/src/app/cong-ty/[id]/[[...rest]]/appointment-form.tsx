@@ -90,7 +90,7 @@ export function AppointmentBookingForm({ company, user, prefillRequest }: Props)
         </p>
         <Link
           href={`/login?next=/cong-ty/${company.id}`}
-          className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-primary to-primary-container px-6 py-3 text-sm font-bold text-on-primary shadow-ambient"
+          className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-[0.98]"
         >
           Đăng nhập để đặt lịch
         </Link>
@@ -234,7 +234,7 @@ export function AppointmentBookingForm({ company, user, prefillRequest }: Props)
           <button
             type="submit"
             disabled={isPending}
-            className="flex-[2] rounded-xl bg-gradient-to-r from-primary to-primary-container px-4 py-3 text-sm font-bold text-on-primary shadow-ambient disabled:opacity-60"
+            className="flex-[2] rounded-xl bg-primary px-4 py-3 text-sm font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-[0.98] disabled:opacity-60"
           >
             {isPending ? 'Đang gửi...' : 'Xác nhận đặt lịch'}
           </button>
@@ -331,7 +331,7 @@ export function AppointmentBookingForm({ company, user, prefillRequest }: Props)
 
       <button
         type="submit"
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-container py-4 font-headline font-bold text-on-primary shadow-ambient transition-all hover:opacity-90 active:scale-[0.98]"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-headline font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-[0.98]"
       >
         <span className="material-symbols-outlined text-base">calendar_month</span>
         Tiếp tục
