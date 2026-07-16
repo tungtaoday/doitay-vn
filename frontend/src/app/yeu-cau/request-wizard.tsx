@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
 import type { AuthUser, PublicCategory } from '@/lib/api-types';
+import { categoryStyle } from '@/lib/category-style';
 import { createServiceRequestAction } from './actions';
 import { LocationPicker } from './location-picker';
 
@@ -24,13 +25,6 @@ interface WizardState {
 }
 
 const TOTAL_STEPS = 4;
-
-const CATEGORY_ICONS: Record<string, string> = {
-  'Thợ Điện': 'bolt',
-  'Thợ Nước': 'water_drop',
-  'Điện lạnh': 'ac_unit',
-  'Sửa chữa': 'build',
-};
 
 export function RequestWizard({
   categories,
@@ -152,7 +146,7 @@ export function RequestWizard({
             <div className="mb-10 grid grid-cols-2 gap-3 md:mb-20 md:gap-6">
               {categories.map((cat) => {
                 const active = state.categoryId === cat.id;
-                const icon = CATEGORY_ICONS[cat.name] ?? 'handyman';
+                const style = categoryStyle(cat.name);
                 return (
                   <button
                     key={cat.id}
@@ -162,10 +156,9 @@ export function RequestWizard({
                       active ? 'border-primary shadow-ambient' : 'border-transparent hover:border-outline-variant'
                     }`}
                   >
-                    <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-full md:mb-8 md:h-16 md:w-16 ${
-                      active ? 'bg-primary text-on-primary' : 'bg-secondary-fixed text-on-secondary-fixed group-hover:bg-primary group-hover:text-on-primary'
-                    }`}>
-                      <span className="material-symbols-outlined text-xl md:text-2xl">{icon}</span>
+                    {/* Màu + icon theo NGÀNH NGHỀ — giữ nguyên khi chọn, viền primary báo trạng thái active */}
+                    <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-full md:mb-8 md:h-16 md:w-16 ${style.chip}`}>
+                      <span className="material-symbols-outlined text-xl md:text-2xl">{style.icon}</span>
                     </div>
                     <span className="block font-headline text-sm font-bold leading-snug text-on-surface md:mb-2 md:text-2xl">{cat.name}</span>
                   </button>

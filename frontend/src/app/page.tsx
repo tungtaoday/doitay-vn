@@ -4,6 +4,8 @@ import { unstable_cache } from 'next/cache';
 import { api, ApiError } from '@/lib/api';
 import type { Paginated, PublicCompanyListItem } from '@/lib/api-types';
 import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
+import { getPublicCategories } from '@/lib/service-requests';
+import { categoryStyle } from '@/lib/category-style';
 
 /**
  * Homepage — rebuild from frontend/stitch/trang_ch_m_i.
@@ -36,11 +38,6 @@ const STEPS = [
     title: 'Hoàn thành',
     desc: 'Thanh toán trực tiếp cho thợ không qua bất cứ bên nào.',
   },
-] as const;
-
-const SMALL_CATS = [
-  { icon: 'water_drop', title: 'Thợ Nước', desc: 'Sửa đường ống, vòi sen, lavabo và máy bơm.' },
-  { icon: 'construction', title: 'Thợ Xây', desc: 'Cải tạo nhà, lát gạch và sơn bả chuyên nghiệp.' },
 ] as const;
 
 const COMMITMENTS = [
@@ -102,9 +99,10 @@ async function loadFeaturedCompanies(): Promise<PublicCompanyListItem[]> {
 }
 
 export default async function HomePage() {
-  const [featured, stats] = await Promise.all([
+  const [featured, stats, categories] = await Promise.all([
     loadFeaturedCompanies(),
     loadStats(),
+    getPublicCategories().catch(() => []),
   ]);
 
   return (
@@ -278,61 +276,31 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid h-auto grid-cols-2 gap-6 md:h-[600px] md:grid-cols-4">
-            {/* Hero card — Thợ Điện */}
-            <div className="group relative col-span-2 row-span-2 flex flex-col justify-between overflow-hidden rounded-5xl bg-primary-fixed p-10">
-              <div className="relative z-10">
-                <h3 className="mb-4 font-headline text-3xl font-extrabold leading-tight text-on-primary-fixed">
-                  Thợ Điện &amp;
-                  <br />
-                  Hệ Thống Mạng
-                </h3>
-                <p className="max-w-[200px] font-medium text-on-primary-fixed-variant opacity-80">
-                  Xử lý mọi sự cố điện dân dụng và công nghiệp.
-                </p>
-              </div>
-              <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-lowest/40 backdrop-blur">
-                <span className="material-symbols-outlined text-3xl text-primary">
-                  bolt
-                </span>
-              </div>
-            </div>
-
-            {SMALL_CATS.map((cat) => (
-              <div
-                key={cat.title}
-                className="group col-span-2 flex flex-col justify-between rounded-5xl bg-surface-container-highest p-8 transition-colors duration-500 hover:bg-secondary-container md:col-span-1"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                  <span className="material-symbols-outlined text-primary">
-                    {cat.icon}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="mb-2 font-headline text-xl font-bold">
-                    {cat.title}
-                  </h3>
-                  <p className="text-sm text-on-surface-variant">{cat.desc}</p>
-                </div>
-              </div>
-            ))}
-
-            {/* Wide card — Thợ Mộc */}
-            <div className="col-span-2 flex items-center justify-between rounded-5xl bg-tertiary-fixed p-10 md:col-span-2">
-              <div className="max-w-[60%]">
-                <h3 className="mb-3 font-headline text-2xl font-bold text-on-tertiary-fixed">
-                  Thợ Mộc &amp; Nội Thất
-                </h3>
-                <p className="text-on-tertiary-fixed-variant">
-                  Đóng mới và sửa chữa nội thất gỗ gia đình.
-                </p>
-              </div>
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-surface-container-lowest/50">
-                <span className="material-symbols-outlined text-4xl text-on-tertiary-fixed-variant">
-                  chair
-                </span>
-              </div>
-            </div>
+          {/* Data-driven từ /public/categories — icon + màu khớp đúng từng ngành nghề
+              (trước đây hardcode 4 nghề với icon/màu cố định, không khớp danh mục thật). */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 lg:grid-cols-5">
+            {categories.map((cat) => {
+              const style = categoryStyle(cat.name);
+              return (
+                <Link
+                  key={cat.id}
+                  href={`/tho?category=${cat.id}` as Route}
+                  className="group flex flex-col gap-5 rounded-4xl bg-surface-container-lowest p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-surface-container-highest md:p-7"
+                >
+                  <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${style.chip}`}>
+                    <span className="material-symbols-outlined text-[28px]">{style.icon}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-headline text-lg font-bold leading-tight text-on-surface">
+                      {cat.name}
+                    </h3>
+                    <span className="material-symbols-outlined text-on-surface-variant opacity-0 transition-opacity group-hover:opacity-100">
+                      arrow_forward
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
