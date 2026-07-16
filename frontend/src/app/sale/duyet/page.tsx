@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 // TODO Phase 3: gate bằng admin guard (hiện chỉ auth:sanctum — xem v1_admin.php TODO).
 export default async function DuyetPage() {
-  await requireUser({ requireProfile: false });
+  await requireUser({ requireProfile: false, loginPath: '/sale/login' });
   const token = await getToken();
 
   let items: SaleSubmission[] = [];

@@ -29,7 +29,7 @@ interface PageProps {
 }
 
 export default async function SalePage({ searchParams }: PageProps) {
-  await requireUser({ requireProfile: false });
+  await requireUser({ requireProfile: false, loginPath: '/sale/login' });
   const { status = '' } = await searchParams;
   const token = await getToken();
 

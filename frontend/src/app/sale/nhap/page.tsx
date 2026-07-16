@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function NhapPage() {
-  await requireUser({ requireProfile: false });
+  await requireUser({ requireProfile: false, loginPath: '/sale/login' });
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-10">

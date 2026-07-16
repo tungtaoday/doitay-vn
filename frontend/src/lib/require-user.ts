@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import type { Route } from 'next';
 import { api, ApiError } from './api';
 import { clearToken, getToken } from './auth';
 import type { AuthUser } from './api-types';
@@ -11,14 +12,16 @@ import type { AuthUser } from './api-types';
  * Options:
  *   - requireProfile: if true (default), redirect to /vi/hoan-thanh-ho-so
  *     when profile_complete is false.
+ *   - loginPath: nơi điều hướng khi chưa/không đăng nhập. Mặc định '/login'
+ *     (luồng thợ/khách). Khu vực Sale truyền '/sale/login' để tách luồng.
  */
 export async function requireUser(
-  options: { requireProfile?: boolean } = {},
+  options: { requireProfile?: boolean; loginPath?: Route } = {},
 ): Promise<AuthUser> {
-  const { requireProfile = true } = options;
+  const { requireProfile = true, loginPath = '/login' as Route } = options;
 
   const token = await getToken();
-  if (!token) redirect('/login');
+  if (!token) redirect(loginPath);
 
   let user: AuthUser;
   try {
@@ -27,14 +30,14 @@ export async function requireUser(
   } catch (e) {
     if (e instanceof ApiError && (e.status === 401 || e.status === 403)) {
       await clearToken();
-      redirect('/login');
+      redirect(loginPath);
     }
     throw e;
   }
 
   if (user.status !== 1) {
     await clearToken();
-    redirect('/login');
+    redirect(loginPath);
   }
 
   if (requireProfile && !user.profile_complete) {
