@@ -23,7 +23,7 @@ export default function PrivacyPage() {
         <div className="prose-custom space-y-10 text-on-surface-variant">
 
           <Section title="1. Thông tin chúng tôi thu thập">
-            <p>Khi bạn sử dụng doitay.vn hoặc ứng dụng Zalo Mini App &ldquo;Thợ Tốt Doitay&rdquo;, chúng tôi có thể thu thập các thông tin sau:</p>
+            <p>Khi bạn sử dụng doitay.vn hoặc ứng dụng Zalo Mini App &ldquo;Doitay - Hồ Sơ Thợ&rdquo;, chúng tôi có thể thu thập các thông tin sau:</p>
             <ul>
               <li><strong className="text-on-surface">Thông tin tài khoản:</strong> Họ tên, số điện thoại, địa chỉ email, ảnh đại diện.</li>
               <li><strong className="text-on-surface">Số điện thoại qua Zalo:</strong> Khi bạn sử dụng ứng dụng Zalo Mini App và đồng ý cấp quyền, chúng tôi có thể nhận số điện thoại từ Zalo để điền sẵn thông tin liên hệ trên hồ sơ. Bạn có thể từ chối và nhập số thủ công.</li>
