@@ -147,7 +147,9 @@ export function RequestWizard({
         {/* Step 1: Category */}
         {step === 1 && (
           <StepShell title="Bạn cần giúp đỡ về việc gì?" subtitle="Chọn loại dịch vụ phù hợp nhất.">
-            <div className="mb-20 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Mobile: 2 cột compact — trước đây 1 cột, mỗi thẻ ~250px khiến
+                bước chọn nghề dài hơn 4 màn hình. Desktop giữ nguyên độ thoáng. */}
+            <div className="mb-10 grid grid-cols-2 gap-3 md:mb-20 md:gap-6">
               {categories.map((cat) => {
                 const active = state.categoryId === cat.id;
                 const icon = CATEGORY_ICONS[cat.name] ?? 'handyman';
@@ -156,16 +158,16 @@ export function RequestWizard({
                     key={cat.id}
                     type="button"
                     onClick={() => patch({ categoryId: cat.id })}
-                    className={`group flex flex-col items-start rounded-3xl border-2 bg-surface-container-lowest p-10 text-left transition-all active:scale-[0.98] ${
+                    className={`group flex flex-col items-start rounded-2xl border-2 bg-surface-container-lowest p-4 text-left transition-all active:scale-[0.98] md:rounded-3xl md:p-10 ${
                       active ? 'border-primary shadow-ambient' : 'border-transparent hover:border-outline-variant'
                     }`}
                   >
-                    <div className={`mb-8 flex h-16 w-16 items-center justify-center rounded-full ${
+                    <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-full md:mb-8 md:h-16 md:w-16 ${
                       active ? 'bg-primary text-on-primary' : 'bg-secondary-fixed text-on-secondary-fixed group-hover:bg-primary group-hover:text-on-primary'
                     }`}>
-                      <span className="material-symbols-outlined">{icon}</span>
+                      <span className="material-symbols-outlined text-xl md:text-2xl">{icon}</span>
                     </div>
-                    <span className="mb-2 block font-headline text-2xl font-bold text-on-surface">{cat.name}</span>
+                    <span className="block font-headline text-sm font-bold leading-snug text-on-surface md:mb-2 md:text-2xl">{cat.name}</span>
                   </button>
                 );
               })}
