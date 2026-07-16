@@ -13,9 +13,19 @@ class LoginRequest extends FormRequest
 
     public function rules(): array
     {
+        // identifier = email HOẶC số điện thoại VN. AuthService::login tự phát
+        // hiện loại qua App\Support\Identifier, nên ở đây chỉ cần string.
         return [
-            'email'    => ['required', 'email:rfc'],
-            'password' => ['required', 'string', 'min:6'],
+            'identifier' => ['required', 'string'],
+            'password'   => ['required', 'string', 'min:6'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'identifier.required' => 'Vui lòng nhập email hoặc số điện thoại.',
+            'password.required'   => 'Vui lòng nhập mật khẩu.',
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Exceptions\Api\AccountInactiveException;
 use App\Exceptions\Api\InvalidCredentialsException;
+use App\Models\Admin;
+use App\Models\AdminNotification;
 use App\Models\User;
 use App\Models\UserLogin;
 use App\Support\Identifier;
@@ -69,6 +71,35 @@ class AuthService
                 cache(['user_role:pending:' . $user->id => $selectedRole], now()->addDays(30));
             } catch (\Throwable) {
             }
+        }
+
+        try {
+            notify($user, 'USER_WELCOME', [
+                'fullname'  => $user->fullname ?? $user->name,
+                'site'      => gs('site_name'),
+                'login_url' => url('/dang-nhap'),
+            ]);
+        } catch (\Throwable) {
+        }
+
+        try {
+            $admin = Admin::first();
+            if ($admin) {
+                notify($admin, 'ADMIN_NEW_USER', [
+                    'fullname' => $user->fullname ?? $user->name,
+                    'email'    => $user->email,
+                    'date'     => now()->format('d/m/Y H:i:s'),
+                    'ip'       => request()->ip(),
+                    'user_url' => url('/admin/users/detail/' . $user->id),
+                ], ['email']);
+            }
+
+            AdminNotification::create([
+                'user_id'   => $user->id,
+                'title'     => 'New member registered',
+                'click_url' => urlPath('admin.users.detail', $user->id),
+            ]);
+        } catch (\Throwable) {
         }
 
         $token = $user->createToken('frontend', ['*'])->plainTextToken;

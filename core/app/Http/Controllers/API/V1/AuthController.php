@@ -40,7 +40,7 @@ class AuthController extends Controller
     {
         try {
             [$user, $token] = $this->auth->login(
-                $request->string('email')->toString(),
+                $request->string('identifier')->toString(),
                 $request->string('password')->toString(),
                 $request,
             );
