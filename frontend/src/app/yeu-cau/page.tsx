@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: 'Tạo yêu cầu dịch vụ',
   description:
     'Mô tả công việc bạn cần — chúng tôi sẽ kết nối với thợ phù hợp trong thời gian ngắn nhất.',
+  alternates: { canonical: '/yeu-cau' },
 };
 
 /**

@@ -112,8 +112,42 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
       .filter(Boolean)
       .join(', ') || 'Toàn quốc';
 
+  // Structured data (SEO) — rich snippet cho thợ: nghề, khu vực, sao đánh giá.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    name: company.name,
+    url: `https://doitay.vn/tho/${company.id}/${company.vanity_slug}`,
+    image: isSeedImage(company.image) ? undefined : company.image,
+    areaServed: locationLabel,
+    ...(company.category?.name ? { serviceType: company.category.name } : {}),
+    ...(company.rating_count > 0
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: company.rating_avg.toFixed(1),
+            reviewCount: company.rating_count,
+            bestRating: 5,
+          },
+        }
+      : {}),
+  };
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Trang chủ', item: 'https://doitay.vn/' },
+      { '@type': 'ListItem', position: 2, name: 'Thợ', item: 'https://doitay.vn/tho' },
+      { '@type': 'ListItem', position: 3, name: company.name },
+    ],
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-6 pb-24 pt-12 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, breadcrumbLd]) }}
+      />
       {/* Breadcrumbs + owner edit button */}
       <div className="mb-8 flex items-center justify-between">
         <nav className="flex items-center gap-2 text-sm text-outline">
@@ -345,7 +379,11 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
                   <div key={r.id} className="flex flex-col gap-3 py-6 first:pt-0">
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-surface-container">
-                        {r.user?.avatar ? (
+                        {/* Chặn avatar hỏng: seed cũ nhét URL ngoài (pravatar) vào path asset → 404.
+                            Chỉ hiện khi URL "sạch" (không phải seed, không có protocol lồng nhau). */}
+                        {r.user?.avatar &&
+                        !isSeedImage(r.user.avatar) &&
+                        !/pravatar|\/https?:/i.test(r.user.avatar) ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={r.user.avatar}

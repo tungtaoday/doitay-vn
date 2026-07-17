@@ -4,7 +4,9 @@ import { SocialButtons } from '@/components/social-buttons';
 import { RegisterForm } from './register-form';
 
 export const metadata: Metadata = {
-  title: 'Đăng ký | doitay.vn',
+  title: 'Đăng ký',
+  description: 'Tạo tài khoản doitay.vn miễn phí — đăng yêu cầu và nhận báo giá từ thợ uy tín gần bạn.',
+  alternates: { canonical: '/dang-ky' },
 };
 
 export default function RegisterPage() {

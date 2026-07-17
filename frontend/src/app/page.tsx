@@ -4,8 +4,36 @@ import { unstable_cache } from 'next/cache';
 import { api, ApiError } from '@/lib/api';
 import type { Paginated, PublicCompanyListItem } from '@/lib/api-types';
 import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
+import type { Metadata } from 'next';
 import { getPublicCategories } from '@/lib/service-requests';
 import { categoryStyle } from '@/lib/category-style';
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
+
+// Structured data (SEO) — Organization + WebSite (ô tìm kiếm rich result).
+const HOME_JSONLD = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: 'Doitay.vn',
+      url: 'https://doitay.vn',
+      logo: 'https://doitay.vn/icon.png',
+    },
+    {
+      '@type': 'WebSite',
+      name: 'Doitay.vn',
+      url: 'https://doitay.vn',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: 'https://doitay.vn/tho?q={search_term_string}',
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
+};
 
 /**
  * Homepage — rebuild from frontend/stitch/trang_ch_m_i.
@@ -107,6 +135,10 @@ export default async function HomePage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_JSONLD) }}
+      />
       {/* ─── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative flex min-h-[760px] items-center overflow-hidden px-6 pb-32 pt-16 md:px-8">
         <div className="absolute inset-0 z-0">

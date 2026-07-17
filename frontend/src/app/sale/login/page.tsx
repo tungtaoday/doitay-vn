@@ -6,8 +6,10 @@ import type { AuthUser } from '@/lib/api-types';
 import { SaleLoginForm } from './sale-login-form';
 
 export const metadata: Metadata = {
-  title: 'Đăng nhập Sale | Doitay',
+  title: 'Đăng nhập Sale',
+  description: 'Cổng đăng nhập nội bộ cho cộng tác viên Sale/CTV doitay.vn.',
   robots: { index: false, follow: false },
+  alternates: { canonical: '/sale/login' },
 };
 
 /**

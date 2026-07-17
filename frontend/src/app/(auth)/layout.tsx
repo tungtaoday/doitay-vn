@@ -23,7 +23,8 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
               <span>{settings.site_name}</span>
             )}
           </Link>
-          <h1 className="mb-8 font-headline text-[3.5rem] font-bold leading-tight tracking-tight text-on-primary">
+          {/* Câu marketing trang trí — KHÔNG dùng <h1> để mỗi trang auth chỉ có 1 h1 (h1 của form). */}
+          <p className="mb-8 font-headline text-[3.5rem] font-bold leading-tight tracking-tight text-on-primary">
             {settings.banner?.heading ? (
               <span dangerouslySetInnerHTML={{ __html: settings.banner.heading.replace(/\n/g, '<br/>') }} />
             ) : (
@@ -31,7 +32,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
                 Kết nối dịch vụ,<br />vươn tầm cuộc sống.
               </>
             )}
-          </h1>
+          </p>
           <p className="max-w-md text-[1.375rem] font-medium text-on-primary opacity-90">
             {settings.banner?.subheading || 'Nền tảng giao dịch dịch vụ thông minh và an toàn hàng đầu dành cho cộng đồng.'}
           </p>

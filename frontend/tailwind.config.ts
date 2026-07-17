@@ -49,7 +49,7 @@ const config: Config = {
         'surface-container':        '#DAE9FF',   // card nền xanh nhạt
         'surface-container-high':   '#C8DAEF',
         'surface-container-highest':'#B5CEEA',
-        outline:                    '#6B8099',
+        outline:                    '#5A6B80',   // đậm hơn để text-outline đạt WCAG 1.4.3 (>=4.5:1) trên nền sáng
         'outline-variant':          '#B0BEC8',
         'inverse-on-surface':       '#EEF4FF',
       },

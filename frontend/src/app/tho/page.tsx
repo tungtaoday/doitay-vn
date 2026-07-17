@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: 'Danh sách thợ chuyên nghiệp',
   description:
     'Tìm thợ tay nghề cao đã được kiểm duyệt — sửa chữa, thi công, dịch vụ tận nơi.',
+  alternates: { canonical: '/tho' },
 };
 
 interface SearchParams {

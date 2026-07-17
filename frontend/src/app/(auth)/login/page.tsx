@@ -5,16 +5,18 @@ import { SocialButtons } from '@/components/social-buttons';
 import { LoginForm } from './login-form';
 
 export const metadata: Metadata = {
-  title: 'Đăng nhập | doitay.vn',
+  title: 'Đăng nhập',
+  description: 'Đăng nhập tài khoản doitay.vn để đặt lịch thợ, theo dõi yêu cầu và quản lý hồ sơ.',
+  alternates: { canonical: '/login' },
 };
 
 export default function LoginPage() {
   return (
     <>
       <header className="mb-12">
-        <h2 className="mb-4 font-headline text-[3.5rem] font-bold leading-none tracking-tighter text-on-surface">
+        <h1 className="mb-4 font-headline text-[3.5rem] font-bold leading-none tracking-tighter text-on-surface">
           Chào mừng trở lại
-        </h2>
+        </h1>
         <p className="text-[1.375rem] font-medium text-secondary">
           Nhập thông tin của bạn để tiếp tục
         </p>
