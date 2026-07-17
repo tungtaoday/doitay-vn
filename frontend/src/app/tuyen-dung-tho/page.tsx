@@ -36,6 +36,15 @@ const BENEFITS = [
   },
 ];
 
+// Số liệu MINH HỌA tiềm năng (không phải cam kết) — dùng để trực quan hoá lợi ích.
+const INCOME = [6, 9, 12, 16, 20, 25]; // triệu đồng/tháng
+const PROOF = [
+  { value: '15–25tr*', label: 'Thu nhập tiềm năng mỗi tháng' },
+  { value: '4.9★', label: 'Điểm đánh giá trung bình' },
+  { value: '340+', label: 'Lượt khách xem một hồ sơ tốt*' },
+  { value: '80%', label: 'Khách tin tưởng hơn khi hồ sơ đủ ảnh' },
+];
+
 async function loadContractorCount(): Promise<number> {
   try {
     const res = await api<{ data: { approved_contractors: number } }>('/public/stats');
@@ -67,14 +76,22 @@ export default async function TuyenDungThoPage() {
 
   return (
     <div className="bg-surface text-on-surface">
-      {/* ─── Hero (sáng, có ô SĐT thật + thẻ hồ sơ mẫu) ───────────────── */}
+      {/* ─── Hero — ảnh đội thợ thật ──────────────────────────────────── */}
       <section className="relative overflow-hidden bg-surface">
-        <div className="pointer-events-none absolute -right-40 -top-40 h-96 w-96 rounded-full bg-primary-fixed/30 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 left-10 h-80 w-80 rounded-full bg-tertiary-fixed/20 blur-3xl" />
+        <div className="absolute inset-0 z-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/hero-tho.jpg"
+            alt="Đội ngũ thợ chuyên nghiệp trên Doitay"
+            className="h-full w-full object-cover object-right"
+          />
+          {/* Trái phủ sáng để chữ tối đọc rõ, phải trong dần để lộ ảnh thợ */}
+          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/90 to-surface/20 md:to-transparent" />
+          <div className="absolute inset-0 bg-surface/45 md:bg-transparent" />
+        </div>
 
-        <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 py-16 md:px-8 md:py-24 lg:grid-cols-2 lg:gap-16">
-          {/* Cột trái */}
-          <div className="space-y-6">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 md:px-8 md:py-28 lg:py-36">
+          <div className="max-w-xl space-y-6">
             <span className="inline-block rounded-full bg-tertiary-container px-4 py-1.5 text-sm font-bold tracking-wider text-on-tertiary-container">
               DÀNH CHO THỢ &amp; ĐỘI NHÓM
             </span>
@@ -83,7 +100,7 @@ export default async function TuyenDungThoPage() {
               <br />
               <span className="text-primary">xứng đáng</span> được nhiều khách biết đến.
             </h1>
-            <p className="max-w-lg text-lg leading-relaxed text-on-surface-variant">
+            <p className="max-w-md text-lg leading-relaxed text-on-surface-variant">
               Tạo hồ sơ nghề chuyên nghiệp hoàn toàn miễn phí — khách hàng tìm thợ uy tín theo khu
               vực sẽ thấy bạn.
             </p>
@@ -107,92 +124,6 @@ export default async function TuyenDungThoPage() {
               ) : null}
             </div>
           </div>
-
-          {/* Cột phải — thẻ hồ sơ thợ mẫu (vector, nét, kèm biểu đồ thu nhập) */}
-          <div className="relative mx-auto w-full max-w-md">
-            <div className="rounded-[1.75rem] bg-surface-container-lowest p-6 shadow-ambient ring-1 ring-outline-variant/20">
-              <div className="mb-4 flex items-center justify-between">
-                <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold tracking-wide text-primary">
-                  HỒ SƠ MẪU
-                </span>
-                <span className="flex items-center gap-1 text-xs font-semibold text-on-surface-variant">
-                  <span
-                    className="material-symbols-outlined text-sm text-tertiary"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    star
-                  </span>
-                  4.9 · 128 đánh giá
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary-container text-primary">
-                  <span
-                    className="material-symbols-outlined text-3xl"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    bolt
-                  </span>
-                </div>
-                <div>
-                  <p className="font-headline text-lg font-bold text-on-surface">Anh Tâm · Thợ điện</p>
-                  <p className="flex items-center gap-1 text-sm text-on-surface-variant">
-                    <span className="material-symbols-outlined text-sm">location_on</span>
-                    Hà Đông, Hà Nội
-                  </p>
-                </div>
-              </div>
-
-              {/* Biểu đồ thu nhập (minh họa) */}
-              <div className="mt-5 rounded-2xl bg-surface-container-low p-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="text-sm font-bold text-on-surface">Thu nhập 6 tháng gần đây</p>
-                  <span className="text-[11px] font-medium text-outline">minh họa</span>
-                </div>
-                <svg viewBox="0 0 240 96" className="w-full" role="img" aria-label="Biểu đồ thu nhập tăng dần qua 6 tháng">
-                  {[34, 44, 52, 66, 78, 90].map((h, i) => (
-                    <rect
-                      key={i}
-                      x={6 + i * 39}
-                      y={96 - h}
-                      width="26"
-                      height={h}
-                      rx="5"
-                      className={i === 5 ? 'fill-primary' : 'fill-primary-container'}
-                    />
-                  ))}
-                </svg>
-                <div className="mt-1 flex justify-between px-1 text-[11px] font-medium text-on-surface-variant">
-                  {['T1', 'T2', 'T3', 'T4', 'T5', 'T6'].map((m) => (
-                    <span key={m}>{m}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <div className="rounded-xl bg-surface-container-low p-3">
-                  <p className="font-headline text-2xl font-extrabold text-primary">340</p>
-                  <p className="text-xs text-on-surface-variant">lượt khách xem hồ sơ</p>
-                </div>
-                <div className="rounded-xl bg-surface-container-low p-3">
-                  <p className="font-headline text-2xl font-extrabold text-primary">12</p>
-                  <p className="text-xs text-on-surface-variant">việc nhận mỗi tháng</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Huy hiệu nổi */}
-            <div className="absolute -bottom-4 -left-4 flex items-center gap-2 rounded-2xl bg-on-surface px-4 py-3 shadow-ambient">
-              <span
-                className="material-symbols-outlined text-tertiary"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                verified
-              </span>
-              <span className="text-sm font-bold text-surface-bright">Doitay đã xác minh</span>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -205,6 +136,77 @@ export default async function TuyenDungThoPage() {
               <p className="mt-1 text-sm font-medium text-on-surface-variant">{s.label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ─── Thu nhập & uy tín — biểu đồ + số liệu ấn tượng ────────────── */}
+      <section className="bg-surface py-20 md:py-24">
+        <div className="mx-auto max-w-6xl px-6 md:px-8">
+          <div className="mb-12 max-w-2xl">
+            <h2 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface md:text-4xl">
+              Hồ sơ tốt = nhiều việc hơn, thu nhập đều hơn
+            </h2>
+            <p className="mt-3 text-lg text-on-surface-variant">
+              Thợ có hồ sơ đầy đủ — ảnh công việc, đánh giá thật, bảng giá rõ ràng — được khách ưu
+              tiên chọn, nên lượng việc tăng dần theo từng tháng.
+            </p>
+          </div>
+
+          <div className="grid items-stretch gap-6 lg:grid-cols-5">
+            {/* Biểu đồ thu nhập */}
+            <div className="rounded-3xl bg-surface-container-low p-6 md:p-8 lg:col-span-3">
+              <div className="mb-5 flex items-center justify-between">
+                <p className="font-headline text-lg font-bold text-on-surface">
+                  Thu nhập theo tháng (triệu đồng)
+                </p>
+                <span className="rounded-full bg-surface-container-highest px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant">
+                  minh họa
+                </span>
+              </div>
+              <svg viewBox="0 0 320 150" className="w-full" role="img" aria-label="Biểu đồ thu nhập tăng dần qua 6 tháng">
+                {INCOME.map((v, i) => {
+                  const h = (v / 25) * 100;
+                  const x = 8 + i * 50;
+                  const y = 120 - h;
+                  return (
+                    <g key={i}>
+                      <rect
+                        x={x}
+                        y={y}
+                        width="34"
+                        height={h}
+                        rx="6"
+                        className={i === INCOME.length - 1 ? 'fill-primary' : 'fill-primary-container'}
+                      />
+                      <text x={x + 17} y={y - 6} textAnchor="middle" className="fill-on-surface text-[11px] font-bold">
+                        {v}
+                      </text>
+                      <text x={x + 17} y="142" textAnchor="middle" className="fill-on-surface-variant text-[10px]">
+                        T{i + 1}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+
+            {/* Số liệu ấn tượng */}
+            <div className="grid grid-cols-2 gap-4 lg:col-span-2">
+              {PROOF.map((p) => (
+                <div
+                  key={p.label}
+                  className="flex flex-col justify-center rounded-2xl bg-surface-container-low p-5"
+                >
+                  <p className="font-headline text-3xl font-extrabold text-primary">{p.value}</p>
+                  <p className="mt-1 text-sm leading-snug text-on-surface-variant">{p.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <p className="mt-6 text-xs text-outline">
+            * Số liệu minh họa tiềm năng dựa trên thợ có hồ sơ đầy đủ — không phải cam kết thu nhập.
+          </p>
         </div>
       </section>
 
