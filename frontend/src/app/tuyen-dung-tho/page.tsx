@@ -62,9 +62,11 @@ export default async function TuyenDungThoPage() {
           <img
             src={HERO_IMG}
             alt="Đội ngũ thợ chuyên nghiệp Việt Nam"
-            className="h-full w-full object-cover opacity-40 mix-blend-overlay"
+            className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-on-surface via-on-surface/85 to-on-surface/40" />
+          {/* Trái tối để chữ đọc rõ, phải sáng dần để lộ ảnh thợ. Mobile thêm lớp phủ nhẹ. */}
+          <div className="absolute inset-0 bg-gradient-to-r from-on-surface via-on-surface/75 to-on-surface/25 md:to-on-surface/10" />
+          <div className="absolute inset-0 bg-on-surface/25 md:bg-transparent" />
         </div>
 
         <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 py-20 md:px-8 lg:grid-cols-2">
@@ -161,7 +163,9 @@ export default async function TuyenDungThoPage() {
                     <div className="h-2 w-28 rounded-full bg-outline-variant" />
                   </div>
                   <div className="space-y-3">
-                    <div className="h-10 w-full rounded-lg border border-outline-variant/20 bg-surface-container" />
+                    <div className="flex h-10 w-full items-center rounded-lg border border-outline-variant/30 bg-surface px-3 text-sm font-medium text-on-surface-variant">
+                      09xx xxx xxx
+                    </div>
                     <div className="flex h-10 w-full items-center justify-center rounded-lg bg-primary-container text-sm font-bold text-on-primary-container">
                       Gửi mã xác thực
                     </div>
