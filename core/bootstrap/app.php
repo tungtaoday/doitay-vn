@@ -117,6 +117,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'demo' => Demo::class,
             'registration.complete' => RegistrationStep::class,
             'maintenance' => MaintenanceMode::class,
+
+            // API v1: khóa tài khoản chưa kích hoạt / chưa hoàn thiện hồ sơ.
+            // Các route v1_user.php dùng alias này — trước đây quên đăng ký nên
+            // /user/appointments và /user/wallet trả 500 "Target class [api.active]".
+            'api.active' => \App\Http\Middleware\Api\EnsureUserActive::class,
+            'api.profile' => \App\Http\Middleware\Api\EnsureProfileComplete::class,
         ]);
 
         $middleware->validateCsrfTokens(
