@@ -9,7 +9,15 @@ export const metadata: Metadata = {
   alternates: { canonical: '/dang-ky' },
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sdt?: string; role?: string }>;
+}) {
+  const { sdt, role } = await searchParams;
+  const initialRole =
+    role === 'contractor' || role === 'both' ? role : 'customer';
+
   return (
     <>
       <header className="mb-12">
@@ -21,7 +29,7 @@ export default function RegisterPage() {
         </p>
       </header>
 
-      <RegisterForm />
+      <RegisterForm initialIdentifier={sdt ?? ''} initialRole={initialRole} />
 
       <SocialButtons label="Hoặc đăng ký bằng" />
 

@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { registerAction, type RegisterResult } from './actions';
 
-export function RegisterForm() {
+export function RegisterForm({
+  initialIdentifier = '',
+  initialRole = 'customer',
+}: {
+  initialIdentifier?: string;
+  initialRole?: 'customer' | 'contractor' | 'both';
+} = {}) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState<RegisterResult | null, FormData>(
     registerAction,
@@ -48,7 +54,7 @@ export function RegisterForm() {
                   type="radio"
                   name="user_role"
                   value={role.value}
-                  defaultChecked={role.value === 'customer'}
+                  defaultChecked={role.value === initialRole}
                   className="sr-only"
                 />
                 <span className="material-symbols-outlined text-2xl">{role.icon}</span>
@@ -102,6 +108,7 @@ export function RegisterForm() {
             name="identifier"
             type="text"
             required
+            defaultValue={initialIdentifier}
             autoComplete="username"
             placeholder="090 123 4567"
             className="h-[72px] w-full rounded-lg border-none bg-surface-container-low px-6 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary"
