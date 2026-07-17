@@ -77,7 +77,7 @@ export default async function TuyenDungThoPage() {
               <br />
               <span className="text-primary-fixed-dim">xứng đáng</span> được nhiều khách biết đến.
             </h1>
-            <p className="max-w-lg text-lg leading-relaxed text-surface-variant md:text-xl">
+            <p className="max-w-lg text-lg leading-relaxed text-inverse-on-surface md:text-xl">
               Tạo hồ sơ nghề chuyên nghiệp hoàn toàn miễn phí trên Doitay — nơi khách hàng tìm thợ
               uy tín theo khu vực.
             </p>
@@ -91,7 +91,7 @@ export default async function TuyenDungThoPage() {
               {phone ? (
                 <a
                   href={`tel:${phone}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-surface-variant/30 bg-white/10 px-8 py-4 text-lg font-semibold text-surface-bright backdrop-blur-md transition-colors hover:bg-white/20"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-4 text-lg font-semibold text-surface-bright backdrop-blur-md transition-colors hover:bg-white/20"
                 >
                   <span className="material-symbols-outlined">call</span>
                   {phone}
@@ -179,7 +179,7 @@ export default async function TuyenDungThoPage() {
                 <h3 className="font-headline text-2xl font-bold text-primary-fixed-dim md:text-3xl">
                   Tạo hồ sơ nghề
                 </h3>
-                <p className="max-w-md text-lg leading-relaxed text-surface-variant">
+                <p className="max-w-md text-lg leading-relaxed text-inverse-on-surface">
                   Thêm ảnh công việc thật, kỹ năng chuyên môn và bảng giá minh bạch. Một hồ sơ đầy đủ
                   giúp khách hàng tin tưởng bạn hơn 80%.
                 </p>
@@ -246,7 +246,7 @@ export default async function TuyenDungThoPage() {
           <h2 className="font-headline text-3xl font-bold leading-tight text-surface-bright md:text-5xl">
             &ldquo;Tôn vinh những đôi bàn tay Việt&rdquo;
           </h2>
-          <p className="mx-auto max-w-2xl text-lg italic leading-relaxed text-surface-variant md:text-xl">
+          <p className="mx-auto max-w-2xl text-lg italic leading-relaxed text-inverse-on-surface md:text-xl">
             Sứ mệnh của chúng tôi là xây dựng một cộng đồng thợ chuyên nghiệp, nơi kỹ năng thực sự
             được ghi nhận và giá trị lao động được trân trọng.
           </p>
