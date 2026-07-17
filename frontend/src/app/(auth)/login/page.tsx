@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { Route } from 'next';
 import Link from 'next/link';
-import { SocialButtons } from '@/components/social-buttons';
+import { SocialButtons, SOCIAL_LOGIN_ENABLED } from '@/components/social-buttons';
 import { LoginForm } from './login-form';
 
 export const metadata: Metadata = {
@@ -14,25 +14,28 @@ export default function LoginPage() {
   return (
     <>
       <header className="mb-12">
-        <h1 className="mb-4 font-headline text-[3.5rem] font-bold leading-none tracking-tighter text-on-surface">
+        <h1 className="mb-3 font-headline text-4xl font-bold leading-tight tracking-tight text-on-surface md:text-5xl">
           Chào mừng trở lại
         </h1>
-        <p className="text-[1.375rem] font-medium text-secondary">
+        <p className="text-lg font-medium text-secondary">
           Nhập thông tin của bạn để tiếp tục
         </p>
       </header>
 
       <LoginForm />
 
-      <div className="my-12 flex items-center gap-6">
-        <div className="h-[2px] flex-grow bg-surface-container-highest" />
-        <span className="text-lg font-bold uppercase tracking-widest text-secondary">
-          Hoặc
-        </span>
-        <div className="h-[2px] flex-grow bg-surface-container-highest" />
-      </div>
-
-      <SocialButtons />
+      {SOCIAL_LOGIN_ENABLED && (
+        <>
+          <div className="my-10 flex items-center gap-6">
+            <div className="h-[2px] flex-grow bg-surface-container-highest" />
+            <span className="text-lg font-bold uppercase tracking-widest text-secondary">
+              Hoặc
+            </span>
+            <div className="h-[2px] flex-grow bg-surface-container-highest" />
+          </div>
+          <SocialButtons />
+        </>
+      )}
 
       <footer className="mt-12 text-center">
         <p className="text-[1.125rem] font-medium text-secondary">

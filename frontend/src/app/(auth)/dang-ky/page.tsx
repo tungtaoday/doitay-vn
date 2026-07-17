@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SocialButtons } from '@/components/social-buttons';
+import { SocialButtons, SOCIAL_LOGIN_ENABLED } from '@/components/social-buttons';
 import { RegisterForm } from './register-form';
 
 export const metadata: Metadata = {
@@ -13,27 +13,28 @@ export default function RegisterPage() {
   return (
     <>
       <header className="mb-12">
-        <h1 className="mb-4 font-headline text-[3.5rem] font-bold leading-none text-primary">
+        <h1 className="mb-3 font-headline text-4xl font-bold leading-tight tracking-tight text-primary md:text-5xl">
           Đăng ký thành viên
         </h1>
-        <p className="text-[1.375rem] font-medium text-secondary">
+        <p className="text-lg font-medium text-secondary">
           Miễn phí — tạo yêu cầu và nhận phản hồi từ thợ trong khu vực của bạn.
         </p>
       </header>
 
       <RegisterForm />
 
-      <div className="mt-12">
-        <div className="mb-8 flex items-center gap-4">
-          <div className="h-[2px] flex-1 bg-surface-container-highest" />
-          <span className="text-[1.125rem] font-bold text-secondary">
-            Hoặc đăng ký bằng
-          </span>
-          <div className="h-[2px] flex-1 bg-surface-container-highest" />
+      {SOCIAL_LOGIN_ENABLED && (
+        <div className="mt-10">
+          <div className="mb-8 flex items-center gap-4">
+            <div className="h-[2px] flex-1 bg-surface-container-highest" />
+            <span className="text-[1.125rem] font-bold text-secondary">
+              Hoặc đăng ký bằng
+            </span>
+            <div className="h-[2px] flex-1 bg-surface-container-highest" />
+          </div>
+          <SocialButtons />
         </div>
-
-        <SocialButtons />
-      </div>
+      )}
 
       <footer className="mt-12 text-center">
         <p className="text-[1.125rem] text-secondary">

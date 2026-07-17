@@ -3,6 +3,7 @@ import { Be_Vietnam_Pro, Inter } from 'next/font/google';
 import './globals.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { SiteChrome } from '@/components/site-chrome';
 import { ZaloWidget } from '@/components/zalo-widget';
 import { getSiteSettings } from '@/lib/site-settings';
 
@@ -67,9 +68,12 @@ export default async function RootLayout({
         />
       </head>
       <body className="bg-background text-on-surface antialiased">
-        <SiteHeader settings={settings} />
-        <main className="pt-20">{children}</main>
-        <SiteFooter settings={settings} />
+        <SiteChrome
+          header={<SiteHeader settings={settings} />}
+          footer={<SiteFooter settings={settings} />}
+        >
+          {children}
+        </SiteChrome>
         <ZaloWidget settings={settings.zalo} />
       </body>
     </html>

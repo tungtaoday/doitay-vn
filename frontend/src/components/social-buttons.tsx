@@ -36,11 +36,17 @@ declare global {
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '';
 const FACEBOOK_APP_ID = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '';
 
+/** true khi có ít nhất 1 nhà cung cấp đăng nhập xã hội được cấu hình. */
+export const SOCIAL_LOGIN_ENABLED = Boolean(GOOGLE_CLIENT_ID || FACEBOOK_APP_ID);
+
 export function SocialButtons() {
   const router = useRouter();
   const googleBtnRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  // Chưa cấu hình provider nào → không hiện gì (tránh lộ "chưa cấu hình" cho user).
+  if (!SOCIAL_LOGIN_ENABLED) return null;
 
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID || !window.google || !googleBtnRef.current) return;
@@ -140,12 +146,6 @@ export function SocialButtons() {
             Facebook
           </button>
         </>
-      ) : null}
-
-      {!GOOGLE_CLIENT_ID && !FACEBOOK_APP_ID ? (
-        <p className="col-span-full rounded-lg bg-surface-container-low px-6 py-4 text-center text-[1rem] text-secondary">
-          Đăng nhập mạng xã hội chưa cấu hình
-        </p>
       ) : null}
 
       {error ? (
