@@ -27,7 +27,9 @@ export function Reveal({
     }
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        // Reveal khi vào tầm nhìn — HOẶC khi đã bị cuộn qua (top < 0) để
+        // không kẹt ẩn nếu người dùng nhảy thẳng xuống (phím End / khôi phục cuộn).
+        if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
           setShown(true);
           io.disconnect();
         }
