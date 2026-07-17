@@ -7,6 +7,8 @@ import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
 import type { Metadata } from 'next';
 import { getPublicCategories } from '@/lib/service-requests';
 import { categoryStyle } from '@/lib/category-style';
+import { Reveal } from '@/components/reveal';
+import { CountUp } from '@/components/count-up';
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
@@ -105,10 +107,6 @@ const loadStats = unstable_cache(
   { revalidate: 300 },
 );
 
-function fmtStat(n: number): string {
-  if (n >= 1000) return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1).replace('.0', '') + 'k+';
-  return n > 0 ? `${n}+` : '—';
-}
 
 async function loadFeaturedCompanies(): Promise<PublicCompanyListItem[]> {
   try {
@@ -186,25 +184,31 @@ export default async function HomePage() {
 
             <div className="flex gap-10 pt-4">
               <div className="flex flex-col">
-                <span className="font-headline text-3xl font-bold text-primary">
-                  {fmtStat(stats.approved_contractors)}
-                </span>
+                <CountUp
+                  value={stats.approved_contractors}
+                  suffix="+"
+                  className="font-headline text-3xl font-bold text-primary"
+                />
                 <span className="text-sm font-medium text-outline">
                   Thợ xác thực
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="font-headline text-3xl font-bold text-primary">
-                  {fmtStat(stats.completed_appointments)}
-                </span>
+                <CountUp
+                  value={stats.completed_appointments}
+                  suffix="+"
+                  className="font-headline text-3xl font-bold text-primary"
+                />
                 <span className="text-sm font-medium text-outline">
                   Dự án hoàn thành
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="font-headline text-3xl font-bold text-primary">
-                  {fmtStat(stats.satisfied_customers)}
-                </span>
+                <CountUp
+                  value={stats.satisfied_customers}
+                  suffix="+"
+                  className="font-headline text-3xl font-bold text-primary"
+                />
                 <span className="text-sm font-medium text-outline">
                   Khách hài lòng
                 </span>
@@ -261,11 +265,12 @@ export default async function HomePage() {
           </div>
           <div className="relative grid grid-cols-1 gap-16 md:grid-cols-3">
             {STEPS.map((step, i) => (
-              <div
+              <Reveal
                 key={step.title}
+                delay={i * 120}
                 className="flex flex-col items-center space-y-6 text-center"
               >
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-surface bg-surface-container-lowest text-primary shadow-ambient">
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-surface bg-surface-container-lowest text-primary shadow-ambient transition-transform duration-300 hover:scale-105">
                   <span className="material-symbols-outlined text-4xl">
                     {step.icon}
                   </span>
@@ -281,7 +286,7 @@ export default async function HomePage() {
                     {step.desc}
                   </p>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -311,26 +316,27 @@ export default async function HomePage() {
           {/* Data-driven từ /public/categories — icon + màu khớp đúng từng ngành nghề
               (trước đây hardcode 4 nghề với icon/màu cố định, không khớp danh mục thật). */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 lg:grid-cols-5">
-            {categories.map((cat) => {
+            {categories.map((cat, i) => {
               const style = categoryStyle(cat.name);
               return (
-                <Link
-                  key={cat.id}
-                  href={`/tho?category=${cat.id}` as Route}
-                  className="group flex flex-col gap-5 rounded-4xl bg-surface-container-lowest p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-surface-container-highest md:p-7"
-                >
-                  <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${style.chip}`}>
-                    <span className="material-symbols-outlined text-[28px]">{style.icon}</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-headline text-lg font-bold leading-tight text-on-surface">
-                      {cat.name}
-                    </h3>
-                    <span className="material-symbols-outlined text-on-surface-variant opacity-0 transition-opacity group-hover:opacity-100">
-                      arrow_forward
-                    </span>
-                  </div>
-                </Link>
+                <Reveal key={cat.id} delay={(i % 5) * 60}>
+                  <Link
+                    href={`/tho?category=${cat.id}` as Route}
+                    className="group flex h-full flex-col gap-5 rounded-4xl bg-surface-container-lowest p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-surface-container-highest md:p-7"
+                  >
+                    <div className={`flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${style.chip}`}>
+                      <span className="material-symbols-outlined text-[28px]">{style.icon}</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-headline text-lg font-bold leading-tight text-on-surface">
+                        {cat.name}
+                      </h3>
+                      <span className="material-symbols-outlined text-on-surface-variant opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100">
+                        arrow_forward
+                      </span>
+                    </div>
+                  </Link>
+                </Reveal>
               );
             })}
           </div>
@@ -356,11 +362,11 @@ export default async function HomePage() {
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              {featured.map((c) => (
+              {featured.map((c, i) => (
+                <Reveal key={c.id} delay={i * 100} className="h-full">
                 <Link
-                  key={c.id}
                   href={`/tho/${c.id}/${c.vanity_slug}`}
-                  className="group rounded-4xl bg-surface-container-lowest p-8 shadow-soft transition-all duration-500 hover:-translate-y-1 hover:shadow-ambient"
+                  className="group block h-full rounded-4xl bg-surface-container-lowest p-8 shadow-soft transition-all duration-500 hover:-translate-y-1 hover:shadow-ambient"
                 >
                   <div className="mb-8 flex items-start justify-between">
                     <div className="relative">
@@ -425,6 +431,7 @@ export default async function HomePage() {
                     </div>
                   </div>
                 </Link>
+                </Reveal>
               ))}
             </div>
           )}
@@ -477,13 +484,13 @@ export default async function HomePage() {
             <div className="mt-12 space-y-4">
               <div className="h-64 rounded-4xl bg-gradient-to-br from-primary-container to-primary" />
               <div className="flex h-48 flex-col justify-end rounded-4xl bg-primary-container p-8 text-on-primary-container">
-                <span className="font-headline text-4xl font-black">98%</span>
+                <CountUp value={98} suffix="%" className="font-headline text-4xl font-black" />
                 <span className="font-bold">Hài lòng</span>
               </div>
             </div>
             <div className="space-y-4">
               <div className="flex h-48 flex-col justify-end rounded-4xl bg-tertiary-container p-8 text-on-tertiary-container">
-                <span className="font-headline text-4xl font-black">15+</span>
+                <CountUp value={15} suffix="+" className="font-headline text-4xl font-black" />
                 <span className="font-bold">Khu vực</span>
               </div>
               <div className="h-64 rounded-4xl bg-gradient-to-br from-tertiary-fixed to-tertiary-container" />
