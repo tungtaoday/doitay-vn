@@ -71,7 +71,16 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
   const mobileLinks = [
     ...NAV_LINKS,
     ...roleLinks,
-    ...(user ? [] : [{ href: '/tuyen-dung-tho' as Route, label: 'Trở thành thợ' }]),
+    ...(user
+      ? []
+      : [
+          { href: '/tuyen-dung-tho' as Route, label: 'Trở thành thợ' },
+          // Guest: đưa Đăng nhập vào menu (nút Đăng ký hiện sẵn ở thanh trên).
+          { href: '/login' as Route, label: 'Đăng nhập' },
+          ...(settings.features.registration
+            ? [{ href: '/dang-ky' as Route, label: 'Đăng ký' }]
+            : []),
+        ]),
   ];
 
   return (
@@ -126,16 +135,17 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
             </div>
           ) : (
             <>
+              {/* Đăng nhập: ẩn trên mobile (đã có trong menu hamburger) để nhường chỗ CTA Đăng ký */}
               <Link
                 href="/login"
-                className="rounded-xl px-5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-surface-container-low"
+                className="hidden rounded-xl px-5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-surface-container-low sm:block"
               >
                 Đăng nhập
               </Link>
               {settings.features.registration ? (
                 <Link
                   href={'/dang-ky' as Route}
-                  className="hidden rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 sm:block"
+                  className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 sm:px-5"
                 >
                   Đăng ký
                 </Link>
