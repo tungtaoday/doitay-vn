@@ -49,7 +49,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
                 </span>
                 <div>
                   <p className="font-bold text-on-primary">{title}</p>
-                  <p className="text-sm text-on-primary/70">{desc}</p>
+                  <p className="text-sm text-on-primary/80">{desc}</p>
                 </div>
               </li>
             ))}
