@@ -25,6 +25,10 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Ẩn thanh cuộn cho vùng cuộn ngang (portfolio, chip lọc...). */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
 /* Focus-visible rõ ràng cho người dùng bàn phím (WCAG 2.4.7).
    Chỉ hiện khi điều hướng bằng keyboard — không phiền khi bấm chuột. */
 :focus-visible {
