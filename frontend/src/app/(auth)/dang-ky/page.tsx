@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SocialButtons, SOCIAL_LOGIN_ENABLED } from '@/components/social-buttons';
+import { SocialButtons } from '@/components/social-buttons';
 import { RegisterForm } from './register-form';
 
 export const metadata: Metadata = {
@@ -23,18 +23,7 @@ export default function RegisterPage() {
 
       <RegisterForm />
 
-      {SOCIAL_LOGIN_ENABLED && (
-        <div className="mt-10">
-          <div className="mb-8 flex items-center gap-4">
-            <div className="h-[2px] flex-1 bg-surface-container-highest" />
-            <span className="text-[1.125rem] font-bold text-secondary">
-              Hoặc đăng ký bằng
-            </span>
-            <div className="h-[2px] flex-1 bg-surface-container-highest" />
-          </div>
-          <SocialButtons />
-        </div>
-      )}
+      <SocialButtons label="Hoặc đăng ký bằng" />
 
       <footer className="mt-12 text-center">
         <p className="text-[1.125rem] text-secondary">

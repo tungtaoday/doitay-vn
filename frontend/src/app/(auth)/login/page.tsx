@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { Route } from 'next';
 import Link from 'next/link';
-import { SocialButtons, SOCIAL_LOGIN_ENABLED } from '@/components/social-buttons';
+import { SocialButtons } from '@/components/social-buttons';
 import { LoginForm } from './login-form';
 
 export const metadata: Metadata = {
@@ -24,18 +24,7 @@ export default function LoginPage() {
 
       <LoginForm />
 
-      {SOCIAL_LOGIN_ENABLED && (
-        <>
-          <div className="my-10 flex items-center gap-6">
-            <div className="h-[2px] flex-grow bg-surface-container-highest" />
-            <span className="text-lg font-bold uppercase tracking-widest text-secondary">
-              Hoặc
-            </span>
-            <div className="h-[2px] flex-grow bg-surface-container-highest" />
-          </div>
-          <SocialButtons />
-        </>
-      )}
+      <SocialButtons label="Hoặc" />
 
       <footer className="mt-12 text-center">
         <p className="text-[1.125rem] font-medium text-secondary">

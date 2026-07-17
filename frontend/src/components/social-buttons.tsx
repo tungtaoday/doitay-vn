@@ -39,14 +39,11 @@ const FACEBOOK_APP_ID = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '';
 /** true khi có ít nhất 1 nhà cung cấp đăng nhập xã hội được cấu hình. */
 export const SOCIAL_LOGIN_ENABLED = Boolean(GOOGLE_CLIENT_ID || FACEBOOK_APP_ID);
 
-export function SocialButtons() {
+export function SocialButtons({ label }: { label?: string }) {
   const router = useRouter();
   const googleBtnRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-
-  // Chưa cấu hình provider nào → không hiện gì (tránh lộ "chưa cấu hình" cho user).
-  if (!SOCIAL_LOGIN_ENABLED) return null;
 
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID || !window.google || !googleBtnRef.current) return;
@@ -114,8 +111,22 @@ export function SocialButtons() {
     );
   }
 
+  // Chưa cấu hình provider nào → không hiện gì (kể cả divider) để tránh lộ
+  // "chưa cấu hình" và tránh divider mồ côi khi server/client đọc env lệch nhau.
+  if (!SOCIAL_LOGIN_ENABLED) return null;
+
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="mt-10">
+      {label ? (
+        <div className="mb-8 flex items-center gap-4">
+          <div className="h-[2px] flex-1 bg-surface-container-highest" />
+          <span className="text-[1.0625rem] font-bold uppercase tracking-wider text-secondary">
+            {label}
+          </span>
+          <div className="h-[2px] flex-1 bg-surface-container-highest" />
+        </div>
+      ) : null}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {GOOGLE_CLIENT_ID ? (
         <>
           <Script
@@ -153,6 +164,7 @@ export function SocialButtons() {
           {error}
         </div>
       ) : null}
+      </div>
     </div>
   );
 }
