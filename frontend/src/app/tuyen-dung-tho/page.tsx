@@ -184,7 +184,12 @@ export default async function TuyenDungThoPage() {
                   giúp khách hàng tin tưởng bạn hơn 80%.
                 </p>
               </div>
-              <div className="relative z-10 flex w-full flex-1 gap-4 overflow-x-auto py-2 hide-scrollbar">
+              <div
+                className="relative z-10 flex w-full flex-1 gap-4 overflow-x-auto py-2 hide-scrollbar"
+                tabIndex={0}
+                role="group"
+                aria-label="Ảnh công việc mẫu — cuộn ngang để xem thêm"
+              >
                 {[WORK_IMG_1, WORK_IMG_2].map((src, i) => (
                   <div
                     key={i}
