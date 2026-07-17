@@ -108,6 +108,15 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
               {link.label}
             </Link>
           ))}
+          {/* Khách chưa đăng nhập: lối vào "Trở thành thợ" ngay trên thanh nav (desktop) */}
+          {!user && (
+            <Link
+              href={'/tuyen-dung-tho' as Route}
+              className="text-on-surface-variant transition-colors hover:text-primary"
+            >
+              Trở thành thợ
+            </Link>
+          )}
           {user && (user.has_company
             ? contractorLinks
             : !user.has_company && (user.pending_role === 'contractor' || user.pending_role === 'both')

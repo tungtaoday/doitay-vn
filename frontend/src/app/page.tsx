@@ -509,13 +509,13 @@ export default async function HomePage() {
                 href={'/tuyen-dung-tho' as Route}
                 className="rounded-full bg-surface-container-lowest px-10 py-5 font-headline text-lg font-bold text-primary shadow-ambient transition-all hover:bg-surface-container-low"
               >
-                Đăng ký thợ ngay
+                Trở thành thợ
               </Link>
               <Link
-                href="/tho"
+                href={'/dang-ky' as Route}
                 className="rounded-full border-2 border-on-primary/30 px-10 py-5 font-headline text-lg font-bold text-on-primary transition-all hover:bg-on-primary/10"
               >
-                Tìm hiểu thêm
+                Đăng ký ngay
               </Link>
             </div>
           </div>
