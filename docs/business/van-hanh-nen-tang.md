@@ -138,6 +138,15 @@ stateDiagram-v2
 
 ## 7. ĐÁNH GIÁ — điểm gãy vận hành & cải thiện (theo ưu tiên)
 
+> **Cập nhật 2026-07-18 — ĐÃ TRIỂN KHAI & verify trên production:**
+> ✅ P0.1 notify thợ khi match (in-app, top-5) · ✅ P0.2 tặng **200.000đ** vào ví khi duyệt hồ sơ
+> (cả 2 đường duyệt, idempotent) · ✅ P0.3 hàng đợi vận hành tại `/sale/duyet` ·
+> ✅ P1.1 che SĐT thợ public (env `SHOW_CONTACT_PUBLIC`) · ✅ P1.2 phí lead vào config
+> (`marketplace.lead_fee`, env `LEAD_FEE`) · ✅ P1.3 duyệt thợ tự đăng ký hợp nhất về `/sale/duyet` + checklist.
+> Còn lại: P1.4 (nạp tự động — cần tài khoản cổng), nhóm P2.
+> Phát hiện thêm khi triển khai: prod thiếu model + bảng `service_requests` (đã deploy + migrate —
+> **luồng yêu cầu dịch vụ trên production trước giờ chưa từng chạy được**).
+
 ### 🔴 P0 — gãy vòng lặp cốt lõi (làm ngay)
 
 **P0.1 — Thợ KHÔNG được thông báo khi được match yêu cầu.**
