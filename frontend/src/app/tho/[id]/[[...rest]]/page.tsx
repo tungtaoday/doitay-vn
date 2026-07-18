@@ -13,6 +13,7 @@ import type {
 } from '@/lib/api-types';
 import { getServiceRequest } from '@/lib/service-requests';
 import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
+import { TrustBadges } from '@/components/trust-badges';
 // @ts-ignore — TypeScript cannot resolve paths containing Next.js dynamic segment brackets
 import { AppointmentBookingForm } from '@/app/cong-ty/[id]/[[...rest]]/appointment-form';
 
@@ -256,6 +257,14 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
               value={`${company.rating_avg.toFixed(1)}/5`}
               label="Điểm hài lòng trung bình"
             />
+          </section>
+
+          {/* Cam kết tin cậy — tín hiệu an tâm tại điểm quyết định đặt lịch */}
+          <section className="space-y-5">
+            <h2 className="font-headline text-2xl font-bold text-on-surface">
+              Đặt qua doitay, yên tâm hơn
+            </h2>
+            <TrustBadges />
           </section>
 
           {/* About + tags */}

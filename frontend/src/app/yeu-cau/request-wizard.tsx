@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
 import type { AuthUser, PublicCategory } from '@/lib/api-types';
 import { categoryStyle } from '@/lib/category-style';
+import { TrustBadges } from '@/components/trust-badges';
 import { createServiceRequestAction } from './actions';
 import { LocationPicker } from './location-picker';
 
@@ -303,6 +304,11 @@ export function RequestWizard({
             {step === TOTAL_STEPS ? (isPending ? 'Đang gửi…' : 'Gửi yêu cầu') : 'Tiếp tục'}
             <span className="material-symbols-outlined text-2xl">arrow_forward</span>
           </button>
+        </div>
+
+        {/* Trấn an tin cậy khi điền yêu cầu */}
+        <div className="mt-12 border-t border-outline-variant/20 pt-8">
+          <TrustBadges variant="strip" className="justify-center" />
         </div>
       </div>
     </div>

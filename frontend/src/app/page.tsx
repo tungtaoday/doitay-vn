@@ -9,6 +9,7 @@ import { getPublicCategories } from '@/lib/service-requests';
 import { categoryStyle } from '@/lib/category-style';
 import { Reveal } from '@/components/reveal';
 import { CountUp } from '@/components/count-up';
+import { TrustBadges } from '@/components/trust-badges';
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
@@ -249,6 +250,15 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ─── Cam kết tin cậy (đưa tín hiệu an tâm lên sớm) ─────────────── */}
+      <section className="bg-surface-container-low py-14">
+        <div className="mx-auto max-w-7xl px-6 md:px-8">
+          <Reveal>
+            <TrustBadges />
+          </Reveal>
         </div>
       </section>
 
