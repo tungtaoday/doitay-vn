@@ -60,9 +60,14 @@ export default async function DuyetPage() {
           <h1 className="font-headline text-2xl font-bold text-on-surface">Vận hành &amp; duyệt hồ sơ</h1>
           <p className="text-sm text-on-surface-variant">{items.length} hồ sơ CTV chờ duyệt</p>
         </div>
-        <Link href={'/sale' as Route} className="text-sm text-primary hover:underline">
-          Danh sách của tôi →
-        </Link>
+        <div className="flex gap-4">
+          <Link href={'/quan-tri' as Route} className="text-sm font-semibold text-primary hover:underline">
+            Trung tâm điều hành →
+          </Link>
+          <Link href={'/sale' as Route} className="text-sm text-primary hover:underline">
+            Danh sách của tôi →
+          </Link>
+        </div>
       </div>
 
       {queues ? <OpsQueuesPanel queues={queues} /> : null}

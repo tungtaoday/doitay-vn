@@ -38,3 +38,8 @@ Route::patch('submissions/{id}/reject',  [SubmissionReviewController::class, 're
 // ── Vận hành (P0.3): hàng đợi chờ xử lý + duyệt thợ tự đăng ký (P1.3) ──────
 Route::get('ops/queues',                 [SubmissionReviewController::class, 'queues'])->name('ops.queues');
 Route::patch('companies/{id}/approve',   [SubmissionReviewController::class, 'approveCompany'])->whereNumber('id')->name('companies.approve');
+
+// ── Trung tâm điều hành /quan-tri: phễu + chi phí + hiệu suất CTV ──────────
+Route::get('dashboard/overview',   [\App\Http\Controllers\API\V1\Admin\AdminDashboardController::class, 'overview'])->name('dashboard.overview');
+Route::get('ctv/performance',      [\App\Http\Controllers\API\V1\Admin\AdminDashboardController::class, 'ctvPerformance'])->name('ctv.performance');
+Route::patch('commissions/mark-paid', [\App\Http\Controllers\API\V1\Admin\AdminDashboardController::class, 'markPaid'])->name('commissions.mark-paid');

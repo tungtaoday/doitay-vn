@@ -16,10 +16,12 @@ class Commission extends Model
         'so_tien',
         'loai',
         'tuan',
+        'paid_at',
     ];
 
     protected $casts = [
         'so_tien' => 'integer',
+        'paid_at' => 'datetime',
     ];
 
     public function submission(): BelongsTo
