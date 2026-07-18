@@ -96,7 +96,7 @@ class SubmissionReviewController extends Controller
             ->limit(20)
             ->get(['id', 'company_id', 'recipient_name', 'appointment_date', 'appointment_time', 'created_at']);
 
-        $pendingDeposits = \App\Models\Deposit::where('status', 'pending')
+        $pendingDeposits = \App\Models\DepositRequest::where('status', 'pending')
             ->orderBy('created_at')
             ->limit(20)
             ->get(['id', 'amount', 'created_at']);
@@ -111,7 +111,7 @@ class SubmissionReviewController extends Controller
             'counts' => [
                 'stale_requests'       => \App\Models\ServiceRequest::where('status', 'open')->where('created_at', '<', now()->subDay())->count(),
                 'pending_appointments' => \App\Models\Appointment::where('status', 'pending')->where('created_at', '<', now()->subHours(4))->count(),
-                'pending_deposits'     => \App\Models\Deposit::where('status', 'pending')->count(),
+                'pending_deposits'     => \App\Models\DepositRequest::where('status', 'pending')->count(),
                 'pending_companies'    => \App\Models\Company::where('status', \App\Constants\Status::PENDING)->count(),
             ],
             'stale_requests'       => $staleRequests,
