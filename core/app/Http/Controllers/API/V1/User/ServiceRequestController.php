@@ -31,7 +31,10 @@ class ServiceRequestController extends Controller
 
         $matches = $this->service->matchCompanies($serviceRequest);
 
-        $resource = (new ServiceRequestResource($serviceRequest->load('category')))
+        // P0.1: báo cho thợ được match — chỉ tại thời điểm tạo yêu cầu.
+        $this->service->notifyMatches($serviceRequest->load('category'), $matches);
+
+        $resource = (new ServiceRequestResource($serviceRequest))
             ->withMatches($matches);
 
         return $resource->response()->setStatusCode(201);

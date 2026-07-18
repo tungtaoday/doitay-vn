@@ -84,6 +84,26 @@ class ManageCompanyController extends Controller
         $company->admin_feedback = $request->details;
         $company->save();
 
+        // P0.2: hồ sơ được duyệt → tạo ví + tặng tín dụng chào mừng (idempotent —
+        // chỉ tặng khi ví được tạo lần đầu). Thợ nhận được thông báo in-app.
+        if ((int) $request->status === \App\Constants\Status::APPROVED) {
+            try {
+                $wallet = \App\Models\CompanyWallet::createForCompany($company);
+                if ($wallet->wasRecentlyCreated && $company->user) {
+                    $credit = number_format((int) config('marketplace.welcome_credit', 200000), 0, ',', '.');
+                    \App\Services\NotificationService::sendSystemNotification(
+                        $company->user,
+                        'Hồ sơ thợ đã được duyệt 🎉',
+                        "Chúc mừng! Hồ sơ \"{$company->name}\" đã lên chợ. Doitay tặng bạn {$credit}đ vào ví để nhận những khách đầu tiên.",
+                        'company_approved',
+                        url('/vi/tho/lich-hen'),
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Log::error('Welcome credit failed: ' . $e->getMessage(), ['company_id' => $company->id]);
+            }
+        }
+
         $notify[] = ['success', $notification];
         return back()->withNotify($notify);
     }

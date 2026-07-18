@@ -34,3 +34,7 @@ Route::prefix('seed')->name('seed.')->group(function () {
 Route::get('submissions',                [SubmissionReviewController::class, 'index'])->name('submissions.index');
 Route::patch('submissions/{id}/approve', [SubmissionReviewController::class, 'approve'])->whereNumber('id')->name('submissions.approve');
 Route::patch('submissions/{id}/reject',  [SubmissionReviewController::class, 'reject'])->whereNumber('id')->name('submissions.reject');
+
+// ── Vận hành (P0.3): hàng đợi chờ xử lý + duyệt thợ tự đăng ký (P1.3) ──────
+Route::get('ops/queues',                 [SubmissionReviewController::class, 'queues'])->name('ops.queues');
+Route::patch('companies/{id}/approve',   [SubmissionReviewController::class, 'approveCompany'])->whereNumber('id')->name('companies.approve');

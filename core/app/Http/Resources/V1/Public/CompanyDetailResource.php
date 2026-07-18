@@ -16,10 +16,9 @@ class CompanyDetailResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        // Live `companies` table has no `show_contact` column today; until
-        // a real opt-in flag exists, expose contact unconditionally for the
-        // public detail view (parity with current Blade behaviour).
-        $showContact = true;
+        // P1.1: che SĐT/email thợ trên trang public để khách đi qua luồng đặt lịch
+        // (bảo vệ phí lead). Bật lại bằng env SHOW_CONTACT_PUBLIC=true nếu đổi chiến lược.
+        $showContact = (bool) config('marketplace.show_contact', false);
 
         return [
             'id'              => $this->id,

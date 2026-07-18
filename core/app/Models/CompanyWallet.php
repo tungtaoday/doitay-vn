@@ -140,13 +140,18 @@ class CompanyWallet extends Model
     /**
      * Add welcome bonus for new companies
      */
-    public function addWelcomeBonus($amount = 100000)
+    public function addWelcomeBonus($amount = null)
     {
+        // Số tiền đọc từ config marketplace (env WELCOME_CREDIT) — không hardcode.
+        $amount = $amount ?? (int) config('marketplace.welcome_credit', 200000);
+        $leadFee = max(1, (int) config('marketplace.lead_fee', 10000));
+        $leads = (int) floor($amount / $leadFee);
+
         return $this->addFunds(
             $amount,
             'welcome_bonus',
-            'Thưởng chào mừng - 10 leads miễn phí',
-            ['bonus_type' => 'welcome', 'leads_count' => 10]
+            "Thưởng chào mừng - {$leads} leads miễn phí",
+            ['bonus_type' => 'welcome', 'leads_count' => $leads]
         );
     }
 

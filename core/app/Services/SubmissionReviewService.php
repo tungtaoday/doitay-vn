@@ -130,6 +130,11 @@ class SubmissionReviewService
             'business_hours' => [],
         ])->save();
 
+        // P0.2: tạo ví + tặng tín dụng chào mừng (config marketplace.welcome_credit).
+        // createForCompany dùng firstOrCreate + wasRecentlyCreated → idempotent,
+        // không thể tặng 2 lần cho cùng company.
+        \App\Models\CompanyWallet::createForCompany($company);
+
         return $company;
     }
 

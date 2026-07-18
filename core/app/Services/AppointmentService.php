@@ -163,7 +163,8 @@ class AppointmentService
             throw new \DomainException('Vui lòng tạo ví cho công ty trước khi xác nhận lịch hẹn.');
         }
 
-        $leadFee = 10000;
+        // Phí lead đọc từ config (env LEAD_FEE) — đổi giá không cần sửa code.
+        $leadFee = (int) config('marketplace.lead_fee', 10000);
 
         $this->walletService->debitWithLock(
             $wallet->id,

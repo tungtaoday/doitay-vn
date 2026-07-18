@@ -171,6 +171,39 @@ class ServiceRequestService
     }
 
     /**
+     * P0.1 — Báo cho các thợ vừa được match biết có khách cần họ.
+     * Chỉ gọi MỘT LẦN khi request vừa tạo (từ controller store), không gọi khi
+     * xem lại kết quả. In-app notification; email/Zalo bổ sung sau.
+     */
+    public function notifyMatches(ServiceRequest $request, \Illuminate\Support\Collection $matches): void
+    {
+        $area = trim(implode(', ', array_filter([$request->district, $request->city])));
+        $categoryName = $request->category->name ?? 'dịch vụ';
+
+        foreach ($matches as $match) {
+            $company = $match['company'] ?? $match;
+            $owner = $company->user ?? null;
+            if (!$owner) {
+                continue;
+            }
+
+            try {
+                \App\Services\NotificationService::sendSystemNotification(
+                    $owner,
+                    'Có khách đang cần ' . $categoryName,
+                    'Khách tại ' . ($area ?: 'khu vực của bạn') . ' vừa đăng yêu cầu: "'
+                        . mb_substr($request->title, 0, 80)
+                        . '". Hồ sơ của bạn được gợi ý cho khách — hãy giữ máy, khách có thể đặt lịch.',
+                    'lead_match',
+                    url('/tho/' . $company->id),
+                );
+            } catch (\Throwable) {
+                // Notify lỗi không được làm hỏng luồng tạo yêu cầu.
+            }
+        }
+    }
+
+    /**
      * Đánh dấu request đã được convert thành appointment. Gọi từ
      * AppointmentService::createForUser khi payload có service_request_id.
      */

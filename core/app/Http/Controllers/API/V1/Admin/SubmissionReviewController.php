@@ -74,4 +74,82 @@ class SubmissionReviewController extends Controller
 
         return (new SubmissionResource($updated->loadCount('images')))->response();
     }
+
+    /**
+     * P0.3 — Hàng đợi vận hành: những thứ đang chờ con người xử lý.
+     * Một màn hình cho Quản lý trực thay vì rơi vào hư không.
+     */
+    public function queues(): JsonResponse
+    {
+        $this->assertManager();
+
+        $staleRequests = \App\Models\ServiceRequest::where('status', 'open')
+            ->where('created_at', '<', now()->subDay())
+            ->orderBy('created_at')
+            ->limit(20)
+            ->get(['id', 'title', 'city', 'district', 'contact_name', 'contact_phone', 'created_at']);
+
+        $pendingAppointments = \App\Models\Appointment::where('status', 'pending')
+            ->where('created_at', '<', now()->subHours(4))
+            ->with('company:id,name,phone')
+            ->orderBy('created_at')
+            ->limit(20)
+            ->get(['id', 'company_id', 'recipient_name', 'appointment_date', 'appointment_time', 'created_at']);
+
+        $pendingDeposits = \App\Models\Deposit::where('status', 'pending')
+            ->orderBy('created_at')
+            ->limit(20)
+            ->get(['id', 'amount', 'created_at']);
+
+        $pendingCompanies = \App\Models\Company::where('status', \App\Constants\Status::PENDING)
+            ->with('user:id,name,email,mobile')
+            ->orderBy('created_at')
+            ->limit(20)
+            ->get(['id', 'user_id', 'name', 'phone', 'city', 'district', 'category_id', 'created_at']);
+
+        return response()->json([
+            'counts' => [
+                'stale_requests'       => \App\Models\ServiceRequest::where('status', 'open')->where('created_at', '<', now()->subDay())->count(),
+                'pending_appointments' => \App\Models\Appointment::where('status', 'pending')->where('created_at', '<', now()->subHours(4))->count(),
+                'pending_deposits'     => \App\Models\Deposit::where('status', 'pending')->count(),
+                'pending_companies'    => \App\Models\Company::where('status', \App\Constants\Status::PENDING)->count(),
+            ],
+            'stale_requests'       => $staleRequests,
+            'pending_appointments' => $pendingAppointments,
+            'pending_deposits'     => $pendingDeposits,
+            'pending_companies'    => $pendingCompanies,
+        ]);
+    }
+
+    /**
+     * P1.3 — Hợp nhất duyệt: Quản lý duyệt luôn thợ TỰ ĐĂNG KÝ (company PENDING)
+     * ngay trên màn /sale/duyet, không phải vào admin legacy.
+     * Duyệt = APPROVED + ví + tín dụng chào mừng + notify (idempotent).
+     */
+    public function approveCompany(int $id): JsonResponse
+    {
+        $this->assertManager();
+
+        $company = \App\Models\Company::with('user')->findOrFail($id);
+        if ((int) $company->status !== \App\Constants\Status::PENDING) {
+            abort(422, 'Hồ sơ không ở trạng thái chờ duyệt.');
+        }
+
+        $company->status = \App\Constants\Status::APPROVED;
+        $company->save();
+
+        $wallet = \App\Models\CompanyWallet::createForCompany($company);
+        if ($wallet->wasRecentlyCreated && $company->user) {
+            $credit = number_format((int) config('marketplace.welcome_credit', 200000), 0, ',', '.');
+            \App\Services\NotificationService::sendSystemNotification(
+                $company->user,
+                'Hồ sơ thợ đã được duyệt 🎉',
+                "Chúc mừng! Hồ sơ \"{$company->name}\" đã lên chợ. Doitay tặng bạn {$credit}đ vào ví để nhận những khách đầu tiên.",
+                'company_approved',
+                url('/vi/tho/lich-hen'),
+            );
+        }
+
+        return response()->json(['data' => ['id' => $company->id, 'status' => 'approved']]);
+    }
 }
