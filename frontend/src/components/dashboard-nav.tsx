@@ -54,30 +54,37 @@ export function DashboardNav({
   }
 
   return (
-    <nav className="sticky top-20 z-40 overflow-x-auto border-b border-on-surface/5 bg-white">
-      <div className="flex items-center gap-1 px-6 md:px-8">
-        {visibleItems.map((item) => {
-          const active = isActive(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-2 whitespace-nowrap px-5 py-4 text-[0.8125rem] font-medium transition-all ${
-                active
-                  ? 'border-b-[3px] border-primary bg-primary/5 font-bold text-primary'
-                  : 'border-b-[3px] border-transparent text-secondary hover:bg-surface-container-low hover:text-on-surface'
-              }`}
-            >
-              <span
-                className="material-symbols-outlined text-[1.125rem]"
-                style={active ? { fontVariationSettings: "'FILL' 1" } : undefined}
+    <nav
+      aria-label="Điều hướng bảng điều khiển"
+      className="sticky top-20 z-40 bg-surface-container-lowest shadow-soft"
+    >
+      {/* Container căn ĐÚNG lề với logo header (max-w-7xl + px như site-header) */}
+      <div className="mx-auto max-w-7xl overflow-x-auto px-6 md:px-8 hide-scrollbar">
+        <div className="flex items-center gap-2 py-2.5">
+          {visibleItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                className={`flex min-h-[44px] shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 text-sm transition-all ${
+                  active
+                    ? 'bg-primary font-bold text-on-primary shadow-ambient'
+                    : 'font-medium text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
+                }`}
               >
-                {item.icon}
-              </span>
-              {item.label}
-            </Link>
-          );
-        })}
+                <span
+                  className="material-symbols-outlined text-[1.125rem]"
+                  style={active ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                >
+                  {item.icon}
+                </span>
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

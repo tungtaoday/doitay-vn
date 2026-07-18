@@ -91,9 +91,12 @@ export function RequestWizard({
     setSubmitError(null);
     const description = state.description.trim();
     startTransition(async () => {
+      // Tiêu đề là TUỲ CHỌN: dưới 5 ký tự (rule backend) thì tự lấy mô tả làm
+      // tiêu đề — người dùng không bao giờ gặp lỗi "tối thiểu 5 ký tự" ở bước 4.
+      const trimmedTitle = state.title.trim();
       const result = await createServiceRequestAction({
         category_id: state.categoryId!,
-        title: (state.title.trim() || description.slice(0, 60)) as string,
+        title: (trimmedTitle.length >= 5 ? trimmedTitle : description.slice(0, 60)) as string,
         description,
         city: state.cityName,
         district: state.districtName || undefined,
@@ -184,6 +187,11 @@ export function RequestWizard({
                   placeholder="Ví dụ: ổ cắm phòng ngủ bị tê"
                   className="h-16 w-full border-x-0 border-b-4 border-t-0 border-surface-container-high bg-transparent px-0 text-2xl font-medium text-on-surface placeholder:text-outline-variant focus:border-primary focus:outline-none focus:ring-0"
                 />
+                {state.title.trim().length > 0 && state.title.trim().length < 5 ? (
+                  <p className="mt-2 text-sm text-outline">
+                    Tiêu đề ngắn quá (cần ≥5 ký tự) — nếu để vậy, hệ thống sẽ tự dùng phần mô tả làm tiêu đề.
+                  </p>
+                ) : null}
               </div>
               <div>
                 <label className="mb-4 block font-headline text-xl font-bold text-on-surface">
