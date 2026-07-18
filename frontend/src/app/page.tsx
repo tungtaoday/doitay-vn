@@ -262,40 +262,53 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── 3 bước ───────────────────────────────────────────────────── */}
-      <section className="bg-surface py-32">
-        <div className="mx-auto max-w-7xl px-6 md:px-8">
-          <div className="mb-20 space-y-4 text-center">
+      {/* ─── 3 bước — luồng quy trình ────────────────────────────────── */}
+      <section className="bg-surface py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-6 md:px-8">
+          <div className="mb-14 space-y-3 text-center">
             <span className="text-sm font-bold uppercase tracking-[0.2em] text-primary">
               Quy trình chuyên nghiệp
             </span>
-            <h2 className="font-headline text-4xl font-bold text-on-surface">
+            <h2 className="font-headline text-4xl font-bold text-on-surface md:text-5xl">
               Chỉ 3 bước đơn giản
             </h2>
+            <p className="mx-auto max-w-xl text-lg text-on-surface-variant">
+              Từ lúc cần đến khi xong việc — nhanh, rõ ràng, không qua trung gian.
+            </p>
           </div>
-          <div className="relative grid grid-cols-1 gap-16 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
             {STEPS.map((step, i) => (
-              <Reveal
-                key={step.title}
-                delay={i * 120}
-                className="flex flex-col items-center space-y-6 text-center"
-              >
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-surface bg-surface-container-lowest text-primary shadow-ambient transition-transform duration-300 hover:scale-105">
-                  <span className="material-symbols-outlined text-4xl">
-                    {step.icon}
+              <Reveal key={step.title} delay={i * 120} className="relative h-full">
+                <div className="group relative h-full overflow-hidden rounded-3xl bg-surface-container-lowest p-8 shadow-soft ring-1 ring-outline-variant/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-ambient">
+                  {/* Số bước lớn — watermark */}
+                  <span className="pointer-events-none absolute -right-1 -top-5 font-headline text-8xl font-black text-primary/[0.08]">
+                    0{i + 1}
                   </span>
-                  <span className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary">
-                    {i + 1}
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-headline text-xl font-bold">
+                  {/* Icon tile primary */}
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-on-primary shadow-ambient transition-transform duration-300 group-hover:scale-105">
+                    <span
+                      className="material-symbols-outlined text-[2rem]"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      {step.icon}
+                    </span>
+                  </div>
+                  <p className="relative mt-6 text-sm font-bold uppercase tracking-wide text-primary">
+                    Bước {i + 1}
+                  </p>
+                  <h3 className="relative mt-1 font-headline text-xl font-bold text-on-surface">
                     {step.title}
                   </h3>
-                  <p className="px-4 leading-relaxed text-on-surface-variant">
+                  <p className="relative mt-2 leading-relaxed text-on-surface-variant">
                     {step.desc}
                   </p>
                 </div>
+                {/* Mũi tên nối bước (desktop) */}
+                {i < STEPS.length - 1 ? (
+                  <span className="material-symbols-outlined absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 translate-x-1/2 rounded-full bg-surface text-3xl text-primary shadow-ambient md:block">
+                    chevron_right
+                  </span>
+                ) : null}
               </Reveal>
             ))}
           </div>
