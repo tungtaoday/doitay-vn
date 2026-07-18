@@ -42,7 +42,7 @@ export default async function WalletOverviewPage() {
           </Link>
         </div>
         {wallets.length === 0 ? (
-          <EmptyState message="Bạn chưa có ví nào. Tạo công ty để bắt đầu." />
+          <EmptyState message="Chưa có ví. Ví được tạo sau khi bạn đăng ký trở thành thợ và hồ sơ được duyệt." />
         ) : (
           <ul className="grid gap-4 md:grid-cols-2">
             {wallets.map((w) => (

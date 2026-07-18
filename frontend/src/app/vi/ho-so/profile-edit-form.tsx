@@ -231,6 +231,7 @@ export function ProfileEditForm({
             <div>
               <label className="mb-2 block text-[1rem] font-bold text-on-surface">Họ và Tên</label>
               <input
+                aria-label="Họ và Tên"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -246,6 +247,7 @@ export function ProfileEditForm({
                 Tên đăng nhập <span className="font-normal text-secondary">(username)</span>
               </label>
               <input
+                aria-label="Tên đăng nhập"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value.replace(/[^a-z0-9_-]/gi, '').toLowerCase())}
@@ -263,6 +265,7 @@ export function ProfileEditForm({
             <div>
               <label className="mb-2 block text-[1rem] font-bold text-on-surface">Số điện thoại</label>
               <input
+                aria-label="Số điện thoại"
                 type="tel"
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))}
@@ -277,6 +280,7 @@ export function ProfileEditForm({
             <div>
               <label className="mb-2 block text-[1rem] font-bold text-on-surface">Email đăng nhập</label>
               <input
+                aria-label="Email đăng nhập"
                 type="text"
                 value={user.email}
                 readOnly
@@ -312,6 +316,7 @@ export function ProfileEditForm({
           <div>
             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Địa chỉ cụ thể</label>
             <input
+              aria-label="Địa chỉ cụ thể"
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -326,6 +331,7 @@ export function ProfileEditForm({
             <div>
               <label className="mb-2 block text-[1rem] font-bold text-on-surface">Tỉnh / Thành phố</label>
               <select
+                aria-label="Tỉnh / Thành phố"
                 value={cityCode}
                 onChange={(e) => handleCityChange(e.target.value)}
                 className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary"
@@ -339,6 +345,7 @@ export function ProfileEditForm({
             <div>
               <label className="mb-2 block text-[1rem] font-bold text-on-surface">Quận / Huyện</label>
               <select
+                aria-label="Quận / Huyện"
                 value={districtCode}
                 onChange={(e) => handleDistrictChange(e.target.value)}
                 disabled={!cityCode}
@@ -354,6 +361,7 @@ export function ProfileEditForm({
           <div>
             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Phường / Xã</label>
             <select
+              aria-label="Phường / Xã"
               value={wardCode}
               onChange={(e) => setWardCode(e.target.value)}
               disabled={!districtCode}

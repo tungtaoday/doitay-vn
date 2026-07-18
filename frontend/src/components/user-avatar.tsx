@@ -6,17 +6,20 @@
  * initials-based colored circle (same algorithm as AvatarHelper.php).
  */
 
+// Chữ navy đậm trên nền sáng để đạt WCAG 1.4.3 (>=4.5:1). Chỉ nền navy đậm
+// mới dùng chữ trắng. (Trước đây nhiều nền sáng để chữ trắng ~1.9:1 — không đọc rõ.)
+const NAVY = '#0B2138';
 const COLORS: { bg: string; text: string }[] = [
-  { bg: '#48BBE2', text: '#fff' },   // primary sky blue
+  { bg: '#48BBE2', text: NAVY },     // primary sky blue
   { bg: '#102F4B', text: '#fff' },   // navy
-  { bg: '#4ECDC4', text: '#fff' },   // teal
-  { bg: '#96CEB4', text: '#fff' },   // sage green
-  { bg: '#DDA0DD', text: '#fff' },   // plum
-  { bg: '#FF6B6B', text: '#fff' },   // coral
-  { bg: '#F7DC6F', text: '#102F4B' },// gold
-  { bg: '#BB8FCE', text: '#fff' },   // lavender
-  { bg: '#85C1E9', text: '#102F4B' },// light blue
-  { bg: '#A3E4D7', text: '#102F4B' },// mint
+  { bg: '#4ECDC4', text: NAVY },     // teal
+  { bg: '#96CEB4', text: NAVY },     // sage green
+  { bg: '#DDA0DD', text: NAVY },     // plum
+  { bg: '#FF6B6B', text: NAVY },     // coral
+  { bg: '#F7DC6F', text: NAVY },     // gold
+  { bg: '#BB8FCE', text: NAVY },     // lavender
+  { bg: '#85C1E9', text: NAVY },     // light blue
+  { bg: '#A3E4D7', text: NAVY },     // mint
 ];
 
 function getInitials(name: string): string {

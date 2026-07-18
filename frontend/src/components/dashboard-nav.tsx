@@ -35,10 +35,11 @@ export function DashboardNav({
 }) {
   const pathname = usePathname();
 
+  // Ví/Nạp tiền là tính năng theo CÔNG TY (của thợ) — không hiện cho khách hàng
+  // để tránh lệch persona ("Tạo công ty để bắt đầu").
   const items: NavItem[] = [
     ...COMMON,
-    ...(isContractor ? CONTRACTOR_ITEMS : [CUSTOMER_BECOME]),
-    ...FINANCE,
+    ...(isContractor ? [...CONTRACTOR_ITEMS, ...FINANCE] : [CUSTOMER_BECOME]),
   ];
 
   // Only show "Hồ sơ của tôi" if actually has a company

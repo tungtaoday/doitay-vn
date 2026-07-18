@@ -323,38 +323,38 @@ export function CompanyForm({
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                           <div>
                             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Họ và Tên</label>
-                            <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary" />
+                            <input aria-label="Họ và Tên" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary" />
                             <p className="mt-1 text-[0.75rem] text-secondary">Đã điền từ đăng ký</p>
                           </div>
                           <div>
                             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Số điện thoại</label>
-                            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))} maxLength={11} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary" />
+                            <input aria-label="Số điện thoại" type="tel" value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))} maxLength={11} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary" />
                             {phone && <p className="mt-1 text-[0.75rem] text-secondary">Đã điền từ đăng ký</p>}
                           </div>
                         </div>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                           <div>
                             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Tên Thợ / Doanh nghiệp</label>
-                            <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} maxLength={255} placeholder="VD: Thợ điện nước Minh Anh" className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary" />
+                            <input aria-label="Tên Thợ / Doanh nghiệp" type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} maxLength={255} placeholder="VD: Thợ điện nước Minh Anh" className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary" />
                             <p className="mt-1 text-[0.75rem] text-secondary">Bỏ trống sẽ tự động lấy từ Họ tên</p>
                           </div>
                           <div>
                             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Email liên hệ</label>
-                            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary" />
+                            <input aria-label="Email liên hệ" type="text" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary" />
                             {email && <p className="mt-1 text-[0.75rem] text-secondary">Đã điền từ đăng ký</p>}
                           </div>
                         </div>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                           <div>
                             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Ngành nghề chính</label>
-                            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary">
+                            <select aria-label="Ngành nghề chính" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary">
                               <option value="">— Chọn ngành nghề —</option>
                               {categories.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
                             </select>
                           </div>
                           <div>
                             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Số năm kinh nghiệm</label>
-                            <input type="number" value={experience} onChange={(e) => setExperience(e.target.value)} min={0} max={100} placeholder="VD: 8" className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary" />
+                            <input aria-label="Số năm kinh nghiệm" type="number" value={experience} onChange={(e) => setExperience(e.target.value)} min={0} max={100} placeholder="VD: 8" className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary" />
                           </div>
                         </div>
                         <div>
@@ -516,7 +516,7 @@ export function CompanyForm({
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                           <div>
                             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Tỉnh / Thành phố</label>
-                            <select value={cityCode} onChange={(e) => handleCityChange(e.target.value)} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary">
+                            <select aria-label="Tỉnh / Thành phố" value={cityCode} onChange={(e) => handleCityChange(e.target.value)} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary">
                               <option value="">— Chọn tỉnh/thành —</option>
                               {cities.map((c) => (<option key={c.code} value={c.code}>{c.name}</option>))}
                             </select>
@@ -524,7 +524,7 @@ export function CompanyForm({
                           </div>
                           <div>
                             <label className="mb-2 block text-[1rem] font-bold text-on-surface">Quận / Huyện</label>
-                            <select value={districtCode} onChange={(e) => handleDistrictChange(e.target.value)} disabled={!cityCode} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary disabled:opacity-60">
+                            <select aria-label="Quận / Huyện" value={districtCode} onChange={(e) => handleDistrictChange(e.target.value)} disabled={!cityCode} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary disabled:opacity-60">
                               <option value="">— Chọn quận/huyện —</option>
                               {districts.map((d) => (<option key={d.code} value={d.code}>{d.name}</option>))}
                             </select>
@@ -532,7 +532,7 @@ export function CompanyForm({
                         </div>
                         <div>
                           <label className="mb-2 block text-[1rem] font-bold text-on-surface">Phường / Xã</label>
-                          <select value={wardCode} onChange={(e) => setWardCode(e.target.value)} disabled={!districtCode} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary disabled:opacity-60">
+                          <select aria-label="Phường / Xã" value={wardCode} onChange={(e) => setWardCode(e.target.value)} disabled={!districtCode} className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary disabled:opacity-60">
                             <option value="">— Chọn phường/xã —</option>
                             {wards.map((w) => (<option key={w.code} value={w.code}>{w.name}</option>))}
                           </select>

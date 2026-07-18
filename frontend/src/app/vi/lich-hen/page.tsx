@@ -27,7 +27,29 @@ export default async function MyAppointmentsPage({
       </h1>
 
       {res.data.length === 0 ? (
-        <p className="text-on-surface-variant">Bạn chưa có lịch hẹn nào.</p>
+        <div className="flex flex-col items-center rounded-3xl border border-dashed border-outline-variant/60 bg-surface-container-lowest px-6 py-16 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+            <span className="material-symbols-outlined text-3xl text-primary">event_available</span>
+          </div>
+          <h2 className="font-headline text-xl font-bold text-on-surface">Bạn chưa có lịch hẹn nào</h2>
+          <p className="mt-2 max-w-sm text-on-surface-variant">
+            Tạo yêu cầu để được thợ báo giá, hoặc tìm thợ trong khu vực và đặt lịch trực tiếp.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href={'/yeu-cau' as Route}
+              className="rounded-xl bg-primary px-6 py-3 font-headline font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95"
+            >
+              Tạo yêu cầu
+            </Link>
+            <Link
+              href="/tho"
+              className="rounded-xl border border-outline-variant/40 px-6 py-3 font-headline font-bold text-on-surface transition-colors hover:bg-surface-container-low"
+            >
+              Tìm thợ
+            </Link>
+          </div>
+        </div>
       ) : (
         <div className="space-y-4">
           {res.data.map((apt) => (
