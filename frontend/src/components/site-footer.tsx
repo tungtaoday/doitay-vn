@@ -94,8 +94,12 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-8 text-center text-xs text-on-surface-variant md:px-8">
-        © {new Date().getFullYear()} {settings.site_name} — Kết nối bàn tay Thợ tài hoa.
+      <div className="mx-auto max-w-7xl space-y-1 px-6 py-8 text-center text-xs text-on-surface-variant md:px-8">
+        <p>© {new Date().getFullYear()} {settings.site_name} — Kết nối bàn tay Thợ tài hoa.</p>
+        {/* Ràng buộc pháp nhân công khai — phục vụ xác minh thương hiệu (Zalo/OA). */}
+        <p className="text-outline">
+          Doitay.vn là sản phẩm vận hành bởi Hộ kinh doanh Ground Truth.
+        </p>
       </div>
     </footer>
   );
