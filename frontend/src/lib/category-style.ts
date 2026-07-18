@@ -14,25 +14,27 @@ export interface CategoryStyle {
   chip: string;
   /** Chỉ màu icon — dùng khi icon đặt trên nền khác (vd thẻ bento lớn) */
   fg: string;
+  /** Nền HOVER: tông -50 nhạt của ĐÚNG màu nghề (dùng cho thẻ danh mục khi rê chuột) */
+  soft: string;
 }
 
 // Thứ tự QUAN TRỌNG: luật hẹp trước luật rộng.
 // 'điều hòa' / 'điện lạnh' phải đứng TRƯỚC luật 'điện' chung.
 const RULES: Array<{ test: RegExp; style: CategoryStyle }> = [
-  { test: /điều\s*hòa|điều\s*hoà|máy\s*lạnh|điện\s*lạnh|vrv|vrf/, style: { icon: 'ac_unit',                chip: 'bg-cyan-100 text-cyan-600',       fg: 'text-cyan-600' } },
-  { test: /nước|đường\s*ống|thông\s*tắc|bồn|cấp\s*thoát/,          style: { icon: 'water_drop',            chip: 'bg-blue-100 text-blue-600',       fg: 'text-blue-600' } },
-  { test: /hàn|cơ\s*khí|sắt\s*thép/,                               style: { icon: 'local_fire_department', chip: 'bg-red-100 text-red-600',         fg: 'text-red-600' } },
-  { test: /mộc|đồ\s*gỗ|nội\s*thất/,                                style: { icon: 'chair',                 chip: 'bg-[#EFE1CE] text-[#96602B]',     fg: 'text-[#96602B]' } },
-  { test: /ốp\s*lát|lát\s*gạch|ốp\b|gạch/,                         style: { icon: 'grid_view',             chip: 'bg-teal-100 text-teal-600',       fg: 'text-teal-600' } },
-  { test: /sơn|bả\s*matit|matit/,                                  style: { icon: 'format_paint',          chip: 'bg-violet-100 text-violet-600',   fg: 'text-violet-600' } },
-  { test: /vệ\s*sinh|dọn\s*dẹp|lau\s*dọn/,                         style: { icon: 'cleaning_services',     chip: 'bg-emerald-100 text-emerald-600', fg: 'text-emerald-600' } },
-  { test: /xây|thợ\s*hồ|trát/,                                     style: { icon: 'construction',          chip: 'bg-orange-100 text-orange-600',   fg: 'text-orange-600' } },
+  { test: /điều\s*hòa|điều\s*hoà|máy\s*lạnh|điện\s*lạnh|vrv|vrf/, style: { icon: 'ac_unit',                chip: 'bg-cyan-100 text-cyan-600',       fg: 'text-cyan-600',    soft: 'hover:bg-cyan-50' } },
+  { test: /nước|đường\s*ống|thông\s*tắc|bồn|cấp\s*thoát/,          style: { icon: 'water_drop',            chip: 'bg-blue-100 text-blue-600',       fg: 'text-blue-600',    soft: 'hover:bg-blue-50' } },
+  { test: /hàn|cơ\s*khí|sắt\s*thép/,                               style: { icon: 'local_fire_department', chip: 'bg-red-100 text-red-600',         fg: 'text-red-600',     soft: 'hover:bg-red-50' } },
+  { test: /mộc|đồ\s*gỗ|nội\s*thất/,                                style: { icon: 'chair',                 chip: 'bg-[#EFE1CE] text-[#96602B]',     fg: 'text-[#96602B]',   soft: 'hover:bg-[#F7F0E6]' } },
+  { test: /ốp\s*lát|lát\s*gạch|ốp\b|gạch/,                         style: { icon: 'grid_view',             chip: 'bg-teal-100 text-teal-600',       fg: 'text-teal-600',    soft: 'hover:bg-teal-50' } },
+  { test: /sơn|bả\s*matit|matit/,                                  style: { icon: 'format_paint',          chip: 'bg-violet-100 text-violet-600',   fg: 'text-violet-600',  soft: 'hover:bg-violet-50' } },
+  { test: /vệ\s*sinh|dọn\s*dẹp|lau\s*dọn/,                         style: { icon: 'cleaning_services',     chip: 'bg-emerald-100 text-emerald-600', fg: 'text-emerald-600', soft: 'hover:bg-emerald-50' } },
+  { test: /xây|thợ\s*hồ|trát/,                                     style: { icon: 'construction',          chip: 'bg-orange-100 text-orange-600',   fg: 'text-orange-600',  soft: 'hover:bg-orange-50' } },
   // Luật rộng nhất — mọi nghề còn lại có chữ 'điện' (Thợ Điện, điện dân dụng...).
-  { test: /điện/,                                                  style: { icon: 'bolt',                  chip: 'bg-amber-100 text-amber-600',     fg: 'text-amber-600' } },
+  { test: /điện/,                                                  style: { icon: 'bolt',                  chip: 'bg-amber-100 text-amber-600',     fg: 'text-amber-600',   soft: 'hover:bg-amber-50' } },
 ];
 
 // Sửa chữa tổng hợp / không rõ ngành → cờ-lê, tông trung tính.
-const FALLBACK: CategoryStyle = { icon: 'handyman', chip: 'bg-slate-200 text-slate-700', fg: 'text-slate-700' };
+const FALLBACK: CategoryStyle = { icon: 'handyman', chip: 'bg-slate-200 text-slate-700', fg: 'text-slate-700', soft: 'hover:bg-slate-50' };
 
 export function categoryStyle(name?: string | null): CategoryStyle {
   const n = (name ?? '').toLowerCase();

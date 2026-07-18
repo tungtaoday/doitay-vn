@@ -332,7 +332,7 @@ export default async function HomePage() {
                 <Reveal key={cat.id} delay={(i % 5) * 60}>
                   <Link
                     href={`/tho?category=${cat.id}` as Route}
-                    className="group flex h-full flex-col gap-5 rounded-4xl bg-surface-container-lowest p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-surface-container-highest md:p-7"
+                    className={`group flex h-full flex-col gap-5 rounded-4xl bg-surface-container-lowest p-6 transition-all duration-300 hover:-translate-y-1 ${style.soft} md:p-7`}
                   >
                     <div className={`flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${style.chip}`}>
                       <span className="material-symbols-outlined text-[28px]">{style.icon}</span>
