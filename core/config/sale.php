@@ -10,6 +10,10 @@ return [
     // Thưởng khi thợ chia sẻ hồ sơ cho khách (VND).
     'commission_share_bonus' => (int) env('SALE_COMMISSION_SHARE_BONUS', 10000),
 
+    // Thưởng KÍCH HOẠT: thợ do CTV tuyển xác nhận lịch hẹn ĐẦU TIÊN (VND).
+    // Đặt 0 để TẮT theo giai đoạn. Ref: sale-service-model.md §3.2.
+    'commission_activation' => (int) env('SALE_COMMISSION_ACTIVATION', 20000),
+
     // Category mặc định khi không match được nghề của submission.
     'default_category_id' => (int) env('SALE_DEFAULT_CATEGORY_ID', 1),
 

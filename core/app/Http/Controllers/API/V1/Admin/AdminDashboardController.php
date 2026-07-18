@@ -64,6 +64,33 @@ class AdminDashboardController extends Controller
                          SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) as completed")
             ->where('created_at', '>=', $from)->groupBy('thang')->get());
 
+        // ── PHỄU CẦU (khách) ──
+        $khach = $byMonth(DB::table('users')
+            ->selectRaw("DATE_FORMAT(created_at,'%Y-%m') as thang, COUNT(*) as n")
+            ->where('created_at', '>=', $from)->groupBy('thang')->get());
+
+        $yeuCau = $byMonth(DB::table('service_requests')
+            ->selectRaw("DATE_FORMAT(created_at,'%Y-%m') as thang, COUNT(*) as tao,
+                         SUM(CASE WHEN selected_appointment_id IS NOT NULL THEN 1 ELSE 0 END) as thanh_lich")
+            ->where('created_at', '>=', $from)->groupBy('thang')->get());
+
+        // ── KÍCH HOẠT: công ty có lịch confirmed ĐẦU TIÊN trong tháng ──
+        $kichHoat = $byMonth(DB::table('appointments')
+            ->whereNotNull('confirmed_at')
+            ->selectRaw("company_id, MIN(confirmed_at) as first_at")
+            ->groupBy('company_id')
+            ->havingRaw('MIN(confirmed_at) >= ?', [$from])
+            ->get()
+            ->groupBy(fn ($r) => substr((string) $r->first_at, 0, 7))
+            ->map(fn ($g, $k) => (object) ['thang' => $k, 'n' => $g->count()])
+            ->values());
+
+        // Thợ CÓ VIỆC trong tháng (proxy "thợ sống")
+        $coViec = $byMonth(DB::table('appointments')
+            ->whereNotNull('confirmed_at')
+            ->selectRaw("DATE_FORMAT(confirmed_at,'%Y-%m') as thang, COUNT(DISTINCT company_id) as n")
+            ->where('confirmed_at', '>=', $from)->groupBy('thang')->get());
+
         $out = [];
         for ($i = $months - 1; $i >= 0; $i--) {
             $t = now()->startOfMonth()->subMonths($i)->format('Y-m');
@@ -78,6 +105,12 @@ class AdminDashboardController extends Controller
                 'lich_tao'       => (int) ($lich[$t]->tao ?? 0),
                 'lich_confirmed' => (int) ($lich[$t]->confirmed ?? 0),
                 'lich_completed' => (int) ($lich[$t]->completed ?? 0),
+                // Phễu cầu + kích hoạt
+                'khach_moi'        => (int) ($khach[$t]->n ?? 0),
+                'yeu_cau_tao'      => (int) ($yeuCau[$t]->tao ?? 0),
+                'yeu_cau_thanh_lich' => (int) ($yeuCau[$t]->thanh_lich ?? 0),
+                'tho_kich_hoat'    => (int) ($kichHoat[$t]->n ?? 0),
+                'tho_co_viec'      => (int) ($coViec[$t]->n ?? 0),
             ];
         }
 
@@ -87,6 +120,17 @@ class AdminDashboardController extends Controller
                 'hoa_hong_chua_tra_toan_bo' => (float) DB::table('commissions')->whereNull('paid_at')->sum('so_tien'),
                 'tho_dang_hoat_dong' => (int) DB::table('companies')->where('status', \App\Constants\Status::APPROVED)->count(),
                 'tong_vi_ao_dang_no' => (float) DB::table('company_wallets')->sum('balance'),
+                'tho_kich_hoat_luy_ke' => (int) DB::table('appointments')->whereNotNull('confirmed_at')->distinct()->count('company_id'),
+            ],
+            // Cấu hình GIAI ĐOẠN hiện tại (đọc từ .env qua config) — hiển thị để chủ luôn
+            // biết mình đang chạy tham số nào; đổi = sửa .env + config:cache.
+            'cau_hinh' => [
+                'lead_fee'             => (int) config('marketplace.lead_fee', 10000),
+                'welcome_credit'       => (int) config('marketplace.welcome_credit', 200000),
+                'show_contact_public'  => (bool) config('marketplace.show_contact', false),
+                'commission_base'      => (int) config('sale.commission_base', 30000),
+                'commission_share'     => (int) config('sale.commission_share_bonus', 10000),
+                'commission_activation' => (int) config('sale.commission_activation', 20000),
             ],
         ]);
     }

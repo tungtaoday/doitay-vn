@@ -175,8 +175,21 @@ class AppointmentService
         );
 
         $appointment->status = 'confirmed';
+        $appointment->confirmed_at = now();
         $appointment->customer_info_unlocked = true;
         $appointment->save();
+
+        // KÍCH HOẠT: đây là lịch confirmed ĐẦU TIÊN của thợ? → thưởng CTV (nếu có nguồn CTV).
+        $isFirstConfirm = Appointment::where('company_id', $company->id)
+            ->whereNotNull('confirmed_at')
+            ->count() === 1;
+        if ($isFirstConfirm) {
+            try {
+                app(CommissionService::class)->grantActivationBonus($company->id);
+            } catch (\Throwable $e) {
+                \Log::error('Activation bonus failed: ' . $e->getMessage(), ['company_id' => $company->id]);
+            }
+        }
 
         $this->statisticsService->incrementHires($company);
 
