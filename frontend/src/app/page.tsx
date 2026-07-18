@@ -53,21 +53,31 @@ const HOME_JSONLD = {
  * frontend/stitch/azure_professional/DESIGN.md.
  */
 
+// Màu theo tiến trình: bắt đầu (xanh dương) → chọn (vàng) → hoàn thành (xanh lá).
 const STEPS = [
   {
     icon: 'post_add',
     title: 'Tạo yêu cầu',
     desc: 'Mô tả chi tiết công việc bạn cần thực hiện và đặt lịch hẹn.',
+    tile: 'bg-sky-500',
+    label: 'text-sky-600',
+    num: 'text-sky-500/[0.12]',
   },
   {
     icon: 'how_to_reg',
     title: 'Chọn thợ',
     desc: 'Xem hồ sơ năng lực và đánh giá từ cộng đồng.',
+    tile: 'bg-amber-500',
+    label: 'text-amber-600',
+    num: 'text-amber-500/[0.12]',
   },
   {
     icon: 'task_alt',
     title: 'Hoàn thành',
     desc: 'Thanh toán trực tiếp cho thợ không qua bất cứ bên nào.',
+    tile: 'bg-emerald-500',
+    label: 'text-emerald-600',
+    num: 'text-emerald-500/[0.12]',
   },
 ] as const;
 
@@ -280,12 +290,12 @@ export default async function HomePage() {
             {STEPS.map((step, i) => (
               <Reveal key={step.title} delay={i * 120} className="relative h-full">
                 <div className="group relative h-full overflow-hidden rounded-3xl bg-surface-container-lowest p-8 shadow-soft ring-1 ring-outline-variant/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-ambient">
-                  {/* Số bước lớn — watermark */}
-                  <span className="pointer-events-none absolute -right-1 -top-5 font-headline text-8xl font-black text-primary/[0.08]">
+                  {/* Số bước lớn — watermark, theo màu bước */}
+                  <span className={`pointer-events-none absolute -right-1 -top-5 font-headline text-8xl font-black ${step.num}`}>
                     0{i + 1}
                   </span>
-                  {/* Icon tile primary */}
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-on-primary shadow-ambient transition-transform duration-300 group-hover:scale-105">
+                  {/* Icon tile — màu riêng theo tiến trình */}
+                  <div className={`relative flex h-16 w-16 items-center justify-center rounded-2xl text-white shadow-ambient transition-transform duration-300 group-hover:scale-105 ${step.tile}`}>
                     <span
                       className="material-symbols-outlined text-[2rem]"
                       style={{ fontVariationSettings: "'FILL' 1" }}
@@ -293,7 +303,7 @@ export default async function HomePage() {
                       {step.icon}
                     </span>
                   </div>
-                  <p className="relative mt-6 text-sm font-bold uppercase tracking-wide text-primary">
+                  <p className={`relative mt-6 text-sm font-bold uppercase tracking-wide ${step.label}`}>
                     Bước {i + 1}
                   </p>
                   <h3 className="relative mt-1 font-headline text-xl font-bold text-on-surface">
