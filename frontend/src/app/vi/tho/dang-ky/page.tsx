@@ -30,17 +30,18 @@ export default async function RegisterExpertPage() {
 
   const defaultCityCode = cities.find((c) => c.name === user.location.city)?.code ?? '';
 
+  // Form chảy trong layout /vi bình thường (header + DashboardNav phía trên).
+  // Trước đây bọc `fixed inset-0` (thiết kế full-screen cũ) → stepper chui
+  // xuống dưới header, layout vỡ.
   return (
-    <div className="fixed inset-0 z-30 overflow-auto bg-surface">
-      <CompanyForm
-        categories={categories}
-        cities={cities}
-        defaultName={user.name}
-        defaultEmail={user.email}
-        defaultPhone={user.mobile ?? ''}
-        defaultCityCode={defaultCityCode}
-        defaultAddress={user.location.address ?? ''}
-      />
-    </div>
+    <CompanyForm
+      categories={categories}
+      cities={cities}
+      defaultName={user.name}
+      defaultEmail={user.email}
+      defaultPhone={user.mobile ?? ''}
+      defaultCityCode={defaultCityCode}
+      defaultAddress={user.location.address ?? ''}
+    />
   );
 }
