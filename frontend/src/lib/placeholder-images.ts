@@ -11,7 +11,9 @@ const PLACEHOLDER_IMAGES: Record<string, string> = {
 /** Returns true for seed/stock images that should be replaced with profession-specific placeholders */
 export function isSeedImage(url?: string | null): boolean {
   if (!url) return true;
-  return url.includes('unsplash.com');
+  // unsplash = ảnh stock seed; pravatar / URL lồng protocol = dữ liệu seed hỏng (404)
+  // → đều thay bằng ảnh ngành nghề để không bao giờ hiện khung ảnh vỡ.
+  return url.includes('unsplash.com') || /pravatar|\/https?:\/\//i.test(url.slice(1));
 }
 
 /**
