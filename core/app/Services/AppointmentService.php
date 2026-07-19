@@ -100,11 +100,16 @@ class AppointmentService
         $totalBalance = $wallets->sum(fn ($c) => $c->wallet?->balance ?? 0);
         $pendingCount = $appointments->where('status', 'pending')->count();
 
+        // Phí lead từ config — trước đây hardcode 50000 trong khi phí trừ thật là
+        // marketplace.lead_fee (10k) → báo sai chi phí cho thợ gấp 5 lần.
+        $leadFee = (int) config('marketplace.lead_fee', 10000);
+
         return [
             'total_balance' => (float) $totalBalance,
             'pending_count' => $pendingCount,
-            'pending_cost' => $pendingCount * 50000,
-            'can_afford_all' => $totalBalance >= ($pendingCount * 50000),
+            'lead_fee' => $leadFee,
+            'pending_cost' => $pendingCount * $leadFee,
+            'can_afford_all' => $totalBalance >= ($pendingCount * $leadFee),
             'confirmed_this_month' => $appointments
                 ->where('status', 'confirmed')
                 ->where('created_at', '>=', now()->startOfMonth())

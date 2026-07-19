@@ -338,6 +338,8 @@ export interface ThoAppointment {
 export interface ThoAppointmentStats {
   total_balance: number;
   pending_count: number;
+  /** Phí lead hiện hành (config backend) — dùng hiển thị, không hardcode ở FE. */
+  lead_fee?: number;
   pending_cost: number;
   can_afford_all: boolean;
   confirmed_this_month: number;

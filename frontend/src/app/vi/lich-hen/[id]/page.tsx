@@ -1,17 +1,29 @@
+import Link from 'next/link';
+import type { Route } from 'next';
 import { notFound } from 'next/navigation';
-import { getMyAppointment, getAppointmentRating } from '@/lib/appointments';
+import { getMyAppointment, getAppointmentRating, getCategoryFeatures } from '@/lib/appointments';
 import { formatDateTime } from '@/lib/format';
-import { ApiError } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
+import type { DetailEnvelope, PublicCompanyDetail, RatingFeature } from '@/lib/api-types';
+import { AppointmentStatusBadge } from '@/components/appointment-status';
 import { AppointmentActions } from './appointment-actions';
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  confirmed: 'bg-blue-100 text-blue-800',
-  completed: 'bg-green-100 text-green-800',
-  canceled: 'bg-red-100 text-red-800',
-};
-
 export const metadata = { title: 'Chi tiết lịch hẹn' };
+
+/** Hàng thông tin có icon — ngôn ngữ chung của design system. */
+function InfoRow({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-start gap-3.5">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+        <span className="material-symbols-outlined text-[1.25rem] text-primary">{icon}</span>
+      </span>
+      <div className="min-w-0">
+        <p className="text-xs font-medium uppercase tracking-wide text-on-surface-variant">{label}</p>
+        <div className="mt-0.5 font-medium text-on-surface">{children}</div>
+      </div>
+    </div>
+  );
+}
 
 export default async function AppointmentDetailPage({
   params,
@@ -31,68 +43,94 @@ export default async function AppointmentDetailPage({
   }
 
   let existingRating = null;
+  let features: RatingFeature[] = [];
   if (appointment.status === 'completed') {
     try {
       const rRes = await getAppointmentRating(numId);
       existingRating = rRes.data;
     } catch {
-      // ignore
+      // chưa có đánh giá
+    }
+    // Tải tiêu chí đánh giá theo nghề Ở SERVER (đúng quy ước: mọi fetch qua lib/api).
+    if (!existingRating && appointment.company.id) {
+      try {
+        const co = await api<DetailEnvelope<PublicCompanyDetail>>(
+          `/public/companies/${appointment.company.id}`,
+        );
+        if (co.data.category?.id) {
+          const f = await getCategoryFeatures(co.data.category.id);
+          features = f.data;
+        }
+      } catch {
+        // không có tiêu chí → form chỉ còn nhận xét
+      }
     }
   }
 
   return (
     <>
-      <h1 className="mb-8 font-headline text-3xl font-bold text-on-surface">
-        Chi tiết lịch hẹn #{appointment.id}
-      </h1>
+      {/* Breadcrumb quay lại */}
+      <Link
+        href={'/vi/lich-hen' as Route}
+        className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+      >
+        <span className="material-symbols-outlined text-[1.125rem]">arrow_back</span>
+        Lịch hẹn của tôi
+      </Link>
 
-      <div className="mb-8 rounded-2xl bg-surface-container-lowest p-8">
-        <div className="mb-6 flex items-center gap-4">
-          <span
-            className={`rounded-full px-4 py-1 text-sm font-bold ${STATUS_COLORS[appointment.status] ?? 'bg-gray-100'}`}
-          >
-            {appointment.status_label}
+      {/* Header */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-on-primary shadow-ambient">
+            <span className="material-symbols-outlined text-[1.75rem]" style={{ fontVariationSettings: "'FILL' 1" }}>
+              calendar_month
+            </span>
           </span>
-          <span className="text-sm text-outline">{formatDateTime(appointment.created_at)}</span>
+          <div>
+            <h1 className="font-headline text-2xl font-bold text-on-surface">
+              Lịch hẹn #{appointment.id}
+            </h1>
+            <p className="text-sm text-on-surface-variant">
+              Tạo lúc {formatDateTime(appointment.created_at)}
+            </p>
+          </div>
         </div>
+        <AppointmentStatusBadge status={appointment.status} label={appointment.status_label} size="md" />
+      </div>
 
-        <dl className="grid gap-6 md:grid-cols-2">
-          <div>
-            <dt className="text-sm font-medium text-on-surface-variant">Thợ</dt>
-            <dd className="mt-1 text-lg font-bold text-on-surface">{appointment.company.name}</dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium text-on-surface-variant">Ngày hẹn</dt>
-            <dd className="mt-1 text-lg text-on-surface">
-              {appointment.appointment_date} — {appointment.appointment_time}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium text-on-surface-variant">Người nhận</dt>
-            <dd className="mt-1 text-on-surface">{appointment.recipient_name}</dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium text-on-surface-variant">Điện thoại</dt>
-            <dd className="mt-1 text-on-surface">{appointment.recipient_phone}</dd>
-          </div>
+      {/* Thông tin */}
+      <div className="mb-8 rounded-3xl bg-surface-container-lowest p-6 shadow-soft ring-1 ring-outline-variant/10 md:p-8">
+        <div className="grid gap-6 md:grid-cols-2">
+          <InfoRow icon="engineering" label="Thợ">
+            {appointment.company.id ? (
+              <Link href={`/tho/${appointment.company.id}` as Route} className="font-bold text-primary hover:underline">
+                {appointment.company.name}
+              </Link>
+            ) : (
+              appointment.company.name
+            )}
+          </InfoRow>
+          <InfoRow icon="event" label="Thời gian hẹn">
+            {appointment.appointment_date} — {appointment.appointment_time}
+          </InfoRow>
+          <InfoRow icon="person" label="Người nhận">{appointment.recipient_name}</InfoRow>
+          <InfoRow icon="call" label="Điện thoại">{appointment.recipient_phone}</InfoRow>
           <div className="md:col-span-2">
-            <dt className="text-sm font-medium text-on-surface-variant">Địa chỉ</dt>
-            <dd className="mt-1 text-on-surface">{appointment.recipient_address}</dd>
+            <InfoRow icon="location_on" label="Địa chỉ">{appointment.recipient_address}</InfoRow>
           </div>
-          {appointment.notes && (
+          {appointment.notes ? (
             <div className="md:col-span-2">
-              <dt className="text-sm font-medium text-on-surface-variant">Ghi chú</dt>
-              <dd className="mt-1 text-on-surface">{appointment.notes}</dd>
+              <InfoRow icon="sticky_note_2" label="Ghi chú">{appointment.notes}</InfoRow>
             </div>
-          )}
-        </dl>
+          ) : null}
+        </div>
       </div>
 
       <AppointmentActions
         appointmentId={appointment.id}
-        companyId={appointment.company.id ?? 0}
         status={appointment.status}
         hasRating={!!existingRating}
+        features={features}
       />
     </>
   );

@@ -35,7 +35,7 @@ class ThoAppointmentResource extends JsonResource
             'can_confirm' => $this->status === 'pending',
             'can_complete' => $this->status === 'confirmed',
             'can_cancel' => $this->status === 'pending',
-            'confirm_fee' => $this->status === 'pending' ? 50000 : null,
+            'confirm_fee' => $this->status === 'pending' ? (int) config('marketplace.lead_fee', 10000) : null,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

@@ -26,7 +26,9 @@ export function ThoActions({
 
   function handle(action: 'confirm' | 'complete' | 'cancel') {
     const labels = {
-      confirm: `Xác nhận lịch hẹn? Phí ${formatVND(confirmFee ?? 50000)} sẽ được trừ từ ví.`,
+      confirm: confirmFee
+        ? `Xác nhận lịch hẹn? Phí ${formatVND(confirmFee)} sẽ được trừ từ ví.`
+        : 'Xác nhận lịch hẹn này?',
       complete: 'Đánh dấu lịch hẹn đã hoàn thành?',
       cancel: 'Bạn chắc chắn muốn huỷ lịch hẹn này?',
     };
@@ -52,9 +54,10 @@ export function ThoActions({
             type="button"
             onClick={() => handle('confirm')}
             disabled={isPending}
-            className="rounded-xl bg-primary px-6 py-3 font-bold text-on-primary transition-all hover:opacity-90 disabled:opacity-50"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-xl bg-primary px-7 font-headline font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-50"
           >
-            {isPending ? 'Đang xử lý...' : `Xác nhận (${formatVND(confirmFee ?? 50000)})`}
+            <span className="material-symbols-outlined text-[1.25rem]">event_available</span>
+            {isPending ? 'Đang xử lý…' : confirmFee ? `Xác nhận (${formatVND(confirmFee)})` : 'Xác nhận'}
           </button>
         )}
 
@@ -63,9 +66,10 @@ export function ThoActions({
             type="button"
             onClick={() => handle('complete')}
             disabled={isPending}
-            className="rounded-xl bg-green-600 px-6 py-3 font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-xl bg-primary px-7 font-headline font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-50"
           >
-            {isPending ? 'Đang xử lý...' : 'Hoàn thành'}
+            <span className="material-symbols-outlined text-[1.25rem]">task_alt</span>
+            {isPending ? 'Đang xử lý…' : 'Hoàn thành'}
           </button>
         )}
 
@@ -74,9 +78,10 @@ export function ThoActions({
             type="button"
             onClick={() => handle('cancel')}
             disabled={isPending}
-            className="rounded-xl bg-error px-6 py-3 font-bold text-on-error transition-all hover:opacity-90 disabled:opacity-50"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-xl border border-error/30 px-6 font-headline font-bold text-error transition-colors hover:bg-error-container/40 disabled:opacity-50"
           >
-            {isPending ? 'Đang xử lý...' : 'Huỷ'}
+            <span className="material-symbols-outlined text-[1.25rem]">event_busy</span>
+            {isPending ? 'Đang xử lý…' : 'Huỷ'}
           </button>
         )}
       </div>

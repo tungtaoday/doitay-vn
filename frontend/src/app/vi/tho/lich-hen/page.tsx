@@ -2,13 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { getThoAppointments } from '@/lib/appointments';
 import { formatVND, formatDateTime } from '@/lib/format';
-
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  confirmed: 'bg-blue-100 text-blue-800',
-  completed: 'bg-green-100 text-green-800',
-  canceled: 'bg-red-100 text-red-800',
-};
+import { AppointmentStatusBadge } from '@/components/appointment-status';
 
 export const metadata = { title: 'Quản lý lịch hẹn — Thợ' };
 
@@ -41,8 +35,8 @@ export default async function ThoAppointmentsPage({
         </div>
       )}
 
-      {/* Filter */}
-      <div className="mb-6 flex flex-wrap gap-2">
+      {/* Filter — segmented pills đồng bộ với DashboardNav */}
+      <div className="mb-6 flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
         {[
           { value: '', label: 'Tất cả' },
           { value: 'pending', label: 'Chờ xác nhận' },
@@ -53,10 +47,10 @@ export default async function ThoAppointmentsPage({
           <Link
             key={f.value}
             href={`/vi/tho/lich-hen${f.value ? `?status=${f.value}` : ''}` as Route}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`flex min-h-[40px] shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm transition-all ${
               (status ?? '') === f.value
-                ? 'bg-primary text-on-primary'
-                : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
+                ? 'bg-primary font-bold text-on-primary shadow-ambient'
+                : 'bg-surface-container-lowest font-medium text-on-surface-variant ring-1 ring-outline-variant/15 hover:bg-surface-container-low hover:text-on-surface'
             }`}
           >
             {f.label}
@@ -66,35 +60,46 @@ export default async function ThoAppointmentsPage({
 
       {/* List */}
       {res.data.length === 0 ? (
-        <p className="text-on-surface-variant">Không có lịch hẹn nào.</p>
+        <div className="flex flex-col items-center rounded-3xl border border-dashed border-outline-variant/60 bg-surface-container-lowest px-6 py-14 text-center">
+          <span className="material-symbols-outlined mb-3 text-4xl text-outline">event_upcoming</span>
+          <p className="font-headline font-bold text-on-surface">Chưa có lịch hẹn nào</p>
+          <p className="mt-1 max-w-sm text-sm text-on-surface-variant">
+            Khi khách đặt lịch với bạn, lịch hẹn sẽ hiện ở đây kèm thông báo.
+          </p>
+        </div>
       ) : (
         <div className="space-y-4">
           {res.data.map((apt) => (
             <Link
               key={apt.id}
               href={`/vi/tho/lich-hen/${apt.id}` as Route}
-              className="flex items-center justify-between rounded-2xl bg-surface-container-lowest p-6 transition-shadow hover:shadow-ambient"
+              className="flex items-center gap-4 rounded-2xl bg-surface-container-lowest p-5 ring-1 ring-outline-variant/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-ambient md:p-6"
             >
-              <div className="space-y-1">
-                <p className="font-headline text-lg font-bold text-on-surface">
+              <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 sm:flex">
+                <span className="material-symbols-outlined text-primary">person</span>
+              </span>
+              <div className="min-w-0 flex-1 space-y-1">
+                <p className="truncate font-headline text-lg font-bold text-on-surface">
                   {apt.customer.name}
                 </p>
-                <p className="text-sm text-on-surface-variant">
+                <p className="flex items-center gap-1.5 text-sm text-on-surface-variant">
+                  <span className="material-symbols-outlined text-[1rem]">event</span>
                   {apt.appointment_date} — {apt.appointment_time}
                 </p>
                 {apt.customer_info_unlocked && (
-                  <p className="text-sm text-on-surface-variant">{apt.customer.phone}</p>
+                  <p className="flex items-center gap-1.5 text-sm text-on-surface-variant">
+                    <span className="material-symbols-outlined text-[1rem]">call</span>
+                    {apt.customer.phone}
+                  </p>
                 )}
               </div>
-              <div className="flex flex-col items-end gap-2">
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-bold ${STATUS_COLORS[apt.status] ?? 'bg-gray-100'}`}
-                >
-                  {apt.status_label}
-                </span>
-                {apt.can_confirm && (
-                  <span className="text-xs text-primary">Xác nhận: {formatVND(50000)}</span>
-                )}
+              <div className="flex shrink-0 flex-col items-end gap-2">
+                <AppointmentStatusBadge status={apt.status} label={apt.status_label} />
+                {apt.can_confirm && res.stats.lead_fee ? (
+                  <span className="text-xs font-semibold text-primary">
+                    Xác nhận: {formatVND(res.stats.lead_fee)}
+                  </span>
+                ) : null}
                 <span className="text-xs text-outline">
                   {formatDateTime(apt.created_at)}
                 </span>

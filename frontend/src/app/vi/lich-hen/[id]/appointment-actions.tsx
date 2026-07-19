@@ -1,23 +1,21 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { cancelAppointment, submitReview } from '../actions';
 import type { RatingFeature } from '@/lib/api-types';
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
-
 export function AppointmentActions({
   appointmentId,
-  companyId,
   status,
   hasRating,
+  features,
 }: {
   appointmentId: number;
-  companyId: number;
   status: string;
   hasRating: boolean;
+  /** Tiêu chí đánh giá theo nghề — tải sẵn ở server (page.tsx), không fetch client. */
+  features: RatingFeature[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -35,7 +33,9 @@ export function AppointmentActions({
   return (
     <div className="space-y-6">
       {error && (
-        <p className="rounded-xl bg-error-container p-4 text-error">{error}</p>
+        <p className="rounded-xl bg-error-container px-5 py-4 text-sm font-medium text-on-error-container">
+          {error}
+        </p>
       )}
 
       {status === 'pending' && (
@@ -43,19 +43,23 @@ export function AppointmentActions({
           type="button"
           onClick={handleCancel}
           disabled={isPending}
-          className="rounded-xl bg-error px-6 py-3 font-bold text-on-error transition-all hover:opacity-90 disabled:opacity-50"
+          className="inline-flex min-h-[48px] items-center gap-2 rounded-xl border border-error/30 px-6 font-headline font-bold text-error transition-colors hover:bg-error-container/40 disabled:opacity-50"
         >
-          {isPending ? 'Đang xử lý...' : 'Huỷ lịch hẹn'}
+          <span className="material-symbols-outlined text-[1.25rem]">event_busy</span>
+          {isPending ? 'Đang xử lý…' : 'Huỷ lịch hẹn'}
         </button>
       )}
 
       {status === 'completed' && !hasRating && (
-        <ReviewForm appointmentId={appointmentId} companyId={companyId} />
+        <ReviewForm appointmentId={appointmentId} features={features} />
       )}
 
       {hasRating && (
-        <p className="text-sm font-medium text-green-700">
-          Bạn đã đánh giá lịch hẹn này.
+        <p className="inline-flex items-center gap-2 rounded-xl bg-primary-container px-5 py-3.5 text-sm font-bold text-on-primary-container">
+          <span className="material-symbols-outlined text-[1.25rem]" style={{ fontVariationSettings: "'FILL' 1" }}>
+            check_circle
+          </span>
+          Bạn đã đánh giá lịch hẹn này. Cảm ơn bạn!
         </p>
       )}
     </div>
@@ -64,34 +68,16 @@ export function AppointmentActions({
 
 function ReviewForm({
   appointmentId,
-  companyId,
+  features,
 }: {
   appointmentId: number;
-  companyId: number;
+  features: RatingFeature[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [features, setFeatures] = useState<RatingFeature[]>([]);
   const [ratings, setRatings] = useState<Record<number, number>>({});
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
-
-  const loadFeatures = useCallback(async () => {
-    try {
-      const res = await fetch(`${API_BASE}/public/companies/${companyId}`)
-      const company = await res.json();
-      const catId = company?.data?.category?.id;
-      if (!catId) return;
-
-      const fRes = await fetch(`${API_BASE}/public/categories/${catId}/features`);
-      const fData = await fRes.json();
-      if (fData?.data) setFeatures(fData.data);
-    } catch {
-      // ignore
-    }
-  }, [companyId]);
-
-  useEffect(() => { loadFeatures(); }, [loadFeatures]);
 
   function handleSubmit() {
     if (!comment.trim()) { setError('Vui lòng nhập nhận xét.'); return; }
@@ -107,54 +93,73 @@ function ReviewForm({
   }
 
   return (
-    <div className="rounded-2xl bg-surface-container-lowest p-8">
-      <h2 className="mb-6 font-headline text-xl font-bold text-on-surface">
-        Đánh giá dịch vụ
-      </h2>
+    <div className="rounded-3xl bg-surface-container-lowest p-6 shadow-soft ring-1 ring-outline-variant/10 md:p-8">
+      <h2 className="mb-1 font-headline text-xl font-bold text-on-surface">Đánh giá dịch vụ</h2>
+      <p className="mb-6 text-sm text-on-surface-variant">
+        Đánh giá của bạn giúp thợ tốt được nhiều khách biết đến hơn.
+      </p>
 
       {error && (
-        <p className="mb-4 rounded-xl bg-error-container p-3 text-sm text-error">{error}</p>
+        <p className="mb-4 rounded-xl bg-error-container px-4 py-3 text-sm font-medium text-on-error-container">
+          {error}
+        </p>
       )}
 
       {features.length > 0 && (
-        <div className="mb-6 space-y-4">
+        <div className="mb-6 divide-y divide-outline-variant/10">
           {features.map((f) => (
-            <div key={f.id} className="flex items-center justify-between">
-              <span className="text-on-surface">{f.name}</span>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setRatings((r) => ({ ...r, [f.id]: star }))}
-                    className={`text-2xl ${
-                      (ratings[f.id] ?? 0) >= star ? 'text-yellow-500' : 'text-gray-300'
-                    }`}
-                  >
-                    ★
-                  </button>
-                ))}
+            <div key={f.id} className="flex items-center justify-between gap-4 py-3 first:pt-0">
+              <span className="font-medium text-on-surface">{f.name}</span>
+              <div className="flex" role="radiogroup" aria-label={`Chấm điểm ${f.name}`}>
+                {[1, 2, 3, 4, 5].map((star) => {
+                  const active = (ratings[f.id] ?? 0) >= star;
+                  return (
+                    <button
+                      key={star}
+                      type="button"
+                      role="radio"
+                      aria-checked={(ratings[f.id] ?? 0) === star}
+                      aria-label={`${star} sao`}
+                      onClick={() => setRatings((r) => ({ ...r, [f.id]: star }))}
+                      className="flex h-11 w-9 items-center justify-center transition-transform active:scale-90"
+                    >
+                      <span
+                        className={`material-symbols-outlined text-[1.75rem] transition-colors ${
+                          active ? 'text-tertiary' : 'text-outline-variant'
+                        }`}
+                        style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}
+                      >
+                        star
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
         </div>
       )}
 
+      <label htmlFor="review-comment" className="mb-2 block text-sm font-bold text-on-surface">
+        Nhận xét của bạn
+      </label>
       <textarea
+        id="review-comment"
         rows={3}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="Nhận xét của bạn về dịch vụ..."
-        className="mb-4 w-full rounded-xl border-none bg-surface-container-low px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/30"
+        placeholder="Thợ làm việc thế nào? Đúng giờ, đúng giá không?"
+        className="mb-5 w-full rounded-xl border-none bg-surface-container-low px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
 
       <button
         type="button"
         onClick={handleSubmit}
         disabled={isPending}
-        className="rounded-xl bg-primary px-6 py-3 font-bold text-on-primary transition-all hover:opacity-90 disabled:opacity-50"
+        className="inline-flex min-h-[48px] items-center gap-2 rounded-xl bg-primary px-7 font-headline font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-50"
       >
-        {isPending ? 'Đang gửi...' : 'Gửi đánh giá'}
+        <span className="material-symbols-outlined text-[1.25rem]">send</span>
+        {isPending ? 'Đang gửi…' : 'Gửi đánh giá'}
       </button>
     </div>
   );
