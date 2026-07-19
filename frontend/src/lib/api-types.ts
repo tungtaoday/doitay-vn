@@ -416,6 +416,8 @@ export interface SiteSettings {
     force_ssl: boolean;
   };
   contact: { support_email: string | null; phone: string | null };
+  /** Ưu đãi giai đoạn (config backend .env) — có thể vắng nếu backend cũ. */
+  incentives?: { welcome_credit: number };
   social: { google_enabled: boolean; facebook_enabled: boolean };
   zalo: {
     enabled: boolean;

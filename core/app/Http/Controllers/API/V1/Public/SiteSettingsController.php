@@ -55,6 +55,10 @@ class SiteSettingsController extends Controller
                         'support_email' => $shortcodes['support_email'] ?? null,
                         'phone'         => $gs?->zalo_phone ?? null,
                     ],
+                    // Ưu đãi giai đoạn (config .env) — FE hiển thị, không hardcode số.
+                    'incentives' => [
+                        'welcome_credit' => (int) config('marketplace.welcome_credit', 200000),
+                    ],
                     'social' => [
                         'google_enabled'   => $this->socialEnabled($socialiteCreds, 'google'),
                         'facebook_enabled' => $this->socialEnabled($socialiteCreds, 'facebook'),
