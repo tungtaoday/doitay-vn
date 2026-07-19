@@ -45,7 +45,7 @@ class AppointmentController extends Controller
             'pending' => Appointment::where('status', 'pending')->count(),
             'confirmed' => Appointment::where('status', 'confirmed')->count(),
             'completed' => Appointment::where('status', 'completed')->count(),
-            'cancelled' => Appointment::where('status', 'cancelled')->count(),
+            'cancelled' => Appointment::where('status', 'canceled')->count(),
             'today' => Appointment::whereDate('created_at', today())->count(),
             'this_week' => Appointment::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
             'this_month' => Appointment::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count(),
@@ -85,7 +85,7 @@ class AppointmentController extends Controller
                     $query->where('status', 'completed');
                 },
                 'appointments as cancelled_appointments' => function($query) {
-                    $query->where('status', 'cancelled');
+                    $query->where('status', 'canceled');
                 }
             ])
             ->with('wallet')
@@ -151,7 +151,7 @@ class AppointmentController extends Controller
                     $query->where('status', 'completed');
                 },
                 'appointments as cancelled_appointments' => function($query) {
-                    $query->where('status', 'cancelled');
+                    $query->where('status', 'canceled');
                 }
             ])
             ->with(['wallet', 'user'])
@@ -294,7 +294,7 @@ class AppointmentController extends Controller
             ]);
         }
         
-        if ($appointment->status === 'cancelled') {
+        if ($appointment->status === 'canceled') {
             $timeline->push([
                 'type' => 'cancelled',
                 'title' => 'Đã hủy',

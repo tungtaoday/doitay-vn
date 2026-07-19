@@ -12,6 +12,15 @@ const STATUS_STYLE: Record<string, { cls: string; icon: string }> = {
 
 const FALLBACK = { cls: 'bg-surface-container-highest text-on-surface', icon: 'help' };
 
+// Nhãn dự phòng khi API trả status_label rỗng (dữ liệu cũ trước khi fix enum).
+const LABEL_FALLBACK: Record<string, string> = {
+  pending: 'Chờ xác nhận',
+  confirmed: 'Đã xác nhận',
+  completed: 'Hoàn thành',
+  canceled: 'Đã huỷ',
+  cancelled: 'Đã huỷ',
+};
+
 export function AppointmentStatusBadge({
   status,
   label,
@@ -21,7 +30,8 @@ export function AppointmentStatusBadge({
   label: string;
   size?: 'sm' | 'md';
 }) {
-  const s = STATUS_STYLE[status] ?? FALLBACK;
+  const s = STATUS_STYLE[status] ?? STATUS_STYLE[status === 'cancelled' ? 'canceled' : ''] ?? FALLBACK;
+  const text = label || LABEL_FALLBACK[status] || 'Không rõ';
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full font-bold ${s.cls} ${
@@ -34,7 +44,7 @@ export function AppointmentStatusBadge({
       >
         {s.icon}
       </span>
-      {label}
+      {text}
     </span>
   );
 }
