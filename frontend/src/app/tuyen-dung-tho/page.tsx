@@ -248,7 +248,7 @@ export default async function TuyenDungThoPage() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             {/* Bước 1 */}
             <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-surface-container-highest p-8 md:p-10 lg:col-span-4">
-              <span className="pointer-events-none absolute -right-4 -top-6 font-headline text-9xl font-black text-on-surface/5">
+              <span aria-hidden="true" className="pointer-events-none absolute -right-4 -top-6 font-headline text-9xl font-black text-on-surface/5">
                 1
               </span>
               <div className="relative z-10 space-y-3">
@@ -288,7 +288,7 @@ export default async function TuyenDungThoPage() {
 
             {/* Bước 2 */}
             <div className="group relative flex flex-col items-center gap-8 overflow-hidden rounded-3xl bg-on-surface p-8 md:p-10 lg:col-span-8 lg:flex-row">
-              <span className="pointer-events-none absolute right-0 top-0 font-headline text-9xl font-black text-surface/5">
+              <span aria-hidden="true" className="pointer-events-none absolute right-0 top-0 font-headline text-9xl font-black text-surface/5">
                 2
               </span>
               <div className="relative z-10 flex-1 space-y-3">

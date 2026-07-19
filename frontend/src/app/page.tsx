@@ -281,7 +281,7 @@ export default async function HomePage() {
               <Reveal key={step.title} delay={i * 120} className="relative h-full">
                 <div className="group relative h-full overflow-hidden rounded-3xl bg-surface-container-lowest p-8 shadow-soft ring-1 ring-outline-variant/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-ambient">
                   {/* Số bước lớn — watermark tông brand */}
-                  <span className="pointer-events-none absolute -right-1 -top-5 font-headline text-8xl font-black text-primary/[0.08]">
+                  <span aria-hidden="true" className="pointer-events-none absolute -right-1 -top-5 font-headline text-8xl font-black text-primary/[0.08]">
                     0{i + 1}
                   </span>
                   {/* Icon tile — tông teal thương hiệu */}

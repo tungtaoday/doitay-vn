@@ -173,7 +173,7 @@ export default async function BecomeContractorPage() {
                   key={s.title}
                   className="group relative flex gap-4 overflow-hidden rounded-2xl bg-surface-container-lowest p-5 ring-1 ring-outline-variant/15 transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  <span className="pointer-events-none absolute -right-1 -top-4 font-headline text-6xl font-black text-primary/[0.07]">
+                  <span aria-hidden="true" className="pointer-events-none absolute -right-1 -top-4 font-headline text-6xl font-black text-primary/[0.07]">
                     0{i + 1}
                   </span>
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-on-primary">
