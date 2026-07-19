@@ -214,74 +214,70 @@ export function CompanyForm({
   const isSubmitting = isPending || uploading;
 
   return (
-    <div className="flex min-h-screen bg-surface">
-      {/* ===== SideNavBar (hidden mobile) ===== */}
-      <nav className="sticky top-0 hidden h-screen w-64 flex-col border-r border-outline-variant/15 bg-surface-container-lowest px-4 py-8 lg:flex">
-        <div className="mb-8">
-          <h2 className="font-headline text-[1.25rem] font-bold text-on-surface">Đăng ký thợ</h2>
-          <p className="mt-1 text-[0.875rem] text-secondary">Hoàn thành hồ sơ của bạn</p>
-        </div>
-        <div className="space-y-1">
+    <div className="mx-auto max-w-6xl">
+      {/* ===== Stepper ngang — nằm TRONG luồng trang, không đè header/nav ===== */}
+      <div className="mb-10">
+        <div className="flex items-center">
           {STEPS.map((s, i) => {
             const isActive = i === step;
             const isDone = i < step;
             return (
-              <button
-                key={s.key}
-                type="button"
-                onClick={() => setStep(i)}
-                className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left transition-all ${
-                  isActive
-                    ? 'border-r-4 border-primary bg-primary/5 font-bold text-primary'
-                    : isDone
-                      ? 'font-medium text-on-surface hover:bg-surface-container-low'
-                      : 'font-medium text-secondary hover:bg-surface-container-low hover:text-on-surface'
-                }`}
-              >
-                <span
-                  className="material-symbols-outlined text-[1.5rem]"
-                  style={isDone ? { fontVariationSettings: "'FILL' 1" } : undefined}
+              <div key={s.key} className={`flex items-center ${i > 0 ? 'flex-1' : ''}`}>
+                {i > 0 && (
+                  <div className={`mx-2 h-0.5 flex-1 rounded-full transition-colors md:mx-3 ${isDone || isActive ? 'bg-primary' : 'bg-outline-variant/30'}`} />
+                )}
+                <button
+                  type="button"
+                  onClick={() => setStep(i)}
+                  aria-current={isActive ? 'step' : undefined}
+                  className="group flex shrink-0 flex-col items-center gap-1.5"
                 >
-                  {isDone ? 'check_circle' : s.icon}
-                </span>
-                <span className="text-[1rem]">{s.label}</span>
-              </button>
+                  <span
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all ${
+                      isActive
+                        ? 'bg-primary text-on-primary shadow-ambient'
+                        : isDone
+                          ? 'bg-primary/15 text-primary'
+                          : 'bg-surface-container-lowest text-outline ring-1 ring-outline-variant/25 group-hover:text-on-surface'
+                    }`}
+                  >
+                    <span
+                      className="material-symbols-outlined text-[1.375rem]"
+                      style={isDone || isActive ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                    >
+                      {isDone ? 'check' : s.icon}
+                    </span>
+                  </span>
+                  <span
+                    className={`whitespace-nowrap text-xs font-semibold ${
+                      isActive ? 'text-primary' : isDone ? 'text-on-surface' : 'text-on-surface-variant'
+                    } ${isActive ? '' : 'hidden sm:block'}`}
+                  >
+                    {s.label}
+                  </span>
+                </button>
+              </div>
             );
           })}
         </div>
-        <div className="mt-auto pt-8">
-          <p className="mb-2 text-[0.75rem] font-bold text-secondary">Bước {step + 1} / {STEPS.length}</p>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-surface-container-highest">
-            <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
-          </div>
-        </div>
-      </nav>
-
-      {/* ===== Mobile step indicator ===== */}
-      <div className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between bg-surface-container-lowest px-6 py-4 lg:hidden">
-        <h2 className="font-headline text-[1.125rem] font-bold text-on-surface">Đăng ký thợ</h2>
-        <span className="text-[0.875rem] font-bold text-primary">Bước {step + 1}/{STEPS.length}</span>
       </div>
 
-      {/* ===== Main content ===== */}
-      <main className="flex-1 pt-16 lg:pt-0">
-        <div className="mx-auto max-w-5xl px-6 py-12 lg:px-12">
-          {/* Step header */}
-          <div className="mb-10">
-            <span className="text-[0.75rem] font-bold uppercase tracking-widest text-primary">Bước {step + 1}/{STEPS.length}</span>
-            <h1 className="mt-2 font-headline text-[2.5rem] font-bold text-on-surface">
-              {step === 0 && 'Thông tin cá nhân'}
-              {step === 1 && 'Chuyên môn & Dịch vụ'}
-              {step === 2 && 'Hình ảnh & Khu vực'}
-              {step === 3 && 'Kiểm tra & Gửi hồ sơ'}
-            </h1>
-            <p className="mt-2 text-[1.125rem] font-medium text-primary">
-              {step === 0 && 'Thông tin cơ bản để khách hàng biết bạn là ai.'}
-              {step === 1 && 'Hãy cho khách hàng biết bạn có thể giúp gì cho họ.'}
-              {step === 2 && 'Ảnh đại diện, dự án đã thực hiện và khu vực phục vụ.'}
-              {step === 3 && 'Xem lại thông tin trước khi gửi.'}
-            </p>
-          </div>
+      {/* Step header */}
+      <div className="mb-8">
+        <span className="text-xs font-bold uppercase tracking-widest text-primary">Bước {step + 1}/{STEPS.length}</span>
+        <h1 className="mt-1.5 font-headline text-3xl font-bold text-on-surface md:text-4xl">
+          {step === 0 && 'Thông tin cá nhân'}
+          {step === 1 && 'Chuyên môn & Dịch vụ'}
+          {step === 2 && 'Hình ảnh & Khu vực'}
+          {step === 3 && 'Kiểm tra & Gửi hồ sơ'}
+        </h1>
+        <p className="mt-2 text-lg text-on-surface-variant">
+          {step === 0 && 'Thông tin cơ bản để khách hàng biết bạn là ai.'}
+          {step === 1 && 'Hãy cho khách hàng biết bạn có thể giúp gì cho họ.'}
+          {step === 2 && 'Ảnh đại diện, dự án đã thực hiện và khu vực phục vụ.'}
+          {step === 3 && 'Xem lại thông tin trước khi gửi.'}
+        </p>
+      </div>
 
           {state && !state.ok && (
             <div className="mb-8 rounded-lg bg-error-container px-6 py-4 text-[1rem] font-medium text-on-error-container">
@@ -678,7 +674,8 @@ export function CompanyForm({
 
             {/* ===== Progress sidebar ===== */}
             <div className="hidden xl:col-span-4 xl:block">
-              <div className="sticky top-8 space-y-6">
+              {/* top-40 = dưới header (80px) + DashboardNav (~64px) + margin */}
+              <div className="sticky top-40 space-y-6">
                 <div className="rounded-xl bg-on-surface p-8">
                   <h4 className="mb-4 font-headline text-[1.25rem] font-bold text-white">Hồ sơ hoàn tất {progressPercent}%</h4>
                   <div className="mb-6 h-3 w-full overflow-hidden rounded-full bg-white/20">
@@ -718,8 +715,6 @@ export function CompanyForm({
               </div>
             </div>
           </div>
-        </div>
-      </main>
     </div>
   );
 }
