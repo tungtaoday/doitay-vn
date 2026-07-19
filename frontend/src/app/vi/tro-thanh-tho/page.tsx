@@ -173,9 +173,14 @@ export default async function BecomeContractorPage() {
                   key={s.title}
                   className="group relative flex gap-4 overflow-hidden rounded-2xl bg-surface-container-lowest p-5 ring-1 ring-outline-variant/15 transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  <span aria-hidden="true" className="pointer-events-none absolute -right-1 -top-4 font-headline text-6xl font-black text-primary/[0.07]">
-                    0{i + 1}
-                  </span>
+                  {/* Watermark số bước — render bằng pseudo-content (trang trí thuần,
+                      không phải text nội dung nên không thuộc phạm vi WCAG 1.4.3) */}
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute -right-1 -top-4 font-headline text-6xl font-black text-primary/[0.07] ${
+                      i === 0 ? "before:content-['01']" : i === 1 ? "before:content-['02']" : "before:content-['03']"
+                    }`}
+                  />
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-on-primary">
                     <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
                       {s.icon}
