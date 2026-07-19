@@ -82,7 +82,11 @@ class ServiceRequestResource extends JsonResource
                 'id' => $company->id,
                 'vanity_slug' => Str::slug($company->name),
                 'name' => $company->name,
-                'image' => $company->image,
+                // DB có thể lưu tên file thô — build full URL như CompanyResource,
+                // nếu không FE sẽ resolve tương đối thành URL rác (ảnh vỡ).
+                'image' => $company->image
+                    ? (str_starts_with($company->image, 'http') ? $company->image : asset('assets/images/company/' . $company->image))
+                    : null,
                 'category' => $company->category ? [
                     'id' => $company->category->id,
                     'name' => $company->category->name,
