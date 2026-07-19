@@ -6,6 +6,7 @@ import { ApiError } from '@/lib/api';
 import { requireUser } from '@/lib/require-user';
 import { getServiceRequest } from '@/lib/service-requests';
 import type { ServiceRequestMatch } from '@/lib/api-types';
+import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
 
 export const metadata: Metadata = {
   title: 'Thợ phù hợp với yêu cầu của bạn',
@@ -95,9 +96,20 @@ function MatchCard({
 
   return (
     <div className="flex flex-col gap-6 rounded-3xl bg-surface-container-lowest p-6 shadow-ambient md:flex-row md:items-center">
-      <div className="flex items-center gap-4 md:w-20 md:flex-col md:items-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-container font-headline text-2xl font-bold text-on-primary-container">
-          {rank}
+      <div className="flex items-center gap-4 md:w-24 md:flex-col md:items-center">
+        {/* Avatar thợ — ảnh thật, fallback ảnh theo ngành nghề */}
+        <div className="relative shrink-0">
+          <div className="h-20 w-20 overflow-hidden rounded-2xl bg-surface-container-low ring-1 ring-outline-variant/15">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={isSeedImage(company.image) ? getPlaceholderImage(company.category?.name, company.name) : company.image!}
+              alt={company.name}
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <span className="absolute -left-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-primary font-headline text-sm font-bold text-on-primary shadow-ambient">
+            {rank}
+          </span>
         </div>
         <div className="text-xs text-outline md:text-center">điểm {score}</div>
       </div>
