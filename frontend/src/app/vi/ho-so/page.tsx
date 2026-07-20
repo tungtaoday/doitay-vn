@@ -42,28 +42,32 @@ export default async function ProfilePage() {
     } catch { /* empty */ }
   }
 
+  // Container do layout /vi cung cấp (max-w-6xl px-6 py-10) — chỉ giới hạn bề
+  // ngang cho dễ đọc, KHÔNG bọc thêm padding (trước đây bị padding kép).
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10 md:px-8">
-      {/* Page header */}
-      <div className="mb-10 flex items-center gap-5">
-        <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-primary/10">
+    <div className="mx-auto max-w-4xl">
+      {/* Page header — cùng ngôn ngữ với trang lịch hẹn: tile + tiêu đề + phụ đề */}
+      <div className="mb-8 flex items-center gap-4">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary text-on-primary shadow-ambient">
           {user.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
           ) : (
-            <span className="material-symbols-outlined text-4xl text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span className="material-symbols-outlined text-[2rem]" style={{ fontVariationSettings: "'FILL' 1" }}>
               account_circle
             </span>
           )}
         </div>
-        <div>
-          <h1 className="font-headline text-[2rem] font-bold text-on-surface">{user.name}</h1>
-          <p className="mt-1 text-[1rem] text-secondary">
-            @{user.username ?? '—'}
+        <div className="min-w-0">
+          <h1 className="truncate font-headline text-2xl font-bold text-on-surface md:text-3xl">
+            {user.name}
+          </h1>
+          <p className="mt-0.5 flex flex-wrap items-center gap-x-3 text-sm text-on-surface-variant">
+            <span>@{user.username ?? '—'}</span>
             {user.has_company && (
-              <span className="ml-3 inline-flex items-center gap-1 text-tertiary">
-                <span className="material-symbols-outlined text-[1rem]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-                Verified
+              <span className="inline-flex items-center gap-1 rounded-full bg-tertiary-container px-2.5 py-0.5 text-xs font-bold text-on-tertiary-container">
+                <span className="material-symbols-outlined text-[0.875rem]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                Đã xác minh
               </span>
             )}
           </p>

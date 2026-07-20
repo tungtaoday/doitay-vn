@@ -123,23 +123,23 @@ export function ProfileEditForm({
 
       {/* Error banner */}
       {state && !state.ok && (
-        <div className="rounded-lg bg-error-container px-6 py-4 text-[1rem] font-medium text-on-error-container">
+        <div className="rounded-xl bg-error-container px-6 py-4 text-[1rem] font-medium text-on-error-container">
           {state.error}
         </div>
       )}
 
       {/* Success banner */}
       {saved && (
-        <div className="flex items-center gap-2 rounded-lg bg-primary/10 px-6 py-4 text-[1rem] font-bold text-primary">
+        <div className="flex items-center gap-2 rounded-xl bg-primary/10 px-6 py-4 text-[1rem] font-bold text-primary">
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
           Đã lưu thay đổi thành công
         </div>
       )}
 
       {/* === Section: Avatar === */}
-      <div className="rounded-xl bg-surface-container-lowest p-8">
-        <h3 className="mb-6 flex items-center gap-2 font-headline text-[1.25rem] font-bold text-on-surface">
-          <span className="material-symbols-outlined text-primary">photo_camera</span>
+      <div className="rounded-3xl bg-surface-container-lowest p-6 shadow-soft ring-1 ring-outline-variant/10 md:p-8">
+        <h3 className="mb-6 flex items-center gap-3 font-headline text-xl font-bold text-on-surface">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10"><span className="material-symbols-outlined text-[1.25rem] text-primary">photo_camera</span></span>
           Ảnh đại diện
         </h3>
 
@@ -209,9 +209,10 @@ export function ProfileEditForm({
                 <button
                   type="submit"
                   disabled={isAvatarPending}
-                  className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-[0.875rem] font-bold text-on-primary transition-opacity hover:opacity-90 disabled:opacity-60"
+                  className="flex min-h-[44px] items-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-60"
                 >
-                  {isAvatarPending ? 'Đang tải...' : 'Lưu ảnh'}
+                  <span className="material-symbols-outlined text-[1.125rem]">check</span>
+                  {isAvatarPending ? 'Đang tải…' : 'Lưu ảnh'}
                 </button>
               )}
             </div>
@@ -220,9 +221,9 @@ export function ProfileEditForm({
       </div>
 
       {/* === Section: Thông tin cá nhân === */}
-      <div className="rounded-xl bg-surface-container-lowest p-8">
-        <h3 className="mb-6 flex items-center gap-2 font-headline text-[1.25rem] font-bold text-on-surface">
-          <span className="material-symbols-outlined text-primary">person</span>
+      <div className="rounded-3xl bg-surface-container-lowest p-6 shadow-soft ring-1 ring-outline-variant/10 md:p-8">
+        <h3 className="mb-6 flex items-center gap-3 font-headline text-xl font-bold text-on-surface">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10"><span className="material-symbols-outlined text-[1.25rem] text-primary">person</span></span>
           Thông tin cá nhân
         </h3>
         <div className="space-y-6">
@@ -236,7 +237,7 @@ export function ProfileEditForm({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={255}
-                className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border-none bg-surface-container-low px-4 text-base font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary/30"
               />
               {fieldError('name') && <p className="mt-1 text-[0.875rem] text-error">{fieldError('name')}</p>}
             </div>
@@ -253,7 +254,7 @@ export function ProfileEditForm({
                 onChange={(e) => setUsername(e.target.value.replace(/[^a-z0-9_-]/gi, '').toLowerCase())}
                 maxLength={50}
                 placeholder="vd: nguyenvana"
-                className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border-none bg-surface-container-low px-4 text-base font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary/30"
               />
               <p className="mt-1 text-[0.75rem] text-secondary">Chỉ dùng chữ thường, số, gạch ngang, gạch dưới. Tối thiểu 6 ký tự.</p>
               {fieldError('username') && <p className="mt-1 text-[0.875rem] text-error">{fieldError('username')}</p>}
@@ -271,7 +272,7 @@ export function ProfileEditForm({
                 onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))}
                 maxLength={11}
                 placeholder="0901234567"
-                className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border-none bg-surface-container-low px-4 text-base font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary/30"
               />
               {fieldError('mobile') && <p className="mt-1 text-[0.875rem] text-error">{fieldError('mobile')}</p>}
             </div>
@@ -284,7 +285,7 @@ export function ProfileEditForm({
                 type="text"
                 value={user.email}
                 readOnly
-                className="h-14 w-full cursor-not-allowed rounded-lg border-none bg-surface-container-low/50 px-4 text-[1.125rem] font-medium text-secondary outline-none"
+                className="h-14 w-full cursor-not-allowed rounded-xl border-none bg-surface-container-low/50 px-4 text-base font-medium text-secondary outline-none"
               />
               <p className="mt-1 text-[0.75rem] text-secondary">Email được tạo tự động, không thể thay đổi</p>
             </div>
@@ -299,7 +300,7 @@ export function ProfileEditForm({
               rows={3}
               maxLength={1000}
               placeholder="Vài dòng về bạn..."
-              className="w-full rounded-lg border-none bg-surface-container-low px-4 py-3 text-[1rem] font-medium leading-relaxed text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary"
+              className="w-full rounded-xl border-none bg-surface-container-low px-4 py-3 text-[1rem] font-medium leading-relaxed text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary/30"
             />
             <p className="mt-1 text-right text-[0.75rem] text-secondary">{about.length}/1000</p>
           </div>
@@ -307,9 +308,9 @@ export function ProfileEditForm({
       </div>
 
       {/* === Section: Địa chỉ === */}
-      <div className="rounded-xl bg-surface-container-lowest p-8">
-        <h3 className="mb-6 flex items-center gap-2 font-headline text-[1.25rem] font-bold text-on-surface">
-          <span className="material-symbols-outlined text-primary">location_on</span>
+      <div className="rounded-3xl bg-surface-container-lowest p-6 shadow-soft ring-1 ring-outline-variant/10 md:p-8">
+        <h3 className="mb-6 flex items-center gap-3 font-headline text-xl font-bold text-on-surface">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10"><span className="material-symbols-outlined text-[1.25rem] text-primary">location_on</span></span>
           Địa chỉ
         </h3>
         <div className="space-y-6">
@@ -322,7 +323,7 @@ export function ProfileEditForm({
               onChange={(e) => setAddress(e.target.value)}
               maxLength={255}
               placeholder="Số nhà, đường..."
-              className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary"
+              className="h-14 w-full rounded-xl border-none bg-surface-container-low px-4 text-base font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary/30"
             />
             {fieldError('address') && <p className="mt-1 text-[0.875rem] text-error">{fieldError('address')}</p>}
           </div>
@@ -334,7 +335,7 @@ export function ProfileEditForm({
                 aria-label="Tỉnh / Thành phố"
                 value={cityCode}
                 onChange={(e) => handleCityChange(e.target.value)}
-                className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border-none bg-surface-container-low px-4 text-base font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary/30"
               >
                 <option value="">— Chọn tỉnh/thành —</option>
                 {cities.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
@@ -349,7 +350,7 @@ export function ProfileEditForm({
                 value={districtCode}
                 onChange={(e) => handleDistrictChange(e.target.value)}
                 disabled={!cityCode}
-                className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary disabled:opacity-60"
+                className="h-14 w-full rounded-xl border-none bg-surface-container-low px-4 text-base font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
               >
                 <option value="">— Chọn quận/huyện —</option>
                 {districts.map((d) => <option key={d.code} value={d.code}>{d.name}</option>)}
@@ -365,7 +366,7 @@ export function ProfileEditForm({
               value={wardCode}
               onChange={(e) => setWardCode(e.target.value)}
               disabled={!districtCode}
-              className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary disabled:opacity-60"
+              className="h-14 w-full rounded-xl border-none bg-surface-container-low px-4 text-base font-medium text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
             >
               <option value="">— Chọn phường/xã —</option>
               {wards.map((w) => <option key={w.code} value={w.code}>{w.name}</option>)}
@@ -375,20 +376,17 @@ export function ProfileEditForm({
       </div>
 
       {/* Submit */}
-      <div className="flex justify-end">
+      <div className="flex flex-col-reverse items-center gap-3 sm:flex-row sm:justify-end">
+        <p className="text-sm text-on-surface-variant sm:mr-auto">
+          Thông tin này hiển thị với thợ khi bạn đặt lịch.
+        </p>
         <button
           type="submit"
           disabled={isPending}
-          className="flex h-14 items-center gap-2 rounded-xl bg-primary px-10 text-[1.125rem] font-bold text-on-primary transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
+          className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-10 font-headline text-lg font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-60 sm:w-auto"
         >
-          {isPending ? (
-            <>Đang lưu...</>
-          ) : (
-            <>
-              <span className="material-symbols-outlined">save</span>
-              Lưu thay đổi
-            </>
-          )}
+          <span className="material-symbols-outlined text-[1.25rem]">save</span>
+          {isPending ? 'Đang lưu…' : 'Lưu thay đổi'}
         </button>
       </div>
     </form>
