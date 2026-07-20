@@ -59,7 +59,7 @@ export function ProfileEditForm({
   useEffect(() => {
     if (state?.ok) {
       setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      setTimeout(() => setSaved(false), 6000);
     }
   }, [state]);
 
@@ -67,7 +67,7 @@ export function ProfileEditForm({
     if (avatarState?.ok) {
       setAvatarSaved(true);
       setAvatarPreview(null);
-      setTimeout(() => setAvatarSaved(false), 3000);
+      setTimeout(() => setAvatarSaved(false), 6000);
     } else if (avatarState && !avatarState.ok) {
       setAvatarError(avatarState.error);
     }
@@ -135,20 +135,8 @@ export function ProfileEditForm({
       <input type="hidden" name="ward_code" value={wardCode} />
       <input type="hidden" name="address" value={address} />
 
-      {/* Error banner */}
-      {state && !state.ok && (
-        <div className="rounded-xl bg-error-container px-6 py-4 text-[1rem] font-medium text-on-error-container">
-          {state.error}
-        </div>
-      )}
-
-      {/* Success banner */}
-      {saved && (
-        <div className="flex items-center gap-2 rounded-xl bg-primary/10 px-6 py-4 text-[1rem] font-bold text-primary">
-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-          Đã lưu thay đổi thành công
-        </div>
-      )}
+      {/* Kết quả lưu hiển thị NGAY CẠNH nút Lưu ở cuối form (chỗ người dùng đang
+          nhìn) — không lặp lại banner ở đầu. */}
 
       {/* === Section: Avatar === */}
       <div className="rounded-3xl bg-surface-container-lowest p-6 shadow-soft ring-1 ring-outline-variant/10 md:p-8">
