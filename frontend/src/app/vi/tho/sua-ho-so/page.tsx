@@ -45,7 +45,7 @@ export default async function EditCompanyPage() {
   if (defaultCityCode) {
     try {
       const res = await api<{ data: LocationItem[] }>(
-        `/public/locations/districts?city_code=${defaultCityCode}`,
+        `/public/locations/districts/${defaultCityCode}`,
       );
       initialDistricts = res.data;
       const districtItem = initialDistricts.find((d) => d.name === company.location.district);
@@ -58,7 +58,7 @@ export default async function EditCompanyPage() {
   if (defaultDistrictCode) {
     try {
       const res = await api<{ data: LocationItem[] }>(
-        `/public/locations/wards?district_code=${defaultDistrictCode}`,
+        `/public/locations/wards/${defaultDistrictCode}`,
       );
       initialWards = res.data;
     } catch { /* empty */ }

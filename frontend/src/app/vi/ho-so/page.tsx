@@ -38,7 +38,7 @@ export default async function ProfilePage() {
   if (userCity) {
     try {
       const districtsRes = await api<{ data: LocationItem[] }>(
-        `/public/locations/districts?city_code=${userCity.code}`,
+        `/public/locations/districts/${userCity.code}`,
       );
       initialDistricts = districtsRes.data;
     } catch { /* empty */ }
@@ -48,7 +48,7 @@ export default async function ProfilePage() {
   if (userDistrict) {
     try {
       const wardsRes = await api<{ data: LocationItem[] }>(
-        `/public/locations/wards?district_code=${userDistrict.code}`,
+        `/public/locations/wards/${userDistrict.code}`,
       );
       initialWards = wardsRes.data;
     } catch { /* empty */ }
