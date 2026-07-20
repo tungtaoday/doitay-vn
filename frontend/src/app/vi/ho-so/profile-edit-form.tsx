@@ -14,11 +14,18 @@ export function ProfileEditForm({
   cities,
   initialDistricts,
   initialWards,
+  initialCityCode,
+  initialDistrictCode,
+  initialWardCode,
 }: {
   user: AuthUser;
   cities: LocationItem[];
   initialDistricts: LocationItem[];
   initialWards: LocationItem[];
+  /** Mã đã resolve sẵn ở server từ tên tỉnh/quận/phường đang lưu. */
+  initialCityCode: string;
+  initialDistrictCode: string;
+  initialWardCode: string;
 }) {
   const [state, formAction, isPending] = useActionState<UpdateProfileResult | null, FormData>(
     updateProfileAction,
@@ -41,19 +48,13 @@ export function ProfileEditForm({
   const [mobile, setMobile] = useState(user.mobile ?? '');
   const [about, setAbout] = useState('');
 
-  // Location
-  const [cityCode, setCityCode] = useState('');
-  const [districtCode, setDistrictCode] = useState('');
-  const [wardCode, setWardCode] = useState('');
+  // Location — mã đã resolve sẵn ở server (không để rỗng, tránh 422 khi lưu).
+  const [cityCode, setCityCode] = useState(initialCityCode);
+  const [districtCode, setDistrictCode] = useState(initialDistrictCode);
+  const [wardCode, setWardCode] = useState(initialWardCode);
   const [address, setAddress] = useState(user.location.address ?? '');
   const [districts, setDistricts] = useState<LocationItem[]>(initialDistricts);
   const [wards, setWards] = useState<LocationItem[]>(initialWards);
-
-  // Resolve initial city/district/ward codes from display names
-  useEffect(() => {
-    const city = cities.find((c) => c.name === user.location.city);
-    if (city) setCityCode(city.code);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (state?.ok) {
@@ -71,6 +72,19 @@ export function ProfileEditForm({
       setAvatarError(avatarState.error);
     }
   }, [avatarState]);
+
+  /** Gửi ảnh bằng FormData tự dựng (không dựa vào <form> lồng nhau). */
+  function handleAvatarUpload() {
+    const file = avatarInputRef.current?.files?.[0];
+    if (!file) {
+      setAvatarError('Chưa chọn ảnh');
+      return;
+    }
+    const fd = new FormData();
+    fd.append('avatar', file);
+    setAvatarError(null);
+    startTransition(() => avatarFormAction(fd));
+  }
 
   function handleAvatarFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -169,8 +183,10 @@ export function ProfileEditForm({
             </button>
           </div>
 
-          {/* Upload form */}
-          <form action={avatarFormAction} className="flex-1">
+          {/* Upload — KHÔNG dùng <form> ở đây: form này nằm trong form hồ sơ,
+              HTML cấm form lồng nhau nên nút "Lưu ảnh" sẽ submit nhầm form ngoài.
+              Thay bằng div + gọi action thủ công qua FormData. */}
+          <div className="flex-1">
             <input
               ref={avatarInputRef}
               type="file"
@@ -207,7 +223,8 @@ export function ProfileEditForm({
               </button>
               {avatarPreview && (
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleAvatarUpload}
                   disabled={isAvatarPending}
                   className="flex min-h-[44px] items-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-60"
                 >
@@ -216,7 +233,7 @@ export function ProfileEditForm({
                 </button>
               )}
             </div>
-          </form>
+          </div>
         </div>
       </div>
 
@@ -376,10 +393,26 @@ export function ProfileEditForm({
       </div>
 
       {/* Submit */}
-      <div className="flex flex-col-reverse items-center gap-3 sm:flex-row sm:justify-end">
-        <p className="text-sm text-on-surface-variant sm:mr-auto">
-          Thông tin này hiển thị với thợ khi bạn đặt lịch.
-        </p>
+      <div className="flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
+        {/* Kết quả hiện NGAY CẠNH nút — trước đây chỉ có banner ở đầu form nên
+            bấm lưu ở cuối trang thì không thấy phản hồi gì. */}
+        {state && !state.ok ? (
+          <p className="flex items-center gap-2 rounded-xl bg-error-container px-4 py-3 text-sm font-medium text-on-error-container sm:mr-auto">
+            <span className="material-symbols-outlined text-[1.25rem]">error</span>
+            {state.error}
+          </p>
+        ) : saved ? (
+          <p className="flex items-center gap-2 rounded-xl bg-primary-container px-4 py-3 text-sm font-bold text-on-primary-container sm:mr-auto">
+            <span className="material-symbols-outlined text-[1.25rem]" style={{ fontVariationSettings: "'FILL' 1" }}>
+              check_circle
+            </span>
+            Đã lưu thay đổi thành công
+          </p>
+        ) : (
+          <p className="text-sm text-on-surface-variant sm:mr-auto">
+            Thông tin này hiển thị với thợ khi bạn đặt lịch.
+          </p>
+        )}
         <button
           type="submit"
           disabled={isPending}

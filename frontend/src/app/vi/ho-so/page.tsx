@@ -22,7 +22,9 @@ export default async function ProfilePage() {
 
   if (!user.profile_complete) redirect('/vi/hoan-thanh-ho-so');
 
-  // Load cities + pre-resolve district list from user's city
+  // Load cities + pre-resolve DANH SÁCH và MÃ quận/phường từ địa chỉ đã lưu.
+  // Trước đây chỉ resolve city → district/ward luôn rỗng → mọi lần bấm "Lưu thay
+  // đổi" đều bị API trả 422 "Vui lòng chọn quận/huyện".
   let cities: LocationItem[] = [];
   let initialDistricts: LocationItem[] = [];
   let initialWards: LocationItem[] = [];
@@ -41,6 +43,18 @@ export default async function ProfilePage() {
       initialDistricts = districtsRes.data;
     } catch { /* empty */ }
   }
+
+  const userDistrict = initialDistricts.find((d) => d.name === user.location.district);
+  if (userDistrict) {
+    try {
+      const wardsRes = await api<{ data: LocationItem[] }>(
+        `/public/locations/wards?district_code=${userDistrict.code}`,
+      );
+      initialWards = wardsRes.data;
+    } catch { /* empty */ }
+  }
+
+  const userWard = initialWards.find((w) => w.name === user.location.ward);
 
   // Container do layout /vi cung cấp (max-w-6xl px-6 py-10) — chỉ giới hạn bề
   // ngang cho dễ đọc, KHÔNG bọc thêm padding (trước đây bị padding kép).
@@ -79,6 +93,9 @@ export default async function ProfilePage() {
         cities={cities}
         initialDistricts={initialDistricts}
         initialWards={initialWards}
+        initialCityCode={userCity?.code ?? ''}
+        initialDistrictCode={userDistrict?.code ?? ''}
+        initialWardCode={userWard?.code ?? ''}
       />
     </div>
   );
