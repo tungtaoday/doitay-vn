@@ -16,7 +16,9 @@ type ServiceRow = { name: string; unit: string; price: string };
 const STEPS = [
   { key: 'identity', label: 'Cá nhân', icon: 'badge' },
   { key: 'specialization', label: 'Chuyên môn', icon: 'construction' },
-  { key: 'verification', label: 'Xác minh', icon: 'verified_user' },
+  // Bước này là Hình ảnh & Khu vực — KHÔNG phải xác minh SĐT (chưa có tính năng đó).
+  // Nhãn cũ "Xác minh" hứa hẹn sai với người dùng.
+  { key: 'media', label: 'Hình ảnh', icon: 'photo_camera' },
   { key: 'review', label: 'Kiểm tra', icon: 'rate_review' },
 ] as const;
 
