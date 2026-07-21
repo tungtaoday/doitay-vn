@@ -72,7 +72,8 @@ class AppointmentService
     public function listForUser(User $user, int $perPage = 20): LengthAwarePaginator
     {
         return Appointment::where('user_id', $user->id)
-            ->with('company:id,name,image')
+            // phone: AppointmentResource tự ẩn/hiện theo status (chỉ lộ khi đã xác nhận).
+            ->with('company:id,name,image,phone')
             ->latest()
             ->paginate($perPage);
     }
