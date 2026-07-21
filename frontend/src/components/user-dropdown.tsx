@@ -44,7 +44,8 @@ function getOnboardingSteps(user: AuthUser, isContractor: boolean) {
   const steps = [
     { label: 'Hoàn thành hồ sơ cá nhân', done: user.profile_complete },
     { label: 'Thêm ảnh đại diện', done: !!user.avatar },
-    { label: 'Xác minh số điện thoại', done: user.sv },
+    // Bỏ "Xác minh số điện thoại": chưa có luồng OTP/xác minh nào để hoàn thành
+    // bước này, nên nó luôn hiển thị dở dang một cách vô nghĩa với người dùng.
   ];
   if (isContractor) {
     steps.push({ label: 'Đăng ký trở thành thợ', done: true });
@@ -57,10 +58,10 @@ function getOnboardingSteps(user: AuthUser, isContractor: boolean) {
 
 // ── Appointment status ────────────────────────────────────────────────────────
 const APT_STATUS: Record<string, { label: string; cls: string }> = {
-  pending:   { label: 'Chờ xác nhận', cls: 'bg-yellow-100 text-yellow-700' },
-  confirmed: { label: 'Đã xác nhận',  cls: 'bg-blue-100 text-blue-700' },
-  completed: { label: 'Hoàn thành',   cls: 'bg-green-100 text-green-700' },
-  canceled:  { label: 'Đã huỷ',       cls: 'bg-red-100 text-red-700' },
+  pending:   { label: 'Chờ xác nhận', cls: 'bg-tertiary-container text-on-tertiary-container' },
+  confirmed: { label: 'Đã xác nhận',  cls: 'bg-secondary-container text-on-secondary-container' },
+  completed: { label: 'Hoàn thành',   cls: 'bg-primary-container text-on-primary-container' },
+  canceled:  { label: 'Đã huỷ',       cls: 'bg-error-container text-on-error-container' },
 };
 
 // ── Tips ──────────────────────────────────────────────────────────────────────
