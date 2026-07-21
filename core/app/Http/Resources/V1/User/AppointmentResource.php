@@ -16,12 +16,19 @@ class AppointmentResource extends JsonResource
 
     public function toArray(Request $request): array
     {
+        // SĐT thợ chỉ lộ cho khách SAU KHI thợ đã xác nhận (hoặc đã hoàn thành) lịch —
+        // trước đó ẩn để bảo vệ mô hình lead. Đây là chiều khách↔thợ; ẩn trên hồ sơ công khai.
+        $revealPhone = in_array($this->status, ['confirmed', 'completed'], true);
+        $companyPhone = $this->company?->phone;
+
         return [
             'id' => $this->id,
             'company' => [
                 'id' => $this->company?->id,
                 'name' => $this->company?->name,
                 'image' => $this->company?->image,
+                'phone' => $revealPhone ? $companyPhone : null,
+                'contact_unlocked' => $revealPhone,
             ],
             'recipient_name' => $this->recipient_name,
             'recipient_phone' => $this->recipient_phone,

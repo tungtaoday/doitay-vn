@@ -113,8 +113,21 @@ export default async function AppointmentDetailPage({
           <InfoRow icon="event" label="Thời gian hẹn">
             {appointment.appointment_date} — {appointment.appointment_time}
           </InfoRow>
+          {/* SĐT thợ — chỉ hiện sau khi thợ xác nhận lịch (bảo vệ lead trước đó). */}
+          <InfoRow icon="support_agent" label="SĐT liên hệ thợ">
+            {appointment.company.phone ? (
+              <a href={`tel:${appointment.company.phone}`} className="font-bold text-primary hover:underline">
+                {appointment.company.phone}
+              </a>
+            ) : (
+              <span className="flex items-center gap-1.5 text-sm font-normal text-on-surface-variant">
+                <span className="material-symbols-outlined text-[1.125rem] text-outline">lock</span>
+                Hiện sau khi thợ xác nhận lịch
+              </span>
+            )}
+          </InfoRow>
           <InfoRow icon="person" label="Người nhận">{appointment.recipient_name}</InfoRow>
-          <InfoRow icon="call" label="Điện thoại">{appointment.recipient_phone}</InfoRow>
+          <InfoRow icon="call" label="SĐT của bạn">{appointment.recipient_phone}</InfoRow>
           <div className="md:col-span-2">
             <InfoRow icon="location_on" label="Địa chỉ">{appointment.recipient_address}</InfoRow>
           </div>

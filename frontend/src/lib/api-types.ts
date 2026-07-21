@@ -293,6 +293,9 @@ export interface AppointmentCompany {
   id: number | null;
   name: string | null;
   image?: string | null;
+  /** SĐT thợ — chỉ có giá trị khi lịch đã xác nhận/hoàn thành (contact_unlocked). */
+  phone?: string | null;
+  contact_unlocked?: boolean;
 }
 
 export interface Appointment {
