@@ -13,6 +13,10 @@ const BARE_PREFIXES = [
   '/sale/login',
 ];
 
+// Cổng Sale/CTV — có header RIÊNG (SaleHeader qua layout của /sale và /quan-tri).
+// Ẩn hoàn toàn header/footer doitay để không lẫn với giao diện khách/thợ.
+const PORTAL_PREFIXES = ['/sale', '/quan-tri'];
+
 export function SiteChrome({
   header,
   footer,
@@ -24,10 +28,16 @@ export function SiteChrome({
 }) {
   const pathname = usePathname() || '';
   const bare = BARE_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
+  const portal = PORTAL_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
 
   if (bare) {
     // Không header/footer, không padding-top (auth layout tự chiếm toàn màn hình).
     return <main className="min-h-screen">{children}</main>;
+  }
+
+  if (portal) {
+    // Cổng Sale tự cung cấp header/nền qua layout riêng — không bọc chrome doitay.
+    return <>{children}</>;
   }
 
   return (
