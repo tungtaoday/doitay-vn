@@ -142,8 +142,9 @@ class ProfileController extends Controller
         $image = $request->file('avatar');
         $imageName = time() . '_user_' . $user->id . '.' . $image->getClientOriginalExtension();
 
-        // Save to doitay-vn/assets/images/user/profile/ (web-accessible root)
-        $uploadPath = base_path('../assets/images/user/profile');
+        // Web phục vụ /assets/ từ core/public/assets/ (SSL Alias). base_path('../assets')
+        // trỏ vào thư mục assets ở ROOT — KHÔNG được web phục vụ → ảnh 404. Dùng public_path().
+        $uploadPath = public_path('assets/images/user/profile');
         if (! file_exists($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }

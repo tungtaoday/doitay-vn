@@ -127,7 +127,7 @@ class UserCompanyController extends Controller
         $image = $request->file('image');
         $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
 
-        $uploadPath = base_path('../assets/images/company');
+        $uploadPath = public_path('assets/images/company');
         if (! file_exists($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
@@ -166,7 +166,7 @@ class UserCompanyController extends Controller
         $image = $request->file('image');
         $imageName = time() . '_project_' . uniqid() . '.' . $image->getClientOriginalExtension();
 
-        $portfolioPath = base_path('../assets/images/portfolio');
+        $portfolioPath = public_path('assets/images/portfolio');
         if (! file_exists($portfolioPath)) {
             mkdir($portfolioPath, 0755, true);
         }
