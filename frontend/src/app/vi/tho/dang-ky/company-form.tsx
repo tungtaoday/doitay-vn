@@ -678,10 +678,11 @@ export function CompanyForm({
             <div className="hidden xl:col-span-4 xl:block">
               {/* top-40 = dưới header (80px) + DashboardNav (~64px) + margin */}
               <div className="sticky top-40 space-y-6">
-                <div className="rounded-xl bg-on-surface p-8">
+                <div className="rounded-2xl bg-on-surface p-8 shadow-ambient">
                   <h4 className="mb-4 font-headline text-[1.25rem] font-bold text-white">Hồ sơ hoàn tất {progressPercent}%</h4>
-                  <div className="mb-6 h-3 w-full overflow-hidden rounded-full bg-white/20">
-                    <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progressPercent}%` }} />
+                  <div className="mb-6 h-3 w-full overflow-hidden rounded-full bg-white/15">
+                    {/* Sky (#48BBE2) nổi rõ trên navy, teal primary bị chìm */}
+                    <div className="h-full rounded-full bg-primary-container transition-all" style={{ width: `${progressPercent}%` }} />
                   </div>
                   <ul className="space-y-4">
                     {[
@@ -690,9 +691,12 @@ export function CompanyForm({
                       { label: 'Hình ảnh & Khu vực', done: completedChecks[2] },
                       { label: 'Xác nhận cuối cùng', done: completedChecks[3] },
                     ].map((item) => (
-                      <li key={item.label} className={`flex items-center gap-3 text-[0.875rem] ${item.done ? 'text-white' : 'text-white/50'}`}>
-                        <span className="material-symbols-outlined text-primary" style={item.done ? { fontVariationSettings: "'FILL' 1" } : undefined}>
-                          {item.done ? 'check_circle' : 'circle'}
+                      <li key={item.label} className={`flex items-center gap-3 text-[0.875rem] ${item.done ? 'font-semibold text-white' : 'text-white/70'}`}>
+                        <span
+                          className={`material-symbols-outlined ${item.done ? 'text-primary-container' : 'text-white/40'}`}
+                          style={item.done ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                        >
+                          {item.done ? 'check_circle' : 'radio_button_unchecked'}
                         </span>
                         {item.label}
                       </li>

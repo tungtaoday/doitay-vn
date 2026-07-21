@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { Route } from 'next';
+import { redirect } from 'next/navigation';
 import { getSiteSettings } from '@/lib/site-settings';
 import { getPublicCategories } from '@/lib/service-requests';
 import { api } from '@/lib/api';
+import { getToken } from '@/lib/auth';
+import type { AuthUser } from '@/lib/api-types';
 import { HeroPhoneForm } from './hero-phone-form';
 
 export const metadata: Metadata = {
@@ -55,6 +58,18 @@ async function loadContractorCount(): Promise<number> {
 }
 
 export default async function TuyenDungThoPage() {
+  // Đã đăng nhập: nếu đã là thợ có công ty thì vào thẳng khu quản lý; còn lại
+  // vẫn xem landing nhưng CTA sẽ đi tới form tạo hồ sơ thợ (không bắt đăng ký lại).
+  const token = await getToken();
+  let isAuthenticated = false;
+  if (token) {
+    try {
+      const me = await api<{ data: AuthUser }>('/auth/me', { token });
+      if (me.data.has_company) redirect('/vi/tho/lich-hen');
+      isAuthenticated = true;
+    } catch { /* token hỏng → coi như khách */ }
+  }
+
   const [settings, contractorCount, categories] = await Promise.all([
     getSiteSettings(),
     loadContractorCount(),
@@ -105,7 +120,7 @@ export default async function TuyenDungThoPage() {
               vực sẽ thấy bạn.
             </p>
 
-            <HeroPhoneForm />
+            <HeroPhoneForm isAuthenticated={isAuthenticated} />
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-medium text-on-surface-variant">
               <span className="flex items-center gap-1.5">
