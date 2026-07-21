@@ -5,6 +5,7 @@ import { updateCompanyAction, type UpdateCompanyResult } from './actions';
 import { fetchDistricts, fetchWards } from '@/app/vi/hoan-thanh-ho-so/actions';
 import { uploadCompanyImage, uploadPortfolioImage } from '@/app/vi/tho/dang-ky/actions';
 import type { LocationItem, PublicCategory, UserCompany } from '@/lib/api-types';
+import { ProfilePreview } from './profile-preview';
 
 type ServiceRow = { name: string; unit: string; price: string };
 
@@ -154,11 +155,32 @@ export function CompanyEditForm({
     .filter((s) => s.name.trim() !== '')
     .map((s) => ({ name: s.name, description: s.unit, price: s.price }));
 
+  // Giá trị suy ra cho khung xem trước (bám state form, cập nhật trực tiếp).
+  const previewCategoryName = categories.find((c) => String(c.id) === categoryId)?.name ?? null;
+  const previewLocation = [
+    districts.find((d) => d.code === districtCode)?.name ?? company.location.district,
+    cities.find((c) => c.code === cityCode)?.name ?? company.location.city,
+  ].filter(Boolean).join(', ');
+  const previewTags = tags.split(',').map((t) => t.trim()).filter(Boolean);
+
   const isSubmitting = isPending || uploading;
   const fieldError = (key: string) => state && !state.ok ? state.fieldErrors?.[key] : undefined;
 
   return (
     <form action={formAction} className="space-y-10">
+      {/* Xem trước hồ sơ như khách hàng thấy — cập nhật trực tiếp khi chỉnh */}
+      <ProfilePreview
+        companyId={company.id}
+        isActive={company.status === 1}
+        name={name}
+        categoryName={previewCategoryName}
+        avatarSrc={avatarPreview}
+        locationLabel={previewLocation}
+        experience={Number(experience) || 0}
+        description={description}
+        tags={previewTags}
+      />
+
       <input type="hidden" name="company_id" value={company.id} />
       <input type="hidden" name="name" value={name} />
       <input type="hidden" name="email" value={email ?? ''} />
