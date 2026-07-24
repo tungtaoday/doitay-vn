@@ -9,6 +9,7 @@ import {
   type CreateCompanyResult,
 } from './actions';
 import { fetchDistricts, fetchWards } from '@/app/vi/hoan-thanh-ho-so/actions';
+import { getServiceSuggestions } from '@/lib/service-suggestions';
 import type { LocationItem, PublicCategory } from '@/lib/api-types';
 
 type ServiceRow = { name: string; unit: string; price: string };
@@ -152,6 +153,18 @@ export function CompanyForm({
   }
 
   // ---- Service table helpers ----
+  /** Bấm chip gợi ý: điền vào hàng trống đầu tiên, hết chỗ thì thêm hàng mới. */
+  function addSuggestedService(name: string) {
+    setServices((prev) => {
+      if (prev.some((r) => r.name.trim() === name)) return prev;
+      const emptyIdx = prev.findIndex((r) => r.name.trim() === '');
+      if (emptyIdx >= 0) {
+        return prev.map((r, i) => (i === emptyIdx ? { ...r, name } : r));
+      }
+      return [...prev, { name, unit: '', price: '' }];
+    });
+  }
+
   function updateService(i: number, patch: Partial<ServiceRow>) {
     setServices((prev) => prev.map((s, idx) => (idx === i ? { ...s, ...patch } : s)));
   }
@@ -386,6 +399,32 @@ export function CompanyForm({
                           Lĩnh vực hoạt động <span className="font-medium text-secondary">(phân cách bằng dấu phẩy)</span>
                         </label>
                         <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} maxLength={500} placeholder="VD: sửa điện, sửa nước, lắp đặt, bảo trì..." className="h-14 w-full rounded-lg border-none bg-surface-container-low px-4 text-[1.125rem] font-medium text-on-surface outline-none placeholder:text-outline transition-all focus:ring-2 focus:ring-primary" />
+                      </div>
+                      {/* Gợi ý dịch vụ ĂN THEO ngành nghề đã chọn — bấm là điền, vẫn gõ tự do được */}
+                      <div className="mb-4">
+                        <p className="mb-2 text-sm font-semibold text-on-surface-variant">
+                          Gợi ý theo nghề{categories.find((c) => String(c.id) === categoryId)?.name ? ` — ${categories.find((c) => String(c.id) === categoryId)!.name}` : ''} (bấm để thêm):
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {getServiceSuggestions(categories.find((c) => String(c.id) === categoryId)?.name).map((sv) => {
+                            const added = services.some((r) => r.name.trim() === sv);
+                            return (
+                              <button
+                                key={sv}
+                                type="button"
+                                onClick={() => addSuggestedService(sv)}
+                                disabled={added}
+                                className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                                  added
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'bg-surface-container-low text-on-surface hover:bg-surface-container'
+                                }`}
+                              >
+                                {added ? '✓ ' : '+ '}{sv}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                       <div className="overflow-hidden rounded-lg border border-outline-variant/15">
                         <table className="w-full text-left">
