@@ -7,6 +7,10 @@
 */
 
 return [
+    // Hồ sơ thợ tạo từ Zalo Mini App: false = vào hàng đợi duyệt (chống spam),
+    // true = lên chợ ngay. Đổi bằng env MINIAPP_AUTOPUBLISH.
+    'miniapp_autopublish' => filter_var(env('MINIAPP_AUTOPUBLISH', false), FILTER_VALIDATE_BOOL),
+
 
     // Phí mở khóa thông tin khách khi thợ xác nhận lịch hẹn (VND).
     'lead_fee' => (int) env('LEAD_FEE', 10000),
