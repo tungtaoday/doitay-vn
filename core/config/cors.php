@@ -23,7 +23,13 @@ return [
     // (or comma-separated list). Localhost defaults are kept for dev.
     'allowed_origins' => array_filter(array_map('trim', explode(',', env('FRONTEND_URL', 'http://localhost:3000,http://127.0.0.1:3000')))),
 
-    'allowed_origins_patterns' => [],
+    // Zalo Mini App webview + trình phát triển Zalo — cho phép gọi endpoint public
+    // (tho-profiles, companies...). Origin cụ thể được phản chiếu nên vẫn an toàn.
+    'allowed_origins_patterns' => [
+        '#^https?://([a-z0-9-]+\.)*zdn\.vn$#i',
+        '#^https?://([a-z0-9-]+\.)*zadn\.vn$#i',
+        '#^https?://([a-z0-9-]+\.)*zalo\.me$#i',
+    ],
 
     'allowed_headers' => ['*'],
 
