@@ -29,6 +29,8 @@ return [
         '#^https?://([a-z0-9-]+\.)*zdn\.vn$#i',
         '#^https?://([a-z0-9-]+\.)*zadn\.vn$#i',
         '#^https?://([a-z0-9-]+\.)*zalo\.me$#i',
+        '#^https?://localhost(:\d+)?$#i',
+        '#^https?://127\.0\.0\.1(:\d+)?$#i',
     ],
 
     'allowed_headers' => ['*'],
