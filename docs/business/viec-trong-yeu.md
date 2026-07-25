@@ -10,6 +10,10 @@
 
 ## A. NÚT THẮT SỐNG CÒN (làm trước tiên)
 
+> ✅ 2026-07-25: Xong TẦNG 1 (Mini App xuất bản hồ sơ lên doitay) — endpoint
+> `POST /public/tho-profiles` + Mini App publish khi đồng ý + QR/share/nút dùng URL
+> thật. Sửa 3 điểm gãy hành trình. Còn: khai domain Zalo Console (xem Tool_cv/ZALO_CONSOLE_CONFIG.md).
+
 | # | Việc | Ai | Trạng thái | Ghi chú |
 |---|------|----|-----------|---------|
 | A1 | **Gỡ duyệt Zalo Mini App** — phản hồi kiểm duyệt: "doanh nghiệp PHẦN MỀM (ĐKKD phần mềm + bán hàng hoá), không phải tiệm sửa chữa; sửa chữa dân dụng KHÔNG phải ngành có điều kiện → không tồn tại giấy phép con; đề nghị đổi danh mục về Công nghệ/Phần mềm" | **Chủ** | ☐ | Nút thắt số 1 của toàn mô hình (kích hoạt thợ + ZNS) |
