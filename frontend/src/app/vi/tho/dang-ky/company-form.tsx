@@ -10,6 +10,7 @@ import {
 } from './actions';
 import { fetchDistricts, fetchWards } from '@/app/vi/hoan-thanh-ho-so/actions';
 import { getServiceSuggestions } from '@/lib/service-suggestions';
+import { formatPriceInput } from '@/lib/format';
 import type { LocationItem, PublicCategory } from '@/lib/api-types';
 
 type ServiceRow = { name: string; unit: string; price: string };
@@ -441,7 +442,7 @@ export function CompanyForm({
                               <tr key={i}>
                                 <td className="px-6 py-3"><input type="text" value={svc.name} onChange={(e) => updateService(i, { name: e.target.value })} placeholder="VD: Lắp đặt đèn trần" className="w-full border-none bg-transparent p-0 text-[1rem] font-medium text-on-surface outline-none placeholder:text-outline focus:ring-0" /></td>
                                 <td className="px-6 py-3"><input type="text" value={svc.unit} onChange={(e) => updateService(i, { unit: e.target.value })} placeholder="Cái / Lần / m²" className="w-full border-none bg-transparent p-0 text-[1rem] text-secondary outline-none placeholder:text-outline focus:ring-0" /></td>
-                                <td className="px-6 py-3"><input type="text" value={svc.price} onChange={(e) => updateService(i, { price: e.target.value })} placeholder="150.000" className="w-full border-none bg-transparent p-0 text-[1rem] font-bold text-on-surface outline-none placeholder:text-outline focus:ring-0" /></td>
+                                <td className="px-6 py-3"><input type="text" value={svc.price} onChange={(e) => updateService(i, { price: formatPriceInput(e.target.value) })} placeholder="150.000" inputMode="numeric" className="w-full border-none bg-transparent p-0 text-[1rem] font-bold text-on-surface outline-none placeholder:text-outline focus:ring-0" /></td>
                                 <td className="px-4 py-3">{services.length > 1 && (<button type="button" onClick={() => removeService(i)} className="text-error hover:text-error/80"><span className="material-symbols-outlined">delete</span></button>)}</td>
                               </tr>
                             ))}

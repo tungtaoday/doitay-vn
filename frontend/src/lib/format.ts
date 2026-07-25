@@ -33,3 +33,14 @@ export function formatDateTime(iso: string | null | undefined): string {
     return '—';
   }
 }
+
+/**
+ * Định dạng ô giá dịch vụ khi gõ: số → chèn dấu chấm nghìn ("150000"→"150.000");
+ * nhưng NẾU có chữ cái (vd "Liên hệ", "Thỏa thuận") thì GIỮ NGUYÊN để thợ vẫn ghi chữ được.
+ */
+export function formatPriceInput(v: string): string {
+  const raw = v ?? '';
+  if (/[^\d.\s]/.test(raw)) return raw; // có chữ → để nguyên
+  const digits = raw.replace(/\D/g, '');
+  return digits ? Number(digits).toLocaleString('vi-VN') : '';
+}
