@@ -7,6 +7,8 @@
 */
 
 return [
+    // SEO: so tho toi thieu de mot trang nghe x khu vuc duoc index (chong thin content).
+    'seo_min_tho' => (int) env('SEO_MIN_THO', 3),
     // Hồ sơ thợ tạo từ Zalo Mini App: false = vào hàng đợi duyệt (chống spam),
     // true = lên chợ ngay. Đổi bằng env MINIAPP_AUTOPUBLISH.
     'miniapp_autopublish' => filter_var(env('MINIAPP_AUTOPUBLISH', false), FILTER_VALIDATE_BOOL),

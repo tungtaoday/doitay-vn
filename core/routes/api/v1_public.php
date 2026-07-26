@@ -33,6 +33,9 @@ Route::get('companies/{id}',    [CompanyController::class, 'show'])->whereNumber
 Route::get('companies/{id}/ratings', [RatingController::class, 'index'])->whereNumber('id')->name('companies.ratings');
 Route::get('categories/{id}/features', [RatingController::class, 'features'])->whereNumber('id')->name('categories.features');
 
+// SEO: cac cap nghe x khu vuc co du cung tho (nguon cho landing + sitemap).
+Route::get('service-areas', [\App\Http\Controllers\API\V1\Public\ServiceAreaController::class, 'index'])->name('service-areas.index');
+
 // ── Xuất bản hồ sơ thợ từ Zalo Mini App (self-serve) — rate-limit chống spam ──
 Route::post('tho-profiles', [\App\Http\Controllers\API\V1\Public\ThoProfileController::class, 'store'])
     ->middleware('throttle:6,1')
