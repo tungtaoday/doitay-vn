@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { api } from '@/lib/api';
 import type { Paginated, PublicCompanyListItem } from '@/lib/api-types';
+import { getServiceAreas } from '@/lib/service-areas';
+import { slugifyVi } from '@/lib/seo-slugs';
 
 const BASE = 'https://doitay.vn';
 
@@ -49,5 +51,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]);
 
-  return [...STATIC_PAGES, ...companyEntries];
+  // Trang SEO nghề × khu vực — CHỈ đưa vào sitemap khi bật index (seed đã xử + có cung).
+  let seoEntries: MetadataRoute.Sitemap = [];
+  if (process.env.SEO_INDEX_ENABLED === 'true') {
+    const areas = await getServiceAreas();
+    const nghes = new Set<string>();
+    for (const a of areas) nghes.add(slugifyVi(a.category_name));
+    seoEntries = [
+      { url: `${BASE}/dich-vu`, priority: 0.8, changeFrequency: 'weekly' },
+      ...Array.from(nghes).map((n) => ({ url: `${BASE}/dich-vu/${n}`, priority: 0.7, changeFrequency: 'weekly' as const })),
+      ...areas.filter((a) => a.count >= 3).map((a) => ({
+        url: `${BASE}/dich-vu/${slugifyVi(a.category_name)}/${slugifyVi(a.district)}`,
+        priority: 0.7, changeFrequency: 'weekly' as const,
+      })),
+    ];
+  }
+
+  return [...STATIC_PAGES, ...companyEntries, ...seoEntries];
 }
