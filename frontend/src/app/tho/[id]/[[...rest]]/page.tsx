@@ -113,7 +113,22 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
       .filter(Boolean)
       .join(', ') || 'Toàn quốc';
 
-  // Structured data (SEO) — rich snippet cho thợ: nghề, khu vực, sao đánh giá.
+  // Structured data (SEO) — rich snippet cho thợ: nghề, khu vực, sao đánh giá, dịch vụ.
+  // ProfessionalService là subtype của LocalBusiness → đủ điều kiện local pack.
+  const offers = (company.services ?? [])
+    .map((svc) => {
+      const name = typeof svc === 'string' ? svc : svc.name;
+      const price = typeof svc === 'string' ? null : svc.price;
+      if (!name) return null;
+      return {
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name },
+        ...(price && Number(price) > 0
+          ? { price: Number(price), priceCurrency: 'VND' }
+          : {}),
+      };
+    })
+    .filter(Boolean);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
@@ -121,7 +136,19 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
     url: `https://doitay.vn/tho/${company.id}/${company.vanity_slug}`,
     image: isSeedImage(company.image) ? undefined : company.image,
     areaServed: locationLabel,
+    priceRange: '$$',
     ...(company.category?.name ? { serviceType: company.category.name } : {}),
+    ...(company.location.district || company.location.city
+      ? {
+          address: {
+            '@type': 'PostalAddress',
+            ...(company.location.district ? { addressLocality: company.location.district } : {}),
+            ...(company.location.city ? { addressRegion: company.location.city } : {}),
+            addressCountry: 'VN',
+          },
+        }
+      : {}),
+    ...(offers.length > 0 ? { makesOffer: offers } : {}),
     ...(company.rating_count > 0
       ? {
           aggregateRating: {
