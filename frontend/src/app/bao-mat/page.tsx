@@ -86,7 +86,7 @@ export default function GroundTruthPrivacyPage() {
               Mọi thắc mắc về bảo mật, vui lòng liên hệ{' '}
               <a href="mailto:admin@doitay.vn" className="font-semibold text-primary hover:underline">admin@doitay.vn</a>
               {' '}hoặc Hotline / Zalo{' '}
-              <a href="tel:0327834490" className="font-semibold text-primary hover:underline">0327 834 490</a>.
+              <a href="tel:0972585990" className="font-semibold text-primary hover:underline">0972 585 990</a>.
             </p>
           </Section>
         </div>

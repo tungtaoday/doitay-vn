@@ -91,7 +91,7 @@ export default function GroundTruthTermsPage() {
             </p>
             <p>
               <span className="material-symbols-outlined mr-2 align-middle text-base text-primary">call</span>
-              Hotline / Zalo: <a href="tel:0327834490" className="text-primary underline">0327 834 490</a>
+              Hotline / Zalo: <a href="tel:0972585990" className="text-primary underline">0972 585 990</a>
             </p>
           </div>
         </Section>
