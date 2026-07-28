@@ -11,8 +11,8 @@ const QUICK_LINKS: { href: Route; label: string }[] = [
 ];
 
 const POLICY_LINKS: { href: Route; label: string }[] = [
-  { href: '/dieu-khoan' as Route, label: 'Điều khoản dịch vụ' },
-  { href: '/bao-mat' as Route, label: 'Chính sách bảo mật' },
+  { href: '/doitay/dieu-khoan' as Route, label: 'Điều khoản dịch vụ' },
+  { href: '/doitay/bao-mat' as Route, label: 'Chính sách bảo mật' },
   { href: '/faq' as Route, label: 'Câu hỏi thường gặp' },
   { href: '/tuyen-dung-tho' as Route, label: 'Tuyển dụng thợ' },
 ];

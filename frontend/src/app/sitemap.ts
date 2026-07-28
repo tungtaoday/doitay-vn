@@ -15,6 +15,8 @@ const STATIC_PAGES: MetadataRoute.Sitemap = [
   { url: `${BASE}/faq`,        priority: 0.5, changeFrequency: 'monthly' },
   { url: `${BASE}/dieu-khoan`, priority: 0.3, changeFrequency: 'yearly'  },
   { url: `${BASE}/bao-mat`,    priority: 0.3, changeFrequency: 'yearly'  },
+  { url: `${BASE}/doitay/dieu-khoan`, priority: 0.3, changeFrequency: 'yearly' },
+  { url: `${BASE}/doitay/bao-mat`,    priority: 0.3, changeFrequency: 'yearly' },
 ];
 
 async function loadAllCompanies(): Promise<PublicCompanyListItem[]> {
