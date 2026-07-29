@@ -331,6 +331,7 @@ export function AppointmentBookingForm({ company, user, prefillRequest }: Props)
 
       <button
         type="submit"
+        data-track-contact="booking"
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-headline font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-[0.98]"
       >
         <span className="material-symbols-outlined text-base">calendar_month</span>

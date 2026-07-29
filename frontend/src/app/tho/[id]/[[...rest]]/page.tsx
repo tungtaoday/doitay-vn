@@ -14,6 +14,7 @@ import type {
 import { getServiceRequest } from '@/lib/service-requests';
 import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
 import { TrustBadges } from '@/components/trust-badges';
+import { ProfileAnalytics } from '@/components/profile-analytics';
 // @ts-ignore — TypeScript cannot resolve paths containing Next.js dynamic segment brackets
 import { AppointmentBookingForm } from '@/app/cong-ty/[id]/[[...rest]]/appointment-form';
 
@@ -172,6 +173,8 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
 
   return (
     <div className="mx-auto max-w-7xl px-6 pb-24 pt-12 lg:px-8">
+      {/* Đo phễu Bắc Đẩu: profile_viewed + contact_clicked (khách/web) */}
+      <ProfileAnalytics companyId={company.id} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, breadcrumbLd]) }}
@@ -516,6 +519,7 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
                     {company.phone ? (
                       <a
                         href={`tel:${company.phone}`}
+                        data-track-contact="phone"
                         className="flex items-center gap-3 hover:text-primary"
                       >
                         <span className="material-symbols-outlined text-primary">call</span>
@@ -525,6 +529,7 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
                     {company.email ? (
                       <a
                         href={`mailto:${company.email}`}
+                        data-track-contact="email"
                         className="flex items-center gap-3 hover:text-primary"
                       >
                         <span className="material-symbols-outlined text-primary">mail</span>
@@ -543,6 +548,7 @@ export default async function ContractorProfilePage({ params, searchParams }: Pa
                     href={company.website}
                     target="_blank"
                     rel="noreferrer"
+                    data-track-contact="website"
                     className="flex items-center gap-3 hover:text-primary"
                   >
                     <span className="material-symbols-outlined text-primary">public</span>

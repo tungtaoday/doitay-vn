@@ -5,6 +5,8 @@ use App\Http\Controllers\API\V1\Public\CompanyController;
 use App\Http\Controllers\API\V1\Public\DepositMethodController;
 use App\Http\Controllers\API\V1\Public\LocationController;
 use App\Http\Controllers\API\V1\Public\RatingController;
+use App\Http\Controllers\API\V1\Public\EventController;
+use App\Http\Controllers\API\V1\Public\MetricsController;
 use App\Http\Controllers\API\V1\Public\SiteSettingsController;
 use App\Http\Controllers\API\V1\Public\StatsController;
 use Illuminate\Support\Facades\Route;
@@ -40,3 +42,14 @@ Route::get('service-areas', [\App\Http\Controllers\API\V1\Public\ServiceAreaCont
 Route::post('tho-profiles', [\App\Http\Controllers\API\V1\Public\ThoProfileController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('tho-profiles.store');
+
+// ── Product events — đo phễu BẮC ĐẨU (thợ share → khách liên hệ) ──
+// Ghi event từ Mini App (thợ) + web (khách). Public, rate-limit chống spam.
+Route::post('events', [EventController::class, 'store'])
+    ->middleware('throttle:60,1')
+    ->name('events.store');
+
+// Thống kê Bắc Đẩu — guard bằng METRICS_TOKEN (?token=... hoặc Bearer).
+Route::get('metrics/bac-dau', [MetricsController::class, 'bacDau'])
+    ->middleware('throttle:30,1')
+    ->name('metrics.bac-dau');

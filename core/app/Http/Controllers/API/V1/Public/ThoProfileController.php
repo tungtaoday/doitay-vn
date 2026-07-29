@@ -25,6 +25,16 @@ class ThoProfileController extends Controller
         $company = $result['company'];
         $live = (int) $company->status === Status::APPROVED;
 
+        // Đo phễu Bắc Đẩu: thợ đưa hồ sơ lên chợ (an toàn — không chặn nếu lỗi).
+        \App\Models\ProductEvent::log([
+            'event'      => 'profile_published',
+            'surface'    => 'tho',
+            'channel'    => 'miniapp',
+            'company_id' => $company->id,
+            'actor_key'  => $request->validated()['zalo_id'] ?? null,
+            'meta'       => ['review_status' => $live ? 'live' : 'pending', 'created' => $result['created']],
+        ]);
+
         return response()->json([
             'data' => [
                 'company_id'    => $company->id,
