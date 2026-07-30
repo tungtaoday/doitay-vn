@@ -34,6 +34,26 @@ class CompanyController extends Controller
             ->additional(['meta' => ['version' => 'v1']]);
     }
 
+    /**
+     * SĐT liên hệ trực tiếp của thợ — CHỈ dùng cho Zalo Mini App (thợ gửi thẻ cho
+     * khách QUEN → cho gọi/nhắn ngay). Web doitay.vn KHÔNG dùng endpoint này: web
+     * vẫn ẩn SĐT (CompanyDetailResource) để khách đi qua luồng đặt lịch.
+     * Trả SĐT từ company.phone, fallback sang SĐT chủ hồ sơ (company.user->mobile).
+     */
+    public function contact(int $id): JsonResponse
+    {
+        $company = $this->search->showPublicById($id); // 404 nếu không tồn tại / chưa duyệt
+        $phone = $company->phone ?: optional($company->user)->mobile;
+
+        return response()->json([
+            'data' => [
+                'id'    => $company->id,
+                'name'  => $company->name,
+                'phone' => $phone ?: null,
+            ],
+        ]);
+    }
+
     public function show(int $id): JsonResponse
     {
         $company = $this->search->showPublicById($id); // throws ModelNotFoundException → 404

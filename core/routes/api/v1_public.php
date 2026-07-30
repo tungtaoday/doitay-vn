@@ -33,6 +33,10 @@ Route::get('categories',        [CategoryController::class, 'index'])->name('cat
 Route::get('companies',         [CompanyController::class, 'index'])->name('companies.index');
 Route::get('companies/{id}',    [CompanyController::class, 'show'])->whereNumber('id')->name('companies.show');
 
+// SĐT liên hệ trực tiếp — CHỈ cho Zalo Mini App (gọi/nhắn ngay). Web vẫn ẩn SĐT.
+Route::get('companies/{id}/contact', [CompanyController::class, 'contact'])
+    ->whereNumber('id')->middleware('throttle:30,1')->name('companies.contact');
+
 Route::get('companies/{id}/ratings', [RatingController::class, 'index'])->whereNumber('id')->name('companies.ratings');
 Route::get('categories/{id}/features', [RatingController::class, 'features'])->whereNumber('id')->name('categories.features');
 
