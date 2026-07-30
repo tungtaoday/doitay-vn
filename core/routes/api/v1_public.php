@@ -6,6 +6,7 @@ use App\Http\Controllers\API\V1\Public\DepositMethodController;
 use App\Http\Controllers\API\V1\Public\LocationController;
 use App\Http\Controllers\API\V1\Public\RatingController;
 use App\Http\Controllers\API\V1\Public\EventController;
+use App\Http\Controllers\API\V1\Public\GuestAppointmentController;
 use App\Http\Controllers\API\V1\Public\MetricsController;
 use App\Http\Controllers\API\V1\Public\SiteSettingsController;
 use App\Http\Controllers\API\V1\Public\StatsController;
@@ -42,6 +43,11 @@ Route::get('service-areas', [\App\Http\Controllers\API\V1\Public\ServiceAreaCont
 Route::post('tho-profiles', [\App\Http\Controllers\API\V1\Public\ThoProfileController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('tho-profiles.store');
+
+// ── Đặt lịch KHÔNG cần đăng nhập (guest) — tự tạo tài khoản theo SĐT/email ──
+Route::post('guest-appointments', [GuestAppointmentController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('guest-appointments.store');
 
 // ── Product events — đo phễu BẮC ĐẨU (thợ share → khách liên hệ) ──
 // Ghi event từ Mini App (thợ) + web (khách). Public, rate-limit chống spam.

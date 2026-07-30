@@ -5,7 +5,7 @@ import { getToken } from '@/lib/auth';
 import type { Appointment } from '@/lib/api-types';
 
 export type CreateAppointmentResult =
-  | { ok: true; id: number }
+  | { ok: true; id: number; guest?: boolean }
   | { ok: false; error: string; fieldErrors?: Record<string, string>; needsLogin?: boolean };
 
 export async function createAppointmentAction(
@@ -13,9 +13,6 @@ export async function createAppointmentAction(
   formData: FormData,
 ): Promise<CreateAppointmentResult> {
   const token = await getToken();
-  if (!token) {
-    return { ok: false, error: 'Vui lòng đăng nhập để đặt lịch', needsLogin: true };
-  }
 
   const companyId = Number(formData.get('company_id'));
   if (!Number.isFinite(companyId) || companyId <= 0) {
@@ -25,22 +22,38 @@ export async function createAppointmentAction(
   const serviceRequestIdRaw = formData.get('service_request_id');
   const serviceRequestId = serviceRequestIdRaw ? Number(serviceRequestIdRaw) : null;
 
+  const base = {
+    company_id: companyId,
+    recipient_name: String(formData.get('recipient_name') ?? '').trim(),
+    recipient_phone: String(formData.get('recipient_phone') ?? '').trim(),
+    recipient_address: String(formData.get('recipient_address') ?? '').trim(),
+    appointment_date: String(formData.get('appointment_date') ?? ''),
+    appointment_time: String(formData.get('appointment_time') ?? ''),
+    notes: String(formData.get('notes') ?? '').trim() || null,
+  };
+
   try {
-    const res = await api<{ data: Appointment }>('/user/appointments', {
+    if (token) {
+      // Khách đã đăng nhập → đặt lịch qua tài khoản của họ.
+      const res = await api<{ data: Appointment }>('/user/appointments', {
+        method: 'POST',
+        token,
+        json: {
+          ...base,
+          service_request_id:
+            serviceRequestId && Number.isFinite(serviceRequestId) ? serviceRequestId : null,
+        },
+      });
+      return { ok: true, id: res.data.id };
+    }
+
+    // Khách CHƯA đăng nhập → đặt lịch guest (hệ thống tự tạo tài khoản theo SĐT/email).
+    const email = String(formData.get('recipient_email') ?? '').trim();
+    const res = await api<{ data: { id: number } }>('/public/guest-appointments', {
       method: 'POST',
-      token,
-      json: {
-        company_id: companyId,
-        recipient_name: String(formData.get('recipient_name') ?? '').trim(),
-        recipient_phone: String(formData.get('recipient_phone') ?? '').trim(),
-        recipient_address: String(formData.get('recipient_address') ?? '').trim(),
-        appointment_date: String(formData.get('appointment_date') ?? ''),
-        appointment_time: String(formData.get('appointment_time') ?? ''),
-        notes: String(formData.get('notes') ?? '').trim() || null,
-        service_request_id: serviceRequestId && Number.isFinite(serviceRequestId) ? serviceRequestId : null,
-      },
+      json: { ...base, recipient_email: email || null },
     });
-    return { ok: true, id: res.data.id };
+    return { ok: true, id: res.data.id, guest: true };
   } catch (e) {
     if (e instanceof ApiError) {
       if (e.status === 401) {

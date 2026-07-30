@@ -10,7 +10,10 @@ use App\Services\WalletService;
 use App\Services\CompanyStatisticsService;
 use App\Services\NotificationService;
 use App\Services\ServiceRequestService;
+use App\Support\Identifier;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AppointmentService
 {
@@ -19,6 +22,54 @@ class AppointmentService
         protected CompanyStatisticsService $statisticsService,
         protected ServiceRequestService $serviceRequestService,
     ) {}
+
+    /**
+     * Đặt lịch cho KHÁCH chưa đăng nhập: tìm-hoặc-tạo tài khoản theo SĐT (hoặc
+     * email), rồi tái dùng createForUser (cùng dedup + notify). Không OTP —
+     * giảm ma sát; thợ gọi SĐT để xác nhận.
+     */
+    public function createForGuest(array $data): Appointment
+    {
+        $user = $this->resolveGuestUser($data);
+
+        return $this->createForUser($user, $data);
+    }
+
+    /** Tìm user theo SĐT/email; chưa có thì tạo tài khoản khách tối giản. */
+    private function resolveGuestUser(array $data): User
+    {
+        $phone = Identifier::normalizePhone((string) $data['recipient_phone']);
+        $email = ! empty($data['recipient_email']) ? strtolower(trim((string) $data['recipient_email'])) : null;
+
+        $user = User::where('mobile', $phone)->first();
+        if (! $user && $email) {
+            $user = User::where('email', $email)->first();
+        }
+        if ($user) {
+            return $user;
+        }
+
+        // Email thật (nếu có) hoặc placeholder nội bộ để thoả ràng buộc unique/not-null.
+        $emailToUse = $email ?: ((Str::slug((string) $data['recipient_name']) ?: 'khach') . '_' . uniqid() . '@guest.doitay.local');
+
+        return User::create([
+            'name'             => $data['recipient_name'],
+            'firstname'        => $data['recipient_name'],
+            'lastname'         => '',
+            // Mật khẩu ngẫu nhiên — khách "nhận" tài khoản sau qua quên mật khẩu/OTP theo SĐT.
+            'password'         => Hash::make(Str::random(40)),
+            'status'           => 1,
+            'ev'               => $email ? 1 : 0,
+            'sv'               => 1,
+            'profile_complete' => 1,
+            'address'          => $data['recipient_address'] ?? null,
+            'mobile'           => $phone,
+            'dial_code'        => '+84',
+            'country_code'     => 'VN',
+            'country_name'     => 'Vietnam',
+            'email'            => $emailToUse,
+        ]);
+    }
 
     public function createForUser(User $user, array $data): Appointment
     {

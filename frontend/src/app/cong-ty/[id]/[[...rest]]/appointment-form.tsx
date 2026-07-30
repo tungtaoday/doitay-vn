@@ -78,44 +78,8 @@ export function AppointmentBookingForm({ company, user, prefillRequest }: Props)
   const inputCls =
     'w-full rounded-xl border border-outline-variant/40 bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30';
 
-  // --- Unauthenticated view ---
-  if (!user) {
-    return (
-      <div className="space-y-4 rounded-2xl border border-primary/20 bg-primary-container/10 p-5 text-center">
-        <div>
-          <span className="material-symbols-outlined text-3xl text-primary">login</span>
-        </div>
-        <p className="text-sm text-on-surface-variant">
-          Vui lòng đăng nhập để đặt lịch với thợ
-        </p>
-        <Link
-          href={`/login?next=/cong-ty/${company.id}`}
-          className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-bold text-on-primary shadow-ambient transition-all hover:bg-primary-hover active:scale-[0.98]"
-        >
-          Đăng nhập để đặt lịch
-        </Link>
-      </div>
-    );
-  }
-
-  // --- Profile-incomplete guard ---
-  if (!user.profile_complete) {
-    return (
-      <div className="space-y-3 rounded-2xl border border-amber-300/40 bg-amber-50/40 p-5 text-sm text-on-surface-variant">
-        <p className="flex items-center gap-2 font-medium text-on-surface">
-          <span className="material-symbols-outlined text-amber-600">info</span>
-          Hoàn thành hồ sơ trước
-        </p>
-        <p>Bạn cần bổ sung thông tin liên hệ để có thể đặt lịch với thợ.</p>
-        <Link
-          href="/vi/hoan-thanh-ho-so"
-          className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary"
-        >
-          Hoàn thành hồ sơ →
-        </Link>
-      </div>
-    );
-  }
+  // Đặt lịch KHÔNG cần đăng nhập: khách vãng lai vẫn thấy form đầy đủ. Nếu chưa
+  // đăng nhập, server action đặt qua luồng guest (tự tạo tài khoản theo SĐT/email).
 
   // --- Success state ---
   if (step === 'success' && state?.ok) {
@@ -132,20 +96,28 @@ export function AppointmentBookingForm({ company, user, prefillRequest }: Props)
             {company.name} sẽ liên hệ với bạn trong thời gian sớm nhất
           </p>
         </div>
-        <div className="flex gap-2">
-          <Link
-            href={`/vi/lich-hen/${state.id}`}
-            className="flex-1 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-on-primary"
-          >
-            Xem chi tiết
-          </Link>
-          <Link
-            href="/vi/lich-hen"
-            className="flex-1 rounded-xl border border-outline-variant/40 px-4 py-3 text-sm font-semibold text-on-surface"
-          >
-            Danh sách lịch hẹn
-          </Link>
-        </div>
+        {state.guest ? (
+          <p className="text-sm text-on-surface-variant">
+            Thợ sẽ gọi số{' '}
+            <span className="font-semibold text-on-surface">{phone}</span>{' '}
+            để xác nhận. Anh/chị không cần đăng nhập.
+          </p>
+        ) : (
+          <div className="flex gap-2">
+            <Link
+              href={`/vi/lich-hen/${state.id}`}
+              className="flex-1 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-on-primary"
+            >
+              Xem chi tiết
+            </Link>
+            <Link
+              href="/vi/lich-hen"
+              className="flex-1 rounded-xl border border-outline-variant/40 px-4 py-3 text-sm font-semibold text-on-surface"
+            >
+              Danh sách lịch hẹn
+            </Link>
+          </div>
+        )}
       </div>
     );
   }
