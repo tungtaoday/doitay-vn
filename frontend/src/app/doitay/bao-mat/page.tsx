@@ -73,9 +73,12 @@ export default function PrivacyPage() {
             </ul>
           </Section>
 
-          <Section title="6. Cookie">
+          <Section title="6. Cookie & đo lường">
             <p>
               doitay.vn sử dụng cookie thiết yếu để duy trì phiên đăng nhập và bảo mật. Chúng tôi không sử dụng cookie theo dõi của bên thứ ba cho mục đích quảng cáo.
+            </p>
+            <p>
+              Chúng tôi có thể dùng công cụ đo lường (như Google Analytics, với IP ẩn danh) để hiểu cách trang được sử dụng và cải thiện dịch vụ — dữ liệu này ở dạng tổng hợp, không dùng để nhận diện cá nhân bạn.
             </p>
           </Section>
 

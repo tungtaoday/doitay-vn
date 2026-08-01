@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Be_Vietnam_Pro, Inter } from 'next/font/google';
 import './globals.css';
 import { SiteHeader } from '@/components/site-header';
@@ -48,6 +49,10 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: '/apple-icon.png',
       shortcut: '/favicon.ico',
     },
+    // Google Search Console — đặt NEXT_PUBLIC_GSC_VERIFICATION trong .env để xác minh domain.
+    ...(process.env.NEXT_PUBLIC_GSC_VERIFICATION
+      ? { verification: { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION } }
+      : {}),
   };
 }
 
@@ -75,6 +80,22 @@ export default async function RootLayout({
           {children}
         </SiteChrome>
         <ZaloWidget settings={settings.zalo} />
+        {/* Google Analytics 4 — chỉ chạy khi đặt NEXT_PUBLIC_GA_ID (G-XXXXXXX) trong .env.
+            Đo SEO/hành vi web phía KHÁCH; anonymize IP. Nguồn sự thật phễu vẫn là product_events. */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', { anonymize_ip: true });`}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

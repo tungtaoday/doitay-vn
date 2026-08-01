@@ -77,6 +77,29 @@ class MetricsController extends Controller
                     'total_contact_clicks'         => $countEvent('contact_clicked'),
                     'total_profile_views'          => $countEvent('profile_viewed'),
                 ],
+                // ── TÁCH KÊNH: khách đến từ đâu (meta.src do web gắn; miniapp = thẻ ThợTốt) ──
+                // src: thotot_card | thotot_app | seo | facebook | zalo | tiktok | ctv | truc_tiep | khac
+                'sources' => (function () use ($since) {
+                    $rows = DB::table('product_events')
+                        ->selectRaw(
+                            "COALESCE(CASE WHEN channel = 'miniapp' THEN 'thotot_app' "
+                            . "ELSE JSON_UNQUOTE(JSON_EXTRACT(meta, '$.src')) END, 'khac') as src, "
+                            . 'event, count(*) as n'
+                        )
+                        ->whereIn('event', ['profile_viewed', 'contact_clicked', 'booking_confirmed'])
+                        ->where('created_at', '>=', $since)
+                        ->groupBy('src', 'event')
+                        ->get();
+                    $out = [];
+                    foreach ($rows as $r) {
+                        $s = $r->src ?: 'khac';
+                        $out[$s] ??= ['viewed' => 0, 'contacted' => 0, 'booked' => 0];
+                        if ($r->event === 'profile_viewed') $out[$s]['viewed'] = (int) $r->n;
+                        if ($r->event === 'contact_clicked') $out[$s]['contacted'] = (int) $r->n;
+                        if ($r->event === 'booking_confirmed') $out[$s]['booked'] = (int) $r->n;
+                    }
+                    return $out;
+                })(),
                 // ── Đếm thô mọi event (debug/dashboard) ──
                 'events' => ProductEvent::query()
                     ->where('created_at', '>=', $since)
