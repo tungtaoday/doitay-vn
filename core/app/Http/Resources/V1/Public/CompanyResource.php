@@ -40,6 +40,8 @@ class CompanyResource extends JsonResource
             'rating_avg'        => (float) ($this->avg_rating ?? 0),
             'rating_count'      => (int) ($this->rating_count ?? $this->ratings()->count()),
             'experience'        => (int) ($this->experience ?? 0),
+            // Hồ sơ seed không được index (sitemap + meta robots đọc cờ này).
+            'indexable'         => ! (bool) ($this->is_seeded ?? false),
         ];
     }
 }

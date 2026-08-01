@@ -63,6 +63,8 @@ export async function generateMetadata({
   return {
     title: company.name,
     description: company.description?.slice(0, 160) ?? undefined,
+    // Hồ sơ seed/test không được index — chỉ hồ sơ thật mới ra Google.
+    ...(company.indexable === false ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       title: company.name,
       description: company.description?.slice(0, 160) ?? undefined,

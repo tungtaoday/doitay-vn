@@ -38,7 +38,8 @@ async function loadAllCompanies(): Promise<PublicCompanyListItem[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const companies = await loadAllCompanies();
+  // Chỉ đưa hồ sơ THẬT vào sitemap — seed/test (indexable=false) không được mời Google index.
+  const companies = (await loadAllCompanies()).filter(c => c.indexable !== false);
 
   const companyEntries: MetadataRoute.Sitemap = companies.flatMap(c => [
     {

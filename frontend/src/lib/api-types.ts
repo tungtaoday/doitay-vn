@@ -141,6 +141,8 @@ export interface PublicCompanyListItem {
   rating_avg: number;
   rating_count: number;
   experience: number;
+  /** false = hồ sơ seed/test — loại khỏi sitemap + meta robots noindex. */
+  indexable?: boolean;
 }
 
 export interface PublicCompanyDetail extends PublicCompanyListItem {

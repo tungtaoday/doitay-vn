@@ -70,6 +70,8 @@ class CompanyDetailResource extends JsonResource
             'email'           => $showContact ? $this->email : null,
             'website'         => $this->url ?? null,
             'created_at'      => optional($this->created_at)->toIso8601String(),
+            // Hồ sơ seed không được index (frontend gắn meta robots noindex).
+            'indexable'       => ! (bool) ($this->is_seeded ?? false),
         ];
     }
 }
