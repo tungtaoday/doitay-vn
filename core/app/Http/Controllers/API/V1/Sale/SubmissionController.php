@@ -33,6 +33,20 @@ class SubmissionController extends Controller
             ->setStatusCode(201);
     }
 
+    /**
+     * GET /sale/tho-lookup?sdt=... — CTV gõ SĐT trước khi nộp:
+     * số này thợ đã tự mở hồ sơ chưa, đã có CTV nhận công chưa.
+     */
+    public function lookup(Request $request): JsonResponse
+    {
+        $sdt = trim((string) $request->query('sdt', ''));
+        if ($sdt === '') {
+            return response()->json(['message' => 'Thiếu số điện thoại'], 422);
+        }
+
+        return response()->json(['data' => $this->service->lookupByPhone($sdt)]);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $userId  = $request->user()->id;

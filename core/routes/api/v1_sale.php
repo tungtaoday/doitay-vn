@@ -21,3 +21,8 @@ Route::post('submissions', [SubmissionController::class, 'store'])
 
 Route::get('submissions', [SubmissionController::class, 'index'])
     ->name('submissions.index');
+
+// Tra SĐT trước khi nộp: thợ đã tự mở hồ sơ chưa, đã có CTV nhận công chưa.
+Route::get('tho-lookup', [SubmissionController::class, 'lookup'])
+    ->middleware('throttle:60,1')
+    ->name('tho-lookup');

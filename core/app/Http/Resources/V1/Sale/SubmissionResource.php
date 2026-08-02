@@ -17,6 +17,8 @@ class SubmissionResource extends JsonResource
     {
         return [
             'id'            => $this->id,
+            // lam_ho = CTV dựng hộ tại chỗ · da_mo = thợ tự mở, CTV khai nhận công
+            'loai'          => $this->loai ?? 'lam_ho',
             'ten_tho'       => $this->ten_tho,
             'nghe'          => $this->nghe,
             'khu_vuc'       => $this->khu_vuc,

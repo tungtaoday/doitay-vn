@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Company;
 use App\Models\ThoSubmission;
 use App\Models\User;
 use App\Services\MiniAppProfileService;
@@ -36,6 +37,7 @@ class SubmissionService
     public function create(User $ctv, array $data, array $imageFiles): ThoSubmission
     {
         $normalized = self::normalizePhone($data['sdt_tho']);
+        $loai = ($data['loai'] ?? 'lam_ho') === 'da_mo' ? 'da_mo' : 'lam_ho';
 
         $exists = ThoSubmission::query()
             ->where('sdt_normalized', $normalized)
@@ -48,9 +50,28 @@ class SubmissionService
             ]);
         }
 
-        return DB::transaction(function () use ($ctv, $data, $normalized, $imageFiles) {
+        // Kiểu "thợ đã tự mở": hồ sơ phải CÓ THẬT và đã có chủ (thợ đã bấm vào app).
+        // Lấy luôn tên/nghề/khu vực từ hồ sơ để CTV khỏi gõ lại.
+        $daMoCompany = null;
+        if ($loai === 'da_mo') {
+            $daMoCompany = $this->findClaimedCompanyByPhone($normalized);
+            if (! $daMoCompany) {
+                throw ValidationException::withMessages([
+                    'sdt_tho' => 'Chưa thấy hồ sơ nào của số này trong app. Nhờ thợ mở Zalo tạo hồ sơ trước, '
+                        . 'hoặc chuyển sang mục "Làm hộ tại chỗ".',
+                ]);
+            }
+            // CTV không phải gõ lại — lấy thẳng từ hồ sơ thợ đã tạo.
+            $data['ten_tho'] = ($data['ten_tho'] ?? null) ?: $daMoCompany->name;
+            $data['nghe'] = ($data['nghe'] ?? null) ?: (string) ($daMoCompany->category?->name ?? 'Thợ');
+            $data['khu_vuc'] = ($data['khu_vuc'] ?? null)
+                ?: (trim(implode(', ', array_filter([$daMoCompany->district, $daMoCompany->city]))) ?: 'Chưa rõ');
+        }
+
+        return DB::transaction(function () use ($ctv, $data, $normalized, $imageFiles, $loai, $daMoCompany) {
             $submission = ThoSubmission::create([
                 'ctv_id'         => $ctv->id,
+                'loai'           => $loai,
                 'ten_tho'        => $data['ten_tho'],
                 'nghe'           => $data['nghe'],
                 'khu_vuc'        => $data['khu_vuc'],
@@ -67,6 +88,15 @@ class SubmissionService
                     'url'      => Storage::disk('public')->url($path),
                     'approved' => false,
                 ]);
+            }
+
+            // Thợ đã tự mở → hồ sơ có sẵn, chỉ gắn để đối chiếu khi duyệt. Không
+            // sinh vé (hồ sơ đã có chủ, không ai được nhận nữa).
+            if ($daMoCompany) {
+                $submission->company_id = $daMoCompany->id;
+                $submission->save();
+
+                return $submission->load('images');
             }
 
             // Dựng luôn hồ sơ (PENDING — chưa lên chợ) + vé để CTV gửi link cho thợ.
@@ -93,6 +123,48 @@ class SubmissionService
 
             return $submission->load('images');
         });
+    }
+
+    /**
+     * Tìm hồ sơ THỢ ĐÃ TỰ MỞ theo SĐT (đã có chủ = thợ đã bấm vào app).
+     * Dùng cho kiểu `da_mo` — và cũng là API tra cứu cho form CTV.
+     */
+    public function findClaimedCompanyByPhone(string $normalizedPhone): ?Company
+    {
+        $user = User::where('mobile', $normalizedPhone)->first();
+        if (! $user) {
+            return null;
+        }
+
+        return $user->companies()
+            ->whereNotNull('zalo_id')
+            ->with('category')
+            ->first();
+    }
+
+    /**
+     * Tra cứu cho form CTV: số này đã có hồ sơ chưa, ai đã nhận công chưa.
+     *
+     * @return array{ton_tai: bool, da_mo: bool, ten_tho: ?string, nghe: ?string,
+     *               khu_vuc: ?string, da_co_ctv: bool, company_id: ?int}
+     */
+    public function lookupByPhone(string $phone): array
+    {
+        $normalized = self::normalizePhone($phone);
+        $company = $this->findClaimedCompanyByPhone($normalized);
+        $daCoCtv = ThoSubmission::where('sdt_normalized', $normalized)
+            ->where('status', '!=', 'rejected')
+            ->exists();
+
+        return [
+            'ton_tai'    => (bool) $company,
+            'da_mo'      => (bool) $company,
+            'ten_tho'    => $company?->name,
+            'nghe'       => $company?->category?->name,
+            'khu_vuc'    => $company ? trim(implode(', ', array_filter([$company->district, $company->city]))) : null,
+            'da_co_ctv'  => $daCoCtv,
+            'company_id' => $company?->id,
+        ];
     }
 
     /** "Cầu Giấy, Hà Nội" → quận = phần đầu, thành phố = phần sau (nếu có). */

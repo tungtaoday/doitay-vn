@@ -14,6 +14,7 @@ class ThoSubmission extends Model
 {
     protected $fillable = [
         'ctv_id',
+        'loai',
         'ten_tho',
         'nghe',
         'khu_vuc',

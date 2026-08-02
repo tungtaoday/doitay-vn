@@ -4,8 +4,37 @@ import { api, ApiError } from '@/lib/api';
 import { getToken } from '@/lib/auth';
 
 export type CreateSubmissionResult =
-  | { ok: true; id: number }
+  | { ok: true; id: number; claimLink?: string | null }
   | { ok: false; error: string; fieldErrors?: Record<string, string>; needsLogin?: boolean };
+
+export type ThoLookup = {
+  ton_tai: boolean;
+  da_mo: boolean;
+  ten_tho: string | null;
+  nghe: string | null;
+  khu_vuc: string | null;
+  da_co_ctv: boolean;
+  company_id: number | null;
+};
+
+/**
+ * Tra SĐT trước khi nộp: thợ đã tự mở hồ sơ trong Mini App chưa, đã có CTV nhận
+ * công chưa. Nhờ đó CTV chọn đúng kiểu nộp và khỏi gõ lại thông tin đã có.
+ */
+export async function lookupThoAction(sdt: string): Promise<ThoLookup | null> {
+  const token = await getToken();
+  if (!token || !sdt.trim()) return null;
+
+  try {
+    const res = await api<{ data: ThoLookup }>(
+      `/sale/tho-lookup?sdt=${encodeURIComponent(sdt.trim())}`,
+      { token },
+    );
+    return res.data;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Nhận FormData (đã kèm images[]) từ client, chuyển tiếp lên API sale.
@@ -18,12 +47,12 @@ export async function createSubmissionAction(formData: FormData): Promise<Create
   }
 
   try {
-    const res = await api<{ data: { id: number } }>('/sale/submissions', {
+    const res = await api<{ data: { id: number; claim_link?: string | null } }>('/sale/submissions', {
       method: 'POST',
       token,
       body: formData,
     });
-    return { ok: true, id: res.data.id };
+    return { ok: true, id: res.data.id, claimLink: res.data.claim_link ?? null };
   } catch (e) {
     if (e instanceof ApiError) {
       if (e.status === 401) {
