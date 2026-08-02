@@ -41,6 +41,10 @@ return [
         'redirect' => env('APP_URL') . '/social-login/callback/google',
     ],
 
-
+    // Zalo Mini App "Hồ Sơ Thợ" — dùng dựng deeplink gửi thợ nhận hồ sơ CTV làm hộ:
+    // https://zalo.me/s/<miniapp_id>/?tho=<id>&claim=<token>
+    'zalo' => [
+        'miniapp_id' => env('ZALO_MINIAPP_ID'),
+    ],
 
 ];

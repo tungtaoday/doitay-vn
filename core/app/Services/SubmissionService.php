@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ThoSubmission;
 use App\Models\User;
+use App\Services\MiniAppProfileService;
 use App\Support\Identifier;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -68,7 +69,44 @@ class SubmissionService
                 ]);
             }
 
+            // Dựng luôn hồ sơ (PENDING — chưa lên chợ) + vé để CTV gửi link cho thợ.
+            // Thợ bấm link → Mini App nhận hồ sơ về tài khoản Zalo của thợ, khỏi
+            // phải nhập lại gì. Chính việc thợ bấm được link cũng là bằng chứng
+            // thợ có thật. Lỗi ở bước này KHÔNG được làm hỏng việc nhập của CTV.
+            try {
+                $result = app(MiniAppProfileService::class)->publish([
+                    'name'        => $data['ten_tho'],
+                    'phone'       => $data['sdt_tho'],
+                    'nghe'        => $data['nghe'],
+                    'city'        => $this->cityFromKhuVuc($data['khu_vuc']),
+                    'district'    => $this->districtFromKhuVuc($data['khu_vuc']),
+                    'experience'  => (int) ($data['nam_kn'] ?? 0),
+                    'description' => 'Thợ ' . $data['nghe'] . ' — ' . $data['khu_vuc'],
+                ]);
+                $company = $result['company'];
+                app(MiniAppProfileService::class)->issueClaimToken($company);
+                $submission->company_id = $company->id;
+                $submission->save();
+            } catch (\Throwable $e) {
+                report($e);
+            }
+
             return $submission->load('images');
         });
+    }
+
+    /** "Cầu Giấy, Hà Nội" → quận = phần đầu, thành phố = phần sau (nếu có). */
+    private function districtFromKhuVuc(string $khuVuc): string
+    {
+        $parts = array_map('trim', explode(',', $khuVuc));
+
+        return $parts[0] ?? '';
+    }
+
+    private function cityFromKhuVuc(string $khuVuc): string
+    {
+        $parts = array_map('trim', explode(',', $khuVuc));
+
+        return count($parts) > 1 ? end($parts) : '';
     }
 }
