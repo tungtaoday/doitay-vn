@@ -14,26 +14,52 @@ use Illuminate\Support\Str;
 /**
  * Xuất bản hồ sơ thợ từ Zalo Mini App lên chợ doitay.
  *
+ * SERVER LÀ NGUỒN SỰ THẬT: Mini App chỉ là client, localStorage chỉ để cache.
+ * Thợ đổi máy / cài lại app → khôi phục bằng `findByZaloId()`.
+ *
  * - Idempotent theo SĐT chuẩn hoá: cùng số → cùng company (không tạo trùng).
+ * - Hồ sơ đã có: CẬP NHẬT khi người gọi chứng minh sở hữu (`zalo_id` khớp) hoặc
+ *   khi hồ sơ chưa có chủ. Người lạ gửi trùng SĐT → trả hồ sơ cũ, không sửa gì
+ *   (chống chiếm hồ sơ).
  * - Mặc định tạo PENDING → vào hàng đợi duyệt (/sale/duyet, /quan-tri) để chống
  *   hồ sơ ảo. Bật `marketplace.miniapp_autopublish=true` để lên chợ ngay.
  */
 class MiniAppProfileService
 {
+    /** Vé nhận hồ sơ (CTV dựng hộ) sống bao lâu. */
+    public const CLAIM_TTL_DAYS = 30;
+
     /**
-     * @return array{company: Company, created: bool, live: bool}
+     * @return array{company: Company, created: bool, live: bool, updated: bool}
      */
     public function publish(array $data): array
     {
         $mobile = Identifier::normalizePhone($data['phone']);
+        $zaloId = trim((string) ($data['zalo_id'] ?? ''));
 
-        return DB::transaction(function () use ($data, $mobile) {
+        return DB::transaction(function () use ($data, $mobile, $zaloId) {
             $user = $this->findOrCreateThoUser($data, $mobile);
 
-            // Dedup: SĐT này đã có company → cập nhật nhẹ, không tạo trùng.
+            // Dedup theo SĐT: cùng số → cùng company.
             $existing = $user->companies()->first();
             if ($existing) {
-                return ['company' => $existing, 'created' => false, 'live' => (int) $existing->status === Status::APPROVED];
+                $owner = trim((string) ($existing->zalo_id ?? ''));
+                // Chủ sở hữu khớp, hoặc hồ sơ chưa có chủ → cho phép cập nhật.
+                $mayEdit = $zaloId !== '' && ($owner === '' || $owner === $zaloId);
+                if ($mayEdit) {
+                    $this->applyProfileFields($existing, $data);
+                    if ($owner === '') {
+                        $existing->zalo_id = $zaloId;
+                    }
+                    $existing->save();
+                }
+
+                return [
+                    'company' => $existing->refresh(),
+                    'created' => false,
+                    'updated' => $mayEdit,
+                    'live'    => (int) $existing->status === Status::APPROVED,
+                ];
             }
 
             $autopublish = (bool) config('marketplace.miniapp_autopublish', false);
@@ -46,6 +72,7 @@ class MiniAppProfileService
                 'name'           => $data['name'],
                 'email'          => $user->email,
                 'phone'          => $data['phone'],
+                'zalo_id'        => $zaloId !== '' ? $zaloId : null,
                 'address'        => trim(implode(', ', array_filter([$data['district'] ?? null, $data['city'] ?? null]))),
                 'city'           => $data['city'] ?? '',
                 'district'       => $data['district'] ?? '',
@@ -66,8 +93,113 @@ class MiniAppProfileService
                 \App\Models\CompanyWallet::createForCompany($company);
             }
 
-            return ['company' => $company, 'created' => true, 'live' => $status === Status::APPROVED];
+            return ['company' => $company, 'created' => true, 'updated' => false, 'live' => $status === Status::APPROVED];
         });
+    }
+
+    /** Ghi các trường hồ sơ do thợ nhập (dùng chung cho tạo mới & cập nhật). */
+    private function applyProfileFields(Company $company, array $data): void
+    {
+        $company->name        = $data['name'];
+        $company->phone       = $data['phone'];
+        $company->category_id = $this->resolveCategoryId($data['nghe']);
+        $company->city        = $data['city'] ?? '';
+        $company->district    = $data['district'] ?? '';
+        $company->address     = trim(implode(', ', array_filter([$data['district'] ?? null, $data['city'] ?? null])));
+        $company->experience  = (int) ($data['experience'] ?? 0);
+        if (! empty($data['description'])) {
+            $company->description = $data['description'];
+        }
+        if (! empty($data['tags'])) {
+            $company->tags = array_values(array_filter($data['tags']));
+        }
+        if (! empty($data['services'])) {
+            $company->services = $this->normalizeServices($data['services']);
+        }
+    }
+
+    /** Khôi phục hồ sơ theo định danh Zalo (thợ đổi máy / cài lại app). */
+    public function findByZaloId(string $zaloId): ?Company
+    {
+        $zaloId = trim($zaloId);
+        if ($zaloId === '') {
+            return null;
+        }
+
+        return Company::with('portfolios')->where('zalo_id', $zaloId)->first();
+    }
+
+    /**
+     * Sinh vé nhận hồ sơ để CTV gửi link cho thợ. Ghi đè vé cũ (mỗi hồ sơ 1 vé sống).
+     *
+     * @return array{token: string, expires_at: \Illuminate\Support\Carbon}
+     */
+    public function issueClaimToken(Company $company): array
+    {
+        $token = Str::lower(Str::random(40));
+        $expires = now()->addDays(self::CLAIM_TTL_DAYS);
+
+        $company->forceFill([
+            'claim_token'      => $token,
+            'claim_expires_at' => $expires,
+        ])->save();
+
+        return ['token' => $token, 'expires_at' => $expires];
+    }
+
+    /**
+     * Thợ bấm link CTV gửi → đổi vé lấy quyền sở hữu hồ sơ.
+     *
+     * @return array{ok: bool, company?: Company, error?: string}
+     */
+    public function claim(Company $company, string $token, string $zaloId): array
+    {
+        $token = trim($token);
+        $zaloId = trim($zaloId);
+
+        if ($zaloId === '') {
+            return ['ok' => false, 'error' => 'missing_zalo_id'];
+        }
+        // Đã là chủ rồi → coi như thành công (bấm lại link cũ không bị lỗi).
+        if (trim((string) $company->zalo_id) === $zaloId) {
+            return ['ok' => true, 'company' => $company];
+        }
+        if (! $company->claim_token || ! hash_equals($company->claim_token, $token)) {
+            return ['ok' => false, 'error' => 'invalid_token'];
+        }
+        if ($company->claim_expires_at && $company->claim_expires_at->isPast()) {
+            return ['ok' => false, 'error' => 'expired_token'];
+        }
+        if ($company->zalo_id) {
+            return ['ok' => false, 'error' => 'already_claimed'];
+        }
+
+        $company->forceFill([
+            'zalo_id'          => $zaloId,
+            'claim_token'      => null,
+            'claim_expires_at' => null,
+            'claimed_at'       => now(),
+        ])->save();
+
+        return ['ok' => true, 'company' => $company->refresh()];
+    }
+
+    /** Người gọi có quyền sửa hồ sơ này không (chủ sở hữu, hoặc vé còn hạn). */
+    public function mayEdit(Company $company, string $zaloId, ?string $claimToken = null): bool
+    {
+        $zaloId = trim($zaloId);
+        $owner = trim((string) $company->zalo_id);
+
+        if ($zaloId !== '' && $owner !== '' && $owner === $zaloId) {
+            return true;
+        }
+        if ($owner === '' && $claimToken && $company->claim_token
+            && hash_equals($company->claim_token, trim($claimToken))
+            && (! $company->claim_expires_at || ! $company->claim_expires_at->isPast())) {
+            return true;
+        }
+
+        return false;
     }
 
     private function findOrCreateThoUser(array $data, string $mobile): User

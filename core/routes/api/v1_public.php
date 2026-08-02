@@ -43,10 +43,28 @@ Route::get('categories/{id}/features', [RatingController::class, 'features'])->w
 // SEO: cac cap nghe x khu vuc co du cung tho (nguon cho landing + sitemap).
 Route::get('service-areas', [\App\Http\Controllers\API\V1\Public\ServiceAreaController::class, 'index'])->name('service-areas.index');
 
-// ── Xuất bản hồ sơ thợ từ Zalo Mini App (self-serve) — rate-limit chống spam ──
+// ── Hồ sơ thợ từ Zalo Mini App — SERVER là nguồn sự thật ──
+// store  : tạo/cập nhật hồ sơ (thợ tự làm)
+// me     : khôi phục hồ sơ khi đổi máy / cài lại app
+// claim  : thợ bấm link CTV gửi để nhận hồ sơ được dựng hộ
+// images : tải ảnh việc lên server (không còn base64 trong máy thợ)
 Route::post('tho-profiles', [\App\Http\Controllers\API\V1\Public\ThoProfileController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('tho-profiles.store');
+
+Route::get('tho-profiles/me', [\App\Http\Controllers\API\V1\Public\ThoProfileController::class, 'me'])
+    ->middleware('throttle:30,1')
+    ->name('tho-profiles.me');
+
+Route::post('tho-profiles/{id}/claim', [\App\Http\Controllers\API\V1\Public\ThoProfileController::class, 'claim'])
+    ->whereNumber('id')
+    ->middleware('throttle:10,1')
+    ->name('tho-profiles.claim');
+
+Route::post('tho-profiles/{id}/images', [\App\Http\Controllers\API\V1\Public\ThoProfileController::class, 'uploadImages'])
+    ->whereNumber('id')
+    ->middleware('throttle:20,1')
+    ->name('tho-profiles.images');
 
 // ── Đặt lịch KHÔNG cần đăng nhập (guest) — tự tạo tài khoản theo SĐT/email ──
 Route::post('guest-appointments', [GuestAppointmentController::class, 'store'])

@@ -15,7 +15,10 @@ class Company extends Model
     protected $casts = [
         'tags' => 'array',
         'services' => 'array',
-        'business_hours' => 'array'
+        'business_hours' => 'array',
+        // Vé nhận hồ sơ (CTV dựng hộ → thợ bấm link để sở hữu)
+        'claim_expires_at' => 'datetime',
+        'claimed_at' => 'datetime',
     ];
 
 
