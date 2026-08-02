@@ -6,6 +6,7 @@ import { getToken } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { formatVnd } from './types';
 import type { SaleSubmission, SaleSubmissionListResponse } from './types';
+import { ClaimLinkBox } from './claim-link-box';
 
 export const metadata: Metadata = {
   title: 'Hồ sơ thợ đã nhập | Sale',
@@ -141,6 +142,11 @@ export default async function SalePage({ searchParams }: PageProps) {
                   <p className="mt-3 rounded-xl bg-error-container/60 px-3 py-2 text-xs text-on-error-container">
                     Lý do từ chối: {s.ly_do_tu_choi} — sửa lại thông tin/ảnh và nhập lại nhé.
                   </p>
+                ) : null}
+
+                {/* Vé còn hạn = thợ chưa bấm link → cho CTV chép lại để gửi Zalo */}
+                {s.claim_link && s.status !== 'rejected' ? (
+                  <ClaimLinkBox link={s.claim_link} tenTho={s.ten_tho} />
                 ) : null}
 
                 {s.status === 'approved' && s.company_id ? (

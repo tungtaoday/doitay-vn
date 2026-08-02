@@ -5,6 +5,10 @@ export interface SaleSubmissionImage {
 
 export interface SaleSubmission {
   id: number;
+  /** lam_ho = CTV dựng hộ tại chỗ · da_mo = thợ tự mở, CTV khai nhận công */
+  loai?: 'lam_ho' | 'da_mo';
+  /** Link gửi thợ để nhận hồ sơ (chỉ có với kiểu làm hộ, khi vé còn hạn). */
+  claim_link?: string | null;
   ten_tho: string;
   nghe: string;
   khu_vuc: string;
