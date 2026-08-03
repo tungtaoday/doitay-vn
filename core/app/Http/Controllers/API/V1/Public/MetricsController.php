@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1\Public;
 
+use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Models\ProductEvent;
 use Illuminate\Http\JsonResponse;
@@ -100,6 +101,39 @@ class MetricsController extends Controller
                     }
                     return $out;
                 })(),
+                // ── Hồ sơ thợ MỚI trong kỳ, gồm cả CHỜ DUYỆT ──
+                // API công khai /public/companies chỉ trả hồ sơ đã duyệt, nên bot
+                // nhắc việc không thấy thợ vừa tạo. Khối này để chủ hệ (có token)
+                // biết ngay có ai vào, và ai đang kẹt ở hàng chờ duyệt.
+                'recent_tho' => DB::table('companies')
+                    ->leftJoin('categories', 'categories.id', '=', 'companies.category_id')
+                    ->where('companies.created_at', '>=', $since)
+                    ->where(function ($q) {
+                        $q->whereNull('companies.is_seeded')->orWhere('companies.is_seeded', 0);
+                    })
+                    ->orderByDesc('companies.id')
+                    ->limit(20)
+                    ->get([
+                        'companies.id',
+                        'companies.name',
+                        'companies.district',
+                        'companies.status',
+                        'companies.zalo_id',
+                        'companies.created_at',
+                        'categories.name as nghe',
+                    ])
+                    ->map(fn ($c) => [
+                        'id'         => (int) $c->id,
+                        'name'       => $c->name,
+                        'nghe'       => $c->nghe,
+                        'district'   => $c->district ?: null,
+                        // live = đã duyệt, hiện trên chợ · pending = còn ở hàng chờ
+                        'status'     => (int) $c->status === Status::APPROVED ? 'live' : 'pending',
+                        // true = thợ đã bấm link nhận hồ sơ (hoặc tự tạo trong app)
+                        'claimed'    => (bool) $c->zalo_id,
+                        'created_at' => (string) $c->created_at,
+                    ])
+                    ->all(),
                 // ── Đếm thô mọi event (debug/dashboard) ──
                 'events' => ProductEvent::query()
                     ->where('created_at', '>=', $since)
