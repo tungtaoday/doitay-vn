@@ -112,7 +112,9 @@ class SubmissionReviewService
             'user_id'        => $user->id,
             'category_id'    => $this->resolveCategoryId($submission->nghe),
             'name'           => $submission->ten_tho,
-            'email'          => $user->email,
+            // User cũ có thể email NULL (tạo từ luồng khác) → companies.email NOT NULL sẽ nổ
+            'email'          => $user->email ?: ('tho_' . Identifier::normalizePhone($submission->sdt_tho)
+                . '_' . uniqid() . '@phone.doitay.local'),
             'phone'          => $submission->sdt_tho,
             'address'        => $submission->khu_vuc,
             'city'           => $city,

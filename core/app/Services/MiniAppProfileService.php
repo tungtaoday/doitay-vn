@@ -70,7 +70,9 @@ class MiniAppProfileService
                 'user_id'        => $user->id,
                 'category_id'    => $this->resolveCategoryId($data['nghe']),
                 'name'           => $data['name'],
-                'email'          => $user->email,
+                // Thợ đã có tài khoản từ luồng khác (đặt lịch guest, admin tạo…) có thể
+                // email NULL → companies.email NOT NULL sẽ nổ. Sinh email kỹ thuật thay thế.
+                'email'          => $this->ensureEmail($user, $mobile),
                 'phone'          => $data['phone'],
                 'zalo_id'        => $zaloId !== '' ? $zaloId : null,
                 'address'        => trim(implode(', ', array_filter([$data['district'] ?? null, $data['city'] ?? null]))),
@@ -95,6 +97,21 @@ class MiniAppProfileService
 
             return ['company' => $company, 'created' => true, 'updated' => false, 'live' => $status === Status::APPROVED];
         });
+    }
+
+    /**
+     * Bảo đảm luôn có email để gán cho company (cột NOT NULL).
+     * Nếu user chưa có email thì vá luôn vào user để lần sau khỏi lặp lỗi.
+     */
+    private function ensureEmail(User $user, string $mobile): string
+    {
+        if (! empty($user->email)) {
+            return $user->email;
+        }
+        $email = 'tho_' . $mobile . '_' . uniqid() . '@phone.doitay.local';
+        $user->forceFill(['email' => $email])->save();
+
+        return $email;
     }
 
     /** Ghi các trường hồ sơ do thợ nhập (dùng chung cho tạo mới & cập nhật). */

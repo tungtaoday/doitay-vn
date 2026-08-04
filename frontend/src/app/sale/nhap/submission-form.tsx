@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
 import { createSubmissionAction, lookupThoAction, type ThoLookup } from './actions';
+import { NGHE, TINH_THANH, QUAN_HA_NOI, ghepKhuVuc } from '../danh-muc';
 
 const FIELD_CLS =
   'h-12 w-full rounded-xl border-none bg-surface-container-low px-4 text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-primary/30';
@@ -17,6 +18,7 @@ export function SubmissionForm() {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [files, setFiles] = useState<File[]>([]);
+  const [tinh, setTinh] = useState<string>('Hà Nội');
   const [lookup, setLookup] = useState<ThoLookup | null>(null);
   const [checking, setChecking] = useState(false);
   const [claimLink, setClaimLink] = useState<string | null>(null);
@@ -61,8 +63,10 @@ export function SubmissionForm() {
     fd.append('sdt_tho', get('sdt_tho'));
     if (loai === 'lam_ho') {
       fd.append('ten_tho', get('ten_tho'));
+      // Nghề và khu vực lấy từ DANH SÁCH CHUẨN (khớp app thợ) — không gõ tay nữa,
+      // nếu không hai bên ghi khác nhau và không khớp được hồ sơ.
       fd.append('nghe', get('nghe'));
-      fd.append('khu_vuc', get('khu_vuc'));
+      fd.append('khu_vuc', ghepKhuVuc(get('quan'), get('tinh')));
       const namKn = get('nam_kn');
       if (namKn) fd.append('nam_kn', namKn);
     }
@@ -206,23 +210,55 @@ export function SubmissionForm() {
 
           <div>
             <label className="mb-1.5 block text-sm font-semibold text-on-surface">Nghề</label>
-            <input name="nghe" className={FIELD_CLS} placeholder="VD: Thợ điện" required />
+            <select name="nghe" className={FIELD_CLS} defaultValue="" required>
+              <option value="" disabled>— Chọn nghề —</option>
+              {NGHE.map((n) => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-outline">
+              Chọn đúng như trong app thợ để hồ sơ khớp được với nhau.
+            </p>
             {err('nghe')}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-on-surface">Khu vực</label>
-              <input name="khu_vuc" className={FIELD_CLS} placeholder="Cầu Giấy, Hà Nội" required />
-              {err('khu_vuc')}
+              <label className="mb-1.5 block text-sm font-semibold text-on-surface">Tỉnh/Thành</label>
+              <select
+                name="tinh"
+                className={FIELD_CLS}
+                value={tinh}
+                onChange={(e) => setTinh(e.target.value)}
+                required
+              >
+                {TINH_THANH.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-on-surface">
-                Năm KN (tùy chọn)
-              </label>
-              <input name="nam_kn" className={FIELD_CLS} placeholder="VD: 3" inputMode="numeric" />
-              {err('nam_kn')}
+              <label className="mb-1.5 block text-sm font-semibold text-on-surface">Quận/Huyện</label>
+              {tinh === 'Hà Nội' ? (
+                <select name="quan" className={FIELD_CLS} defaultValue="" required>
+                  <option value="" disabled>— Chọn quận —</option>
+                  {QUAN_HA_NOI.map((q) => (
+                    <option key={q} value={q}>{q}</option>
+                  ))}
+                </select>
+              ) : (
+                <input name="quan" className={FIELD_CLS} placeholder="VD: Quận 1" required />
+              )}
+              {err('khu_vuc')}
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-on-surface">
+              Năm kinh nghiệm (tùy chọn)
+            </label>
+            <input name="nam_kn" className={FIELD_CLS} placeholder="VD: 3" inputMode="numeric" />
+            {err('nam_kn')}
           </div>
         </>
       ) : (
