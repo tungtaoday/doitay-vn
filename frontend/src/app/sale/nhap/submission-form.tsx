@@ -19,6 +19,8 @@ export function SubmissionForm() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [files, setFiles] = useState<File[]>([]);
   const [tinh, setTinh] = useState<string>('Hà Nội');
+  // Ảnh chân dung thợ — khách tin mặt người hơn mọi thứ khác trên hồ sơ
+  const [chanDung, setChanDung] = useState<File | null>(null);
   const [lookup, setLookup] = useState<ThoLookup | null>(null);
   const [checking, setChecking] = useState(false);
   const [claimLink, setClaimLink] = useState<string | null>(null);
@@ -70,6 +72,7 @@ export function SubmissionForm() {
       const namKn = get('nam_kn');
       if (namKn) fd.append('nam_kn', namKn);
     }
+    if (chanDung) fd.append('anh_chan_dung', chanDung);
     files.forEach((f) => fd.append('images[]', f));
 
     const res = await createSubmissionAction(fd);
@@ -208,6 +211,53 @@ export function SubmissionForm() {
             {err('ten_tho')}
           </div>
 
+          {/* Ảnh chân dung — khách nhìn mặt thợ mới tin, đặt ngay đầu form */}
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-on-surface">
+              Ảnh chân dung thợ
+            </label>
+            <div className="flex items-center gap-4">
+              <label className="flex size-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container">
+                {chanDung ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={URL.createObjectURL(chanDung)}
+                    alt="Ảnh chân dung"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-center text-xs leading-tight">
+                    Chụp
+                    <br />
+                    ảnh thợ
+                  </span>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => setChanDung(e.target.files?.[0] ?? null)}
+                />
+              </label>
+              <div className="min-w-0 text-xs text-on-surface-variant">
+                <p>Xin phép thợ rồi chụp một tấm tại chỗ.</p>
+                <p className="mt-1 text-outline">
+                  Hồ sơ có mặt thợ được khách gọi nhiều hơn hẳn hồ sơ để hình mặc định.
+                </p>
+                {chanDung ? (
+                  <button
+                    type="button"
+                    onClick={() => setChanDung(null)}
+                    className="mt-2 text-error underline"
+                  >
+                    Chụp lại
+                  </button>
+                ) : null}
+              </div>
+            </div>
+            {err('anh_chan_dung')}
+          </div>
+
           <div>
             <label className="mb-1.5 block text-sm font-semibold text-on-surface">Nghề</label>
             <select name="nghe" className={FIELD_CLS} defaultValue="" required>
@@ -309,7 +359,7 @@ export function SubmissionForm() {
 
       <button
         type="submit"
-        disabled={pending || files.length < minAnh}
+        disabled={pending || files.length < minAnh || (loai === 'lam_ho' && !chanDung)}
         className="h-12 w-full rounded-xl bg-primary font-semibold text-on-primary shadow-ambient transition-all active:scale-95 disabled:opacity-50"
       >
         {pending ? 'Đang gửi...' : loai === 'da_mo' ? 'Khai nhận công' : 'Gửi hồ sơ'}

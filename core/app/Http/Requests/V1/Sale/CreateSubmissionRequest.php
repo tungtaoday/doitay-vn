@@ -34,6 +34,9 @@ class CreateSubmissionRequest extends FormRequest
             'bang_gia.*.gia' => 'required_with:bang_gia|string|max:50',
 
             'images'   => 'required|array|min:' . ($daMo ? 1 : 3) . '|max:5',
+            // Ảnh chân dung thợ — khách tin mặt người hơn mọi thứ khác trên hồ sơ.
+            // Bắt buộc khi CTV dựng hộ (thợ đang ngồi đó, chụp 1 phát là xong).
+            'anh_chan_dung' => ($daMo ? 'nullable' : 'required') . '|file|image|max:4096',
             'images.*' => 'image|max:3072',
         ];
     }
@@ -46,6 +49,10 @@ class CreateSubmissionRequest extends FormRequest
             'khu_vuc.required' => 'Vui lòng nhập khu vực.',
             'sdt_tho.required' => 'Vui lòng nhập số điện thoại thợ.',
             'sdt_tho.regex'    => 'Số điện thoại không hợp lệ.',
+            'anh_chan_dung.required' => 'Cần ảnh chân dung thợ — khách nhìn mặt mới tin. '
+                . 'Xin phép rồi chụp 1 tấm tại chỗ là được.',
+            'anh_chan_dung.image'    => 'Ảnh chân dung phải là tệp ảnh.',
+            'anh_chan_dung.max'      => 'Ảnh chân dung tối đa 4MB.',
             'images.required'  => $this->input('loai') === 'da_mo'
                 ? 'Cần ít nhất 1 ảnh bằng chứng đã gặp thợ (ảnh chụp chung hoặc ảnh đoạn chat).'
                 : 'Vui lòng thêm ảnh công việc.',

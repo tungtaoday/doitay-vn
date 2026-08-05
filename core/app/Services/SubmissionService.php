@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\ThoSubmission;
 use App\Models\User;
 use App\Services\MiniAppProfileService;
+use App\Services\ThoPortfolioService;
 use App\Support\Identifier;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -34,7 +35,7 @@ class SubmissionService
      *
      * @throws ValidationException khi SĐT đã tồn tại.
      */
-    public function create(User $ctv, array $data, array $imageFiles): ThoSubmission
+    public function create(User $ctv, array $data, array $imageFiles, $anhChanDung = null): ThoSubmission
     {
         $normalized = self::normalizePhone($data['sdt_tho']);
         $loai = ($data['loai'] ?? 'lam_ho') === 'da_mo' ? 'da_mo' : 'lam_ho';
@@ -68,7 +69,7 @@ class SubmissionService
                 ?: (trim(implode(', ', array_filter([$daMoCompany->district, $daMoCompany->city]))) ?: 'Chưa rõ');
         }
 
-        return DB::transaction(function () use ($ctv, $data, $normalized, $imageFiles, $loai, $daMoCompany) {
+        return DB::transaction(function () use ($ctv, $data, $normalized, $imageFiles, $loai, $daMoCompany, $anhChanDung) {
             $submission = ThoSubmission::create([
                 'ctv_id'         => $ctv->id,
                 'loai'           => $loai,
@@ -114,6 +115,10 @@ class SubmissionService
                     'description' => 'Thợ ' . $data['nghe'] . ' — ' . $data['khu_vuc'],
                 ]);
                 $company = $result['company'];
+                // Ảnh chân dung → companies.image, hiện ngay trên hồ sơ khách xem
+                if ($anhChanDung) {
+                    app(ThoPortfolioService::class)->setAvatar($company, $anhChanDung);
+                }
                 app(MiniAppProfileService::class)->issueClaimToken($company);
                 $submission->company_id = $company->id;
                 $submission->save();

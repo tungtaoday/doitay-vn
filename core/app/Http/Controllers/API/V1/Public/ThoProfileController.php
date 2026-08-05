@@ -141,6 +141,12 @@ class ThoProfileController extends Controller
             return response()->json(['message' => 'Không có quyền sửa hồ sơ này'], 403);
         }
 
+        // Ảnh chân dung (nếu có) — thứ khách tin nhất trên hồ sơ
+        $avatar = null;
+        if ($request->hasFile('avatar')) {
+            $avatar = $this->portfolio->setAvatar($company, $request->file('avatar'));
+        }
+
         $result = $this->portfolio->addImages(
             $company,
             $request->file('images', []),
@@ -150,6 +156,7 @@ class ThoProfileController extends Controller
         return response()->json([
             'data' => [
                 'saved'  => $result['saved'],
+                'avatar' => $avatar ? asset('assets/images/company/' . $avatar) : null,
                 'images' => $this->portfolio->listImages($company),
             ],
         ], 201);

@@ -18,7 +18,9 @@ class UploadThoImagesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'images'   => ['required', 'array', 'min:1', 'max:5'],
+            // Ảnh chân dung thợ — gửi kèm hoặc gửi riêng (khi đó images có thể rỗng)
+            'avatar'   => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'images'   => ['required_without:avatar', 'array', 'max:5'],
             'images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'titles'   => ['nullable', 'array', 'max:5'],
             'titles.*' => ['nullable', 'string', 'max:120'],

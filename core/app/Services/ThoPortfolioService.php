@@ -62,6 +62,37 @@ class ThoPortfolioService
         return ['saved' => count($saved), 'images' => $saved];
     }
 
+    /**
+     * Ảnh CHÂN DUNG thợ → `companies.image`.
+     *
+     * Khách tin mặt người hơn mọi thứ khác trên hồ sơ. Trước đây cột này chỉ được
+     * ghi từ trang admin cũ; Mini App và cổng CTV đều không gửi ảnh chân dung nên
+     * hồ sơ hiện ra bằng hình minh hoạ mặc định.
+     * Lưu ở `assets/images/company` — đúng chỗ CompanyResource đọc ra.
+     */
+    public function setAvatar(Company $company, UploadedFile $file): ?string
+    {
+        if (! $file->isValid()) {
+            return null;
+        }
+        $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        if (! in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+            return null;
+        }
+
+        $dir = public_path('assets' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'company');
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $name = time() . '_tho' . $company->id . '_' . Str::lower(Str::random(8)) . '.' . $ext;
+        $file->move($dir, $name);
+
+        $company->forceFill(['image' => $name])->save();
+
+        return $name;
+    }
+
     /** Xoá 1 ảnh của hồ sơ (thợ tự gỡ ảnh trong app). */
     public function removeImage(Company $company, int $portfolioId): bool
     {

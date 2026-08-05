@@ -26,6 +26,7 @@ class SubmissionController extends Controller
             $request->user(),
             $request->validated(),
             $request->file('images', []),
+            $request->file('anh_chan_dung'),
         );
 
         return (new SubmissionResource($submission))
