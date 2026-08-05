@@ -55,12 +55,20 @@ export default async function SalePage({ searchParams }: PageProps) {
       {/* Header + CTA */}
       <div className="mb-6 flex items-center justify-between gap-3">
         <h1 className="font-headline text-2xl font-bold text-on-surface">Hồ sơ thợ</h1>
-        <Link
-          href={'/sale/nhap' as Route}
-          className="shrink-0 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary shadow-ambient transition-all active:scale-95"
-        >
-          + Nhập thợ
-        </Link>
+        <div className="flex shrink-0 gap-2">
+          <Link
+            href={'/sale/hieu-suat' as Route}
+            className="rounded-xl bg-surface-container px-4 py-2.5 text-sm font-semibold text-on-surface transition-all active:scale-95"
+          >
+            Hiệu suất
+          </Link>
+          <Link
+            href={'/sale/nhap' as Route}
+            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary shadow-ambient transition-all active:scale-95"
+          >
+            + Nhập thợ
+          </Link>
+        </div>
       </div>
 
       {/* Stats — hoa hồng là động lực chính của CTV, đưa lên đầu */}

@@ -16,6 +16,31 @@ use Illuminate\Support\Str;
  */
 class ThoProfileResource extends JsonResource
 {
+    /** Đếm sự kiện 30 ngày của chính hồ sơ này. Lỗi thì trả 0, không chặn hồ sơ. */
+    private function thongKe(): array
+    {
+        try {
+            $rows = \Illuminate\Support\Facades\DB::table('product_events')
+                ->selectRaw('event, count(*) as n')
+                ->where('company_id', $this->id)
+                ->where('created_at', '>=', now()->subDays(30))
+                ->groupBy('event')
+                ->pluck('n', 'event');
+
+            $viewed = (int) ($rows['profile_viewed'] ?? 0);
+            $contacted = (int) ($rows['contact_clicked'] ?? 0);
+
+            return [
+                'da_gui_the'  => (int) ($rows['profile_shared'] ?? 0),
+                'khach_xem'   => $viewed,
+                'khach_lien_he' => $contacted,
+                'ty_le_lien_he' => $viewed > 0 ? round($contacted * 100 / $viewed) : 0,
+            ];
+        } catch (\Throwable) {
+            return ['da_gui_the' => 0, 'khach_xem' => 0, 'khach_lien_he' => 0, 'ty_le_lien_he' => 0];
+        }
+    }
+
     public function toArray(Request $request): array
     {
         $live = (int) $this->status === Status::APPROVED;
@@ -46,6 +71,9 @@ class ThoProfileResource extends JsonResource
             'review_status' => $live ? 'live' : 'pending',
             'is_live'       => $live,
             'claimed'       => (bool) $this->zalo_id,
+            // Hiệu suất hồ sơ 30 ngày — để thợ tự thấy thẻ của mình có ai xem không.
+            // Đây là thứ khiến thợ chịu gửi thẻ tiếp: nhìn thấy con số nhúc nhích.
+            'thong_ke'      => $this->thongKe(),
             'profile_url'   => rtrim((string) config('app.frontend_url', config('app.url')), '/')
                 . '/tho/' . $this->id . '/' . Str::slug((string) $this->name),
         ];

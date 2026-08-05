@@ -17,13 +17,112 @@ use Illuminate\Support\Facades\DB;
  */
 class MetricsController extends Controller
 {
-    public function bacDau(Request $request): JsonResponse
+    /** Chặn cửa: mọi endpoint metrics đều cần token đọc. */
+    private function guard(Request $request): void
     {
         $configured = (string) config('metrics.token', '');
         $given = (string) ($request->query('token') ?? $request->bearerToken() ?? '');
         if ($configured === '' || ! hash_equals($configured, $given)) {
             abort(403, 'Metrics token không hợp lệ.');
         }
+    }
+
+    /**
+     * GET /public/metrics/tho-performance?token=&days=30
+     *
+     * Bảng HIỆU SUẤT TỪNG THỢ cho người quản lý: ai đang sống, ai có hồ sơ mà
+     * chưa share, ai share rồi mà không ai gọi. Đây là thứ Quyển 6 gọi là "đo
+     * chuỗi ra tiền" — nhìn theo từng thợ chứ không chỉ tổng.
+     */
+    public function thoPerformance(Request $request): JsonResponse
+    {
+        $this->guard($request);
+
+        $days  = max(1, min(365, (int) $request->query('days', 30)));
+        $since = now()->subDays($days);
+
+        // Gộp sự kiện theo company trong cửa sổ — 1 truy vấn, không N+1.
+        $stats = DB::table('product_events')
+            ->selectRaw('company_id, event, count(*) as n, max(created_at) as last_at')
+            ->whereNotNull('company_id')
+            ->where('created_at', '>=', $since)
+            ->groupBy('company_id', 'event')
+            ->get()
+            ->groupBy('company_id');
+
+        $companies = DB::table('companies')
+            ->leftJoin('categories', 'categories.id', '=', 'companies.category_id')
+            ->where(function ($q) {
+                $q->whereNull('companies.is_seeded')->orWhere('companies.is_seeded', 0);
+            })
+            ->orderByDesc('companies.id')
+            ->limit(500)
+            ->get([
+                'companies.id', 'companies.name', 'companies.district', 'companies.city',
+                'companies.status', 'companies.zalo_id', 'companies.phone',
+                'companies.created_at', 'categories.name as nghe',
+            ]);
+
+        $rows = [];
+        foreach ($companies as $c) {
+            $ev = $stats->get($c->id, collect());
+            $get = fn (string $e) => (int) ($ev->firstWhere('event', $e)->n ?? 0);
+            $viewed    = $get('profile_viewed');
+            $contacted = $get('contact_clicked');
+            $shared    = $get('profile_shared');
+            $lastAt    = $ev->max('last_at');
+
+            $rows[] = [
+                'id'          => (int) $c->id,
+                'name'        => $c->name,
+                'nghe'        => $c->nghe,
+                'khu_vuc'     => trim(implode(', ', array_filter([$c->district, $c->city]))) ?: null,
+                'phone'       => $c->phone,
+                'status'      => (int) $c->status === Status::APPROVED ? 'live' : 'pending',
+                'claimed'     => (bool) $c->zalo_id,
+                'created_at'  => (string) $c->created_at,
+                'shared'      => $shared,
+                'viewed'      => $viewed,
+                'contacted'   => $contacted,
+                // Tỉ lệ khách xem rồi bấm liên hệ — chỉ số chất lượng hồ sơ
+                'contact_rate' => $viewed > 0 ? round($contacted * 100 / $viewed, 1) : null,
+                'last_at'     => $lastAt ? (string) $lastAt : null,
+                // Chẩn đoán sẵn để người xem khỏi tự luận
+                'tinh_trang'  => $this->chanDoan((bool) $c->zalo_id, $shared, $viewed, $contacted),
+            ];
+        }
+
+        $tong = count($rows);
+        $daShare = count(array_filter($rows, fn ($r) => $r['shared'] > 0));
+        $coKhach = count(array_filter($rows, fn ($r) => $r['contacted'] > 0));
+
+        return response()->json(['data' => [
+            'window_days' => $days,
+            'tong_quan' => [
+                'tong_tho'      => $tong,
+                'da_nhan_ho_so' => count(array_filter($rows, fn ($r) => $r['claimed'])),
+                'da_share'      => $daShare,
+                'co_khach_lien_he' => $coKhach,
+                'share_rate'    => $tong > 0 ? round($daShare * 100 / $tong, 1) : 0,
+                'real_lead_rate' => $daShare > 0 ? round($coKhach * 100 / $daShare, 1) : 0,
+            ],
+            'tho' => $rows,
+        ]]);
+    }
+
+    /** Một câu nói thẳng thợ này đang kẹt ở đâu — dùng cho cả bảng quản lý lẫn bot. */
+    private function chanDoan(bool $claimed, int $shared, int $viewed, int $contacted): string
+    {
+        if (! $claimed)               return 'chua_nhan_ho_so';   // CTV dựng hộ, thợ chưa bấm link
+        if ($shared === 0)            return 'chua_share';        // có hồ sơ mà chưa gửi khách
+        if ($viewed === 0)            return 'share_chua_ai_xem';
+        if ($contacted === 0)         return 'xem_nhung_khong_goi'; // hồ sơ yếu: thiếu ảnh/giá
+        return 'dang_song';
+    }
+
+    public function bacDau(Request $request): JsonResponse
+    {
+        $this->guard($request);
 
         $days  = max(1, min(365, (int) $request->query('days', 30)));
         $since = now()->subDays($days);

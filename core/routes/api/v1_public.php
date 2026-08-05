@@ -81,3 +81,8 @@ Route::post('events', [EventController::class, 'store'])
 Route::get('metrics/bac-dau', [MetricsController::class, 'bacDau'])
     ->middleware('throttle:30,1')
     ->name('metrics.bac-dau');
+
+// Hiệu suất TỪNG thợ (bảng quản lý): ai chưa nhận hồ sơ, chưa share, share mà không ai gọi.
+Route::get('metrics/tho-performance', [MetricsController::class, 'thoPerformance'])
+    ->middleware('throttle:30,1')
+    ->name('metrics.tho-performance');
