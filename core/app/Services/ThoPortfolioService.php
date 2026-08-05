@@ -96,9 +96,12 @@ class ThoPortfolioService
     }
 
     /**
-     * Thư mục ảnh thật. Prod & local đều là `<gốc repo>/assets/images/portfolio`
-     * (vhost doitay.vn phục vụ từ gốc repo, không phải core/public).
-     * Ghi đè bằng config `marketplace.portfolio_dir` nếu hạ tầng đổi.
+     * Thư mục ảnh thật = `core/public/assets/images/portfolio`.
+     *
+     * ⚠️ Trên prod, vhost doitay.vn KHÔNG phục vụ file từ gốc repo — nó proxy mọi thứ
+     * sang Next.js, chỉ có `Alias /assets/ → core/public/assets/` là ngoại lệ. Ghi vào
+     * gốc repo thì ảnh lưu được nhưng URL trả 404 (đã dính lỗi này 05/08).
+     * Đây cũng là chỗ CompanyController (Blade cũ) vẫn ghi — giữ một chỗ duy nhất.
      */
     private function storageDir(): string
     {
@@ -107,8 +110,8 @@ class ThoPortfolioService
             return rtrim($configured, '/\\');
         }
 
-        return dirname(base_path()) . DIRECTORY_SEPARATOR . 'assets'
-            . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'portfolio';
+        return public_path('assets' . DIRECTORY_SEPARATOR . 'images'
+            . DIRECTORY_SEPARATOR . 'portfolio');
     }
 
     private function url(string $filename): string
