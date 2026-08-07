@@ -318,10 +318,11 @@ class InsightController extends Controller
         $this->assertManager();
 
         // Yêu cầu khách gửi lên mà quá 24h chưa ghép được thợ — mất khách ở đây.
-        $yeuCauTreo = $this->boUserMoi(
-            DB::table('service_requests as r')->leftJoin('users as u', 'u.id', '=', 'r.user_id'),
-            'r.user_id'
-        )
+        // KHÔNG lọc suy đoán ở hàng đợi này: yêu cầu là do người thật tự gõ,
+        // giấu nhầm một cái là mất một khách. Đo thực tế cũng cho thấy không có
+        // yêu cầu nào do bộ seed sinh ra.
+        $yeuCauTreo = DB::table('service_requests as r')
+            ->leftJoin('users as u', 'u.id', '=', 'r.user_id')
             ->select('r.id', 'r.title', 'r.city', 'r.district', 'r.contact_name', 'r.contact_phone', 'r.created_at')
             ->where('r.status', 'open')
             ->where('r.created_at', '<', now()->subDay())

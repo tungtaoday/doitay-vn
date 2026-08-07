@@ -53,7 +53,9 @@ trait LocDuLieuMoi
                     ->orWhereExists(fn ($s) => $s->from('appointments as athat')
                         ->join('companies as cthat', 'cthat.id', '=', 'athat.company_id')
                         ->whereColumn('athat.user_id', $cot)
-                        ->where(fn ($x) => $x->whereNull('cthat.is_seeded')->orWhere('cthat.is_seeded', 0)));
+                        ->where(fn ($x) => $x->whereNull('cthat.is_seeded')->orWhere('cthat.is_seeded', 0)))
+                    ->orWhereExists(fn ($s) => $s->from('service_requests as ryc')
+                        ->whereColumn('ryc.user_id', $cot));
             });
     }
 
