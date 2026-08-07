@@ -8,6 +8,7 @@ import { categoryStyle } from '@/lib/category-style';
 import { TrustBadges } from '@/components/trust-badges';
 import { createServiceRequestAction } from './actions';
 import { LocationPicker } from './location-picker';
+import { recordEvent } from '@/lib/track';
 
 interface WizardState {
   categoryId: number | null;
@@ -66,6 +67,12 @@ export function RequestWizard({
     setState((s) => ({ ...s, images: [...s.images, ...files].slice(0, 5) }));
   }, []);
 
+  // Mở form = ý định cao nhất trên web. Đo ở đây để biết bao nhiêu người bắt
+  // đầu điền mà không gửi được.
+  useEffect(() => {
+    recordEvent('request_started', { surface: 'khach', channel: 'web' });
+  }, []);
+
   useEffect(() => {
     const urls = state.images.map((f) => URL.createObjectURL(f));
     setImagePreviews(urls);
@@ -115,6 +122,11 @@ export function RequestWizard({
         return;
       }
 
+      recordEvent('request_submitted', {
+        surface: 'khach',
+        channel: 'web',
+        meta: { category_id: state.categoryId, city: state.cityName },
+      });
       router.push(`/yeu-cau/ket-qua/${result.id}` as Route);
     });
   }

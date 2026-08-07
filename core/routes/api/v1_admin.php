@@ -43,3 +43,10 @@ Route::patch('companies/{id}/approve',   [SubmissionReviewController::class, 'ap
 Route::get('dashboard/overview',   [\App\Http\Controllers\API\V1\Admin\AdminDashboardController::class, 'overview'])->name('dashboard.overview');
 Route::get('ctv/performance',      [\App\Http\Controllers\API\V1\Admin\AdminDashboardController::class, 'ctvPerformance'])->name('ctv.performance');
 Route::patch('commissions/mark-paid', [\App\Http\Controllers\API\V1\Admin\AdminDashboardController::class, 'markPaid'])->name('commissions.mark-paid');
+
+// ── Ba mặt quản trị còn thiếu: khách hàng · điểm chạm · việc hôm nay ───────
+Route::prefix('insight')->name('insight.')->group(function () {
+    Route::get('khach-hang', [\App\Http\Controllers\API\V1\Admin\InsightController::class, 'khachHang'])->name('khach-hang');
+    Route::get('diem-cham',  [\App\Http\Controllers\API\V1\Admin\InsightController::class, 'diemCham'])->name('diem-cham');
+    Route::get('hom-nay',    [\App\Http\Controllers\API\V1\Admin\InsightController::class, 'viecHomNay'])->name('hom-nay');
+});

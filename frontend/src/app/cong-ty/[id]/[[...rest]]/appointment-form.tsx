@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useActionState, useEffect, useMemo, useState } from 'react';
 import { createAppointmentAction, type CreateAppointmentResult } from './actions';
 import type { AuthUser, PublicCompanyDetail, ServiceRequestData } from '@/lib/api-types';
+import { recordEvent } from '@/lib/track';
 
 type Step = 'form' | 'confirm' | 'success';
 
@@ -72,7 +73,14 @@ export function AppointmentBookingForm({ company, user, prefillRequest }: Props)
   const maxDate = useMemo(() => maxISO(30), []);
 
   useEffect(() => {
-    if (state?.ok) setStep('success');
+    if (state?.ok) {
+      setStep('success');
+      recordEvent('booking_confirmed', {
+        companyId: company.id,
+        surface: 'khach',
+        channel: 'web',
+      });
+    }
   }, [state]);
 
   const inputCls =
@@ -146,6 +154,7 @@ export function AppointmentBookingForm({ company, user, prefillRequest }: Props)
       return;
     }
     setClientError(null);
+    recordEvent('booking_started', { companyId: company.id, surface: 'khach', channel: 'web' });
     setStep('confirm');
   }
 

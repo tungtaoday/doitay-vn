@@ -8,7 +8,13 @@ type TrackEvent =
   | 'profile_viewed'
   | 'contact_clicked'
   | 'booking_started'
-  | 'booking_confirmed';
+  | 'booking_confirmed'
+  // Hành trình khách phía web — không có mấy cái này thì bảng điểm chạm chỉ
+  // thấy đoạn cuối (xem hồ sơ → bấm gọi), không biết khách rơi ở khúc nào trước đó.
+  | 'search_performed'
+  | 'request_started'
+  | 'request_submitted'
+  | 'signup_completed';
 
 interface TrackOpts {
   companyId?: number;

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { unstable_cache } from 'next/cache';
 import type { Metadata, Route } from 'next';
 import { api, ApiError } from '@/lib/api';
+import { SearchAnalytics } from '@/components/search-analytics';
 import type { Paginated, PublicCategory, PublicCompanyListItem } from '@/lib/api-types';
 import { getPlaceholderImage, isSeedImage } from '@/lib/placeholder-images';
 
@@ -105,8 +106,14 @@ export default async function ContractorListPage({ searchParams }: PageProps) {
 
   const activeCatName = categories.find(c => String(c.id) === activeCat)?.name;
 
+  // Khoá lọc: bỏ `page` để lật trang không tính là một lượt tìm mới.
+  const khoaLoc = [params.q, activeCat, activeDist, activeRating, params.sort]
+    .filter(Boolean)
+    .join('|');
+
   return (
     <div className="mx-auto max-w-7xl px-4 pb-32 pt-6 md:px-8 md:pt-8">
+      <SearchAnalytics khoa={khoaLoc} soKetQua={payload?.data.length ?? 0} />
       <nav className="mb-6 lg:mb-12">
         <div className="mb-3 flex items-center gap-2 text-sm text-outline">
           <Link href="/" className="transition-colors hover:text-primary">Trang chủ</Link>

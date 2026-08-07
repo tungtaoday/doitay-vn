@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import { recordEvent } from '@/lib/track';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { registerAction, type RegisterResult } from './actions';
@@ -20,6 +21,7 @@ export function RegisterForm({
 
   useEffect(() => {
     if (state?.ok) {
+      recordEvent('signup_completed', { surface: 'khach', channel: 'web' });
       if (!state.profileComplete) {
         router.replace('/vi/hoan-thanh-ho-so');
       } else {

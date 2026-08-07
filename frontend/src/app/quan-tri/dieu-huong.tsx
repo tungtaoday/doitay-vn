@@ -9,8 +9,11 @@ import type { Route } from 'next';
  * chỗ kia phải gõ tay địa chỉ. Đặt cùng một thanh ở đầu mọi trang để đi lại được.
  */
 const MUC: { href: string; nhan: string; mo_ta: string }[] = [
+  { href: '/quan-tri/hom-nay', nhan: 'Việc hôm nay', mo_ta: 'Gọi ai, việc nào quá hạn' },
   { href: '/quan-tri', nhan: 'Điều hành', mo_ta: 'Số tháng · chi phí · CTV' },
-  { href: '/sale/hieu-suat', nhan: 'Hiệu suất thợ', mo_ta: 'Ai kẹt ở đâu' },
+  { href: '/quan-tri/khach-hang', nhan: 'Khách hàng', mo_ta: 'Phía cầu · ai sắp rơi' },
+  { href: '/sale/hieu-suat', nhan: 'Hiệu suất thợ', mo_ta: 'Phía cung · ai kẹt ở đâu' },
+  { href: '/quan-tri/diem-cham', nhan: 'Điểm chạm', mo_ta: 'Hành động · kênh nguồn' },
   { href: '/sale/duyet', nhan: 'Hàng chờ duyệt', mo_ta: 'Nghiệm thu hồ sơ' },
   { href: '/sale', nhan: 'Hồ sơ CTV nhập', mo_ta: 'Danh sách + link gửi thợ' },
 ];

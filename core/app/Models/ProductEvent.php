@@ -34,6 +34,12 @@ class ProductEvent extends Model
         'contact_clicked',
         'booking_started',
         'booking_confirmed',
+        // Hành trình khách phía web — thêm để bảng điểm chạm thấy được cả khúc
+        // đầu (tìm thợ, gửi yêu cầu, đăng ký), không chỉ khúc xem hồ sơ.
+        'search_performed',
+        'request_started',
+        'request_submitted',
+        'signup_completed',
     ];
 
     /** Ghi 1 event. Bỏ qua nếu event không hợp lệ; nuốt mọi exception. */
