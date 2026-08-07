@@ -227,6 +227,34 @@ export default async function QuanTriPage() {
         &quot;Đã trả&quot; = đánh dấu thanh toán toàn bộ khoản đang nợ của CTV đó (sau khi bạn chuyển
         khoản thật). Tỉ lệ duyệt đỏ khi &lt;70% (ngưỡng KPI).
       </p>
+
+      {/* Bản đồ quản trị — để không phải nhớ "cái này sửa ở đâu" */}
+      <h2 className="mb-3 mt-10 font-headline text-lg font-bold text-on-surface">
+        Cái gì sửa ở đâu
+      </h2>
+      <div className="grid gap-3 md:grid-cols-3">
+        {BAN_DO.map((b) => (
+          <div key={b.noi} className="rounded-2xl bg-surface-container-lowest p-4 ring-1 ring-outline-variant/15">
+            <p className="font-headline text-sm font-bold text-on-surface">{b.noi}</p>
+            <p className="mt-1 text-xs leading-relaxed text-on-surface-variant">{b.gi}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
+
+const BAN_DO: { noi: string; gi: string }[] = [
+  {
+    noi: 'Trang này + /sale/*',
+    gi: 'Vận hành hàng ngày: duyệt hồ sơ thợ, hiệu suất từng thợ, hoa hồng CTV, phễu cung–cầu.',
+  },
+  {
+    noi: 'Admin hệ thống (doitay.vn/admin)',
+    gi: 'Hồ sơ gốc: tài khoản user, công ty, danh mục nghề, ví & giao dịch, cài đặt website, thông báo.',
+  },
+  {
+    noi: '.env trên server + config:cache',
+    gi: 'Tham số giai đoạn: phí lead, tặng ví, mức hoa hồng, ẩn/hiện SĐT thợ, bật index SEO. Xem khối cấu hình phía trên.',
+  },
+];

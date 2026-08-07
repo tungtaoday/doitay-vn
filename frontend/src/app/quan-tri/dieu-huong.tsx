@@ -17,7 +17,7 @@ const MUC: { href: string; nhan: string; mo_ta: string }[] = [
 
 export function DieuHuongQuanTri({ dang_o }: { dang_o: string }) {
   return (
-    <nav className="mb-6 flex flex-wrap gap-2">
+    <nav className="mb-6 flex flex-wrap items-stretch gap-2">
       {MUC.map((m) => {
         const active = m.href === dang_o;
         return (
@@ -37,6 +37,18 @@ export function DieuHuongQuanTri({ dang_o }: { dang_o: string }) {
           </Link>
         );
       })}
+
+      {/* Mảng hồ sơ gốc (user, công ty, danh mục, cài đặt, ví, giao dịch) vẫn nằm
+          ở admin Laravel — không bê sang đây, chỉ mở đường sang cho khỏi gõ tay. */}
+      <a
+        href="https://doitay.vn/admin"
+        target="_blank"
+        rel="noreferrer"
+        className="rounded-xl bg-surface-container-low px-4 py-2.5 text-on-surface-variant transition-colors hover:bg-surface-container"
+      >
+        <span className="block text-sm font-bold">Admin hệ thống ↗</span>
+        <span className="block text-[11px] text-outline">User · công ty · ví · cài đặt</span>
+      </a>
     </nav>
   );
 }
