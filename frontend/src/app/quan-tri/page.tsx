@@ -5,6 +5,8 @@ import { requireUser } from '@/lib/require-user';
 import { getToken } from '@/lib/auth';
 import { api, ApiError } from '@/lib/api';
 import { CtvTable, type CtvRow } from './ctv-table';
+import { DieuHuongQuanTri } from './dieu-huong';
+import { CanXuLy } from './can-xu-ly';
 
 export const metadata: Metadata = {
   title: 'Trung tâm điều hành',
@@ -107,10 +109,12 @@ export default async function QuanTriPage() {
             Phễu cung &amp; cầu · chi phí (khớp FM model) · CTV — 6 tháng gần nhất
           </p>
         </div>
-        <Link href={'/sale/duyet' as Route} className="text-sm font-semibold text-primary hover:underline">
-          Duyệt hồ sơ &amp; hàng đợi →
-        </Link>
       </div>
+
+      <DieuHuongQuanTri dang_o="/quan-tri" />
+
+      {/* Việc đang kẹt — đặt trước số liệu vì đây là thứ phải làm hôm nay */}
+      <CanXuLy />
 
       {/* Tiles tổng */}
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">

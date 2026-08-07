@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { requireUser } from '@/lib/require-user';
+import { DieuHuongQuanTri } from '../../quan-tri/dieu-huong';
 import { api } from '@/lib/api';
 import { TINH_TRANG_INFO, type HieuSuatResponse, type ThoRow } from './types';
 
@@ -41,6 +42,7 @@ export default async function HieuSuatPage({ searchParams }: PageProps) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
+      <DieuHuongQuanTri dang_o="/sale/hieu-suat" />
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-headline text-2xl font-bold text-on-surface">Hiệu suất thợ</h1>

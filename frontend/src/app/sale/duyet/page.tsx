@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { requireUser } from '@/lib/require-user';
+import { DieuHuongQuanTri } from '../../quan-tri/dieu-huong';
 import { getToken } from '@/lib/auth';
 import { api, ApiError } from '@/lib/api';
 import type { SaleSubmission, SaleSubmissionListResponse } from '../types';
@@ -55,6 +56,7 @@ export default async function DuyetPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
+      <DieuHuongQuanTri dang_o="/sale/duyet" />
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="font-headline text-2xl font-bold text-on-surface">Vận hành &amp; duyệt hồ sơ</h1>

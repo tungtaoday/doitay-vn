@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { requireUser } from '@/lib/require-user';
+import { DieuHuongQuanTri } from '../quan-tri/dieu-huong';
 import { getToken } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { formatVnd } from './types';
@@ -52,6 +53,7 @@ export default async function SalePage({ searchParams }: PageProps) {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 md:px-6 md:py-10">
+      <DieuHuongQuanTri dang_o="/sale" />
       {/* Header + CTA */}
       <div className="mb-6 flex items-center justify-between gap-3">
         <h1 className="font-headline text-2xl font-bold text-on-surface">Hồ sơ thợ</h1>
