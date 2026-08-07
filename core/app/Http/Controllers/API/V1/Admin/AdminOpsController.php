@@ -228,6 +228,145 @@ class AdminOpsController extends Controller
         ]]);
     }
 
+    // ── Cộng tác viên ────────────────────────────────────────────────────
+
+    /**
+     * Danh sách CTV — gồm cả người CHƯA nhập hồ sơ nào.
+     *
+     * Bảng hiệu suất cũ join tho_submissions nên CTV mới tuyển vô hình: tuyển
+     * xong không biết ai chưa bắt đầu. Ở đây đi từ bảng ctvs, số liệu chỉ là
+     * phần đắp thêm.
+     */
+    public function ctvList(): JsonResponse
+    {
+        $this->assertManager();
+
+        $ds = DB::table('ctvs as t')
+            ->leftJoin('users as u', 'u.id', '=', 't.user_id')
+            ->select('t.id', 't.user_id', 't.trang_thai', 't.khu_vuc', 't.ghi_chu', 't.created_at',
+                'u.name', 'u.mobile', 'u.email')
+            ->orderByDesc('t.id')
+            ->get();
+
+        $hoSo = DB::table('tho_submissions')
+            ->selectRaw("ctv_id, count(*) as nhap, "
+                . "sum(status = 'approved') as duyet, "
+                . "sum(status = 'rejected') as tu_choi, "
+                . 'max(created_at) as lan_cuoi')
+            ->groupBy('ctv_id')->get()->keyBy('ctv_id');
+
+        $hh = DB::table('commissions')
+            ->selectRaw('ctv_id, sum(so_tien) as tong, '
+                . 'sum(case when paid_at is null then so_tien else 0 end) as chua_tra')
+            ->groupBy('ctv_id')->get()->keyBy('ctv_id');
+
+        $rows = $ds->map(function ($c) use ($hoSo, $hh) {
+            $s = $hoSo->get($c->user_id);
+            $h = $hh->get($c->user_id);
+            $nhap = (int) ($s->nhap ?? 0);
+            $duyet = (int) ($s->duyet ?? 0);
+
+            return [
+                'id'         => (int) $c->id,
+                'user_id'    => (int) $c->user_id,
+                'name'       => $c->name,
+                'mobile'     => $c->mobile,
+                'khu_vuc'    => $c->khu_vuc,
+                'ghi_chu'    => $c->ghi_chu,
+                'trang_thai' => (int) $c->trang_thai,
+                'them_ngay'  => $c->created_at,
+                'nhap'       => $nhap,
+                'duyet'      => $duyet,
+                'tu_choi'    => (int) ($s->tu_choi ?? 0),
+                'ti_le_duyet' => $nhap > 0 ? round($duyet * 100 / $nhap) : null,
+                'lan_cuoi'   => $s->lan_cuoi ?? null,
+                'hoa_hong_tong'     => (float) ($h->tong ?? 0),
+                'hoa_hong_chua_tra' => (float) ($h->chua_tra ?? 0),
+                'tinh_trang' => $this->chanDoanCtv((int) $c->trang_thai, $nhap, $s->lan_cuoi ?? null),
+            ];
+        });
+
+        return response()->json(['data' => [
+            'items' => $rows,
+            'dem' => [
+                'tong'        => $rows->count(),
+                'hoat_dong'   => $rows->where('trang_thai', 1)->count(),
+                'chua_bat_dau' => $rows->where('tinh_trang', 'chua_bat_dau')->count(),
+                'nguoi_lanh'  => $rows->where('tinh_trang', 'nguoi')->count(),
+                'no_hoa_hong' => (float) $rows->sum('hoa_hong_chua_tra'),
+            ],
+        ]]);
+    }
+
+    private function chanDoanCtv(int $trangThai, int $nhap, ?string $lanCuoi): string
+    {
+        if ($trangThai === 0) return 'ngung';
+        if ($nhap === 0) return 'chua_bat_dau';
+        if ($lanCuoi && $lanCuoi < now()->subDays(14)) return 'nguoi';
+        return 'dang_chay';
+    }
+
+    /**
+     * Thêm CTV theo SĐT tài khoản đã có.
+     *
+     * Cố ý KHÔNG tạo tài khoản hộ: mật khẩu phải do chính người đó đặt. Chưa có
+     * tài khoản thì bảo họ đăng ký trên doitay.vn rồi thêm sau — API trả đúng
+     * câu hướng dẫn đó để người quản lý khỏi đoán.
+     */
+    public function addCtv(Request $request): JsonResponse
+    {
+        $this->assertManager();
+        $data = $request->validate([
+            'sdt'     => 'required|string|max:20',
+            'khu_vuc' => 'nullable|string|max:120',
+            'ghi_chu' => 'nullable|string|max:500',
+        ]);
+
+        $sdt = preg_replace('/\D+/', '', $data['sdt']);
+        $duoi = substr($sdt, -9);   // bỏ 0 / +84 đầu số để khớp mọi cách nhập
+
+        $u = User::whereRaw('RIGHT(REPLACE(REPLACE(mobile, " ", ""), "+", ""), 9) = ?', [$duoi])->first();
+        if (! $u) {
+            abort(422, 'Chưa có tài khoản nào dùng số này. Bảo bạn ấy đăng ký tài khoản trên doitay.vn trước, rồi thêm lại.');
+        }
+
+        if (DB::table('ctvs')->where('user_id', $u->id)->exists()) {
+            abort(422, $u->name . ' đã nằm trong danh sách CTV rồi.');
+        }
+
+        DB::table('ctvs')->insert([
+            'user_id'    => $u->id,
+            'trang_thai' => 1,
+            'khu_vuc'    => $data['khu_vuc'] ?? null,
+            'ghi_chu'    => $data['ghi_chu'] ?? null,
+            'nguoi_them' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json(['data' => [
+            'message' => 'Đã thêm ' . $u->name . ' vào danh sách CTV. Gửi họ link doitay.vn/sale để bắt đầu nhập hồ sơ.',
+        ]]);
+    }
+
+    public function setCtvStatus(Request $request, int $id): JsonResponse
+    {
+        $this->assertManager();
+        $data = $request->validate(['trang_thai' => 'required|in:0,1']);
+
+        $c = DB::table('ctvs')->where('id', $id)->first();
+        if (! $c) abort(404, 'Không tìm thấy CTV.');
+
+        DB::table('ctvs')->where('id', $id)
+            ->update(['trang_thai' => (int) $data['trang_thai'], 'updated_at' => now()]);
+
+        return response()->json(['data' => [
+            'message' => (int) $data['trang_thai'] === 1
+                ? 'Đã cho hoạt động lại.'
+                : 'Đã ngưng — tài khoản này không nhập hồ sơ mới được nữa.',
+        ]]);
+    }
+
     // ── Lịch hẹn ─────────────────────────────────────────────────────────
 
     public function appointments(Request $request): JsonResponse

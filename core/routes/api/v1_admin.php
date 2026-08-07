@@ -60,6 +60,10 @@ Route::prefix('ops')->name('ops.')->group(function () {
     Route::get('users',                    [$c, 'users'])->name('users');
     Route::post('users/{id}/status',       [$c, 'setUserStatus'])->whereNumber('id')->name('users.status');
 
+    Route::get('ctv',                      [$c, 'ctvList'])->name('ctv');
+    Route::post('ctv',                     [$c, 'addCtv'])->name('ctv.add');
+    Route::post('ctv/{id}/status',         [$c, 'setCtvStatus'])->whereNumber('id')->name('ctv.status');
+
     Route::get('lich-hen',                 [$c, 'appointments'])->name('lich-hen');
     Route::post('lich-hen/{id}/action',    [$c, 'appointmentAction'])->whereNumber('id')->name('lich-hen.action');
     Route::get('danh-gia',                 [$c, 'reviews'])->name('danh-gia');

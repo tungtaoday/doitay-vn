@@ -215,14 +215,18 @@ export default async function QuanTriPage() {
         tiền ảo (credit). Đối chiếu <code>docs/business/fm-model-doitay.xlsx</code>.
       </p>
 
-      {/* CTV */}
+      {/* CTV — quản lý đầy đủ ở trang riêng, đây chỉ là bảng tóm tắt */}
       <h2 className="mb-3 font-headline text-lg font-bold text-on-surface">
         Hiệu suất CTV &amp; đối soát hoa hồng
       </h2>
       <CtvTable rows={ctv} />
       <p className="mt-2 text-xs text-outline">
-        &quot;Đã trả&quot; = đánh dấu thanh toán toàn bộ khoản đang nợ của CTV đó (sau khi bạn chuyển
-        khoản thật). Tỉ lệ duyệt đỏ khi &lt;70% (ngưỡng KPI).
+        Bảng này chỉ thấy CTV ĐÃ nhập hồ sơ. Danh sách đầy đủ (gồm người mới tuyển chưa làm gì),
+        thêm/ngưng CTV và đánh dấu đã trả:{' '}
+        <Link href={'/quan-tri/ctv' as Route} className="text-primary hover:underline">
+          trang Cộng tác viên
+        </Link>
+        .
       </p>
 
       {/* Bản đồ quản trị — để không phải nhớ "cái này sửa ở đâu" */}

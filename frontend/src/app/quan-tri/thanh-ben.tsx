@@ -35,7 +35,7 @@ const NHOM: { ten: string; muc: { href: string; nhan: string; mo_ta?: string }[]
     ten: 'Tiền',
     muc: [
       { href: '/quan-tri/vi-tho', nhan: 'Ví thợ & giao dịch' },
-      { href: '/quan-tri', nhan: 'Hoa hồng CTV', mo_ta: 'Ở cuối trang Điều hành' },
+      { href: '/quan-tri/ctv', nhan: 'Cộng tác viên', mo_ta: 'Thêm · ngưng · trả hoa hồng' },
     ],
   },
   {

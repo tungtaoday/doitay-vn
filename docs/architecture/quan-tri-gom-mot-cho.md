@@ -31,7 +31,7 @@ sang admin cũ. Không giấu đi — lúc cần mà không biết tìm ở đâ
 | Hằng ngày | **Lịch hẹn** (chốt xong việc · huỷ lịch chờ) | kéo từ admin Blade |
 | Theo dõi | Điều hành · Khách hàng · Hiệu suất thợ · Điểm chạm | mới |
 | Tiền | **Ví thợ & giao dịch** | kéo từ admin Blade |
-| Tiền | Hoa hồng CTV | đã có |
+| Tiền | **Cộng tác viên** (thêm · ngưng · đối soát hoa hồng) | mới |
 | Dữ liệu | **Người dùng** (tìm · khoá · mở) | kéo từ admin Blade |
 | Dữ liệu | **Đánh giá** (soi điểm thấp · xoá nội dung bậy) | kéo từ admin Blade |
 | Dữ liệu | **Danh mục nghề** (thêm · sửa · ẩn hiện) | kéo từ admin Blade |
@@ -60,6 +60,12 @@ API: `API\V1\Admin\AdminOpsController` (`/api/v1/admin/ops/*`), gate bằng
    `system_info` — bí mật hệ thống, API không bao giờ trả ra.
 6. **Cột `confirmed_at` của `appointments` chỉ có trên DB production**, DB dev cũ chưa
    có. Đừng select nó trong truy vấn dùng chung.
+7. **CTV là thực thể thật từ bảng `ctvs`**, không suy ra từ `tho_submissions` nữa.
+   `SubmissionService::assertLaCtv` chặn người ngoài danh sách nộp hồ sơ; danh sách
+   RỖNG thì bỏ qua kiểm tra để hệ đang chạy không gãy. Migration đã backfill mọi
+   người từng nộp hồ sơ nên không ai đang làm bị mất quyền.
+8. **Không tạo tài khoản hộ CTV** — mật khẩu phải do chính họ đặt. Thêm CTV là tìm
+   theo SĐT của tài khoản đã có; chưa có thì bảo đăng ký trước.
 
 ## Chưa kéo (còn ở admin Blade)
 

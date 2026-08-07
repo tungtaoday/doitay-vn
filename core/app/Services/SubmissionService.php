@@ -9,6 +9,7 @@ use App\Services\MiniAppProfileService;
 use App\Services\ThoPortfolioService;
 use App\Support\Identifier;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -29,6 +30,36 @@ class SubmissionService
     }
 
     /**
+     * Chỉ người có tên trong bảng `ctvs` mới nộp được hồ sơ.
+     *
+     * Trước đây bất kỳ tài khoản doitay nào đăng nhập cũng nộp được — tức là
+     * không có cách nào ngưng quyền của một CTV đã nghỉ. Danh sách RỖNG thì bỏ
+     * qua kiểm tra, để hệ đang chạy không gãy trước khi kịp lập danh sách
+     * (migration create_ctvs_table đã tự đắp sẵn mọi người từng nộp hồ sơ).
+     */
+    private function assertLaCtv(User $ctv): void
+    {
+        if (! Schema::hasTable('ctvs')) {
+            return;
+        }
+        if (DB::table('ctvs')->count() === 0) {
+            return;
+        }
+
+        $ok = DB::table('ctvs')
+            ->where('user_id', $ctv->id)
+            ->where('trang_thai', 1)
+            ->exists();
+
+        if (! $ok) {
+            throw ValidationException::withMessages([
+                'ctv' => 'Tài khoản này không nằm trong danh sách cộng tác viên đang hoạt động. '
+                    . 'Liên hệ quản lý để được thêm vào.',
+            ]);
+        }
+    }
+
+    /**
      * Tạo submission (pending) + lưu ảnh. Chặn trùng SĐT (còn hiệu lực).
      *
      * @param  \Illuminate\Http\UploadedFile[]  $imageFiles
@@ -37,6 +68,8 @@ class SubmissionService
      */
     public function create(User $ctv, array $data, array $imageFiles, $anhChanDung = null): ThoSubmission
     {
+        $this->assertLaCtv($ctv);
+
         $normalized = self::normalizePhone($data['sdt_tho']);
         $loai = ($data['loai'] ?? 'lam_ho') === 'da_mo' ? 'da_mo' : 'lam_ho';
 

@@ -56,3 +56,18 @@ export async function luuDanhMuc(input: {
 export async function luuCaiDat(input: Record<string, string>): Promise<OpsResult> {
   return goi('/admin/ops/cai-dat', 'POST', input, ['/quan-tri/cai-dat']);
 }
+
+/** Thêm một CTV vào danh sách (theo SĐT tài khoản đã có). */
+export async function themCtv(input: {
+  sdt: string;
+  khu_vuc?: string;
+  ghi_chu?: string;
+}): Promise<OpsResult> {
+  if (!input.sdt.trim()) return { ok: false, error: 'Nhập số điện thoại đã.' };
+  return goi('/admin/ops/ctv', 'POST', input, ['/quan-tri/ctv']);
+}
+
+/** Ngưng (0) hoặc cho chạy lại (1) một CTV. */
+export async function doiTrangThaiCtv(id: number, trang_thai: 0 | 1): Promise<OpsResult> {
+  return goi(`/admin/ops/ctv/${id}/status`, 'POST', { trang_thai }, ['/quan-tri/ctv']);
+}
