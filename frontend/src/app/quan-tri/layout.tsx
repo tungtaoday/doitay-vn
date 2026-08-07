@@ -3,6 +3,7 @@ import { getToken } from '@/lib/auth';
 import { api } from '@/lib/api';
 import type { AuthUser } from '@/lib/api-types';
 import { SalePortalShell } from '@/components/sale-portal-shell';
+import { ThanhBen } from './thanh-ben';
 
 /** Trung tâm điều hành thuộc cổng Sale — dùng chung header sale, tách khỏi doitay. */
 export default async function QuanTriLayout({ children }: { children: ReactNode }) {
@@ -16,5 +17,14 @@ export default async function QuanTriLayout({ children }: { children: ReactNode 
       /* ignore */
     }
   }
-  return <SalePortalShell userName={userName}>{children}</SalePortalShell>;
+  // Thanh bên nằm TRONG cổng Sale: mọi màn quản trị dùng chung một khung,
+  // không còn cảnh mỗi trang tự vẽ một thanh điều hướng riêng.
+  return (
+    <SalePortalShell userName={userName}>
+      <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-4 py-6 md:flex-row md:px-6 md:py-8">
+        <ThanhBen />
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
+    </SalePortalShell>
+  );
 }

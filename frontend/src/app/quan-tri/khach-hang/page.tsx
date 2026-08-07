@@ -4,7 +4,6 @@ import type { Route } from 'next';
 import { requireUser } from '@/lib/require-user';
 import { getToken } from '@/lib/auth';
 import { api, ApiError } from '@/lib/api';
-import { DieuHuongQuanTri } from '../dieu-huong';
 import { KhongCoQuyen } from '../khong-co-quyen';
 import { KHACH_INFO, gio, type KhachHangResponse, type KhachRow, type TinhTrangKhach } from '../insight-types';
 
@@ -47,15 +46,13 @@ export default async function KhachHangPage({ searchParams }: PageProps) {
   const dem = (t: string) => rows.filter((r) => r.tinh_trang === t).length;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 md:px-6">
+    <div className="max-w-6xl">
       <div className="mb-6">
         <h1 className="font-headline text-2xl font-bold text-on-surface">Hiệu suất khách hàng</h1>
         <p className="text-sm text-on-surface-variant">
           {days} ngày · đăng ký → gửi yêu cầu → có lịch → xong việc → quay lại
         </p>
       </div>
-
-      <DieuHuongQuanTri dang_o="/quan-tri/khach-hang" />
 
       <div className="mb-4 flex gap-2">
         {['30', '90', '365'].map((x) => (

@@ -5,7 +5,6 @@ import { requireUser } from '@/lib/require-user';
 import { getToken } from '@/lib/auth';
 import { api, ApiError } from '@/lib/api';
 import { CtvTable, type CtvRow } from './ctv-table';
-import { DieuHuongQuanTri } from './dieu-huong';
 import { CanXuLy } from './can-xu-ly';
 
 export const metadata: Metadata = {
@@ -101,7 +100,7 @@ export default async function QuanTriPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
+    <div className="max-w-5xl">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-headline text-2xl font-bold text-on-surface">Trung tâm điều hành</h1>
@@ -110,8 +109,6 @@ export default async function QuanTriPage() {
           </p>
         </div>
       </div>
-
-      <DieuHuongQuanTri dang_o="/quan-tri" />
 
       {/* Việc đang kẹt — đặt trước số liệu vì đây là thứ phải làm hôm nay */}
       <CanXuLy />
@@ -246,12 +243,12 @@ export default async function QuanTriPage() {
 
 const BAN_DO: { noi: string; gi: string }[] = [
   {
-    noi: 'Trang này + /sale/*',
-    gi: 'Vận hành hàng ngày: duyệt hồ sơ thợ, hiệu suất từng thợ, hoa hồng CTV, phễu cung–cầu.',
+    noi: 'Trung tâm quản trị (thanh bên trái)',
+    gi: 'Gần như mọi việc: số liệu cung–cầu, điểm chạm, việc hôm nay, duyệt hồ sơ thợ, lệnh nạp tiền, ví thợ, người dùng, hoa hồng CTV.',
   },
   {
-    noi: 'Admin hệ thống (doitay.vn/admin)',
-    gi: 'Hồ sơ gốc: tài khoản user, công ty, danh mục nghề, ví & giao dịch, cài đặt website, thông báo.',
+    noi: 'Admin cũ (doitay.vn/admin)',
+    gi: 'Chỉ còn phần chưa kéo về và hiếm dùng: danh mục nghề, đánh giá, nội dung trang, mẫu email/thông báo, ticket. Log 15 ngày cho thấy gần như không ai vào.',
   },
   {
     noi: '.env trên server + config:cache',

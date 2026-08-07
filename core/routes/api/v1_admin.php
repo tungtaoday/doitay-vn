@@ -50,3 +50,13 @@ Route::prefix('insight')->name('insight.')->group(function () {
     Route::get('diem-cham',  [\App\Http\Controllers\API\V1\Admin\InsightController::class, 'diemCham'])->name('diem-cham');
     Route::get('hom-nay',    [\App\Http\Controllers\API\V1\Admin\InsightController::class, 'viecHomNay'])->name('hom-nay');
 });
+
+// ── Gom admin Blade về một chỗ: tiền + người dùng ─────────────────────────
+Route::prefix('ops')->name('ops.')->group(function () {
+    $c = \App\Http\Controllers\API\V1\Admin\AdminOpsController::class;
+    Route::get('deposits',                 [$c, 'deposits'])->name('deposits');
+    Route::post('deposits/{id}/process',   [$c, 'processDeposit'])->whereNumber('id')->name('deposits.process');
+    Route::get('wallets',                  [$c, 'wallets'])->name('wallets');
+    Route::get('users',                    [$c, 'users'])->name('users');
+    Route::post('users/{id}/status',       [$c, 'setUserStatus'])->whereNumber('id')->name('users.status');
+});

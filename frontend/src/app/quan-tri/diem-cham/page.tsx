@@ -4,7 +4,6 @@ import type { Route } from 'next';
 import { requireUser } from '@/lib/require-user';
 import { getToken } from '@/lib/auth';
 import { api, ApiError } from '@/lib/api';
-import { DieuHuongQuanTri } from '../dieu-huong';
 import { KhongCoQuyen } from '../khong-co-quyen';
 import { HANH_DONG_NHAN, KENH_NHAN, gio, type DiemChamResponse } from '../insight-types';
 
@@ -51,15 +50,13 @@ export default async function DiemChamPage({ searchParams }: PageProps) {
   const dinh = Math.max(...buoc.map((b) => b.n), 1);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 md:px-6">
+    <div className="max-w-6xl">
       <div className="mb-6">
         <h1 className="font-headline text-2xl font-bold text-on-surface">Điểm chạm &amp; hành động</h1>
         <p className="text-sm text-on-surface-variant">
           {d.days} ngày · mọi hành động ghi được từ web doitay.vn và Mini App ThợTốt
         </p>
       </div>
-
-      <DieuHuongQuanTri dang_o="/quan-tri/diem-cham" />
 
       <div className="mb-6 flex gap-2">
         {['7', '30', '90'].map((x) => (
