@@ -59,4 +59,13 @@ Route::prefix('ops')->name('ops.')->group(function () {
     Route::get('wallets',                  [$c, 'wallets'])->name('wallets');
     Route::get('users',                    [$c, 'users'])->name('users');
     Route::post('users/{id}/status',       [$c, 'setUserStatus'])->whereNumber('id')->name('users.status');
+
+    Route::get('lich-hen',                 [$c, 'appointments'])->name('lich-hen');
+    Route::post('lich-hen/{id}/action',    [$c, 'appointmentAction'])->whereNumber('id')->name('lich-hen.action');
+    Route::get('danh-gia',                 [$c, 'reviews'])->name('danh-gia');
+    Route::delete('danh-gia/{id}',         [$c, 'deleteReview'])->whereNumber('id')->name('danh-gia.delete');
+    Route::get('danh-muc',                 [$c, 'categories'])->name('danh-muc');
+    Route::post('danh-muc',                [$c, 'saveCategory'])->name('danh-muc.save');
+    Route::get('cai-dat',                  [$c, 'settings'])->name('cai-dat');
+    Route::post('cai-dat',                 [$c, 'saveSettings'])->name('cai-dat.save');
 });

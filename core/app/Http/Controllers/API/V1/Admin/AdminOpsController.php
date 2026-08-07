@@ -227,4 +227,227 @@ class AdminOpsController extends Controller
             'message' => (int) $data['status'] === 1 ? 'Đã mở khoá tài khoản.' : 'Đã khoá tài khoản.',
         ]]);
     }
+
+    // ── Lịch hẹn ─────────────────────────────────────────────────────────
+
+    public function appointments(Request $request): JsonResponse
+    {
+        $this->assertManager();
+        $status = (string) $request->query('status', '');
+        $q = trim((string) $request->query('q', ''));
+
+        $query = DB::table('appointments as a')
+            ->leftJoin('companies as c', 'c.id', '=', 'a.company_id')
+            ->select(
+                // KHÔNG select confirmed_at: cột này chỉ có trên DB production,
+                // DB dev cũ chưa có — mà bảng cũng không cần hiển thị nó.
+                'a.id', 'a.status', 'a.appointment_date', 'a.appointment_time', 'a.created_at',
+                'a.recipient_name', 'a.recipient_phone', 'a.recipient_address',
+                'a.notes', 'a.company_id', 'c.name as tho', 'c.phone as tho_phone'
+            );
+
+        if ($status !== '') $query->where('a.status', $status);
+        if ($q !== '') {
+            $query->where(function ($w) use ($q) {
+                $w->where('a.recipient_name', 'like', "%{$q}%")
+                    ->orWhere('a.recipient_phone', 'like', "%{$q}%")
+                    ->orWhere('c.name', 'like', "%{$q}%");
+            });
+        }
+
+        $rows = $query->orderByDesc('a.id')->limit(200)->get();
+
+        $dem = DB::table('appointments')
+            ->selectRaw('status, count(*) as n')->groupBy('status')->pluck('n', 'status');
+
+        return response()->json(['data' => [
+            'items' => $rows,
+            'dem' => [
+                'pending'   => (int) ($dem['pending'] ?? 0),
+                'confirmed' => (int) ($dem['confirmed'] ?? 0),
+                'completed' => (int) ($dem['completed'] ?? 0),
+                'canceled'  => (int) ($dem['canceled'] ?? 0),
+            ],
+        ]]);
+    }
+
+    /**
+     * Admin chốt hoặc huỷ một lịch hẹn.
+     *
+     * Cố ý KHÔNG cho admin "xác nhận" hộ thợ: xác nhận sẽ trừ phí lead trong ví
+     * thợ và có thể kích thưởng CTV (AppointmentService::confirmByCompany) — đó
+     * phải là hành động của chính thợ. Ở đây chỉ gọi lại đúng service với tài
+     * khoản chủ sở hữu để mọi thông báo và ràng buộc trạng thái giữ nguyên.
+     */
+    public function appointmentAction(Request $request, int $id): JsonResponse
+    {
+        $this->assertManager();
+        $data = $request->validate(['action' => 'required|in:hoan_thanh,huy']);
+
+        $a = \App\Models\Appointment::findOrFail($id);
+        $chuTho = DB::table('companies')->where('id', $a->company_id)->value('user_id');
+        if (! $chuTho) {
+            abort(422, 'Lịch này không gắn với thợ nào, không xử lý tự động được.');
+        }
+        $owner = User::findOrFail($chuTho);
+        $svc = app(\App\Services\AppointmentService::class);
+
+        try {
+            if ($data['action'] === 'hoan_thanh') {
+                $svc->completeByCompany($owner, $id);
+                $msg = 'Đã chốt hoàn thành.';
+            } else {
+                $svc->cancelByCompany($owner, $id);
+                $msg = 'Đã huỷ lịch.';
+            }
+        } catch (\DomainException $e) {
+            abort(422, $e->getMessage());
+        }
+
+        return response()->json(['data' => ['message' => $msg]]);
+    }
+
+    // ── Đánh giá ─────────────────────────────────────────────────────────
+
+    public function reviews(Request $request): JsonResponse
+    {
+        $this->assertManager();
+        $max = $request->query('max');
+        $q = trim((string) $request->query('q', ''));
+
+        $query = DB::table('reviews as r')
+            ->leftJoin('users as u', 'u.id', '=', 'r.user_id')
+            ->leftJoin('companies as c', 'c.id', '=', 'r.company_id')
+            ->select('r.id', 'r.rating', 'r.review', 'r.created_at', 'r.company_id',
+                'u.name as khach', 'c.name as tho');
+
+        if ($max !== null && $max !== '') $query->where('r.rating', '<=', (int) $max);
+        if ($q !== '') {
+            $query->where(function ($w) use ($q) {
+                $w->where('r.review', 'like', "%{$q}%")->orWhere('c.name', 'like', "%{$q}%");
+            });
+        }
+
+        return response()->json(['data' => [
+            'items' => $query->orderByDesc('r.id')->limit(200)->get(),
+            'dem' => [
+                'tong'  => (int) DB::table('reviews')->count(),
+                'thap'  => (int) DB::table('reviews')->where('rating', '<=', 2)->count(),
+                'trung_binh' => round((float) DB::table('reviews')->avg('rating'), 2),
+            ],
+        ]]);
+    }
+
+    public function deleteReview(int $id): JsonResponse
+    {
+        $this->assertManager();
+        $r = DB::table('reviews')->where('id', $id)->first();
+        if (! $r) abort(404, 'Không tìm thấy đánh giá.');
+        DB::table('reviews')->where('id', $id)->delete();
+
+        return response()->json(['data' => ['message' => 'Đã xoá đánh giá.']]);
+    }
+
+    // ── Danh mục nghề ────────────────────────────────────────────────────
+
+    public function categories(): JsonResponse
+    {
+        $this->assertManager();
+
+        // Kèm số thợ mỗi nghề: danh mục không có thợ nào thì bật lên chỉ làm
+        // khách bấm vào rồi thấy trang rỗng.
+        $rows = DB::table('categories as k')
+            ->selectRaw('k.id, k.name, k.description, k.status, k.icon, '
+                . '(select count(*) from companies c where c.category_id = k.id) as so_tho')
+            ->orderBy('k.name')
+            ->get();
+
+        return response()->json(['data' => ['items' => $rows]]);
+    }
+
+    public function saveCategory(Request $request): JsonResponse
+    {
+        $this->assertManager();
+        $data = $request->validate([
+            'id'          => 'nullable|integer|exists:categories,id',
+            'name'        => 'required|string|max:120',
+            'description' => 'nullable|string|max:500',
+            'status'      => 'required|in:0,1',
+        ]);
+
+        $payload = [
+            'name'        => $data['name'],
+            'description' => $data['description'] ?? null,
+            'status'      => (int) $data['status'],
+            'updated_at'  => now(),
+        ];
+
+        if (! empty($data['id'])) {
+            DB::table('categories')->where('id', $data['id'])->update($payload);
+            $msg = 'Đã cập nhật nghề.';
+        } else {
+            $payload['created_at'] = now();
+            DB::table('categories')->insert($payload);
+            $msg = 'Đã thêm nghề mới.';
+        }
+
+        return response()->json(['data' => ['message' => $msg]]);
+    }
+
+    // ── Cài đặt chung ────────────────────────────────────────────────────
+
+    /**
+     * CHỈ mở đúng những trường an toàn. general_settings còn chứa mail_config,
+     * sms_config, socialite_credentials, system_info — bí mật hệ thống, không
+     * bao giờ trả ra API này.
+     */
+    private const CAI_DAT_CHO_PHEP = [
+        'site_name', 'cur_text', 'cur_sym', 'email_from',
+        'zalo_phone', 'zalo_name', 'zalo_message', 'zalo_position', 'zalo_online',
+        'registration', 'maintenance_mode',
+    ];
+
+    public function settings(): JsonResponse
+    {
+        $this->assertManager();
+        $s = \App\Models\GeneralSetting::first();
+        if (! $s) abort(404, 'Chưa có bản ghi cài đặt.');
+
+        $out = [];
+        foreach (self::CAI_DAT_CHO_PHEP as $k) {
+            $out[$k] = $s->{$k} ?? null;
+        }
+
+        return response()->json(['data' => ['cai_dat' => $out]]);
+    }
+
+    public function saveSettings(Request $request): JsonResponse
+    {
+        $this->assertManager();
+        $data = $request->validate([
+            'site_name'        => 'nullable|string|max:120',
+            'cur_text'         => 'nullable|string|max:10',
+            'cur_sym'          => 'nullable|string|max:10',
+            'email_from'       => 'nullable|email|max:120',
+            'zalo_phone'       => 'nullable|string|max:20',
+            'zalo_name'        => 'nullable|string|max:120',
+            'zalo_message'     => 'nullable|string|max:300',
+            'zalo_position'    => 'nullable|string|max:20',
+            'zalo_online'      => 'nullable|in:0,1',
+            'registration'     => 'nullable|in:0,1',
+            'maintenance_mode' => 'nullable|in:0,1',
+        ]);
+
+        $s = \App\Models\GeneralSetting::first();
+        if (! $s) abort(404, 'Chưa có bản ghi cài đặt.');
+
+        foreach ($data as $k => $v) {
+            if (in_array($k, self::CAI_DAT_CHO_PHEP, true)) {
+                $s->{$k} = $v;
+            }
+        }
+        $s->save();
+
+        return response()->json(['data' => ['message' => 'Đã lưu cài đặt.']]);
+    }
 }

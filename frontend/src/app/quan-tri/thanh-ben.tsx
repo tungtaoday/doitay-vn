@@ -19,6 +19,7 @@ const NHOM: { ten: string; muc: { href: string; nhan: string; mo_ta?: string }[]
       { href: '/quan-tri/hom-nay', nhan: 'Việc hôm nay', mo_ta: 'Gọi ai, việc nào quá hạn' },
       { href: '/sale/duyet', nhan: 'Hàng chờ duyệt', mo_ta: 'Nghiệm thu hồ sơ thợ' },
       { href: '/quan-tri/nap-tien', nhan: 'Lệnh nạp tiền', mo_ta: 'Duyệt tiền vào ví thợ' },
+      { href: '/quan-tri/lich-hen', nhan: 'Lịch hẹn', mo_ta: 'Chốt kết quả từng việc' },
     ],
   },
   {
@@ -41,8 +42,14 @@ const NHOM: { ten: string; muc: { href: string; nhan: string; mo_ta?: string }[]
     ten: 'Dữ liệu',
     muc: [
       { href: '/quan-tri/nguoi-dung', nhan: 'Người dùng', mo_ta: 'Tìm · khoá · mở' },
+      { href: '/quan-tri/danh-gia', nhan: 'Đánh giá', mo_ta: 'Soi điểm thấp · gỡ bậy' },
+      { href: '/quan-tri/danh-muc', nhan: 'Danh mục nghề', mo_ta: 'Thêm · sửa · ẩn hiện' },
       { href: '/sale', nhan: 'Hồ sơ CTV nhập' },
     ],
+  },
+  {
+    ten: 'Hệ thống',
+    muc: [{ href: '/quan-tri/cai-dat', nhan: 'Cài đặt', mo_ta: 'Tên site · nút Zalo · bảo trì' }],
   },
 ];
 
