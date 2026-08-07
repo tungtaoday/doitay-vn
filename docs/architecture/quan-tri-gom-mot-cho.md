@@ -28,10 +28,10 @@ sang admin cũ. Không giấu đi — lúc cần mà không biết tìm ở đâ
 | Hằng ngày | Việc hôm nay | mới |
 | Hằng ngày | Hàng chờ duyệt (`/sale/duyet`) | đã có |
 | Hằng ngày | **Lệnh nạp tiền** | kéo từ admin Blade |
+| Hằng ngày | **Lịch hẹn** (chốt xong việc · huỷ lịch chờ) | kéo từ admin Blade |
 | Theo dõi | Điều hành · Khách hàng · Hiệu suất thợ · Điểm chạm | mới |
 | Tiền | **Ví thợ & giao dịch** | kéo từ admin Blade |
 | Tiền | Hoa hồng CTV | đã có |
-| Hằng ngày | **Lịch hẹn** (chốt xong việc · huỷ lịch chờ) | kéo từ admin Blade |
 | Dữ liệu | **Người dùng** (tìm · khoá · mở) | kéo từ admin Blade |
 | Dữ liệu | **Đánh giá** (soi điểm thấp · xoá nội dung bậy) | kéo từ admin Blade |
 | Dữ liệu | **Danh mục nghề** (thêm · sửa · ẩn hiện) | kéo từ admin Blade |
