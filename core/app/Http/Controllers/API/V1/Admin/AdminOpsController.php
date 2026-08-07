@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\DB;
  */
 class AdminOpsController extends Controller
 {
+    use \App\Support\LocDuLieuMoi;
+
     private function assertManager(): void
     {
         $ids = config('sale.manager_user_ids', []);
@@ -186,7 +188,10 @@ class AdminOpsController extends Controller
         if ($loc === 'tho')    $query->whereExists($laTho);
         if ($loc === 'khach')  $query->whereNotExists($laTho);
         if ($loc === 'khoa')   $query->where('users.status', 0);
-        if ($loc === 'seed')   $query->where('users.is_seeded', 1);
+        // Cờ users.is_seeded không đáng tin trên production (xem LocDuLieuMoi):
+        // "mồi" ở đây suy từ dữ liệu, "thật" là phần còn lại.
+        if ($loc === 'seed')   $query->whereNotIn('users.id', $this->idUserThat());
+        if ($loc === 'that')   $query->whereIn('users.id', $this->idUserThat());
 
         $rows = $query->orderByDesc('users.id')->limit(200)->get();
 
@@ -196,7 +201,7 @@ class AdminOpsController extends Controller
                 'tong'  => (int) DB::table('users')->count(),
                 'tho'   => (int) DB::table('users')->join('companies', 'companies.user_id', '=', 'users.id')->distinct()->count('users.id'),
                 'khoa'  => (int) DB::table('users')->where('status', 0)->count(),
-                'seed'  => (int) DB::table('users')->where('is_seeded', 1)->count(),
+                'seed'  => (int) DB::table('users')->whereNotIn('id', $this->idUserThat())->count(),
             ],
         ]]);
     }
@@ -374,6 +379,9 @@ class AdminOpsController extends Controller
         $this->assertManager();
         $status = (string) $request->query('status', '');
         $q = trim((string) $request->query('q', ''));
+        // Mặc định ẨN dữ liệu mồi — production còn 1202 lịch của thợ seed, để
+        // lẫn vào thì bảng này không dùng được. ?seed=1 khi cần soi dữ liệu cũ.
+        $hienSeed = $request->query('seed') === '1';
 
         $query = DB::table('appointments as a')
             ->leftJoin('companies as c', 'c.id', '=', 'a.company_id')
@@ -385,6 +393,7 @@ class AdminOpsController extends Controller
                 'a.notes', 'a.company_id', 'c.name as tho', 'c.phone as tho_phone'
             );
 
+        if (! $hienSeed) $this->boThoMoi($query, 'c');
         if ($status !== '') $query->where('a.status', $status);
         if ($q !== '') {
             $query->where(function ($w) use ($q) {
@@ -396,8 +405,9 @@ class AdminOpsController extends Controller
 
         $rows = $query->orderByDesc('a.id')->limit(200)->get();
 
-        $dem = DB::table('appointments')
-            ->selectRaw('status, count(*) as n')->groupBy('status')->pluck('n', 'status');
+        $demQ = DB::table('appointments as a')->leftJoin('companies as c', 'c.id', '=', 'a.company_id');
+        if (! $hienSeed) $this->boThoMoi($demQ, 'c');
+        $dem = $demQ->selectRaw('a.status, count(*) as n')->groupBy('a.status')->pluck('n', 'status');
 
         return response()->json(['data' => [
             'items' => $rows,
@@ -407,6 +417,8 @@ class AdminOpsController extends Controller
                 'completed' => (int) ($dem['completed'] ?? 0),
                 'canceled'  => (int) ($dem['canceled'] ?? 0),
             ],
+            'du_lieu_moi' => $this->demDuLieuMoi(),
+            'dang_hien_seed' => $hienSeed,
         ]]);
     }
 

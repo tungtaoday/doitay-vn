@@ -33,6 +33,8 @@ interface Res {
   data: {
     items: Row[];
     dem: { pending: number; confirmed: number; completed: number; canceled: number };
+    du_lieu_moi: { tho_moi: number; lich_moi: number };
+    dang_hien_seed: boolean;
   };
 }
 
@@ -52,7 +54,7 @@ const TAB = [
 ];
 
 interface PageProps {
-  searchParams: Promise<{ status?: string; q?: string }>;
+  searchParams: Promise<{ status?: string; q?: string; seed?: string }>;
 }
 
 /**
@@ -63,7 +65,7 @@ interface PageProps {
  */
 export default async function LichHenPage({ searchParams }: PageProps) {
   await requireUser({ requireProfile: false, loginPath: '/sale/login' });
-  const { status = 'confirmed', q = '' } = await searchParams;
+  const { status = 'confirmed', q = '', seed = '' } = await searchParams;
   const token = await getToken();
 
   let d: Res['data'] | null = null;
@@ -72,6 +74,7 @@ export default async function LichHenPage({ searchParams }: PageProps) {
     const qs = new URLSearchParams();
     if (status) qs.set('status', status);
     if (q) qs.set('q', q);
+    if (seed === '1') qs.set('seed', '1');
     const res = await api<Res>(`/admin/ops/lich-hen?${qs.toString()}`, { token: token ?? undefined });
     d = res.data;
   } catch (e) {
@@ -90,6 +93,28 @@ export default async function LichHenPage({ searchParams }: PageProps) {
           {d.dem.pending} chờ thợ nhận · {d.dem.confirmed} đã nhận · {d.dem.completed} xong việc
         </p>
       </div>
+
+      {/* Dữ liệu mồi bị ẩn mặc định — nói rõ đang ẩn bao nhiêu, đừng để người
+          đọc tưởng hệ thống mất dữ liệu. */}
+      {d.du_lieu_moi.lich_moi > 0 ? (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-amber-50 px-4 py-3 text-xs text-amber-900 ring-1 ring-amber-200/60">
+          <span>
+            Hệ còn <b>{d.du_lieu_moi.lich_moi}</b> lịch hẹn của <b>{d.du_lieu_moi.tho_moi}</b> thợ mồi
+            (dữ liệu dựng thử).{' '}
+            {d.dang_hien_seed ? 'Đang hiện cả dữ liệu mồi.' : 'Đang ẩn khỏi bảng dưới.'}
+          </span>
+          <Link
+            href={
+              `/quan-tri/lich-hen?status=${status}${q ? `&q=${encodeURIComponent(q)}` : ''}${
+                d.dang_hien_seed ? '' : '&seed=1'
+              }` as Route
+            }
+            className="shrink-0 rounded-lg bg-white/70 px-3 py-1.5 font-semibold"
+          >
+            {d.dang_hien_seed ? 'Ẩn dữ liệu mồi' : 'Hiện cả dữ liệu mồi'}
+          </Link>
+        </div>
+      ) : null}
 
       <form action="/quan-tri/lich-hen" className="mb-4 flex gap-2">
         <input

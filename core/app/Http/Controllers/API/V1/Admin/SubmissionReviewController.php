@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
  */
 class SubmissionReviewController extends Controller
 {
+    use \App\Support\LocDuLieuMoi;
+
     public function __construct(private readonly SubmissionReviewService $service)
     {
     }
@@ -89,8 +91,12 @@ class SubmissionReviewController extends Controller
             ->limit(20)
             ->get(['id', 'title', 'city', 'district', 'contact_name', 'contact_phone', 'created_at']);
 
+        // Bỏ thợ mồi: hàng đợi này để GỌI người thật, lẫn dữ liệu seed vào là vô dụng.
+        $khongMoi = fn ($q) => $q->whereHas('company', fn ($c) => $c->where(fn ($x) => $x->whereNull('is_seeded')->orWhere('is_seeded', 0)));
+
         $pendingAppointments = \App\Models\Appointment::where('status', 'pending')
             ->where('created_at', '<', now()->subHours(4))
+            ->tap($khongMoi)
             ->with('company:id,name,phone')
             ->orderBy('created_at')
             ->limit(20)
@@ -110,7 +116,7 @@ class SubmissionReviewController extends Controller
         return response()->json([
             'counts' => [
                 'stale_requests'       => \App\Models\ServiceRequest::where('status', 'open')->where('created_at', '<', now()->subDay())->count(),
-                'pending_appointments' => \App\Models\Appointment::where('status', 'pending')->where('created_at', '<', now()->subHours(4))->count(),
+                'pending_appointments' => \App\Models\Appointment::where('status', 'pending')->where('created_at', '<', now()->subHours(4))->tap($khongMoi)->count(),
                 'pending_deposits'     => \App\Models\DepositRequest::where('status', 'pending')->count(),
                 'pending_companies'    => \App\Models\Company::where('status', \App\Constants\Status::PENDING)->count(),
             ],
@@ -151,5 +157,37 @@ class SubmissionReviewController extends Controller
         }
 
         return response()->json(['data' => ['id' => $company->id, 'status' => 'approved']]);
+    }
+
+    /**
+     * Từ chối thợ TỰ ĐĂNG KÝ (kèm lý do).
+     *
+     * Trước đây chỉ duyệt được ở cổng mới, còn từ chối phải mở admin Blade —
+     * nghĩa là một nửa thao tác nằm ở hệ khác. Không tặng ví, không tạo gì.
+     */
+    public function rejectCompany(\Illuminate\Http\Request $request, int $id): JsonResponse
+    {
+        $this->assertManager();
+        $data = $request->validate(['ly_do' => 'required|string|max:500']);
+
+        $company = \App\Models\Company::with('user')->findOrFail($id);
+        if ((int) $company->status !== \App\Constants\Status::PENDING) {
+            abort(422, 'Hồ sơ không ở trạng thái chờ duyệt.');
+        }
+
+        $company->status = \App\Constants\Status::REJECTED;
+        $company->save();
+
+        if ($company->user) {
+            \App\Services\NotificationService::sendSystemNotification(
+                $company->user,
+                'Hồ sơ thợ chưa được duyệt',
+                "Hồ sơ {$company->name} chưa lên chợ được. Lý do: {$data['ly_do']}. Bạn sửa lại rồi gửi duyệt lại nhé.",
+                'company_rejected',
+                url('/vi/tho/sua-ho-so'),
+            );
+        }
+
+        return response()->json(['data' => ['id' => $company->id, 'status' => 'rejected']]);
     }
 }

@@ -52,3 +52,24 @@ export async function rejectAction(id: number, lyDo: string): Promise<ReviewResu
     return { ok: false, error: 'Không thể từ chối hồ sơ.' };
   }
 }
+
+/** Từ chối thợ tự đăng ký (kèm lý do). Thợ nhận thông báo và sửa lại hồ sơ. */
+export async function rejectCompanyAction(id: number, lyDo: string): Promise<ReviewResult> {
+  const token = await getToken();
+  if (!token) return { ok: false, error: 'Vui lòng đăng nhập' };
+  if (!lyDo.trim()) return { ok: false, error: 'Phải ghi lý do để thợ biết sửa gì.' };
+  try {
+    await api(`/admin/companies/${id}/reject`, {
+      method: 'PATCH',
+      token,
+      json: { ly_do: lyDo.trim() },
+    });
+    return { ok: true };
+  } catch (e) {
+    if (e instanceof ApiError) {
+      const body = e.body as { message?: string };
+      return { ok: false, error: body.message ?? 'Không thể từ chối hồ sơ thợ.' };
+    }
+    return { ok: false, error: 'Không thể từ chối hồ sơ thợ.' };
+  }
+}

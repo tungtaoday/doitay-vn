@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\DB;
  */
 class InsightController extends Controller
 {
+    use \App\Support\LocDuLieuMoi;
+
     private function assertManager(): void
     {
         $ids = config('sale.manager_user_ids', []);
@@ -34,10 +36,14 @@ class InsightController extends Controller
     /** Loại tài khoản thợ (sở hữu company) và tài khoản seed khỏi tập "khách". */
     private function khachQuery()
     {
-        return DB::table('users as u')
+        $q = DB::table('users as u')
             ->leftJoin('companies as c', 'c.user_id', '=', 'u.id')
             ->whereNull('c.id')
-            ->where(fn ($q) => $q->where('u.is_seeded', 0)->orWhereNull('u.is_seeded'));
+            ->where(fn ($w) => $w->where('u.is_seeded', 0)->orWhereNull('u.is_seeded'));
+
+        // Cờ is_seeded trên users KHÔNG đáng tin (xem LocDuLieuMoi) — suy thêm
+        // từ dữ liệu, nếu không bảng khách hàng toàn khách do bộ seed sinh ra.
+        return $this->boUserMoi($q, 'u.id');
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -312,8 +318,10 @@ class InsightController extends Controller
         $this->assertManager();
 
         // Yêu cầu khách gửi lên mà quá 24h chưa ghép được thợ — mất khách ở đây.
-        $yeuCauTreo = DB::table('service_requests as r')
-            ->leftJoin('users as u', 'u.id', '=', 'r.user_id')
+        $yeuCauTreo = $this->boUserMoi(
+            DB::table('service_requests as r')->leftJoin('users as u', 'u.id', '=', 'r.user_id'),
+            'r.user_id'
+        )
             ->select('r.id', 'r.title', 'r.city', 'r.district', 'r.contact_name', 'r.contact_phone', 'r.created_at')
             ->where('r.status', 'open')
             ->where('r.created_at', '<', now()->subDay())
@@ -368,8 +376,10 @@ class InsightController extends Controller
     /** Lịch hẹn kèm tên/SĐT hai đầu để gọi được ngay từ bảng. */
     private function lichKem()
     {
-        return DB::table('appointments as a')
-            ->leftJoin('companies as c', 'c.id', '=', 'a.company_id')
+        $q = DB::table('appointments as a')
+            ->leftJoin('companies as c', 'c.id', '=', 'a.company_id');
+
+        return $this->boThoMoi($q, 'c')
             ->select(
                 'a.id', 'a.status', 'a.appointment_date', 'a.appointment_time', 'a.created_at',
                 'a.recipient_name', 'a.recipient_phone', 'a.recipient_address',

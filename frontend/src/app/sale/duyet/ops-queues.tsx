@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { approveCompanyAction } from './review-actions';
+import { approveCompanyAction, rejectCompanyAction } from './review-actions';
 
 export interface OpsQueues {
   counts: {
@@ -34,7 +34,27 @@ export function OpsQueuesPanel({ queues }: { queues: OpsQueues }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  // Ô nhập lý do mở ngay tại dòng đang từ chối, giữ riêng theo id để bấm nhiều
+  // dòng không đè lý do của nhau.
+  const [dangTuChoi, setDangTuChoi] = useState<number | null>(null);
+  const [lyDoTuChoi, setLyDoTuChoi] = useState<Record<number, string>>({});
   const c = queues.counts;
+
+  function rejectCompany(id: number) {
+    const lyDo = lyDoTuChoi[id]?.trim();
+    if (!lyDo) {
+      setDangTuChoi(id);
+      return;
+    }
+    setError(null);
+    startTransition(async () => {
+      const res = await rejectCompanyAction(id, lyDo);
+      if (res.ok) {
+        setDangTuChoi(null);
+        router.refresh();
+      } else setError(res.error);
+    });
+  }
 
   function approveCompany(id: number) {
     setError(null);
@@ -94,18 +114,42 @@ export function OpsQueuesPanel({ queues }: { queues: OpsQueues }) {
                     {[co.district, co.city].filter(Boolean).join(', ') || '—'} · {co.phone ?? co.user?.mobile ?? 'chưa có SĐT'} · {ago(co.created_at)}
                   </p>
                 </div>
-                <button
-                  onClick={() => approveCompany(co.id)}
-                  disabled={isPending}
-                  className="shrink-0 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-on-primary transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-60"
-                >
-                  Duyệt + tặng ví
-                </button>
+                <div className="flex shrink-0 flex-col items-end gap-1.5">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => approveCompany(co.id)}
+                      disabled={isPending}
+                      className="rounded-xl bg-primary px-4 py-2 text-sm font-bold text-on-primary transition-all hover:bg-primary-hover active:scale-95 disabled:opacity-60"
+                    >
+                      Duyệt + tặng ví
+                    </button>
+                    <button
+                      onClick={() => rejectCompany(co.id)}
+                      disabled={isPending}
+                      className="rounded-xl bg-surface-container px-3 py-2 text-sm font-semibold text-on-surface transition-all active:scale-95 disabled:opacity-60"
+                    >
+                      Từ chối
+                    </button>
+                  </div>
+                  {dangTuChoi === co.id ? (
+                    <input
+                      autoFocus
+                      value={lyDoTuChoi[co.id] ?? ''}
+                      onChange={(e) => setLyDoTuChoi((m) => ({ ...m, [co.id]: e.target.value }))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') rejectCompany(co.id);
+                      }}
+                      placeholder="Lý do từ chối rồi Enter"
+                      className="w-56 rounded-lg bg-surface-container-low px-2 py-1.5 text-xs outline-none ring-2 ring-transparent focus:ring-primary/30"
+                    />
+                  ) : null}
+                </div>
               </li>
             ))}
           </ul>
           <p className="mt-2 text-[11px] text-outline">
-            Duyệt = hồ sơ lên chợ + tự tạo ví kèm tín dụng chào mừng. Từ chối (kèm lý do) vẫn thao tác ở trang admin.
+            Duyệt = hồ sơ lên chợ + tự tạo ví kèm tín dụng chào mừng. Từ chối bắt buộc ghi lý do —
+            thợ nhận thông báo kèm lý do đó để sửa lại.
           </p>
         </div>
       ) : null}
