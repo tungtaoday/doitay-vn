@@ -184,6 +184,13 @@ export interface KhachMoiRow {
 
 export interface HomNayResponse {
   data: {
+    /** Nhật lệnh bot blueprint đẩy lên; null khi chưa có bản nào. */
+    nhat_lenh: {
+      ngay: string;
+      so_ngay: number | null;
+      tieu_de: string | null;
+      noi_dung: Record<string, unknown>;
+    } | null;
     yeu_cau_treo: YeuCauRow[];
     lich_hom_nay: LichRow[];
     cho_tho_nhan: LichRow[];

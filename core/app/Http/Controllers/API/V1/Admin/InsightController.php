@@ -360,7 +360,15 @@ class InsightController extends Controller
             ->orderByDesc('u.created_at')
             ->limit(30)->get();
 
+        // Nhat lenh cua bot blueprint - viec "phai lam theo ke hoach" dat canh
+        // viec "dang ket theo du lieu", de mo mot trang la thay du ca hai loai.
+        $nhatLenh = DB::table('nhat_lenh')->orderByDesc('ngay')->first();
+        if ($nhatLenh) {
+            $nhatLenh->noi_dung = json_decode((string) $nhatLenh->noi_dung, true) ?: [];
+        }
+
         return response()->json(['data' => [
+            'nhat_lenh'     => $nhatLenh,
             'yeu_cau_treo'  => $yeuCauTreo,
             'lich_hom_nay'  => $lichHomNay,
             'cho_tho_nhan'  => $choTho,

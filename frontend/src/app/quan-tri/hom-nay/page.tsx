@@ -4,6 +4,7 @@ import { getToken } from '@/lib/auth';
 import { api, ApiError } from '@/lib/api';
 import { KhongCoQuyen } from '../khong-co-quyen';
 import { gio, type HomNayResponse, type LichRow } from '../insight-types';
+import { NhatLenhBox, type NhatLenh } from './nhat-lenh';
 
 export const metadata: Metadata = {
   title: 'Việc hôm nay | Quản trị',
@@ -46,6 +47,10 @@ export default async function HomNayPage() {
             : 'Không có việc nào đến hạn. Dồn sức tuyển thợ và đẩy nội dung.'}
         </p>
       </div>
+
+      {/* Việc theo KẾ HOẠCH (bot blueprint đẩy lên) đặt trước việc đang KẸT
+          theo dữ liệu — mở một trang là thấy đủ cả hai loại. */}
+      {d.nhat_lenh ? <NhatLenhBox d={d.nhat_lenh as NhatLenh} /> : null}
 
       <div className="mb-8 grid grid-cols-3 gap-3">
         <O nhan="Hồ sơ CTV chờ duyệt" so={String(d.dem.ho_so_cho_duyet)} />

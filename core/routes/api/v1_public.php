@@ -77,6 +77,11 @@ Route::post('events', [EventController::class, 'store'])
     ->middleware('throttle:60,1')
     ->name('events.store');
 
+// -- Nhat lenh: bot blueprint day viec trong ngay len cho trung tam quan tri --
+// Chan bang METRICS_TOKEN vi ben ghi la cron, khong co phien dang nhap.
+Route::post('nhat-lenh', [\App\Http\Controllers\API\V1\Public\NhatLenhController::class, 'store'])
+    ->name('nhat-lenh.store');
+
 // Thống kê Bắc Đẩu — guard bằng METRICS_TOKEN (?token=... hoặc Bearer).
 Route::get('metrics/bac-dau', [MetricsController::class, 'bacDau'])
     ->middleware('throttle:30,1')
