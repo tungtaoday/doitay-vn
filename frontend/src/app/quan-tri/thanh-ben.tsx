@@ -49,7 +49,10 @@ const NHOM: { ten: string; muc: { href: string; nhan: string; mo_ta?: string }[]
   },
   {
     ten: 'Hệ thống',
-    muc: [{ href: '/quan-tri/cai-dat', nhan: 'Cài đặt', mo_ta: 'Tên site · nút Zalo · bảo trì' }],
+    muc: [
+      { href: '/quan-tri/so-tay', nhan: 'Sổ tay vận hành', mo_ta: '12 quyển + phụ lục' },
+      { href: '/quan-tri/cai-dat', nhan: 'Cài đặt', mo_ta: 'Tên site · nút Zalo · bảo trì' },
+    ],
   },
 ];
 
