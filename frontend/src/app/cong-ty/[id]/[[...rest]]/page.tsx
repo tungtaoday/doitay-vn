@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { hienGia } from '@/lib/gia';
 import type { Route } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
@@ -287,7 +288,7 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
                             {desc && <p className="mt-0.5 text-[0.8125rem] text-secondary">{desc}</p>}
                           </td>
                           <td className="p-5 text-right font-bold text-primary">
-                            {price ? `${Number(price).toLocaleString('vi-VN')} đ` : 'Liên hệ'}
+                            {hienGia(price)}
                           </td>
                         </tr>
                       );
