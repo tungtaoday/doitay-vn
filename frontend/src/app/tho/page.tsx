@@ -261,8 +261,50 @@ export default async function ContractorListPage({ searchParams }: PageProps) {
           )}
 
           {payload && payload.data.length === 0 && (
-            <div className="rounded-3xl bg-surface-container-low p-12 text-center text-on-surface-variant">
-              Không tìm thấy thợ nào phù hợp.
+            /* Ngõ cụt cũ: chỉ báo "không tìm thấy" rồi hết. Khách đã nói rõ họ
+               cần gì mà lại bị chặn ở đây — đưa thẳng sang gửi yêu cầu, vì đó
+               mới là đường ra việc khi chưa có thợ khớp sẵn. */
+            <div className="rounded-3xl bg-surface-container-low p-8 text-center md:p-12">
+              <p className="font-headline text-xl font-bold text-on-surface">
+                {params.q ? <>Chưa có thợ nào khớp &ldquo;{params.q}&rdquo;</> : 'Chưa có thợ nào khớp bộ lọc này'}
+              </p>
+              <p className="mx-auto mt-2 max-w-md text-sm text-on-surface-variant">
+                Mô tả việc bạn cần, chúng tôi tìm thợ phù hợp và gọi lại cho bạn. Không mất phí.
+              </p>
+
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  href={'/yeu-cau' as Route}
+                  className="rounded-full bg-primary px-8 py-3.5 font-headline font-bold text-on-primary shadow-ambient transition-all active:scale-95"
+                >
+                  Gửi yêu cầu — có thợ gọi lại
+                </Link>
+                <Link
+                  href={'/tho' as Route}
+                  className="rounded-full bg-surface-container px-6 py-3.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container-high"
+                >
+                  Xem tất cả thợ
+                </Link>
+              </div>
+
+              {categories.length > 0 && (
+                <div className="mt-7">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-outline">
+                    Hoặc chọn nghề
+                  </p>
+                  <div className="mt-2 flex flex-wrap justify-center gap-2">
+                    {categories.slice(0, 10).map(k => (
+                      <Link
+                        key={k.id}
+                        href={`/tho?category=${k.id}` as Route}
+                        className="rounded-full bg-surface-container-lowest px-4 py-2 text-sm font-medium text-on-surface transition-colors hover:bg-surface-container"
+                      >
+                        {k.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -278,6 +320,19 @@ export default async function ContractorListPage({ searchParams }: PageProps) {
                   buildPageHref={p => buildHref(params, { page: String(p) })}
                 />
               )}
+
+              {/* Có kết quả nhưng chưa ưng ai vẫn là ngõ cụt nếu không có lối ra. */}
+              <div className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-surface-container-low p-6">
+                <p className="text-sm text-on-surface-variant">
+                  Chưa ưng ai? Mô tả việc cần làm, chúng tôi tìm thợ phù hợp và gọi lại.
+                </p>
+                <Link
+                  href={'/yeu-cau' as Route}
+                  className="shrink-0 rounded-full bg-primary px-6 py-3 text-sm font-bold text-on-primary transition-all active:scale-95"
+                >
+                  Gửi yêu cầu
+                </Link>
+              </div>
             </>
           )}
         </section>

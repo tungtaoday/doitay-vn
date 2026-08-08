@@ -40,10 +40,19 @@ class CompanySearchService
         }
 
         if (! empty($filters['q'])) {
-            $term = '%' . trim((string) $filters['q']) . '%';
+            $tuKhoa = trim((string) $filters['q']);
+            $term = '%' . $tuKhoa . '%';
+
+            // Khách gõ NGHỀ ("điện", "điều hòa") chứ không gõ tên thợ — ô tìm ở
+            // trang chủ hỏi thẳng "Bạn cần thợ gì hôm nay?". Chỉ khớp name +
+            // description thì "điện" trả về 0 kết quả dù có cả một danh mục
+            // Thợ Điện. Tìm thêm ở tên nghề và địa bàn.
             $query->where(function ($q) use ($term) {
                 $q->where('name', 'like', $term)
-                  ->orWhere('description', 'like', $term);
+                  ->orWhere('description', 'like', $term)
+                  ->orWhere('city', 'like', $term)
+                  ->orWhere('district', 'like', $term)
+                  ->orWhereHas('category', fn ($k) => $k->where('name', 'like', $term));
             });
         }
 

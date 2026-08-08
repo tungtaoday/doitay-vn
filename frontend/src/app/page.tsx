@@ -183,6 +183,24 @@ export default async function HomePage() {
               </div>
             </form>
 
+            {/* Lối tắt ngay dưới ô tìm: phần lớn khách chỉ cần chọn đúng nghề,
+                bắt họ gõ rồi tự đoán từ khoá là chỗ dễ rơi nhất. Thẻ nghề đầy
+                đủ vẫn ở dưới trang. */}
+            {categories.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="text-sm text-on-surface-variant">Hay tìm:</span>
+                {categories.slice(0, 5).map(cat => (
+                  <Link
+                    key={cat.id}
+                    href={`/tho?category=${cat.id}` as Route}
+                    className="rounded-full bg-surface-container-low px-4 py-1.5 text-sm font-medium text-on-surface transition-colors hover:bg-surface-container"
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+
             <div className="flex gap-10 pt-4">
               <div className="flex flex-col">
                 <CountUp
