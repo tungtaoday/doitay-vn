@@ -60,4 +60,48 @@ class NhatLenhController extends Controller
 
         return response()->json(['data' => ['message' => 'Đã ghi nhật lệnh ngày ' . $ngay]]);
     }
+
+    /**
+     * Ghi một BÁO CÁO việc đã làm.
+     *
+     * Bên gọi là bot Telegram (cron/nền, không có phiên) nên vẫn chặn bằng
+     * METRICS_TOKEN như các endpoint đo lường khác.
+     */
+    public function baoCao(Request $request): JsonResponse
+    {
+        $this->guard($request);
+
+        $data = $request->validate([
+            'ngay'      => 'nullable|date',
+            'noi_dung'  => 'required|string|max:500',
+            'so_viec'   => 'nullable|integer|min:1|max:99',
+            'nguon'     => 'nullable|string|max:20',
+        ]);
+
+        $ngay = $data['ngay'] ?? now()->toDateString();
+
+        // Báo cáo trùng (nhắn lại "xong 1" hai lần) thì bỏ qua, không nhân đôi.
+        $trung = DB::table('bao_cao_viec')
+            ->where('ngay', $ngay)
+            ->where('noi_dung', $data['noi_dung'])
+            ->exists();
+
+        if (! $trung) {
+            DB::table('bao_cao_viec')->insert([
+                'ngay'       => $ngay,
+                'noi_dung'   => $data['noi_dung'],
+                'so_viec'    => $data['so_viec'] ?? null,
+                'nguon'      => $data['nguon'] ?? 'telegram',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $tong = (int) DB::table('bao_cao_viec')->where('ngay', $ngay)->count();
+
+        return response()->json(['data' => [
+            'message' => $trung ? 'Việc này đã ghi rồi.' : 'Đã ghi.',
+            'trong_ngay' => $tong,
+        ]]);
+    }
 }

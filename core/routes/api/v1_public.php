@@ -82,6 +82,10 @@ Route::post('events', [EventController::class, 'store'])
 Route::post('nhat-lenh', [\App\Http\Controllers\API\V1\Public\NhatLenhController::class, 'store'])
     ->name('nhat-lenh.store');
 
+// Bao cao viec da lam — dong not nua con lai cua vong lap day viec.
+Route::post('nhat-lenh/bao-cao', [\App\Http\Controllers\API\V1\Public\NhatLenhController::class, 'baoCao'])
+    ->name('nhat-lenh.bao-cao');
+
 // Thống kê Bắc Đẩu — guard bằng METRICS_TOKEN (?token=... hoặc Bearer).
 Route::get('metrics/bac-dau', [MetricsController::class, 'bacDau'])
     ->middleware('throttle:30,1')

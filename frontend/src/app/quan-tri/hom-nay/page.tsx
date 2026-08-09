@@ -52,6 +52,33 @@ export default async function HomNayPage() {
           theo dữ liệu — mở một trang là thấy đủ cả hai loại. */}
       {d.nhat_lenh ? <NhatLenhBox d={d.nhat_lenh as NhatLenh} /> : null}
 
+      {/* Việc đã báo cáo — nửa còn lại của vòng lặp: đẩy việc ra thì phải thấy
+          việc chạy về, không thì cuối tuần review không có gì đối chiếu. */}
+      {d.da_lam.length > 0 ? (
+        <section className="mb-8 rounded-2xl bg-primary-container/20 p-5">
+          <h2 className="font-headline text-lg font-bold text-on-surface">
+            Đã làm hôm nay ({d.da_lam.length})
+          </h2>
+          <ul className="mt-2 space-y-1.5">
+            {d.da_lam.map((v, i) => (
+              <li key={i} className="flex gap-2 text-sm text-on-surface">
+                <span className="text-primary">✓</span>
+                <span>
+                  {v.so_viec ? <b>Việc {v.so_viec}. </b> : null}
+                  {v.noi_dung}
+                  <span className="ml-2 text-xs text-outline">{gio(v.created_at)}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : (
+        <p className="mb-8 rounded-2xl bg-surface-container-low px-4 py-3 text-sm text-on-surface-variant">
+          Chưa báo cáo việc nào hôm nay. Làm xong việc thì nhắn bot Telegram{' '}
+          <b>“xong 1”</b> (theo số việc ở trên) hoặc <b>“xong &lt;việc vừa làm&gt;”</b>.
+        </p>
+      )}
+
       <div className="mb-8 grid grid-cols-3 gap-3">
         <O nhan="Hồ sơ CTV chờ duyệt" so={String(d.dem.ho_so_cho_duyet)} />
         <O nhan="Thợ tự đăng ký chờ duyệt" so={String(d.dem.tho_cho_duyet)} />

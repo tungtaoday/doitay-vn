@@ -367,8 +367,16 @@ class InsightController extends Controller
             $nhatLenh->noi_dung = json_decode((string) $nhatLenh->noi_dung, true) ?: [];
         }
 
+        // Việc đã báo cáo hôm nay — đặt cạnh nhật lệnh để nhìn phát biết còn
+        // đọng bao nhiêu, khỏi phải nhớ đã nhắn gì cho bot.
+        $daLam = DB::table('bao_cao_viec')
+            ->whereDate('ngay', now()->toDateString())
+            ->orderBy('id')
+            ->get(['so_viec', 'noi_dung', 'created_at']);
+
         return response()->json(['data' => [
             'nhat_lenh'     => $nhatLenh,
+            'da_lam'        => $daLam,
             'yeu_cau_treo'  => $yeuCauTreo,
             'lich_hom_nay'  => $lichHomNay,
             'cho_tho_nhan'  => $choTho,
