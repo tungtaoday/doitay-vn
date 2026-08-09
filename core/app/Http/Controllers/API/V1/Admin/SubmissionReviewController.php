@@ -91,8 +91,11 @@ class SubmissionReviewController extends Controller
             ->limit(20)
             ->get(['id', 'title', 'city', 'district', 'contact_name', 'contact_phone', 'created_at']);
 
-        // Bỏ thợ mồi: hàng đợi này để GỌI người thật, lẫn dữ liệu seed vào là vô dụng.
-        $khongMoi = fn ($q) => $q->whereHas('company', fn ($c) => $c->where(fn ($x) => $x->whereNull('is_seeded')->orWhere('is_seeded', 0)));
+        // (thợ thật) HOẶC (lịch tạo từ ngày ra quân). Lọc theo thợ đơn thuần sẽ
+        // giấu ca khách thật đặt trúng thợ mồi — xem LocDuLieuMoi::NGAY_RA_QUAN.
+        $khongMoi = fn ($q) => $q->where(fn ($w) => $w
+            ->whereHas('company', fn ($c) => $c->where(fn ($x) => $x->whereNull('is_seeded')->orWhere('is_seeded', 0)))
+            ->orWhere('created_at', '>=', \App\Support\LocDuLieuMoi::NGAY_RA_QUAN));
 
         $pendingAppointments = \App\Models\Appointment::where('status', 'pending')
             ->where('created_at', '<', now()->subHours(4))

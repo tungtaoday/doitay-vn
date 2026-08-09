@@ -396,7 +396,16 @@ class InsightController extends Controller
         $q = DB::table('appointments as a')
             ->leftJoin('companies as c', 'c.id', '=', 'a.company_id');
 
-        return $this->boThoMoi($q, 'c')
+        // (thợ thật) HOẶC (lịch tạo từ ngày ra quân): lọc theo thợ đơn thuần sẽ
+        // GIẤU đúng ca nguy hiểm nhất — khách thật đặt trúng thợ mồi (mồi không
+        // có SĐT nên đặt lịch là đường liên hệ duy nhất của họ). Lịch mồi cũ
+        // 2024-2025 vẫn bị loại vì tạo trước ngày ra quân.
+        $q->where(function ($w) {
+            $w->where(fn ($x) => $x->whereNull('c.is_seeded')->orWhere('c.is_seeded', 0))
+              ->orWhere('a.created_at', '>=', self::NGAY_RA_QUAN);
+        });
+
+        return $q
             ->select(
                 'a.id', 'a.status', 'a.appointment_date', 'a.appointment_time', 'a.created_at',
                 'a.recipient_name', 'a.recipient_phone', 'a.recipient_address',

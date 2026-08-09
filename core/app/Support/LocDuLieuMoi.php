@@ -25,6 +25,13 @@ use Illuminate\Support\Facades\DB;
  */
 trait LocDuLieuMoi
 {
+    /**
+     * Ngày ra quân (Ngày 1 blueprint — khớp agent-system/quan-tri/config.json).
+     * Mọi lịch hẹn tạo TỪ ngày này là việc thật, kể cả khi khách đặt trúng thợ
+     * mồi — đó chính là ca cần cứu, không được để bộ lọc mồi giấu mất.
+     */
+    public const NGAY_RA_QUAN = '2026-08-03';
+
     /** Loại thợ mồi. $bang là alias của bảng companies trong truy vấn. */
     protected function boThoMoi(Builder $q, string $bang = 'c'): Builder
     {
