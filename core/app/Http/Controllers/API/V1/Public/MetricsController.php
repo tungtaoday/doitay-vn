@@ -8,6 +8,7 @@ use App\Models\ProductEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * API V1 — Public (guard bằng token). Trả phễu BẮC ĐẨU:
@@ -239,6 +240,31 @@ class MetricsController extends Controller
                     ->select('event', DB::raw('count(*) as n'))
                     ->groupBy('event')
                     ->pluck('n', 'event'),
+                // ── SỐ VẬN HÀNH cho máy chấm cược tuần ──
+                // Sổ cược (agent-system/quan-tri/thi-nghiem.yaml) cần vài con số
+                // ngoài phễu event: thợ thật, CTV, kỷ luật báo cáo. Gom vào đây
+                // để script bao-cao-tuan chỉ cần MỘT token và MỘT lượt gọi.
+                'van_hanh' => [
+                    'so_tho_that' => (int) DB::table('companies')
+                        ->where('status', Status::APPROVED)
+                        ->where(fn ($q) => $q->whereNull('is_seeded')->orWhere('is_seeded', 0))
+                        ->count(),
+                    'tho_cho_duyet' => (int) DB::table('companies')
+                        ->where('status', Status::PENDING)->count(),
+                    'so_ctv' => Schema::hasTable('ctvs')
+                        ? (int) DB::table('ctvs')->count() : 0,
+                    'so_ctv_hoat_dong' => Schema::hasTable('ctvs')
+                        ? (int) DB::table('ctvs')->where('trang_thai', 1)->count() : 0,
+                    'ho_so_ctv_nhap_ky' => (int) DB::table('tho_submissions')
+                        ->where('created_at', '>=', $since)->count(),
+                    'yeu_cau_ky' => (int) DB::table('service_requests')
+                        ->where('created_at', '>=', $since)->count(),
+                    'bao_cao_viec_ky' => Schema::hasTable('bao_cao_viec')
+                        ? (int) DB::table('bao_cao_viec')->where('ngay', '>=', $since->toDateString())->count() : 0,
+                    'so_ngay_co_bao_cao' => Schema::hasTable('bao_cao_viec')
+                        ? (int) DB::table('bao_cao_viec')->where('ngay', '>=', $since->toDateString())
+                            ->distinct()->count('ngay') : 0,
+                ],
             ],
         ]);
     }
