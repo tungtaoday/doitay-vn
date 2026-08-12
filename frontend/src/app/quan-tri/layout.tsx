@@ -1,9 +1,22 @@
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { getToken } from '@/lib/auth';
 import { api } from '@/lib/api';
 import type { AuthUser } from '@/lib/api-types';
 import { SalePortalShell } from '@/components/sale-portal-shell';
 import { ThanhBen } from './thanh-ben';
+
+// PWA "app quản trị trên điện thoại": manifest riêng cho nhánh /quan-tri —
+// KHÔNG đặt ở root layout vì manifest site-wide phải dành cho phía khách;
+// người lạ thêm doitay.vn vào màn hình chính không được rơi vào cổng admin.
+export const metadata: Metadata = {
+  manifest: '/quan-tri.webmanifest',
+  appleWebApp: { capable: true, title: 'Doitay QT', statusBarStyle: 'default' },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#102F4B',
+};
 
 /** Trung tâm điều hành thuộc cổng Sale — dùng chung header sale, tách khỏi doitay. */
 export default async function QuanTriLayout({ children }: { children: ReactNode }) {
