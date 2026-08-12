@@ -374,9 +374,17 @@ class InsightController extends Controller
             ->orderBy('id')
             ->get(['so_viec', 'noi_dung', 'created_at']);
 
+        // Thợ tiềm năng gom từ seeding — mỗi dòng là một cuộc nhắn Zalo phải làm.
+        $thoTiemNang = \Illuminate\Support\Facades\Schema::hasTable('tho_tiem_nang')
+            ? DB::table('tho_tiem_nang')->where('trang_thai', 'moi')
+                ->orderByDesc('id')->limit(20)
+                ->get(['id', 'ten', 'sdt', 'link_bai', 'trich', 'loai', 'created_at'])
+            : collect();
+
         return response()->json(['data' => [
             'nhat_lenh'     => $nhatLenh,
             'da_lam'        => $daLam,
+            'tho_tiem_nang' => $thoTiemNang,
             'yeu_cau_treo'  => $yeuCauTreo,
             'lich_hom_nay'  => $lichHomNay,
             'cho_tho_nhan'  => $choTho,

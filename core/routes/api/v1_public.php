@@ -95,3 +95,11 @@ Route::get('metrics/bac-dau', [MetricsController::class, 'bacDau'])
 Route::get('metrics/tho-performance', [MetricsController::class, 'thoPerformance'])
     ->middleware('throttle:30,1')
     ->name('metrics.tho-performance');
+
+// Doc bao cao + ghi chu cac ngay gan day — cho phien "dieu chinh ke hoach".
+Route::get('nhat-lenh/bao-cao', [\App\Http\Controllers\API\V1\Public\NhatLenhController::class, 'danhSachBaoCao'])
+    ->name('nhat-lenh.bao-cao.danh-sach');
+
+// Tho tiem nang gom tu seeding — bot ghi (METRICS_TOKEN), quan tri doc qua Viec hom nay.
+Route::post('tho-tiem-nang', [\App\Http\Controllers\API\V1\Public\ThoTiemNangController::class, 'store'])
+    ->name('tho-tiem-nang.store');

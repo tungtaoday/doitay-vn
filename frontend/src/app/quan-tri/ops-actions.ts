@@ -71,3 +71,13 @@ export async function themCtv(input: {
 export async function doiTrangThaiCtv(id: number, trang_thai: 0 | 1): Promise<OpsResult> {
   return goi(`/admin/ops/ctv/${id}/status`, 'POST', { trang_thai }, ['/quan-tri/ctv']);
 }
+
+/** Đánh dấu thợ tiềm năng (lead seeding): đã nhắn Zalo / bỏ qua / ra hồ sơ. */
+export async function doiTrangThaiThoTiemNang(
+  id: number,
+  trang_thai: 'da_nhan' | 'bo_qua' | 'da_tao_ho_so',
+): Promise<OpsResult> {
+  return goi(`/admin/ops/tho-tiem-nang/${id}/trang-thai`, 'POST', { trang_thai }, [
+    '/quan-tri/hom-nay',
+  ]);
+}

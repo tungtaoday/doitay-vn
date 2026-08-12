@@ -65,6 +65,8 @@ Route::prefix('ops')->name('ops.')->group(function () {
     Route::post('ctv',                     [$c, 'addCtv'])->name('ctv.add');
     Route::post('ctv/{id}/status',         [$c, 'setCtvStatus'])->whereNumber('id')->name('ctv.status');
 
+    Route::post('tho-tiem-nang/{id}/trang-thai', [$c, 'thoTiemNangStatus'])->whereNumber('id')->name('tho-tiem-nang.status');
+
     Route::get('lich-hen',                 [$c, 'appointments'])->name('lich-hen');
     Route::post('lich-hen/{id}/action',    [$c, 'appointmentAction'])->whereNumber('id')->name('lich-hen.action');
     Route::get('danh-gia',                 [$c, 'reviews'])->name('danh-gia');

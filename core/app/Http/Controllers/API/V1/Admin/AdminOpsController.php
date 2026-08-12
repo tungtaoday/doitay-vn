@@ -372,6 +372,30 @@ class AdminOpsController extends Controller
         ]]);
     }
 
+    // ── Thợ tiềm năng (lead từ seeding) ──────────────────────────────────
+
+    /** Đánh dấu đã nhắn Zalo / bỏ qua / đã ra hồ sơ một thợ tiềm năng. */
+    public function thoTiemNangStatus(Request $request, int $id): JsonResponse
+    {
+        $this->assertManager();
+        $data = $request->validate([
+            'trang_thai' => 'required|in:da_nhan,bo_qua,da_tao_ho_so,moi',
+        ]);
+
+        $ok = DB::table('tho_tiem_nang')->where('id', $id)
+            ->update(['trang_thai' => $data['trang_thai'], 'updated_at' => now()]);
+        if (! $ok) abort(404, 'Không tìm thấy thợ tiềm năng.');
+
+        $nhan = [
+            'da_nhan' => 'Đã đánh dấu ĐÃ NHẮN Zalo.',
+            'bo_qua' => 'Đã bỏ qua.',
+            'da_tao_ho_so' => 'Đã đánh dấu RA HỒ SƠ — đẹp!',
+            'moi' => 'Đã trả về trạng thái mới.',
+        ];
+
+        return response()->json(['data' => ['message' => $nhan[$data['trang_thai']]]]);
+    }
+
     // ── Lịch hẹn ─────────────────────────────────────────────────────────
 
     public function appointments(Request $request): JsonResponse

@@ -193,6 +193,16 @@ export interface HomNayResponse {
     } | null;
     /** Việc đã báo cáo xong hôm nay (nhắn "xong 1" cho bot Telegram). */
     da_lam: Array<{ so_viec: number | null; noi_dung: string; created_at: string | null }>;
+    /** Thợ tiềm năng gom từ seeding — mỗi dòng là một cuộc nhắn Zalo phải làm. */
+    tho_tiem_nang: Array<{
+      id: number;
+      ten: string | null;
+      sdt: string;
+      link_bai: string | null;
+      trich: string | null;
+      loai: string | null;
+      created_at: string | null;
+    }>;
     yeu_cau_treo: YeuCauRow[];
     lich_hom_nay: LichRow[];
     cho_tho_nhan: LichRow[];

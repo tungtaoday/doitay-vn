@@ -5,6 +5,8 @@ import { api, ApiError } from '@/lib/api';
 import { KhongCoQuyen } from '../khong-co-quyen';
 import { gio, type HomNayResponse, type LichRow } from '../insight-types';
 import { NhatLenhBox, type NhatLenh } from './nhat-lenh';
+import { NutHanhDong } from '../nut-hanh-dong';
+import { doiTrangThaiThoTiemNang } from '../ops-actions';
 
 export const metadata: Metadata = {
   title: 'Việc hôm nay | Quản trị',
@@ -84,6 +86,58 @@ export default async function HomNayPage() {
         <O nhan="Thợ tự đăng ký chờ duyệt" so={String(d.dem.tho_cho_duyet)} />
         <O nhan="Hoa hồng chưa trả" so={vnd(d.dem.hoa_hong_chua_tra)} />
       </div>
+
+      {/* Lead từ seeding: bài group có SĐT → bot lưu về đây. Comment đã xin
+          phép công khai nên nhắn Zalo là cuộc chào ẤM — làm trong ngày, để
+          nguội quá 2-3 hôm là người ta quên mình là ai. */}
+      <Muc
+        tieu_de={`Thợ tiềm năng từ seeding (${d.tho_tiem_nang.length})`}
+        vi_sao="Nhắn Zalo theo kịch bản bot đã đưa kèm lúc lưu — xin 3-5 ảnh việc + dựng hộ hồ sơ."
+        rong={d.tho_tiem_nang.length === 0}
+      >
+        {d.tho_tiem_nang.map((t) => (
+          <li
+            key={t.id}
+            className="rounded-2xl bg-surface-container-lowest px-4 py-3 ring-1 ring-outline-variant/15"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-on-surface">
+                  {t.ten ?? 'Chưa rõ tên'} ·{' '}
+                  <a href={`tel:${t.sdt}`} className="text-primary">{t.sdt}</a>
+                </p>
+                <p className="truncate text-xs text-on-surface-variant">{t.trich ?? ''}</p>
+                {t.link_bai ? (
+                  <a
+                    href={t.link_bai}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Mở bài gốc ↗
+                  </a>
+                ) : null}
+              </div>
+              <span className="flex shrink-0 gap-1.5">
+                <NutHanhDong
+                  chay={doiTrangThaiThoTiemNang.bind(null, t.id, 'da_nhan')}
+                  nhan="Đã nhắn Zalo"
+                  kieu="chinh"
+                />
+                <NutHanhDong
+                  chay={doiTrangThaiThoTiemNang.bind(null, t.id, 'da_tao_ho_so')}
+                  nhan="Ra hồ sơ ✓"
+                />
+                <NutHanhDong
+                  chay={doiTrangThaiThoTiemNang.bind(null, t.id, 'bo_qua')}
+                  nhan="Bỏ"
+                  kieu="nguy_hiem"
+                />
+              </span>
+            </div>
+          </li>
+        ))}
+      </Muc>
 
       <Muc
         tieu_de="Yêu cầu khách treo quá 24h"
