@@ -102,6 +102,26 @@ class AuthService
         } catch (\Throwable) {
         }
 
+        // Báo TỨC THỜI vào Telegram người vận hành — kênh họ thật sự nhìn.
+        // Phân biệt vai để đọc lướt là biết nên gọi hay chờ hồ sơ.
+        try {
+            $vai = match ($selectedRole) {
+                'contractor' => '🔧 THỢ đăng ký',
+                'both'       => '🔧 Thợ + khách',
+                default      => '👤 Khách đăng ký',
+            };
+            $lienHe = $user->mobile ?: ($user->email && ! str_contains($user->email, '@phone.doitay.local') ? $user->email : '(chưa có SĐT)');
+            \App\Support\TelegramNotifier::send(
+                "<b>{$vai}</b>\n"
+                . ($user->fullname ?? $user->name) . " · {$lienHe}\n"
+                . now()->format('H:i d/m') . ' · #' . $user->id
+                . ($selectedRole === 'contractor' || $selectedRole === 'both'
+                    ? "\n👉 Thợ mới — nhắc họ dựng hồ sơ / gửi link claim."
+                    : '')
+            );
+        } catch (\Throwable) {
+        }
+
         $token = $user->createToken('frontend', ['*'])->plainTextToken;
 
         return [$user, $token];

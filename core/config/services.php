@@ -47,4 +47,10 @@ return [
         'miniapp_id' => env('ZALO_MINIAPP_ID'),
     ],
 
+    // Báo tức thời cho người vận hành (đăng ký mới…) — TelegramNotifier.
+    'telegram' => [
+        'token'      => env('TELEGRAM_BOT_TOKEN'),
+        'admin_chat' => env('TELEGRAM_ADMIN_CHAT'),
+    ],
+
 ];
